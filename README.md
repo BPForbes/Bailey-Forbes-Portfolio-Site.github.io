@@ -7,6 +7,8 @@ The copy is written from Bailey’s résumé plus **public git history** on [BPF
 ## Local preview
 
 ```bash
+npm ci
+npm run build
 python3 -m http.server 4173
 ```
 
@@ -19,5 +21,6 @@ Open `http://localhost:4173`.
 | `index.html` | Home, experience, education |
 | `projects/` | Expanded project write-ups |
 | `timeline.html` | Cross-repo release ledger |
-| `js/data.js` | Timeline events transcribed from git |
+| `src/` | TypeScript source (`data.ts`, `site.ts`, `types.ts`) |
+| `js/` | Compiled ES modules served by Pages |
 | `CNAME` | `bailey-forbes.com` |
