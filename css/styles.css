@@ -567,6 +567,28 @@ section {
   margin-bottom: 1.25rem;
 }
 
+.timeline-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1.75rem;
+}
+
+.timeline-toc .chip {
+  color: inherit;
+  text-decoration: none;
+}
+
+.timeline-toc .chip:hover {
+  border-color: var(--copper);
+  color: var(--copper-soft);
+}
+
+.project-timeline {
+  scroll-margin-top: calc(var(--nav-h) + 1rem);
+  margin: 0 0 3rem;
+}
+
 .filter-btn {
   background: transparent;
   color: var(--text-dim);

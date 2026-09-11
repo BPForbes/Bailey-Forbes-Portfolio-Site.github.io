@@ -20,7 +20,7 @@ Open `http://localhost:4173`.
 |------|---------|
 | `index.html` | Home, experience, education |
 | `projects/` | Expanded project write-ups |
-| `timeline.html` | Cross-repo release ledger |
+| `timeline.html` | Individual timeline per project |
 | `src/` | TypeScript source (`data.ts`, `site.ts`, `types.ts`) |
 | `js/` | Compiled ES modules served by Pages |
 | `CNAME` | `bailey-forbes.com` |

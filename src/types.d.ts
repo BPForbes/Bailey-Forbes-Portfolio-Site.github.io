@@ -1,6 +1,7 @@
 export type EventKind = "feature" | "release";
 
 export type ProjectId =
+  | "emr"
   | "homework-central"
   | "flinstone"
   | "keyquorum"
@@ -29,6 +30,7 @@ export interface PortfolioData {
   compiled: string;
   source: string;
   projects: Record<ProjectId, string>;
+  projectOrder: readonly ProjectId[];
   languages: Partial<Record<ProjectId, readonly LanguageShare[]>>;
   events: readonly TimelineEvent[];
 }

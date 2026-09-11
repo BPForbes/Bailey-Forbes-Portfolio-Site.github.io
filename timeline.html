@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Release ledger — Bailey Forbes</title>
-  <meta name="description" content="Cross-project timeline of BPForbes releases and features compiled from git history." />
+  <meta name="description" content="Individual project timelines for EMR, Flinstone, Homework Central, KeyQuorum, and QPU." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,19 +16,20 @@
   <main id="main">
     <div class="wrap">
       <header class="page-hero">
-        <p class="kicker">Compiled 11 Sep 2026</p>
-        <h1>Release ledger</h1>
+        <p class="kicker">One ledger · separate trains</p>
+        <h1>Project timelines</h1>
         <p class="lede">
-          One chronological view of what was added across the public account. Copper dots are
-          named releases or repo openings; patina dots are feature landings from commits and merged PRs.
+          Each project keeps its own release train. Public repos are dated from git and merged
+          PRs. The EMR sequence is the client engagement — login, PPI, staff credentials, testing —
+          not a public commit log.
         </p>
       </header>
       <p class="note">
-        Sources: <code>git log</code> on Homework-Central, Bailey-Forbes-Flinstone, KeyQuorum, QPU,
-        BPForbes.github.io, and Flinstone-OS; GitHub PR lists; Flinstone <code>version/entries/*.ver</code>
-        GM=1 descriptions. Private Baker Hill and EMR work is dated from the resume, not from git.
+        Sources: <code>git log</code> and PR lists on Homework-Central, Bailey-Forbes-Flinstone,
+        Flinstone-OS, KeyQuorum, QPU, and BPForbes.github.io; Flinstone <code>version/entries</code>
+        GM=1 notes. EMR dates follow the Aug 2021 – May 2022 engagement.
       </p>
-      <div data-timeline data-filters></div>
+      <div data-project-timelines></div>
     </div>
   </main>
   <footer class="site-footer" data-site-footer></footer>

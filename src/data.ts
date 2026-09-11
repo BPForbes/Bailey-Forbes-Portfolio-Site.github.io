@@ -4,6 +4,7 @@ export const PORTFOLIO: PortfolioData = {
   compiled: "2026-09-11",
   source: "Public git history and merged pull requests on github.com/BPForbes",
   projects: {
+    emr: "Electronic medical record",
     "homework-central": "Homework Central",
     flinstone: "Flinstone Kernel",
     keyquorum: "KeyQuorum",
@@ -11,7 +12,21 @@ export const PORTFOLIO: PortfolioData = {
     "flinstone-os": "Flinstone-OS",
     portfolio: "This site",
   },
+  projectOrder: [
+    "emr",
+    "flinstone-os",
+    "qpu",
+    "flinstone",
+    "homework-central",
+    "keyquorum",
+    "portfolio",
+  ],
   languages: {
+    emr: [
+      { name: "Kotlin", pct: 40, color: "#A97BFF" },
+      { name: "Java", pct: 35, color: "#b07219" },
+      { name: "Firebase / REST", pct: 25, color: "#FFA000" },
+    ],
     "homework-central": [
       { name: "C#", pct: 59, color: "#512bd4" },
       { name: "TypeScript", pct: 26, color: "#3178c6" },
@@ -40,10 +55,45 @@ export const PORTFOLIO: PortfolioData = {
     },
     {
       date: "2021-08",
+      kind: "release",
+      project: "emr",
+      title: "Engagement opens",
+      detail: "Client-sponsored EMR for an organization serving 26 hospital locations. Five-person team scopes Kotlin patient services, Java staff APIs, Firebase, and a move off spreadsheet workflows.",
+    },
+    {
+      date: "2021-10",
       kind: "feature",
-      project: "homework-central",
-      title: "Client EMR and tutoring begin",
-      detail: "Resume-era work: a hospital EMR for 26 locations, plus STEM tutoring that later becomes the Homework Central community.",
+      project: "emr",
+      title: "Login",
+      detail: "Authenticated access for staff and patient-service roles. Sessions and permission gates so records are not anonymously readable or writable.",
+    },
+    {
+      date: "2021-12",
+      kind: "feature",
+      project: "emr",
+      title: "PPI management",
+      detail: "Protected patient information (PPI) records: dietary and patient workflow tracking, Firebase schema, and Kotlin patient services that replace manual spreadsheet handling.",
+    },
+    {
+      date: "2022-02",
+      kind: "feature",
+      project: "emr",
+      title: "Staff credentials",
+      detail: "Java staff endpoints and credentialed staff identities. Phased permission increases as the sponsor takes on more of the system.",
+    },
+    {
+      date: "2022-04",
+      kind: "feature",
+      project: "emr",
+      title: "Testing and backup validation",
+      detail: "Postman cross-checks across local backups, Firebase, and REST endpoints. Selenium automation and HIPAA-focused security review of data-handling paths.",
+    },
+    {
+      date: "2022-05",
+      kind: "release",
+      project: "emr",
+      title: "Sponsor handoff",
+      detail: "Administrative ownership transferred after onboarding. Team measured about 60% improvement in record-processing efficiency versus the spreadsheet baseline.",
     },
     {
       date: "2023-04",

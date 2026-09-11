@@ -90,14 +90,14 @@ document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
   el.append(bar, legend);
 });
 
-const mount = document.querySelector<HTMLElement>("[data-timeline]");
-if (mount) {
+function renderTimeline(mount: HTMLElement): void {
   const events = [...PORTFOLIO.events].sort((a, b) => a.date.localeCompare(b.date));
   const allowed = (mount.getAttribute("data-project") ?? "")
     .split(",")
     .map((value) => value.trim())
     .filter(isProjectId);
   const showFilters = mount.hasAttribute("data-filters");
+  const hideProjectChip = mount.hasAttribute("data-hide-project-chip");
 
   let filter: TimelineFilter = "all";
 
@@ -113,7 +113,7 @@ if (mount) {
 
     if (showFilters) {
       const keys: TimelineFilter[] =
-        allowed.length > 0 ? ["all", ...allowed] : ["all", ...Object.keys(PORTFOLIO.projects).filter(isProjectId)];
+        allowed.length > 0 ? ["all", ...allowed] : ["all", ...PORTFOLIO.projectOrder];
 
       const filters = document.createElement("div");
       filters.className = "filters";
@@ -169,15 +169,18 @@ if (mount) {
       const meta = document.createElement("div");
       meta.className = "tl-meta";
 
-      const projectChip = document.createElement("span");
-      projectChip.className = "chip";
-      projectChip.textContent = PORTFOLIO.projects[event.project];
+      if (!hideProjectChip) {
+        const projectChip = document.createElement("span");
+        projectChip.className = "chip";
+        projectChip.textContent = PORTFOLIO.projects[event.project];
+        meta.appendChild(projectChip);
+      }
 
       const kindChip = document.createElement("span");
       kindChip.className = "chip";
       kindChip.textContent = event.kind;
+      meta.appendChild(kindChip);
 
-      meta.append(projectChip, kindChip);
       body.append(heading, detail, meta);
       item.append(date, dot, body);
       list.appendChild(item);
@@ -188,3 +191,47 @@ if (mount) {
 
   render();
 }
+
+const grouped = document.querySelector<HTMLElement>("[data-project-timelines]");
+if (grouped) {
+  const toc = document.createElement("nav");
+  toc.className = "timeline-toc";
+  toc.setAttribute("aria-label", "Project timelines");
+
+  for (const id of PORTFOLIO.projectOrder) {
+    const href = document.createElement("a");
+    href.className = "chip";
+    href.href = `#timeline-${id}`;
+    href.textContent = PORTFOLIO.projects[id];
+    toc.appendChild(href);
+  }
+  grouped.appendChild(toc);
+
+  for (const id of PORTFOLIO.projectOrder) {
+    const section = document.createElement("section");
+    section.className = "project-timeline";
+    section.id = `timeline-${id}`;
+
+    const head = document.createElement("div");
+    head.className = "section-head";
+    const title = document.createElement("h2");
+    title.textContent = PORTFOLIO.projects[id];
+    head.appendChild(title);
+    section.appendChild(head);
+
+    const mount = document.createElement("div");
+    mount.setAttribute("data-timeline", "");
+    mount.setAttribute("data-project", id);
+    mount.setAttribute("data-hide-project-chip", "");
+    section.appendChild(mount);
+    grouped.appendChild(section);
+    renderTimeline(mount);
+  }
+}
+
+document.querySelectorAll<HTMLElement>("[data-timeline]").forEach((mount) => {
+  if (mount.closest("[data-project-timelines]")) {
+    return;
+  }
+  renderTimeline(mount);
+});
