@@ -37,7 +37,7 @@ if (footer) {
         <p>© 2026 Bailey P Forbes. Timelines compiled from public git history on 11 Sep 2026.</p>
         <p>
           <a href="https://github.com/BPForbes">GitHub</a>
-          · <a href="https://www.linkedin.com/in/bailey-forbes-506a12238">LinkedIn</a>
+          · <a href="https://www.linkedin.com/in/bailey-preston-forbes">LinkedIn</a>
           · <a href="mailto:baileyforbes@rocketmail.com">Email</a>
         </p>
       </div>
