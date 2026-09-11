@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Release ledger — Bailey Forbes</title>
+  <meta name="description" content="Cross-project timeline of BPForbes releases and features compiled from git history." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-root="." data-page="timeline">
+  <header class="site-header" data-site-header></header>
+  <main id="main">
+    <div class="wrap">
+      <header class="page-hero">
+        <p class="kicker">Compiled 11 Sep 2026</p>
+        <h1>Release ledger</h1>
+        <p class="lede">
+          One chronological view of what was added across the public account. Copper dots are
+          named releases or repo openings; patina dots are feature landings from commits and merged PRs.
+        </p>
+      </header>
+      <p class="note">
+        Sources: <code>git log</code> on Homework-Central, Bailey-Forbes-Flinstone, KeyQuorum, QPU,
+        BPForbes.github.io, and Flinstone-OS; GitHub PR lists; Flinstone <code>version/entries/*.ver</code>
+        GM=1 descriptions. Private Baker Hill and EMR work is dated from the resume, not from git.
+      </p>
+      <div data-timeline data-filters></div>
+    </div>
+  </main>
+  <footer class="site-footer" data-site-footer></footer>
+  <script src="js/data.js"></script>
+  <script src="js/site.js"></script>
+</body>
+</html>

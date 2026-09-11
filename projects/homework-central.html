@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Homework Central — Bailey Forbes</title>
+  <meta name="description" content="Homework Central: Discord-to-web migration with bitmask auth, chat, tickets, and ML moderation. Timeline from git history." />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body data-root=".." data-page="projects">
+  <header class="site-header" data-site-header></header>
+  <main id="main">
+    <div class="wrap">
+      <header class="page-hero">
+        <p class="kicker">Lead · Jun 2026 – present</p>
+        <h1>Homework Central</h1>
+        <p class="lede">
+          A community platform for people to collaborate on each other’s education — and the
+          replacement for a 16,000-member Discord. I own the architecture: API, frontend,
+          permissions, moderation, and the one-command local stack.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://github.com/BPForbes/Homework-Central">Repository</a>
+          <a class="btn btn-ghost" href="../timeline.html">Account timeline</a>
+        </div>
+      </header>
+
+      <div data-lang-bar="homework-central"></div>
+
+      <section class="prose">
+        <h2>What it is</h2>
+        <p>
+          The public README describes a React + Vite frontend, an ASP.NET Core API on .NET 10,
+          and PostgreSQL, started by <code>scripts/run-dev</code> with Docker for Postgres and
+          FCaptcha. That is the skeleton. The git record is a Discord-shaped product being grown
+          in public: login, roles, rooms, mentions, tickets, media, a tutor path, and a neural
+          monitor that trains on moderation concepts.
+        </p>
+        <p>
+          I spent four years tutoring in the same community. The migration is not a greenfield
+          social app; it is a permissioned workplace for homework help, with staff tools that
+          Discord never gave us.
+        </p>
+      </section>
+
+      <section class="prose">
+        <h2>Architecture that the history forced</h2>
+        <p>
+          <strong>Bitmask authorization.</strong> PR #4 (28 Jun 2026) implemented the MVP after
+          a conventional RBAC login (#3). Roles and room rights are packed into masks so a
+          check is a bitwise test, not a join-heavy policy walk. Later PRs (#25–#26) had to
+          fix custom role masks, category merge, and infrastructure permissions — evidence the
+          model is in live use, not a sketch.
+        </p>
+        <p>
+          <strong>Tenant isolation for developers.</strong> #7 added <code>/devlogin</code>;
+          #9 gave each developer a tenant database. That is how a 16k-member production shape
+          can be hacked on locally without sharing one dirty Postgres volume.
+        </p>
+        <p>
+          <strong>Rooms as resources.</strong> #12 introduced a visibility primitive and chat-room
+          access. Custom channels, public-to-private updates (#27), and the later water-theme
+          chrome (#40–#47) sit on that primitive rather than a hard-coded channel list.
+        </p>
+        <p>
+          <strong>Moderation as a pipeline.</strong> #50 (16 Jul) brought tickets, media, votes,
+          Trial Tutor, and assessments. The next week reverted TorchSharp, restored dual CPU
+          ChatMonitor models, and added a tutor subject processor (aliases, case-fold, spell-check)
+          shared with ticket preface checks. Training then moved to fewer LLM round-trips, a 2D
+          neural mesh with a Kubernetes split, and a live audit/weight UI (August).
+        </p>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <h2>Release and feature timeline</h2>
+          <p>Merged pull requests and commit subjects, in the order they landed on the public repo.</p>
+        </div>
+        <div data-timeline data-project="homework-central"></div>
+      </section>
+
+      <section class="prose">
+        <h2>Still moving</h2>
+        <p>
+          Main’s first 15 commits stop at the 15 Jul UI rebase, but the PR train continues:
+          neural-net work through August, DevOps documentation and training-pause in early
+          September, and open branches for memory optimization (Rust LRU with C# fallback) and
+          a safer Postgres reset that must not wipe Ollama, uploads, or MinIO. The product is
+          mid-migration, not archived.
+        </p>
+      </section>
+    </div>
+  </main>
+  <footer class="site-footer" data-site-footer></footer>
+  <script src="../js/data.js"></script>
+  <script src="../js/site.js"></script>
+</body>
+</html>

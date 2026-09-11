@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QPU — Bailey Forbes</title>
+  <meta name="description" content="QPU quantum process language and browser workbench. Timeline from the Python repo and BPForbes.github.io." />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body data-root=".." data-page="projects">
+  <header class="site-header" data-site-header></header>
+  <main id="main">
+    <div class="wrap">
+      <header class="page-hero">
+        <p class="kicker">Python 2025 · TypeScript 2026</p>
+        <h1>QPU</h1>
+        <p class="lede">
+          A quantum circuit simulator with its own assembly-style language, then a static
+          React workbench that compiles the same processes in the browser.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://github.com/BPForbes/QPU">Python simulator</a>
+          <a class="btn btn-ghost" href="https://github.com/BPForbes/BPForbes.github.io">Workbench</a>
+        </div>
+      </header>
+
+      <div data-lang-bar="qpu"></div>
+
+      <section class="prose">
+        <h2>Two repositories, one language</h2>
+        <p>
+          <a href="https://github.com/BPForbes/QPU">QPU</a> (10 Jul 2025) is the language and
+          Python engine: <code>parse_command</code> in <code>qpu/ast.py</code>, a cycle clock
+          driven only by <code>INCREASECYCLE</code>, process compilation from text files, child
+          processes, tokens, join/split, measure, and both primitive and derived boolean gates.
+        </p>
+        <p>
+          <a href="https://github.com/BPForbes/BPForbes.github.io">BPForbes.github.io</a>
+          (8–12 Jun 2026) is not a generic homepage — it is a TypeScript port of that compiler
+          plus an interactive circuit canvas, file tools, truth-table I/O, and a correction lab.
+          QPU-Sim on the account is an empty stub from the same July week; the real simulator
+          is the Python tree.
+        </p>
+      </section>
+
+      <section class="prose">
+        <h2>What the commits added</h2>
+        <p>
+          <strong>Python, July 2025.</strong> Early work is adder correctness: OR-gate rewrite,
+          SingleBitFullAdder, per-case tests, then two-bit and four-bit protocols. A
+          divide-and-conquer four-bit adder is attempted, then reset to a linear approach, then
+          rewritten so the four-bit adder depends on two second-level adders rather than four
+          single-bit adders. In parallel: Hilbert logging, cycle/snapshot mechanics, a
+          statevector backend, noise channels, and ID locking so process wrap-up treats IDs as
+          ancilla (unlock, reset to |0⟩, pop, log).
+        </p>
+        <p>
+          <strong>Workbench, June 2026.</strong> Forty commits in four days. AST backend and
+          gate-placement validation; interactive workbench; hamburger navigation and
+          <code>.qpucir</code> persistence; progress visualization and PDF docs on Pages;
+          two-bit adder register/output-binding fixes; RESET hidden from UI; <code>pi</code>
+          rotations; Circuit Correction Lab (first WebLLM, then local Ollama); <code>.qpuio</code>
+          truth-table metadata; partial tables; per-file gate modules and a custom-gate engine.
+        </p>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <h2>Timeline</h2>
+        </div>
+        <div data-timeline data-project="qpu"></div>
+      </section>
+    </div>
+  </main>
+  <footer class="site-footer" data-site-footer></footer>
+  <script src="../js/data.js"></script>
+  <script src="../js/site.js"></script>
+</body>
+</html>

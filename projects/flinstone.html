@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flinstone Kernel — Bailey Forbes</title>
+  <meta name="description" content="Flinstone: portable C/Assembly kernel with versioned contracts and a documented 2.2–4.2 release train from git history." />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body data-root=".." data-page="projects">
+  <header class="site-header" data-site-header></header>
+  <main id="main">
+    <div class="wrap">
+      <header class="page-hero">
+        <p class="kicker">Creator · 2023 – present</p>
+        <h1>Flinstone Kernel</h1>
+        <p class="lede">
+          A portable kernel built from first principles in C and Assembly. Hardware abstraction,
+          filesystems, process control, and device I/O sit behind versioned subsystem contracts
+          so a release can move without silently breaking the last one.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://github.com/BPForbes/Bailey-Forbes-Flinstone">Kernel repo</a>
+          <a class="btn btn-ghost" href="https://github.com/BPForbes/Flinstone-OS">2025 OS experiment</a>
+        </div>
+      </header>
+
+      <div data-lang-bar="flinstone"></div>
+
+      <section class="prose">
+        <h2>What it is</h2>
+        <p>
+          The public kernel repo opens 28 May 2025 as a C filesystem and shell. The resume dates
+          the project to 2023; Flinstone-OS (7–10 Jul 2025) is the C++/QEMU sibling with a
+          minimal TCP/IP stack and libsodium. The C line is the one that grew a versioning
+          machine: <code>version/entries</code>, locked files, and GM=1 promotes onto main.
+        </p>
+        <p>
+          About 70 versioned contracts cover networking, storage, drivers, diagnostics, and
+          identity. Backward compatibility is explicit — metadata and migration notes, not
+          “we’ll fix the callers.” Four core releases on that policy are 4.0.0, 4.0.1, 4.1.x,
+          and 4.2.0, after a 2.x/3.x train that installed the versioning itself.
+        </p>
+      </section>
+
+      <section class="prose">
+        <h2>How the system grew</h2>
+        <p>
+          <strong>Hosted filesystem, then a machine.</strong> February 2026 turns the shell into
+          an OS sketch: ASM memory primitives, Facade/Strategy/Command file management, port I/O
+          drivers, a thread-safe allocator, an embedded x86 VM (disk, timer, paging, snapshots),
+          and an MLQ scheduler with real vs stub driver capabilities on x86-64 and AArch64.
+        </p>
+        <p>
+          <strong>Contracts before more surface.</strong> 3.3.0 (12 May) splits audit from
+          command history and documents fs_jail. 4.0.0 (18 May) is the major bump: inheritable
+          P0–P9 bundles (foundations through hardening). 4.1.0 wires identity — SQLite users,
+          PBKDF2, login/su/sudo, elevation. 4.1.1 is a 50-issue hardening sweep. 4.2.0 (19 Jun)
+          is the networking milestone.
+        </p>
+        <p>
+          <strong>Networking from the metal up.</strong> The 4.2.0 <code>.ver</code> file lists
+          netdev, software loopback, Linux TAP, ARP, IPv4 LPM, ICMP, UDP, TCP shims, DNS,
+          DHCPv4, IPv6/NDP, a Wi-Fi station contract, a multi-device chat/file server, and WSL
+          portproxy hosting. Later PRs add 802.11ax, home-SSID join, macvlan LAN identity, and
+          Dragonfly SAE for WPA3.
+        </p>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <h2>Named releases</h2>
+          <p>From <code>version/entries</code> on Bailey-Forbes-Flinstone, plus the 2025 OS repo.</p>
+        </div>
+        <div class="experience">
+          <article class="entry">
+            <div class="entry-head"><h3>Flinstone-OS</h3><p class="when">2025-07-10</p></div>
+            <p>Toy shell + experimental kernel. Ethernet/UDP structs, TCP/IP, sodium, QEMU/VirtualBox scripts.</p>
+          </article>
+          <article class="entry">
+            <div class="entry-head"><h3>2.2.4 – 3.2.3</h3><p class="when">2026-05-11 – 05-12</p></div>
+            <p>Syscall-style shell dispatch, FAT32 host volumes, AArch64/Pi defaults, disk-backed history, OS roadmap.</p>
+          </article>
+          <article class="entry">
+            <div class="entry-head"><h3>3.3.0</h3><p class="when">2026-05-12</p></div>
+            <p>Contract surfaces for fs_jail and audit; FL1 history vs post-exec audit log.</p>
+          </article>
+          <article class="entry">
+            <div class="entry-head"><h3>4.0.0 / 4.0.1</h3><p class="when">2026-05-18 – 05-19</p></div>
+            <p>Inheritable system contracts; then IPC/VFS/shell hardening and serial <code>-j1</code> default builds.</p>
+          </article>
+          <article class="entry">
+            <div class="entry-head"><h3>4.1.0 / 4.1.1</h3><p class="when">2026-05-23 – 05-24</p></div>
+            <p>Identity stack; then issues #169–#222 (ARM ABI, sessions, batch argv, SHA-256 fetches, threadpool).</p>
+          </article>
+          <article class="entry">
+            <div class="entry-head"><h3>4.2.0</h3><p class="when">2026-06-19</p></div>
+            <p>P3 networking, server foundations, WSL and native Linux integration. Latest GM promote on main.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <h2>Feature timeline</h2>
+        </div>
+        <div data-timeline data-project="flinstone,flinstone-os" data-filters></div>
+      </section>
+    </div>
+  </main>
+  <footer class="site-footer" data-site-footer></footer>
+  <script src="../js/data.js"></script>
+  <script src="../js/site.js"></script>
+</body>
+</html>
