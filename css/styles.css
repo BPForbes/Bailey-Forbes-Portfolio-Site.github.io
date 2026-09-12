@@ -704,6 +704,12 @@ section {
   font-size: 0.88rem;
 }
 
+.btn-static {
+  pointer-events: none;
+  cursor: default;
+  user-select: none;
+}
+
 .guest-window {
   display: flex;
   flex-direction: column;

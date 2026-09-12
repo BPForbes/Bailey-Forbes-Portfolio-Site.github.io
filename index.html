@@ -26,8 +26,7 @@
             but as a timeline of what each project actually shipped.
           </p>
           <div class="hero-actions">
-            <button type="button" class="btn btn-primary" data-guest-launch="qpu">Launch QPU</button>
-            <a class="btn btn-ghost" href="projects/index.html">Read the projects</a>
+            <a class="btn btn-primary" href="projects/index.html">Read the projects</a>
             <a class="btn btn-ghost" href="timeline.html">Open the release ledger</a>
           </div>
         </div>
@@ -97,7 +96,7 @@
           <p>Each project has its own timeline. Student forks stay off the front page.</p>
         </div>
         <div class="card-grid">
-          <a class="card" href="projects/homework-central.html">
+          <article class="card">
             <div class="card-top">
               <p class="eyebrow">Jun 2026 – present</p>
               <span class="chip">Lead</span>
@@ -113,8 +112,11 @@
               <span class="chip">PostgreSQL</span>
               <span class="chip">76 PRs</span>
             </div>
-          </a>
-          <a class="card" href="projects/flinstone.html">
+            <div class="card-actions">
+              <a class="btn btn-primary" href="projects/homework-central.html">View project</a>
+            </div>
+          </article>
+          <article class="card">
             <div class="card-top">
               <p class="eyebrow">2023 – present · repo 2025</p>
               <span class="chip">390 commits</span>
@@ -130,8 +132,12 @@
               <span class="chip">Networking</span>
               <span class="chip">4.2.0</span>
             </div>
-          </a>
-          <a class="card" href="projects/keyquorum.html">
+            <div class="card-actions">
+              <span class="btn btn-primary btn-static">Try it Out!</span>
+              <a class="btn btn-ghost" href="projects/flinstone.html">View project</a>
+            </div>
+          </article>
+          <article class="card">
             <div class="card-top">
               <p class="eyebrow">Aug – Sep 2026</p>
               <span class="chip">Rust</span>
@@ -146,13 +152,17 @@
               <span class="chip">SQLite</span>
               <span class="chip">Axum</span>
             </div>
-          </a>
+            <div class="card-actions">
+              <span class="btn btn-primary btn-static">Try it Out!</span>
+              <a class="btn btn-ghost" href="projects/keyquorum.html">View project</a>
+            </div>
+          </article>
           <article class="card">
             <div class="card-top">
               <p class="eyebrow">Jul 2025 – Jun 2026</p>
               <span class="chip">Python + TS</span>
             </div>
-            <h3><a href="projects/qpu.html">QPU</a></h3>
+            <h3>QPU</h3>
             <p>
               A custom quantum instruction language and simulator, then a browser workbench with
               truth tables, child processes, and a circuit correction lab.
@@ -163,11 +173,11 @@
               <span class="chip">Vite</span>
             </div>
             <div class="card-actions">
-              <button type="button" class="btn btn-primary" data-guest-launch="qpu">Launch workbench</button>
-              <a class="btn btn-ghost" href="projects/qpu.html">Project notes</a>
+              <span class="btn btn-primary btn-static">Try it Out!</span>
+              <a class="btn btn-ghost" href="projects/qpu.html">View project</a>
             </div>
           </article>
-          <a class="card" href="projects/emr.html">
+          <article class="card">
             <div class="card-top">
               <p class="eyebrow">Aug 2021 – May 2022</p>
               <span class="chip">Client</span>
@@ -183,20 +193,11 @@
               <span class="chip">Firebase</span>
               <span class="chip">HIPAA testing</span>
             </div>
-          </a>
+            <div class="card-actions">
+              <a class="btn btn-primary" href="projects/emr.html">View project</a>
+            </div>
+          </article>
         </div>
-      </section>
-
-      <section id="live-lab">
-        <div class="section-head">
-          <h2>Live lab</h2>
-          <p>
-            QPU runs in this window, loaded from
-            <a href="https://bpforbes.github.io/BPForbes.QPU.github.io/?embed=1">BPForbes.QPU.github.io</a>.
-            The site stores the guest URL and chrome — not a copy of the workbench.
-          </p>
-        </div>
-        <div data-guest-window data-guest="qpu" id="live-lab-window"></div>
       </section>
 
       <section id="experience">

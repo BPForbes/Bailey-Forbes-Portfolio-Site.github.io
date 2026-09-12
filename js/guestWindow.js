@@ -89,27 +89,33 @@ function createGuestWindow(mount) {
     const minBtn = mustQuery(shell, "[data-guest-min]", HTMLButtonElement);
     const maxBtn = mustQuery(shell, "[data-guest-max]", HTMLButtonElement);
     const dockButtons = new Map();
-    for (const id of GUEST_ORDER) {
-        const guest = GUESTS[id];
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "guest-dock-btn";
-        button.dataset.guestId = id;
-        button.setAttribute("aria-pressed", "false");
-        const name = document.createElement("span");
-        name.textContent = guest.name;
-        button.appendChild(name);
-        if (isLiveGuest(guest)) {
-            const live = document.createElement("span");
-            live.className = "guest-live-dot";
-            live.setAttribute("aria-hidden", "true");
-            button.appendChild(live);
+    const solo = mount.hasAttribute("data-guest-solo");
+    if (solo) {
+        dockEl.hidden = true;
+    }
+    else {
+        for (const id of GUEST_ORDER) {
+            const guest = GUESTS[id];
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "guest-dock-btn";
+            button.dataset.guestId = id;
+            button.setAttribute("aria-pressed", "false");
+            const name = document.createElement("span");
+            name.textContent = guest.name;
+            button.appendChild(name);
+            if (isLiveGuest(guest)) {
+                const live = document.createElement("span");
+                live.className = "guest-live-dot";
+                live.setAttribute("aria-hidden", "true");
+                button.appendChild(live);
+            }
+            button.addEventListener("click", () => {
+                setGuest(id);
+            });
+            dockEl.appendChild(button);
+            dockButtons.set(id, button);
         }
-        button.addEventListener("click", () => {
-            setGuest(id);
-        });
-        dockEl.appendChild(button);
-        dockButtons.set(id, button);
     }
     function setStatus(text, tone) {
         statusEl.textContent = text;
