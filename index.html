@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bailey Forbes — Software Engineer</title>
+  <meta name="description" content="Portfolio of Bailey P Forbes: C#/.NET, TypeScript, systems programming, and public project release timelines compiled from git history." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-root="." data-page="home">
+  <header class="site-header" data-site-header></header>
+
+  <main id="main">
+    <div class="wrap">
+      <section class="hero">
+        <div>
+          <p class="kicker">Software engineer · C# / TypeScript / systems</p>
+          <h1>Bailey Forbes</h1>
+          <p class="lede">
+            I build production APIs, community platforms, and kernels that keep their contracts
+            across releases. This site expands the public BPForbes record — not as a repo list,
+            but as a timeline of what each project actually shipped.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="projects/index.html">Read the projects</a>
+            <a class="btn btn-ghost" href="timeline.html">Open the release ledger</a>
+          </div>
+        </div>
+        <dl class="hero-meta">
+          <div class="meta-row">
+            <dt>Based</dt>
+            <dd>Indiana</dd>
+          </div>
+          <div class="meta-row">
+            <dt>Now</dt>
+            <dd>Homework Central lead</dd>
+          </div>
+          <div class="meta-row">
+            <dt>Recently</dt>
+            <dd>Baker Hill intern, NextGen / NuComply</dd>
+          </div>
+          <div class="meta-row">
+            <dt>Public line</dt>
+            <dd>Flinstone 4.2, KeyQuorum, QPU</dd>
+          </div>
+          <div class="meta-row">
+            <dt>Contact</dt>
+            <dd><a href="mailto:baileyforbes@rocketmail.com">baileyforbes@rocketmail.com</a></dd>
+          </div>
+        </dl>
+      </section>
+
+      <div class="stats" aria-label="Selected results">
+        <div class="stat"><b>16k</b><span>Discord members moving to a purpose-built web platform</span></div>
+        <div class="stat"><b>584M</b><span>Records in production systems supported at Baker Hill</span></div>
+        <div class="stat"><b>70+</b><span>Versioned Flinstone subsystem contracts kept compatible</span></div>
+        <div class="stat"><b>4</b><span>Core kernel releases, 2.2 through 4.2, with migration notes</span></div>
+      </div>
+
+      <section>
+        <div class="section-head">
+          <h2>How this site is built</h2>
+          <p>
+            Every featured project is public on <a href="https://github.com/BPForbes">github.com/BPForbes</a>.
+            Release dates and feature lines come from commit subjects, merged PRs, and Flinstone’s
+            <code>version/entries</code> files — not from marketing copy.
+          </p>
+        </div>
+        <div class="card-grid">
+          <article class="card">
+            <p class="eyebrow">Method</p>
+            <h3>Git history first</h3>
+            <p>
+              Homework Central’s merged PR train, Flinstone’s GM=1 promotes, KeyQuorum’s August–September
+              CLI landings, and the QPU Python-to-TypeScript move are transcribed into one ledger.
+            </p>
+          </article>
+          <article class="card">
+            <p class="eyebrow">Voice</p>
+            <h3>What landed, not just what exists</h3>
+            <p>
+              A repo name is not an explanation. Each project page walks the features in the order
+              they were added, so the architecture is visible as a sequence of decisions.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="projects">
+        <div class="section-head">
+          <h2>Featured work</h2>
+          <p>Each project has its own timeline. Student forks stay off the front page.</p>
+        </div>
+        <div class="card-grid">
+          <a class="card" href="projects/homework-central.html">
+            <div class="card-top">
+              <p class="eyebrow">Jun 2026 – present</p>
+              <span class="chip">Lead</span>
+            </div>
+            <h3>Homework Central</h3>
+            <p>
+              C#/.NET 10, React, PostgreSQL, and Docker replacing Discord for a 16,000-member
+              education community: bitmask auth, rooms, tickets, and an on-box moderation net.
+            </p>
+            <div class="chips">
+              <span class="chip">C#</span>
+              <span class="chip">TypeScript</span>
+              <span class="chip">PostgreSQL</span>
+              <span class="chip">76 PRs</span>
+            </div>
+          </a>
+          <a class="card" href="projects/flinstone.html">
+            <div class="card-top">
+              <p class="eyebrow">2023 – present · repo 2025</p>
+              <span class="chip">390 commits</span>
+            </div>
+            <h3>Flinstone Kernel</h3>
+            <p>
+              Portable C and Assembly kernel with versioned contracts, FAT32, identity, and a
+              first-principles TCP/IP and Wi-Fi stack. Four core releases keep old interfaces alive.
+            </p>
+            <div class="chips">
+              <span class="chip">C</span>
+              <span class="chip">Assembly</span>
+              <span class="chip">Networking</span>
+              <span class="chip">4.2.0</span>
+            </div>
+          </a>
+          <a class="card" href="projects/keyquorum.html">
+            <div class="card-top">
+              <p class="eyebrow">Aug – Sep 2026</p>
+              <span class="chip">Rust</span>
+            </div>
+            <h3>KeyQuorum</h3>
+            <p>
+              Hardware-key file sharing: recursive M-of-N trees, PIN windows, sealed mailbox
+              envelopes, and a CLI that refuses to take secrets as argv.
+            </p>
+            <div class="chips">
+              <span class="chip">Rust</span>
+              <span class="chip">SQLite</span>
+              <span class="chip">Axum</span>
+            </div>
+          </a>
+          <a class="card" href="projects/qpu.html">
+            <div class="card-top">
+              <p class="eyebrow">Jul 2025 – Jun 2026</p>
+              <span class="chip">Python + TS</span>
+            </div>
+            <h3>QPU</h3>
+            <p>
+              A custom quantum instruction language and simulator, then a browser workbench with
+              truth tables, child processes, and a circuit correction lab.
+            </p>
+            <div class="chips">
+              <span class="chip">Python</span>
+              <span class="chip">TypeScript</span>
+              <span class="chip">Vite</span>
+            </div>
+          </a>
+          <a class="card" href="projects/emr.html">
+            <div class="card-top">
+              <p class="eyebrow">Aug 2021 – May 2022</p>
+              <span class="chip">Client</span>
+            </div>
+            <h3>Electronic medical record</h3>
+            <p>
+              Hospital EMR for 26 locations. Planning and a PoC, then front end, client stack,
+              staff side, wiring the two, a concentrated HIPAA/security pass, and May handoff.
+            </p>
+            <div class="chips">
+              <span class="chip">Kotlin</span>
+              <span class="chip">Java</span>
+              <span class="chip">Firebase</span>
+              <span class="chip">HIPAA testing</span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section id="experience">
+        <div class="section-head">
+          <h2>Experience</h2>
+          <p>Production finance systems, then an independent platform migration I still lead.</p>
+        </div>
+        <div class="experience">
+          <article class="entry">
+            <div class="entry-head">
+              <div>
+                <h3>Developer and project lead</h3>
+                <p class="org">Homework Central website migration</p>
+              </div>
+              <p class="when">Jun 2026 – present · Sellersburg, IN</p>
+            </div>
+            <ul>
+              <li>Architected a C#/.NET, React, TypeScript, and PostgreSQL platform to replace Discord workflows for 16,000 members.</li>
+              <li>Shipped authenticated chat, moderation tickets, room membership, and role-based access encoded as bit-packed masks for constant-time checks.</li>
+              <li>Built ML-assisted moderation (35,600+ trainable weights) with training, evaluation, and ticket workflows on the same stack.</li>
+              <li>Automated one-command Docker provisioning for the API, frontend, PostgreSQL, and CAPTCHA services.</li>
+            </ul>
+          </article>
+          <article class="entry">
+            <div class="entry-head">
+              <div>
+                <h3>Software engineer intern</h3>
+                <p class="org">Baker Hill</p>
+              </div>
+              <p class="when">Sep 2025 – May 2026 · Indianapolis, IN</p>
+            </div>
+            <ul>
+              <li>Developed C#/.NET and TypeScript integrations for loan-origination systems used by 100+ financial institutions.</li>
+              <li>Reduced the NuComply compliance-integration process from months to days by isolating business logic from HTTP transport and automating UN/FY ↔ NuComply exchange through an SSO endpoint.</li>
+              <li>Resolved about 10% of weekly production-support requests across systems holding 584 million records, working Salesforce cases and Azure DevOps.</li>
+              <li>Validated isolated CI/CD deployments and approved fixes before production hotfix merges for 10+ institutions.</li>
+            </ul>
+          </article>
+          <article class="entry">
+            <div class="entry-head">
+              <div>
+                <h3>Software engineer, client-sponsored project</h3>
+                <p class="org"><a href="projects/emr.html">Electronic medical record system</a></p>
+              </div>
+              <p class="when">Aug 2021 – May 2022</p>
+            </div>
+            <ul>
+              <li>Five-person team for an organization serving 26 hospital locations: Kotlin patient services, Java staff endpoints, Firebase, and REST documentation.</li>
+              <li>Cross-validated records across local backups, Firebase, and endpoints; HIPAA-focused review and Selenium/Postman testing.</li>
+              <li>Contributed to a measured 60% improvement in record-processing efficiency, then handed the sponsor administrative ownership.</li>
+            </ul>
+          </article>
+          <article class="entry">
+            <div class="entry-head">
+              <div>
+                <h3>STEM tutor</h3>
+                <p class="org">Indiana University Homework Central</p>
+              </div>
+              <p class="when">Aug 2021 – May 2025</p>
+            </div>
+            <ul>
+              <li>Tutored computer science, mathematics, and cybersecurity for 50+ high-school and university students — the community the current platform is being built to host.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="education">
+        <div class="section-head">
+          <h2>Education and skills</h2>
+        </div>
+        <div class="experience">
+          <article class="entry">
+            <div class="entry-head">
+              <div>
+                <h3>B.S. Computer Science, minor in Mathematics</h3>
+                <p class="org">Indiana University Southeast · Dean’s List</p>
+              </div>
+              <p class="when">May 2025</p>
+            </div>
+          </article>
+          <article class="entry">
+            <div class="entry-head">
+              <div>
+                <h3>Cybersecurity certificate, information security track</h3>
+                <p class="org">Indiana University Southeast · Summa Cum Laude</p>
+              </div>
+              <p class="when">Dec 2024</p>
+            </div>
+          </article>
+          <article class="entry">
+            <div class="entry-head">
+              <div>
+                <h3>A.S. Computer Science</h3>
+                <p class="org">Ivy Tech Community College · Magna Cum Laude</p>
+              </div>
+              <p class="when">May 2022</p>
+            </div>
+          </article>
+        </div>
+        <div class="skills" style="margin-top: 1rem;">
+          <div class="skill-block">
+            <h3>Languages</h3>
+            <p>C#, C, C++, Rust, TypeScript, JavaScript, Python, SQL, Java, Kotlin, Assembly</p>
+          </div>
+          <div class="skill-block">
+            <h3>Web and APIs</h3>
+            <p>.NET, React, REST, HTML/CSS, IIS, Azure DevOps, Docker</p>
+          </div>
+          <div class="skill-block">
+            <h3>Data and systems</h3>
+            <p>PostgreSQL, SQL Server, Firebase, Linux/UNIX, networking, hardware abstraction</p>
+          </div>
+          <div class="skill-block">
+            <h3>Delivery and security</h3>
+            <p>CI/CD, production support, RBAC, HIPAA-focused testing, dependency injection</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact">
+        <div class="section-head">
+          <h2>Contact</h2>
+        </div>
+        <ul class="contact-list">
+          <li><a href="mailto:baileyforbes@rocketmail.com">baileyforbes@rocketmail.com</a></li>
+          <li><a href="tel:+13175003621">(317) 500-3621</a></li>
+          <li><a href="https://www.linkedin.com/in/bailey-preston-forbes">LinkedIn</a></li>
+          <li><a href="https://github.com/BPForbes">GitHub · BPForbes</a></li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer" data-site-footer></footer>
+  <script type="module" src="js/site.js"></script>
+</body>
+</html>

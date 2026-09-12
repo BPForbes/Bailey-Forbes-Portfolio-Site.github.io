@@ -1,0 +1,12 @@
+{
+  "name": "bailey-forbes-portfolio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "5.9.2"
+  }
+}

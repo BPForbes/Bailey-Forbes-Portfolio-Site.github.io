@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KeyQuorum — Bailey Forbes</title>
+  <meta name="description" content="KeyQuorum hardware-key quorum sharing in Rust. Feature timeline from August–September 2026 git history." />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body data-root=".." data-page="projects">
+  <header class="site-header" data-site-header></header>
+  <main id="main">
+    <div class="wrap">
+      <header class="page-hero">
+        <p class="kicker">Rust · Aug 2026 – present</p>
+        <h1>KeyQuorum</h1>
+        <p class="lede">
+          Secure file sharing centered on hardware key sharing. A file’s data key — or any
+          secret — can be split recursively into a tree. Unlocking means reconstructing that
+          tree, not presenting a single token or password.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://github.com/BPForbes/KeyQuorum">Repository</a>
+          <a class="btn btn-ghost" href="../timeline.html#timeline-keyquorum">This project on the ledger</a>
+        </div>
+      </header>
+
+      <div data-lang-bar="keyquorum"></div>
+
+      <section class="prose">
+        <h2>What it is</h2>
+        <p>
+          The README is unusually precise about status: the CLI covers the concept, quorum
+          split/reconstruct is implemented in software, and USB tokens are still on the roadmap.
+          That honesty matches the git pace. The repo is created 24 Aug 2026 and, within days,
+          has a SQLite store, a guarded share schema, a CLI that prompts for secrets instead of
+          taking them as arguments, and review passes that close deletion races and hash leaks.
+        </p>
+        <p>
+          A flat M-of-N quorum is the simplest tree. The interesting case is organizational:
+          a company master key splits across departments, and a department share splits again
+          across a team. <code>tree --node A B</code> finds the lowest common ancestor;
+          <code>reconstruct</code> starts there. Bridges let independent employee and manager
+          stores sign across a cut without merging private subtrees.
+        </p>
+      </section>
+
+      <section class="prose">
+        <h2>Features in the order they were added</h2>
+        <p>
+          <strong>Day one store.</strong> PR #2 lands the local SQLite schema and guards against
+          unsafe share deletion and type confusion. The same day: password manager, expiring
+          share links, password-locked files, then the <code>keyquorum</code> binary with file
+          permission and path checks.
+        </p>
+        <p>
+          <strong>Registry and trees.</strong> 25 Aug adds generate/register/list, recursive
+          splits, signature verification, export bundles, PIN unlock windows, and <code>pin relock</code>.
+          Review PRs fix share-file validation, weak-key checks, and transaction cleanup.
+        </p>
+        <p>
+          <strong>Arena, LCA, PSS.</strong> 30–31 Aug: arena-allocated trees, LCA reconstruct,
+          cross-branch bridges, PSS eviction, and private sign bridges between stores that do
+          not share a canonical document.
+        </p>
+        <p>
+          <strong>Mailbox, then restraint.</strong> 1 Sep introduces an Axum mailbox with API
+          keys and Swagger, immediately reverts it, then re-lands a hardened relay (merge, URL,
+          store integrity). 2 Sep adds date-based TTL and a signed provider identity for minting
+          customer keys — and drops network presence checks from the product. The mailbox is a
+          sealed-envelope router; it never unwraps <code>.kqpb</code> packages.
+        </p>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <h2>Timeline</h2>
+        </div>
+        <div data-timeline data-project="keyquorum" data-hide-project-chip></div>
+      </section>
+    </div>
+  </main>
+  <footer class="site-footer" data-site-footer></footer>
+  <script type="module" src="../js/site.js"></script>
+</body>
+</html>
