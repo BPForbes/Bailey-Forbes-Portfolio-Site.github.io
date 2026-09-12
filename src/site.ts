@@ -1,4 +1,5 @@
 import { PORTFOLIO } from "./data.js";
+import { mountGuestWindows } from "./guestWindow.js";
 import type { ProjectId, TimelineFilter } from "./types.js";
 
 const root = document.body.getAttribute("data-root") ?? ".";
@@ -243,3 +244,5 @@ document.querySelectorAll<HTMLElement>("[data-timeline]").forEach((mount) => {
   }
   renderTimeline(mount);
 });
+
+mountGuestWindows();

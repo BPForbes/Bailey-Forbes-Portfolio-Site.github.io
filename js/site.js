@@ -1,4 +1,5 @@
 import { PORTFOLIO } from "./data.js";
+import { mountGuestWindows } from "./guestWindow.js";
 const root = document.body.getAttribute("data-root") ?? ".";
 const page = document.body.getAttribute("data-page") ?? "";
 function fromRoot(path) {
@@ -202,3 +203,4 @@ document.querySelectorAll("[data-timeline]").forEach((mount) => {
     }
     renderTimeline(mount);
 });
+mountGuestWindows();

@@ -221,8 +221,8 @@ export const PORTFOLIO = {
             kind: "release",
             project: "qpu",
             title: "QPU browser workbench",
-            detail: "BPForbes.github.io ships a TypeScript/React circuit workbench: AST compiler, hamburger file tools, .qpucir storage, and PDF docs on Pages.",
-            href: "https://github.com/BPForbes/BPForbes.github.io",
+            detail: "BPForbes.QPU.github.io (moved from BPForbes.github.io) ships a TypeScript/React circuit workbench: AST compiler, hamburger file tools, .qpucir storage, and PDF docs on Pages.",
+            href: "https://github.com/BPForbes/BPForbes.QPU.github.io",
         },
         {
             date: "2026-06-09",

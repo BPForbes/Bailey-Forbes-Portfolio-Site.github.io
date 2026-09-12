@@ -26,7 +26,8 @@
             but as a timeline of what each project actually shipped.
           </p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="projects/index.html">Read the projects</a>
+            <button type="button" class="btn btn-primary" data-guest-launch="qpu">Launch QPU</button>
+            <a class="btn btn-ghost" href="projects/index.html">Read the projects</a>
             <a class="btn btn-ghost" href="timeline.html">Open the release ledger</a>
           </div>
         </div>
@@ -146,12 +147,12 @@
               <span class="chip">Axum</span>
             </div>
           </a>
-          <a class="card" href="projects/qpu.html">
+          <article class="card">
             <div class="card-top">
               <p class="eyebrow">Jul 2025 – Jun 2026</p>
               <span class="chip">Python + TS</span>
             </div>
-            <h3>QPU</h3>
+            <h3><a href="projects/qpu.html">QPU</a></h3>
             <p>
               A custom quantum instruction language and simulator, then a browser workbench with
               truth tables, child processes, and a circuit correction lab.
@@ -161,7 +162,11 @@
               <span class="chip">TypeScript</span>
               <span class="chip">Vite</span>
             </div>
-          </a>
+            <div class="card-actions">
+              <button type="button" class="btn btn-primary" data-guest-launch="qpu">Launch workbench</button>
+              <a class="btn btn-ghost" href="projects/qpu.html">Project notes</a>
+            </div>
+          </article>
           <a class="card" href="projects/emr.html">
             <div class="card-top">
               <p class="eyebrow">Aug 2021 – May 2022</p>
@@ -180,6 +185,18 @@
             </div>
           </a>
         </div>
+      </section>
+
+      <section id="live-lab">
+        <div class="section-head">
+          <h2>Live lab</h2>
+          <p>
+            QPU runs in this window, loaded from
+            <a href="https://bpforbes.github.io/BPForbes.QPU.github.io/?embed=1">BPForbes.QPU.github.io</a>.
+            The site stores the guest URL and chrome — not a copy of the workbench.
+          </p>
+        </div>
+        <div data-guest-window data-guest="qpu" id="live-lab-window"></div>
       </section>
 
       <section id="experience">

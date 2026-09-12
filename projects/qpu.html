@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>QPU — Bailey Forbes</title>
-  <meta name="description" content="QPU quantum process language and browser workbench. Timeline from the Python repo and BPForbes.github.io." />
+  <meta name="description" content="QPU quantum process language and browser workbench. Timeline from the Python repo and BPForbes.QPU.github.io." />
   <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,13 +23,26 @@
           React workbench that compiles the same processes in the browser.
         </p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="https://github.com/BPForbes/QPU">Python simulator</a>
-          <a class="btn btn-ghost" href="https://github.com/BPForbes/BPForbes.github.io">Workbench</a>
+          <button type="button" class="btn btn-primary" data-guest-launch="qpu">Launch workbench</button>
+          <a class="btn btn-ghost" href="https://github.com/BPForbes/QPU">Python simulator</a>
+          <a class="btn btn-ghost" href="https://github.com/BPForbes/BPForbes.QPU.github.io">Workbench</a>
           <a class="btn btn-ghost" href="../timeline.html#timeline-qpu">This project on the ledger</a>
         </div>
       </header>
 
       <div data-lang-bar="qpu"></div>
+
+      <section id="live-lab">
+        <div class="section-head">
+          <h2>Live lab</h2>
+          <p>
+            The workbench stays on
+            <a href="https://github.com/BPForbes/BPForbes.QPU.github.io">BPForbes.QPU.github.io</a>
+            and loads here as a guest. Launch workbench opens this same window fullscreen.
+          </p>
+        </div>
+        <div data-guest-window data-guest="qpu" id="live-lab-window"></div>
+      </section>
 
       <section class="prose">
         <h2>Two repositories, one language</h2>
@@ -40,9 +53,10 @@
           processes, tokens, join/split, measure, and both primitive and derived boolean gates.
         </p>
         <p>
-          <a href="https://github.com/BPForbes/BPForbes.github.io">BPForbes.github.io</a>
-          (8–12 Jun 2026) is not a generic homepage — it is a TypeScript port of that compiler
-          plus an interactive circuit canvas, file tools, truth-table I/O, and a correction lab.
+          <a href="https://github.com/BPForbes/BPForbes.QPU.github.io">BPForbes.QPU.github.io</a>
+          (8–12 Jun 2026, originally BPForbes.github.io) is not a generic homepage — it is a
+          TypeScript port of that compiler plus an interactive circuit canvas, file tools,
+          truth-table I/O, and a correction lab.
           QPU-Sim on the account is an empty stub from the same July week; the real simulator
           is the Python tree.
         </p>

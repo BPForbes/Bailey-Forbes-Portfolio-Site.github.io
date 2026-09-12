@@ -18,9 +18,9 @@ Open `http://localhost:4173`.
 
 | Path | Purpose |
 |------|---------|
-| `index.html` | Home, experience, education |
-| `projects/` | Expanded project write-ups |
+| `index.html` | Home, experience, education, Live lab guest window |
+| `projects/` | Expanded project write-ups (QPU also hosts the lab window) |
 | `timeline.html` | Individual timeline per project |
-| `src/` | TypeScript source (`data.ts`, `site.ts`, `types.ts`) |
+| `src/` | TypeScript source (`apps.ts`, `data.ts`, `guestWindow.ts`, `site.ts`, `types.d.ts`) |
 | `js/` | Compiled ES modules served by Pages |
 | `CNAME` | `bailey-forbes.com` |
