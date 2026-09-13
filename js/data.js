@@ -45,13 +45,6 @@ export const PORTFOLIO = {
     },
     events: [
         {
-            date: "2020-03",
-            kind: "feature",
-            project: "portfolio",
-            title: "GitHub account opens",
-            detail: "BPForbes is created. Early public work is coursework and forks; the original systems line starts later.",
-        },
-        {
             date: "2021-08",
             kind: "release",
             project: "emr",
@@ -99,13 +92,6 @@ export const PORTFOLIO = {
             project: "emr",
             title: "Sponsor handoff",
             detail: "May closes securing and transfers administrative ownership after onboarding. Team measured about 60% improvement in record-processing efficiency versus the spreadsheet baseline.",
-        },
-        {
-            date: "2023-04",
-            kind: "feature",
-            project: "portfolio",
-            title: "Early Java desktop experiments",
-            detail: "Public repos JavaFXBall, ResterantPayMenuJFX, and resterantbill record the first original application work on the account.",
         },
         {
             date: "2025-05-28",
