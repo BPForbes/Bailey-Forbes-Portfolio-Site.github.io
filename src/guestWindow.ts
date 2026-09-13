@@ -317,6 +317,10 @@ function createGuestWindow(mount: HTMLElement): GuestController {
       return;
     }
 
+    if (!isLiveGuest(GUESTS[currentId]) || iframe.hidden) {
+      return;
+    }
+
     guestReady = true;
     hideBoot();
     setStatus("Live · attached", "live");
