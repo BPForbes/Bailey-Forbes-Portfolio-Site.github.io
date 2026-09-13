@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Electronic medical record — Bailey Forbes</title>
+  <meta name="description" content="Client-sponsored EMR for 26 hospital locations. Timeline: planning and PoC, front end, client stack, staff side, wiring, HIPAA hardening, and handoff." />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body data-page="projects">
+  <header class="site-header" data-site-header></header>
+  <main id="main">
+    <div class="wrap">
+      <header class="page-hero">
+        <p class="kicker">Software engineer · Aug 2021 – May 2022</p>
+        <h1>Electronic medical record</h1>
+        <p class="lede">
+          Client-sponsored healthcare system for an organization serving 26 hospital locations.
+          REST APIs, Firebase, Kotlin patient services, Java staff endpoints, and HIPAA-focused
+          testing — built to retire spreadsheet workflows.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-ghost" href="#timeline">Timeline</a>
+        </div>
+      </header>
+
+      <div data-lang-bar="emr"></div>
+      <p class="note">Language split is approximate. The client tree is not public, so this bar is not from GitHub linguist.</p>
+
+      <section class="prose">
+        <h2>What it is</h2>
+        <p>
+          A five-person engagement: document the architecture, implement patient and staff
+          services, prove backups match the live store, and walk the sponsor up to administrative
+          ownership. Dietary and patient workflow tracking moved off spreadsheets into structured
+          records. The team measured about 60% improvement in record-processing efficiency.
+        </p>
+        <p>
+          The year ran in phases: August planning and a proof of concept, September–October
+          for the first front end, the rest of 2021 on the client full stack, January–February
+          on staff services, March–April wiring those two sides, then April–May on securing
+          (HIPAA was reviewed throughout, and drilled hard in April) and a May handoff.
+          Documentation and security work sat beside every phase. There is no public git
+          history for this tree.
+        </p>
+      </section>
+
+      <section id="timeline">
+        <div class="section-head">
+          <h2>Project timeline</h2>
+          <p>Engagement sequence from planning through handoff, as the team actually worked it.</p>
+        </div>
+        <div data-timeline data-project="emr" data-hide-project-chip></div>
+      </section>
+    </div>
+  </main>
+  <footer class="site-footer" data-site-footer></footer>
+  <script type="module" src="/js/site.js"></script>
+</body>
+</html>

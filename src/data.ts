@@ -9,17 +9,13 @@ export const PORTFOLIO: PortfolioData = {
     flinstone: "Flinstone Kernel",
     keyquorum: "KeyQuorum",
     qpu: "QPU",
-    "flinstone-os": "Flinstone-OS",
-    portfolio: "This site",
   },
   projectOrder: [
     "emr",
-    "flinstone-os",
     "qpu",
     "flinstone",
     "homework-central",
     "keyquorum",
-    "portfolio",
   ],
   languages: {
     emr: [
@@ -40,19 +36,9 @@ export const PORTFOLIO: PortfolioData = {
       { name: "Python / C++", pct: 6, color: "#3178c6" },
     ],
     keyquorum: [{ name: "Rust", pct: 100, color: "#dea584" }],
-    qpu: [
-      { name: "TypeScript", pct: 82, color: "#3178c6" },
-      { name: "Python", pct: 18, color: "#3572a5" },
-    ],
+    qpu: [{ name: "TypeScript", pct: 100, color: "#3178c6" }],
   },
   events: [
-    {
-      date: "2020-03",
-      kind: "feature",
-      project: "portfolio",
-      title: "GitHub account opens",
-      detail: "BPForbes is created. Early public work is coursework and forks; the original systems line starts later.",
-    },
     {
       date: "2021-08",
       kind: "release",
@@ -103,42 +89,12 @@ export const PORTFOLIO: PortfolioData = {
       detail: "May closes securing and transfers administrative ownership after onboarding. Team measured about 60% improvement in record-processing efficiency versus the spreadsheet baseline.",
     },
     {
-      date: "2023-04",
-      kind: "feature",
-      project: "portfolio",
-      title: "Early Java desktop experiments",
-      detail: "Public repos JavaFXBall, ResterantPayMenuJFX, and resterantbill record the first original application work on the account.",
-    },
-    {
       date: "2025-05-28",
       kind: "release",
       project: "flinstone",
       title: "Flinstone repository created",
       detail: "Bailey-Forbes-Flinstone starts as a C filesystem and shell with hardware-level disk operations. This becomes the long-running kernel line.",
       href: "https://github.com/BPForbes/Bailey-Forbes-Flinstone",
-    },
-    {
-      date: "2025-07-07",
-      kind: "release",
-      project: "flinstone-os",
-      title: "Flinstone-OS toy kernel",
-      detail: "C++/Assembly experiment with Ethernet/UDP headers, a minimal TCP/IP stack, libsodium, and QEMU/VirtualBox simulation scripts.",
-      href: "https://github.com/BPForbes/Flinstone-OS",
-    },
-    {
-      date: "2025-07-10",
-      kind: "release",
-      project: "qpu",
-      title: "QPU Python simulator",
-      detail: "Universal Quantum Processor lands: assembly-style AST, cycle clock, process compilation, and full-adder protocols (1-, 2-, 4-, then 8-bit).",
-      href: "https://github.com/BPForbes/QPU",
-    },
-    {
-      date: "2025-07-22",
-      kind: "feature",
-      project: "qpu",
-      title: "Statevector backend and noise",
-      detail: "PR #16 adds a qubit statevector engine, noise channels, ID locking per process, and Hilbert-space logging.",
     },
     {
       date: "2025-09",
@@ -223,8 +179,8 @@ export const PORTFOLIO: PortfolioData = {
       kind: "release",
       project: "qpu",
       title: "QPU browser workbench",
-      detail: "BPForbes.github.io ships a TypeScript/React circuit workbench: AST compiler, hamburger file tools, .qpucir storage, and PDF docs on Pages.",
-      href: "https://github.com/BPForbes/BPForbes.github.io",
+      detail: "BPForbes.QPU.github.io (moved from BPForbes.github.io) ships a TypeScript/React circuit workbench: AST compiler, hamburger file tools, .qpucir storage, and PDF docs on Pages.",
+      href: "https://github.com/BPForbes/BPForbes.QPU.github.io",
     },
     {
       date: "2026-06-09",
@@ -366,14 +322,6 @@ export const PORTFOLIO: PortfolioData = {
       project: "homework-central",
       title: "Training pause and DevOps gates",
       detail: "Continuous training can pause without resetting the ticket cursor. DevOps thought files and CodeRabbit CLI gates land around it.",
-    },
-    {
-      date: "2026-09-11",
-      kind: "release",
-      project: "portfolio",
-      title: "Portfolio site begins",
-      detail: "This repository is created for bailey-forbes.com and populated from the public BPForbes git record.",
-      href: "https://github.com/BPForbes/Bailey-Forbes-Portfolio-Site.github.io",
     },
   ],
 };

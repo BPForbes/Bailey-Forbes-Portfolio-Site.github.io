@@ -5,9 +5,7 @@ export type ProjectId =
   | "homework-central"
   | "flinstone"
   | "keyquorum"
-  | "qpu"
-  | "flinstone-os"
-  | "portfolio";
+  | "qpu";
 
 export type TimelineFilter = "all" | ProjectId;
 
