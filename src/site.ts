@@ -1,24 +1,16 @@
 import { PORTFOLIO } from "./data.js";
 import { mountGuestWindows } from "./guestWindow.js";
+import { ROUTES } from "./routes.js";
 import type { ProjectId, TimelineFilter } from "./types.js";
 
-const root = document.body.getAttribute("data-root") ?? ".";
 const page = document.body.getAttribute("data-page") ?? "";
-
-function fromRoot(path: string): string {
-  const rel = path.replace(/^\/+/, "");
-  if (root === "" || root === "/") {
-    return `/${rel}`;
-  }
-  return `${root.replace(/\/+$/, "")}/${rel}`;
-}
 
 const header = document.querySelector<HTMLElement>("[data-site-header]");
 if (header) {
   header.innerHTML = `
       <a class="skip-link" href="#main">Skip to content</a>
       <div class="nav-wrap">
-        <a class="brand" href="${fromRoot("index.html")}">
+        <a class="brand" href="${ROUTES.home}">
           <span class="brand-mark">BF</span>
           <span class="brand-text">
             <strong>Bailey Forbes</strong>
@@ -27,10 +19,10 @@ if (header) {
         </a>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
         <ul class="nav-links" id="site-nav">
-          <li><a data-nav="home" href="${fromRoot("index.html")}">Home</a></li>
-          <li><a data-nav="projects" href="${fromRoot("projects/index.html")}">Projects</a></li>
-          <li><a data-nav="timeline" href="${fromRoot("timeline.html")}">Timeline</a></li>
-          <li><a data-nav="experience" href="${fromRoot("index.html#experience")}">Experience</a></li>
+          <li><a data-nav="home" href="${ROUTES.home}">Home</a></li>
+          <li><a data-nav="projects" href="${ROUTES.projects}">Projects</a></li>
+          <li><a data-nav="timeline" href="${ROUTES.timeline}">Timeline</a></li>
+          <li><a data-nav="experience" href="${ROUTES.experience}">Experience</a></li>
         </ul>
       </div>
     `;

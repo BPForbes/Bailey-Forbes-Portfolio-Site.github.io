@@ -12,15 +12,31 @@ npm run build
 python3 -m http.server 4173
 ```
 
-Open `http://localhost:4173`.
+Open `http://localhost:4173/home/`.
+
+## Routes
+
+GitHub Pages serves each folder’s `index.html` without showing the filename. Old `.html` paths redirect.
+
+| URL | Page |
+|-----|------|
+| `/` | Redirects to `/home/` |
+| `/home/` | Home, experience, education |
+| `/projects/` | Project index |
+| `/projects/qpu/` | QPU (live lab) |
+| `/projects/flinstone/` | Flinstone Kernel (lab chrome) |
+| `/projects/keyquorum/` | KeyQuorum (lab chrome) |
+| `/projects/homework-central/` | Homework Central |
+| `/projects/emr/` | Electronic medical record |
+| `/timeline/` | Individual timeline per project |
 
 ## Layout
 
 | Path | Purpose |
 |------|---------|
-| `index.html` | Home, experience, education |
+| `home/index.html` | Home, experience, education |
 | `projects/` | Project write-ups; Flinstone, KeyQuorum, and QPU each host their own lab window |
-| `timeline.html` | Individual timeline per project |
-| `src/` | TypeScript source (`apps.ts`, `data.ts`, `guestWindow.ts`, `site.ts`, `types.d.ts`) |
+| `timeline/` | Individual timeline per project |
+| `src/` | TypeScript source (`apps.ts`, `data.ts`, `guestWindow.ts`, `routes.ts`, `site.ts`, `types.d.ts`) |
 | `js/` | Compiled ES modules served by Pages |
 | `CNAME` | `bailey-forbes.com` |
