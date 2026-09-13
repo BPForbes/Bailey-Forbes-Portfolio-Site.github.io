@@ -1,7 +1,7 @@
 export const ROUTES = {
     home: "/home/",
     projects: "/projects/",
-    timeline: "/timeline/",
+    timeline: "/projects/",
     experience: "/home/#experience",
 };
 export const PROJECT_PATHS = {

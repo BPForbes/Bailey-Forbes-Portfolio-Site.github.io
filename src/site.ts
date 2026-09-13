@@ -14,14 +14,13 @@ if (header) {
           <span class="brand-mark">BF</span>
           <span class="brand-text">
             <strong>Bailey Forbes</strong>
-            <span>Release ledger</span>
+            <span>Timeline</span>
           </span>
         </a>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
         <ul class="nav-links" id="site-nav">
           <li><a data-nav="home" href="${ROUTES.home}">Home</a></li>
           <li><a data-nav="projects" href="${ROUTES.projects}">Projects</a></li>
-          <li><a data-nav="timeline" href="${ROUTES.timeline}">Timeline</a></li>
           <li><a data-nav="experience" href="${ROUTES.experience}">Experience</a></li>
         </ul>
       </div>

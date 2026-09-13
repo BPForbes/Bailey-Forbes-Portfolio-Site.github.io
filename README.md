@@ -28,7 +28,7 @@ GitHub Pages serves each folder’s `index.html` without showing the filename. O
 | `/projects/keyquorum/` | KeyQuorum (lab chrome) |
 | `/projects/homework-central/` | Homework Central |
 | `/projects/emr/` | Electronic medical record |
-| `/timeline/` | Individual timeline per project |
+| `/timeline/` | Redirects to `/projects/` |
 
 ## Layout
 
@@ -36,7 +36,7 @@ GitHub Pages serves each folder’s `index.html` without showing the filename. O
 |------|---------|
 | `home/index.html` | Home, experience, education |
 | `projects/` | Project write-ups; Flinstone, KeyQuorum, and QPU each host their own lab window |
-| `timeline/` | Individual timeline per project |
+| `projects/*/index.html` | Project write-up and that project’s timeline |
 | `src/` | TypeScript source (`apps.ts`, `data.ts`, `guestWindow.ts`, `routes.ts`, `site.ts`, `types.d.ts`) |
 | `js/` | Compiled ES modules served by Pages |
 | `CNAME` | `bailey-forbes.com` |
