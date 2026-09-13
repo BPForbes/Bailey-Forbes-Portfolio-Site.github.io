@@ -1,7 +1,10 @@
-export const QPU_GUEST_ORIGIN = "https://bpforbes.github.io";
+// Same-origin copy of the QPU playground. The upstream Pages site stacks every
+// view in one scroller; this hosted build shows one page at a time.
+export const QPU_GUEST_SRC = "/workbench/?embed=1";
 
-export const QPU_GUEST_SRC =
-  "https://bpforbes.github.io/BPForbes.QPU.github.io/?embed=1";
+export function qpuGuestOrigin(win: Pick<Window, "location"> = window): string {
+  return win.location.origin;
+}
 
 export const QPU_EMBED_SOURCE = "qpu-guest";
 
@@ -17,7 +20,6 @@ export interface LiveGuest extends GuestBase {
   id: "qpu";
   kind: "live";
   src: string;
-  origin: string;
 }
 
 export interface FlinstoneGuest extends GuestBase {
@@ -44,7 +46,6 @@ export const GUESTS: { readonly [K in GuestId]: Extract<GuestApp, { id: K }> } =
     subtitle: "Circuit workbench",
     repo: "https://github.com/BPForbes/BPForbes.QPU.github.io",
     src: QPU_GUEST_SRC,
-    origin: QPU_GUEST_ORIGIN,
   },
   flinstone: {
     id: "flinstone",

@@ -3,7 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run build:workbench",
+    "build:workbench": "npm ci --prefix qpu && npm run build --prefix qpu",
+    "test:workbench": "npm test --prefix qpu",
     "watch": "tsc --watch"
   },
   "devDependencies": {

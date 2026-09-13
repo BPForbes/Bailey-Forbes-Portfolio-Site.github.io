@@ -16,5 +16,5 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Compile TypeScript
-        run: npm ci && npm run build
+      - name: Compile TypeScript and QPU workbench
+        run: npm ci && npm run build && npm run test:workbench

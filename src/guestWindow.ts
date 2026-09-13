@@ -1,10 +1,10 @@
 import {
   GUEST_ORDER,
   GUESTS,
-  QPU_GUEST_ORIGIN,
   isGuestId,
   isGuestReadyMessage,
   isLiveGuest,
+  qpuGuestOrigin,
 } from "./apps.js";
 import type { GuestApp, GuestId, LiveGuest } from "./apps.js";
 
@@ -305,7 +305,7 @@ function createGuestWindow(mount: HTMLElement): GuestController {
   }
 
   window.addEventListener("message", (event: MessageEvent<unknown>) => {
-    if (event.origin !== QPU_GUEST_ORIGIN) {
+    if (event.origin !== qpuGuestOrigin()) {
       return;
     }
 
