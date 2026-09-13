@@ -8,7 +8,6 @@ export const PORTFOLIO = {
         keyquorum: "KeyQuorum",
         qpu: "QPU",
         "flinstone-os": "Flinstone-OS",
-        portfolio: "This site",
     },
     projectOrder: [
         "emr",
@@ -17,7 +16,6 @@ export const PORTFOLIO = {
         "flinstone",
         "homework-central",
         "keyquorum",
-        "portfolio",
     ],
     languages: {
         emr: [
@@ -350,14 +348,6 @@ export const PORTFOLIO = {
             project: "homework-central",
             title: "Training pause and DevOps gates",
             detail: "Continuous training can pause without resetting the ticket cursor. DevOps thought files and CodeRabbit CLI gates land around it.",
-        },
-        {
-            date: "2026-09-11",
-            kind: "release",
-            project: "portfolio",
-            title: "Portfolio site begins",
-            detail: "This repository is created for bailey-forbes.com and populated from the public BPForbes git record.",
-            href: "https://github.com/BPForbes/Bailey-Forbes-Portfolio-Site.github.io",
         },
     ],
 };

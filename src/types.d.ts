@@ -6,8 +6,7 @@ export type ProjectId =
   | "flinstone"
   | "keyquorum"
   | "qpu"
-  | "flinstone-os"
-  | "portfolio";
+  | "flinstone-os";
 
 export type TimelineFilter = "all" | ProjectId;
 
