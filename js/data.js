@@ -7,11 +7,9 @@ export const PORTFOLIO = {
         flinstone: "Flinstone Kernel",
         keyquorum: "KeyQuorum",
         qpu: "QPU",
-        "flinstone-os": "Flinstone-OS",
     },
     projectOrder: [
         "emr",
-        "flinstone-os",
         "qpu",
         "flinstone",
         "homework-central",
@@ -36,10 +34,7 @@ export const PORTFOLIO = {
             { name: "Python / C++", pct: 6, color: "#3178c6" },
         ],
         keyquorum: [{ name: "Rust", pct: 100, color: "#dea584" }],
-        qpu: [
-            { name: "TypeScript", pct: 82, color: "#3178c6" },
-            { name: "Python", pct: 18, color: "#3572a5" },
-        ],
+        qpu: [{ name: "TypeScript", pct: 100, color: "#3178c6" }],
     },
     events: [
         {
@@ -98,29 +93,6 @@ export const PORTFOLIO = {
             title: "Flinstone repository created",
             detail: "Bailey-Forbes-Flinstone starts as a C filesystem and shell with hardware-level disk operations. This becomes the long-running kernel line.",
             href: "https://github.com/BPForbes/Bailey-Forbes-Flinstone",
-        },
-        {
-            date: "2025-07-07",
-            kind: "release",
-            project: "flinstone-os",
-            title: "Flinstone-OS toy kernel",
-            detail: "C++/Assembly experiment with Ethernet/UDP headers, a minimal TCP/IP stack, libsodium, and QEMU/VirtualBox simulation scripts.",
-            href: "https://github.com/BPForbes/Flinstone-OS",
-        },
-        {
-            date: "2025-07-10",
-            kind: "release",
-            project: "qpu",
-            title: "QPU Python simulator",
-            detail: "Universal Quantum Processor lands: assembly-style AST, cycle clock, process compilation, and full-adder protocols (1-, 2-, 4-, then 8-bit).",
-            href: "https://github.com/BPForbes/QPU",
-        },
-        {
-            date: "2025-07-22",
-            kind: "feature",
-            project: "qpu",
-            title: "Statevector backend and noise",
-            detail: "PR #16 adds a qubit statevector engine, noise channels, ID locking per process, and Hilbert-space logging.",
         },
         {
             date: "2025-09",
