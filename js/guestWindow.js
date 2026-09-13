@@ -30,6 +30,7 @@ function createGuestWindow(mount) {
     const initialId = isGuestId(requested) ? requested : "qpu";
     let currentId = initialId;
     let bootTimer = 0;
+    let guestReady = false;
     const shell = document.createElement("article");
     shell.className = "guest-window";
     shell.setAttribute("aria-label", "Live lab");
@@ -182,6 +183,7 @@ function createGuestWindow(mount) {
         bootEl.hidden = true;
     }
     function attachLive(guest) {
+        guestReady = false;
         offlineEl.hidden = true;
         iframe.hidden = false;
         iframe.title = `${guest.name} workbench`;
@@ -190,6 +192,7 @@ function createGuestWindow(mount) {
         iframe.src = guest.src;
     }
     function detachLive() {
+        guestReady = false;
         hideBoot();
         iframe.src = "about:blank";
         iframe.hidden = true;
@@ -208,7 +211,7 @@ function createGuestWindow(mount) {
     function refreshStatus() {
         const guest = GUESTS[currentId];
         if (isLiveGuest(guest)) {
-            setStatus(bootEl.hidden ? "Live · attached" : "Connecting…", bootEl.hidden ? "live" : "wait");
+            setStatus(guestReady ? "Live · attached" : "Connecting…", guestReady ? "live" : "wait");
             return;
         }
         setStatus("Not attached", "off");
@@ -243,19 +246,6 @@ function createGuestWindow(mount) {
         }
         showOffline(guest);
     }
-    iframe.addEventListener("load", () => {
-        if (iframe.hidden) {
-            return;
-        }
-        const src = iframe.getAttribute("src");
-        if (src === null || src === "" || src === "about:blank") {
-            return;
-        }
-        hideBoot();
-        if (isLiveGuest(GUESTS[currentId])) {
-            setStatus("Live · attached", "live");
-        }
-    });
     window.addEventListener("message", (event) => {
         if (event.origin !== QPU_GUEST_ORIGIN) {
             return;
@@ -266,6 +256,7 @@ function createGuestWindow(mount) {
         if (!isGuestReadyMessage(event.data)) {
             return;
         }
+        guestReady = true;
         hideBoot();
         setStatus("Live · attached", "live");
     });

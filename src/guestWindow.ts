@@ -54,6 +54,7 @@ function createGuestWindow(mount: HTMLElement): GuestController {
   const initialId: GuestId = isGuestId(requested) ? requested : "qpu";
   let currentId: GuestId = initialId;
   let bootTimer = 0;
+  let guestReady = false;
 
   const shell = document.createElement("article");
   shell.className = "guest-window";
@@ -225,6 +226,7 @@ function createGuestWindow(mount: HTMLElement): GuestController {
   }
 
   function attachLive(guest: LiveGuest): void {
+    guestReady = false;
     offlineEl.hidden = true;
     iframe.hidden = false;
     iframe.title = `${guest.name} workbench`;
@@ -234,6 +236,7 @@ function createGuestWindow(mount: HTMLElement): GuestController {
   }
 
   function detachLive(): void {
+    guestReady = false;
     hideBoot();
     iframe.src = "about:blank";
     iframe.hidden = true;
@@ -255,7 +258,7 @@ function createGuestWindow(mount: HTMLElement): GuestController {
   function refreshStatus(): void {
     const guest = GUESTS[currentId];
     if (isLiveGuest(guest)) {
-      setStatus(bootEl.hidden ? "Live · attached" : "Connecting…", bootEl.hidden ? "live" : "wait");
+      setStatus(guestReady ? "Live · attached" : "Connecting…", guestReady ? "live" : "wait");
       return;
     }
 
@@ -301,22 +304,6 @@ function createGuestWindow(mount: HTMLElement): GuestController {
     showOffline(guest);
   }
 
-  iframe.addEventListener("load", () => {
-    if (iframe.hidden) {
-      return;
-    }
-
-    const src = iframe.getAttribute("src");
-    if (src === null || src === "" || src === "about:blank") {
-      return;
-    }
-
-    hideBoot();
-    if (isLiveGuest(GUESTS[currentId])) {
-      setStatus("Live · attached", "live");
-    }
-  });
-
   window.addEventListener("message", (event: MessageEvent<unknown>) => {
     if (event.origin !== QPU_GUEST_ORIGIN) {
       return;
@@ -330,6 +317,7 @@ function createGuestWindow(mount: HTMLElement): GuestController {
       return;
     }
 
+    guestReady = true;
     hideBoot();
     setStatus("Live · attached", "live");
   });
