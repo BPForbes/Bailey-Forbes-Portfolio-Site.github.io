@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>QPU — Bailey Forbes</title>
-  <meta name="description" content="QPU quantum process language and browser workbench. Timeline from BPForbes.QPU.github.io." />
+  <meta name="description" content="QPU quantum process language and browser playground. Timeline from BPForbes.QPU.github.io." />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -20,11 +20,11 @@
         <h1>QPU</h1>
         <p class="lede">
           A quantum circuit simulator with its own assembly-style language, and a static
-          React workbench that compiles those processes in the browser.
+          React playground that compiles those processes in the browser.
         </p>
         <div class="hero-actions">
-          <button type="button" class="btn btn-primary" data-guest-launch="qpu">Launch workbench</button>
-          <a class="btn btn-ghost" href="https://github.com/BPForbes/BPForbes.QPU.github.io">Workbench</a>
+          <button type="button" class="btn btn-primary" data-guest-launch="qpu">Launch playground</button>
+          <a class="btn btn-ghost" href="https://github.com/BPForbes/BPForbes.QPU.github.io">Playground</a>
         </div>
       </header>
 
@@ -34,9 +34,11 @@
         <div class="section-head">
           <h2>Live lab</h2>
           <p>
-            The workbench stays on
+            The playground stays on
             <a href="https://github.com/BPForbes/BPForbes.QPU.github.io">BPForbes.QPU.github.io</a>
-            and loads here as a guest. Launch workbench opens this same window fullscreen.
+            and loads here as a guest. Hamburger navigation, stacked pages, Play Sequence,
+            and Run all stay inside the iframe. After the guest announces ready, this window
+            can switch pages. Launch playground opens this same window fullscreen.
           </p>
         </div>
         <div data-guest-window data-guest="qpu" data-guest-solo id="live-lab-window"></div>
@@ -47,8 +49,8 @@
         <p>
           <a href="https://github.com/BPForbes/BPForbes.QPU.github.io">BPForbes.QPU.github.io</a>
           (8–12 Jun 2026, originally BPForbes.github.io) is a TypeScript compiler for the QPU
-          process language plus an interactive circuit canvas, file tools, truth-table I/O, and
-          a correction lab.
+          process language plus a hamburger playground: stacked circuit builder, docs, particle
+          visualization, correction lab, and file pages, with Play Sequence and Run all.
         </p>
       </section>
 

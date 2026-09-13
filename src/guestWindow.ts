@@ -2,11 +2,12 @@ import {
   GUEST_ORDER,
   GUESTS,
   QPU_GUEST_ORIGIN,
+  hostSetViewMessage,
   isGuestId,
-  isGuestReadyMessage,
   isLiveGuest,
+  parseGuestReadyMessage,
 } from "./apps.js";
-import type { GuestApp, GuestId, LiveGuest } from "./apps.js";
+import type { GuestApp, GuestId, LiveGuest, QpuViewId, QpuViewOption } from "./apps.js";
 
 const BOOT_FALLBACK_MS = 8000;
 
@@ -55,6 +56,8 @@ function createGuestWindow(mount: HTMLElement): GuestController {
   let currentId: GuestId = initialId;
   let bootTimer = 0;
   let guestReady = false;
+  let currentView: QpuViewId = "builder";
+  let playgroundViews: readonly QpuViewOption[] = [];
 
   const shell = document.createElement("article");
   shell.className = "guest-window";
@@ -68,7 +71,7 @@ function createGuestWindow(mount: HTMLElement): GuestController {
       </div>
       <div class="guest-heading">
         <p class="guest-title" data-guest-title>QPU</p>
-        <p class="guest-subtitle" data-guest-subtitle>Circuit workbench</p>
+        <p class="guest-subtitle" data-guest-subtitle>Playground</p>
       </div>
       <div class="guest-title-actions">
         <button type="button" class="guest-btn" data-guest-fullscreen>Fullscreen</button>
@@ -77,11 +80,12 @@ function createGuestWindow(mount: HTMLElement): GuestController {
       <p class="guest-status" data-guest-status data-tone="wait" aria-live="polite">Connecting…</p>
     </header>
     <nav class="guest-dock" data-guest-dock aria-label="Lab guests"></nav>
+    <nav class="guest-pages" data-guest-pages hidden aria-label="Playground pages"></nav>
     <div class="guest-stage" data-guest-stage>
       <iframe
         class="guest-frame"
         data-guest-frame
-        title="QPU workbench"
+        title="QPU playground"
         allow="fullscreen; clipboard-write"
         referrerpolicy="strict-origin-when-cross-origin"
         hidden
@@ -94,7 +98,7 @@ function createGuestWindow(mount: HTMLElement): GuestController {
       </div>
       <div class="guest-boot" data-guest-boot hidden>
         <p class="eyebrow">Guest</p>
-        <p>Attaching QPU…</p>
+        <p>Attaching QPU playground…</p>
       </div>
     </div>
   `;
@@ -105,6 +109,7 @@ function createGuestWindow(mount: HTMLElement): GuestController {
   const subtitleEl = mustQuery(shell, "[data-guest-subtitle]");
   const statusEl = mustQuery(shell, "[data-guest-status]");
   const dockEl = mustQuery(shell, "[data-guest-dock]");
+  const pagesEl = mustQuery(shell, "[data-guest-pages]");
   const stageEl = mustQuery(shell, "[data-guest-stage]");
   const iframe = mustQuery(shell, "[data-guest-frame]", HTMLIFrameElement);
   const offlineEl = mustQuery(shell, "[data-guest-offline]");
@@ -178,8 +183,7 @@ function createGuestWindow(mount: HTMLElement): GuestController {
   }
 
   async function enterExpanded(): Promise<void> {
-    shell.classList.remove("is-minimized");
-    stageEl.hidden = false;
+    restoreStage();
     refreshStatus();
     rememberSlot();
 
@@ -227,9 +231,12 @@ function createGuestWindow(mount: HTMLElement): GuestController {
 
   function attachLive(guest: LiveGuest): void {
     guestReady = false;
+    playgroundViews = [];
+    pagesEl.hidden = true;
+    pagesEl.replaceChildren();
     offlineEl.hidden = true;
     iframe.hidden = false;
-    iframe.title = `${guest.name} workbench`;
+    iframe.title = `${guest.name} playground`;
     showBoot();
     setStatus("Connecting…", "wait");
     iframe.src = guest.src;
@@ -237,9 +244,52 @@ function createGuestWindow(mount: HTMLElement): GuestController {
 
   function detachLive(): void {
     guestReady = false;
+    playgroundViews = [];
+    pagesEl.hidden = true;
+    pagesEl.replaceChildren();
     hideBoot();
     iframe.src = "about:blank";
     iframe.hidden = true;
+  }
+
+  function syncPageButtons(): void {
+    pagesEl.querySelectorAll<HTMLButtonElement>("[data-guest-view]").forEach((button) => {
+      const id = button.dataset.guestView ?? "";
+      button.setAttribute("aria-current", id === currentView ? "page" : "false");
+    });
+  }
+
+  function renderPlaygroundPages(views: readonly QpuViewOption[]): void {
+    playgroundViews = views;
+    pagesEl.replaceChildren();
+
+    for (const view of views) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "guest-page-btn";
+      button.dataset.guestView = view.id;
+      button.textContent = view.label;
+      button.addEventListener("click", () => {
+        postSetView(view.id);
+      });
+      pagesEl.appendChild(button);
+    }
+
+    pagesEl.hidden = shell.classList.contains("is-minimized") || views.length === 0;
+    syncPageButtons();
+  }
+
+  function postSetView(view: QpuViewId): void {
+    const guest = GUESTS[currentId];
+    const frame = iframe.contentWindow;
+
+    if (!isLiveGuest(guest) || !guestReady || frame === null) {
+      return;
+    }
+
+    currentView = view;
+    syncPageButtons();
+    frame.postMessage(hostSetViewMessage(view), guest.origin);
   }
 
   function showOffline(guest: GuestApp): void {
@@ -253,6 +303,12 @@ function createGuestWindow(mount: HTMLElement): GuestController {
     offlineRepoEl.textContent = `${guest.name} repository`;
     offlineEl.hidden = false;
     setStatus("Not attached", "off");
+  }
+
+  function restoreStage(): void {
+    shell.classList.remove("is-minimized");
+    stageEl.hidden = false;
+    pagesEl.hidden = !guestReady || playgroundViews.length === 0;
   }
 
   function refreshStatus(): void {
@@ -269,8 +325,10 @@ function createGuestWindow(mount: HTMLElement): GuestController {
     const guest = GUESTS[id];
     const alreadyShowing = currentId === id && !force;
 
-    shell.classList.remove("is-minimized");
-    stageEl.hidden = false;
+    restoreStage();
+    if (!isLiveGuest(guest)) {
+      pagesEl.hidden = true;
+    }
     titleEl.textContent = guest.name;
     subtitleEl.textContent = guest.subtitle;
     shell.dataset.guest = id;
@@ -313,7 +371,8 @@ function createGuestWindow(mount: HTMLElement): GuestController {
       return;
     }
 
-    if (!isGuestReadyMessage(event.data)) {
+    const ready = parseGuestReadyMessage(event.data);
+    if (ready === null) {
       return;
     }
 
@@ -322,7 +381,14 @@ function createGuestWindow(mount: HTMLElement): GuestController {
     }
 
     guestReady = true;
+    currentView = ready.view;
     hideBoot();
+    if (sameViews(playgroundViews, ready.views)) {
+      pagesEl.hidden = shell.classList.contains("is-minimized") || ready.views.length === 0;
+      syncPageButtons();
+    } else {
+      renderPlaygroundPages(ready.views);
+    }
     setStatus("Live · attached", "live");
   });
 
@@ -360,6 +426,7 @@ function createGuestWindow(mount: HTMLElement): GuestController {
     void exitExpanded().then(() => {
       shell.classList.add("is-minimized");
       stageEl.hidden = true;
+      pagesEl.hidden = true;
       setStatus("Minimized", "off");
     });
   });
@@ -380,6 +447,13 @@ function createGuestWindow(mount: HTMLElement): GuestController {
     enterExpanded,
     exitExpanded,
   };
+}
+
+function sameViews(left: readonly QpuViewOption[], right: readonly QpuViewOption[]): boolean {
+  return (
+    left.length === right.length &&
+    left.every((view, index) => view.id === right[index]?.id && view.label === right[index]?.label)
+  );
 }
 
 function mustQuery<T extends HTMLElement>(

@@ -861,6 +861,35 @@ section {
   box-shadow: 0 0 0 3px rgba(126, 163, 106, 0.18);
 }
 
+.guest-pages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 1.1rem;
+  padding: 0.45rem 0.85rem 0.5rem;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+.guest-page-btn {
+  padding: 0.2rem 0;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.guest-page-btn:hover {
+  color: var(--text);
+}
+
+.guest-page-btn[aria-current="page"] {
+  color: var(--text);
+  border-bottom-color: var(--copper);
+}
+
 .guest-stage {
   position: relative;
   display: grid;
