@@ -11,6 +11,10 @@
   --copper-soft: #e0b27a;
   --patina: #7ea36a;
   --patina-dim: #4f6a43;
+  --crimson: #c4453c;
+  --navy: #1c2740;
+  --paper: #f3ead8;
+  --paper-ink: #2a2418;
   --ink: #0b0c0a;
   --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
   --radius: 16px;
@@ -124,6 +128,15 @@ a:hover {
   letter-spacing: 0.02em;
 }
 
+.brand-photo {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--copper);
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--bg-soft);
+}
+
 .brand-text {
   display: flex;
   flex-direction: column;
@@ -184,11 +197,11 @@ main {
 }
 
 .hero {
-  padding: 4.5rem 0 3.5rem;
+  padding: 3.75rem 0 2.75rem;
   display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  gap: 3rem;
-  align-items: end;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 2.75rem;
+  align-items: center;
 }
 
 .kicker {
@@ -224,6 +237,79 @@ h1 {
   flex-wrap: wrap;
   gap: 0.75rem;
   margin-top: 1.6rem;
+}
+
+.hero-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  list-style: none;
+  margin: 1.25rem 0 0;
+  padding: 0;
+}
+
+.hero-pills li {
+  padding: 0.28rem 0.7rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+
+.hero-portrait {
+  position: relative;
+}
+
+.portrait-frame {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 28px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  background: var(--navy);
+}
+
+.portrait-frame picture,
+.portrait-frame img {
+  display: block;
+  width: 100%;
+}
+
+.portrait-frame img {
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: center 12%;
+}
+
+.portrait-glow {
+  pointer-events: none;
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 42%;
+  background: linear-gradient(transparent, rgba(11, 12, 10, 0.72));
+}
+
+.portrait-caption {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: end;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.portrait-caption span {
+  color: var(--copper-soft);
 }
 
 .btn {
@@ -305,7 +391,7 @@ h1 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0.85rem;
-  margin: 0 0 4rem;
+  margin: 0 0 3.25rem;
 }
 
 .stat {
@@ -329,6 +415,88 @@ h1 {
 
 section {
   padding: 1.25rem 0 3.25rem;
+}
+
+#about {
+  scroll-margin-top: calc(var(--nav-h) + 1rem);
+}
+
+.about-layout {
+  display: grid;
+  grid-template-columns: 0.82fr 1.18fr;
+  gap: 2.25rem;
+  align-items: start;
+}
+
+.about-print {
+  margin: 0;
+  background:
+    radial-gradient(520px 220px at 50% 0%, rgba(196, 69, 60, 0.12), transparent 60%),
+    linear-gradient(180deg, #f7f0e2 0%, var(--paper) 48%, #e6d8bf 100%);
+  border: 1px solid rgba(201, 138, 74, 0.38);
+  border-radius: 24px;
+  padding: 1.6rem 1.15rem 0;
+  box-shadow: var(--shadow);
+  color: var(--paper-ink);
+}
+
+.about-print img {
+  display: block;
+  width: 100%;
+  filter: drop-shadow(0 18px 20px rgba(42, 36, 24, 0.22));
+}
+
+.about-print figcaption {
+  padding: 0.85rem 0.35rem 1.05rem;
+  color: #6b5e48;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.about-copy .kicker {
+  color: var(--crimson);
+}
+
+.about-copy h2 {
+  margin: 0 0 1rem;
+  font-size: clamp(1.9rem, 3vw, 2.6rem);
+}
+
+.about-copy p {
+  margin: 0 0 1rem;
+  color: var(--text-dim);
+  max-width: 42rem;
+}
+
+.about-copy p:last-of-type {
+  margin-bottom: 1.25rem;
+}
+
+.interest-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.interest {
+  padding: 0.95rem 1rem;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.interest h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+}
+
+.interest p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 .section-head {
@@ -971,8 +1139,19 @@ body.guest-overlay-open {
   .hero,
   .stats,
   .card-grid,
-  .skills {
+  .skills,
+  .about-layout,
+  .interest-grid {
     grid-template-columns: 1fr;
+  }
+
+  .about-print {
+    max-width: 22rem;
+    margin-inline: auto;
+  }
+
+  .portrait-frame img {
+    aspect-ratio: 4 / 5;
   }
 
   .nav-toggle {
