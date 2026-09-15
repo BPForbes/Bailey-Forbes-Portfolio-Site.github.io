@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Projects — Bailey Forbes</title>
-  <meta name="description" content="Original BPForbes projects with expanded explanations and git-history release timelines." />
+  <meta name="description" content="Five BPForbes projects with full write-ups and release timelines compiled from public git history. QPU and Flinstone run in the browser." />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400&family=Sora:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body data-page="projects">
@@ -19,41 +19,96 @@
         <p class="kicker">BPForbes · original work</p>
         <h1>Projects</h1>
         <p class="lede">
-          Each project has its own timeline. Public repos follow merge order; the EMR page
-          follows the 2021–2022 engagement (PoC, front end, client stack, staff, wiring, HIPAA).
+          Five projects, each with a write-up and its own timeline. Public repos follow merge
+          order; the EMR page follows the 2021–2022 engagement, because that tree is not public.
+          QPU and Flinstone run in the browser on their own pages.
         </p>
       </header>
 
       <div class="card-grid">
-        <a class="card" href="/projects/emr/">
-          <p class="eyebrow">Kotlin · Java · Firebase</p>
-          <h3>Electronic medical record</h3>
-          <p>26-hospital client system. Timeline: PoC (Aug 2021), front end (Sep–Oct), client stack (late 2021), staff (Jan–Feb), wiring, HIPAA/hardening, May handoff.</p>
-          <div class="chips"><span class="chip">Aug 2021 – May 2022</span></div>
-        </a>
         <a class="card" href="/projects/homework-central/">
-          <p class="eyebrow">C# · TypeScript · PostgreSQL</p>
-          <h3>Homework Central</h3>
-          <p>Education community platform. Created 7 Jun 2026; still receiving PRs in September. Bitmask auth, chat, tickets, neural moderation.</p>
-          <div class="chips"><span class="chip">github.com/BPForbes/Homework-Central</span></div>
+          <div class="card-top">
+            <p class="eyebrow">Jun 2026 – present</p>
+            <span class="chip">Source on GitHub</span>
+          </div>
+          <h2>Homework Central</h2>
+          <p>
+            Education community platform replacing a 16,000-member Discord. Bitmask
+            authorization, rooms, chat, moderation tickets, and an on-box neural monitor.
+            Created 7 Jun 2026 and still taking pull requests.
+          </p>
+          <div class="chips">
+            <span class="chip">C#</span>
+            <span class="chip">TypeScript</span>
+            <span class="chip">PostgreSQL</span>
+          </div>
         </a>
+
         <a class="card" href="/projects/flinstone/">
-          <p class="eyebrow">C · Assembly · C++</p>
-          <h3>Flinstone Kernel</h3>
-          <p>390 commits, versioned contracts, 4.2.0 networking GM.</p>
-          <div class="chips"><span class="chip">Bailey-Forbes-Flinstone</span></div>
+          <div class="card-top">
+            <p class="eyebrow">2023 – present</p>
+            <span class="chip">Runs in browser</span>
+          </div>
+          <h2>Flinstone Kernel</h2>
+          <p>
+            A portable kernel from first principles: 390 commits, roughly 70 versioned subsystem
+            contracts, and a 4.2.0 networking release that keeps the older interfaces alive.
+          </p>
+          <div class="chips">
+            <span class="chip">C</span>
+            <span class="chip">Assembly</span>
+            <span class="chip">C++</span>
+          </div>
         </a>
+
         <a class="card" href="/projects/keyquorum/">
-          <p class="eyebrow">Rust</p>
-          <h3>KeyQuorum</h3>
-          <p>Hardware-key quorum file sharing. Scaffolded 24 Aug 2026; CLI, trees, bridges, and mailbox relay in two weeks.</p>
-          <div class="chips"><span class="chip">BPForbes/KeyQuorum</span></div>
+          <div class="card-top">
+            <p class="eyebrow">Aug – Sep 2026</p>
+            <span class="chip">Command line only</span>
+          </div>
+          <h2>KeyQuorum</h2>
+          <p>
+            Hardware-key quorum file sharing. Scaffolded 24 Aug 2026; CLI, recursive share trees,
+            cross-store bridges, and a sealed mailbox relay inside two weeks.
+          </p>
+          <div class="chips">
+            <span class="chip">Rust</span>
+            <span class="chip">SQLite</span>
+            <span class="chip">Axum</span>
+          </div>
         </a>
+
         <a class="card" href="/projects/qpu/">
-          <p class="eyebrow">TypeScript</p>
-          <h3>QPU</h3>
-          <p>Quantum process language and the static workbench on BPForbes.QPU.github.io (Jun 2026).</p>
-          <div class="chips"><span class="chip">QPU + BPForbes.QPU.github.io</span></div>
+          <div class="card-top">
+            <p class="eyebrow">Jun 2026</p>
+            <span class="chip">Runs in browser</span>
+          </div>
+          <h2>QPU</h2>
+          <p>
+            A quantum process language, its simulator, and the browser workbench published on
+            BPForbes.QPU.github.io — truth tables, child processes, and a circuit correction lab.
+          </p>
+          <div class="chips">
+            <span class="chip">TypeScript</span>
+            <span class="chip">Vite</span>
+          </div>
+        </a>
+
+        <a class="card" href="/projects/emr/">
+          <div class="card-top">
+            <p class="eyebrow">Aug 2021 – May 2022</p>
+            <span class="chip">Not public</span>
+          </div>
+          <h2>Electronic medical record</h2>
+          <p>
+            A 26-hospital client system across seven phases: proof of concept, front end, client
+            stack, staff services, wiring the two sides, HIPAA hardening, and a May handoff.
+          </p>
+          <div class="chips">
+            <span class="chip">Kotlin</span>
+            <span class="chip">Java</span>
+            <span class="chip">Firebase</span>
+          </div>
         </a>
       </div>
     </div>

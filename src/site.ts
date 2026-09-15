@@ -1,7 +1,7 @@
 import { PORTFOLIO } from "./data.js";
 import { mountGuestWindows } from "./guestWindow.js";
 import { ROUTES } from "./routes.js";
-import type { ProjectId, TimelineFilter } from "./types.js";
+import type { ProjectId } from "./types.js";
 
 const page = document.body.getAttribute("data-page") ?? "";
 
@@ -20,9 +20,10 @@ if (header) {
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
         <ul class="nav-links" id="site-nav">
           <li><a data-nav="home" href="${ROUTES.home}">Home</a></li>
-          <li><a data-nav="about" href="${ROUTES.about}">About</a></li>
           <li><a data-nav="projects" href="${ROUTES.projects}">Projects</a></li>
           <li><a data-nav="experience" href="${ROUTES.experience}">Experience</a></li>
+          <li><a data-nav="about" href="${ROUTES.about}">About</a></li>
+          <li><a data-nav="contact" href="${ROUTES.contact}">Contact</a></li>
         </ul>
       </div>
     `;
@@ -32,12 +33,15 @@ const footer = document.querySelector<HTMLElement>("[data-site-footer]");
 if (footer) {
   footer.innerHTML = `
       <div class="wrap footer-grid">
-        <p>© 2026 Bailey P Forbes. Timelines compiled from public git history on 11 Sep 2026.</p>
         <p>
-          <a href="https://github.com/BPForbes">GitHub</a>
-          · <a href="https://www.linkedin.com/in/bailey-preston-forbes">LinkedIn</a>
-          · <a href="mailto:baileyforbes@rocketmail.com">Email</a>
+          © 2026 Bailey P Forbes. Project timelines are compiled from public git history on
+          <a href="https://github.com/BPForbes">github.com/BPForbes</a>, 11 Sep 2026.
         </p>
+        <ul class="footer-links">
+          <li><a href="mailto:baileyforbes@rocketmail.com">Email Bailey</a></li>
+          <li><a href="https://www.linkedin.com/in/bailey-preston-forbes">LinkedIn</a></li>
+          <li><a href="https://github.com/BPForbes">GitHub</a></li>
+        </ul>
       </div>
     `;
 }
@@ -49,9 +53,28 @@ document.querySelectorAll<HTMLAnchorElement>(`[data-nav="${page}"]`).forEach((li
 const toggle = document.querySelector<HTMLButtonElement>(".nav-toggle");
 const links = document.querySelector<HTMLElement>(".nav-links");
 if (toggle && links) {
-  toggle.addEventListener("click", () => {
-    const open = links.classList.toggle("is-open");
+  const setOpen = (open: boolean): void => {
+    links.classList.toggle("is-open", open);
     toggle.setAttribute("aria-expanded", String(open));
+  };
+
+  toggle.addEventListener("click", () => {
+    setOpen(!links.classList.contains("is-open"));
+  });
+
+  // A tapped destination must close the menu, otherwise an in-page hash link
+  // leaves the panel covering the section it just scrolled to.
+  links.addEventListener("click", (event: MouseEvent) => {
+    if (event.target instanceof HTMLAnchorElement) {
+      setOpen(false);
+    }
+  });
+
+  document.addEventListener("keydown", (event: KeyboardEvent) => {
+    if (event.key === "Escape" && links.classList.contains("is-open")) {
+      setOpen(false);
+      toggle.focus();
+    }
   });
 }
 
@@ -72,6 +95,12 @@ document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
 
   const bar = document.createElement("div");
   bar.className = "lang-bar";
+  bar.setAttribute("role", "img");
+  bar.setAttribute(
+    "aria-label",
+    `Language split: ${langs.map((lang) => `${lang.name} ${lang.pct} percent`).join(", ")}`,
+  );
+
   const legend = document.createElement("div");
   legend.className = "lang-legend";
 
@@ -80,11 +109,14 @@ document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
     seg.className = "lang-seg";
     seg.style.width = `${lang.pct}%`;
     seg.style.background = lang.color;
-    seg.title = `${lang.name} ${lang.pct}%`;
     bar.appendChild(seg);
 
     const item = document.createElement("span");
-    item.textContent = `${lang.name} ${lang.pct}%`;
+    const swatch = document.createElement("span");
+    swatch.className = "lang-swatch";
+    swatch.style.background = lang.color;
+    swatch.setAttribute("aria-hidden", "true");
+    item.append(swatch, document.createTextNode(`${lang.name} ${lang.pct}%`));
     legend.appendChild(item);
   }
 
@@ -97,42 +129,22 @@ function renderTimeline(mount: HTMLElement): void {
     .split(",")
     .map((value) => value.trim())
     .filter(isProjectId);
-  const showFilters = mount.hasAttribute("data-filters");
   const hideProjectChip = mount.hasAttribute("data-hide-project-chip");
 
-  let filter: TimelineFilter = "all";
-
   const render = (): void => {
-    const visible = events.filter((event) => {
-      if (allowed.length > 0 && !allowed.includes(event.project)) {
-        return false;
-      }
-      return filter === "all" || event.project === filter;
-    });
+    const visible = events.filter(
+      (event) => allowed.length === 0 || allowed.includes(event.project),
+    );
 
     mount.replaceChildren();
 
-    if (showFilters) {
-      const keys: TimelineFilter[] =
-        allowed.length > 0 ? ["all", ...allowed] : ["all", ...PORTFOLIO.projectOrder];
-
-      const filters = document.createElement("div");
-      filters.className = "filters";
-
-      for (const key of keys) {
-        const btn = document.createElement("button");
-        btn.className = "filter-btn";
-        btn.type = "button";
-        btn.setAttribute("aria-pressed", String(key === filter));
-        btn.textContent = key === "all" ? "All work" : (PORTFOLIO.projects[key] ?? key);
-        btn.addEventListener("click", () => {
-          filter = key;
-          render();
-        });
-        filters.appendChild(btn);
-      }
-
-      mount.appendChild(filters);
+    if (visible.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "timeline-empty";
+      empty.textContent =
+        "No timeline entries have been compiled for this project yet.";
+      mount.appendChild(empty);
+      return;
     }
 
     const list = document.createElement("div");
@@ -193,48 +205,6 @@ function renderTimeline(mount: HTMLElement): void {
   render();
 }
 
-const grouped = document.querySelector<HTMLElement>("[data-project-timelines]");
-if (grouped) {
-  const toc = document.createElement("nav");
-  toc.className = "timeline-toc";
-  toc.setAttribute("aria-label", "Project timelines");
-
-  for (const id of PORTFOLIO.projectOrder) {
-    const href = document.createElement("a");
-    href.className = "chip";
-    href.href = `#timeline-${id}`;
-    href.textContent = PORTFOLIO.projects[id];
-    toc.appendChild(href);
-  }
-  grouped.appendChild(toc);
-
-  for (const id of PORTFOLIO.projectOrder) {
-    const section = document.createElement("section");
-    section.className = "project-timeline";
-    section.id = `timeline-${id}`;
-
-    const head = document.createElement("div");
-    head.className = "section-head";
-    const title = document.createElement("h2");
-    title.textContent = PORTFOLIO.projects[id];
-    head.appendChild(title);
-    section.appendChild(head);
-
-    const mount = document.createElement("div");
-    mount.setAttribute("data-timeline", "");
-    mount.setAttribute("data-project", id);
-    mount.setAttribute("data-hide-project-chip", "");
-    section.appendChild(mount);
-    grouped.appendChild(section);
-    renderTimeline(mount);
-  }
-}
-
-document.querySelectorAll<HTMLElement>("[data-timeline]").forEach((mount) => {
-  if (mount.closest("[data-project-timelines]")) {
-    return;
-  }
-  renderTimeline(mount);
-});
+document.querySelectorAll<HTMLElement>("[data-timeline]").forEach(renderTimeline);
 
 mountGuestWindows();

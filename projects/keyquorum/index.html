@@ -8,7 +8,7 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400&family=Sora:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body data-page="projects">
@@ -24,7 +24,8 @@
           tree, not presenting a single token or password.
         </p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="https://github.com/BPForbes/KeyQuorum">Repository</a>
+          <a class="btn btn-primary" href="https://github.com/BPForbes/KeyQuorum">Read the source on GitHub</a>
+          <a class="btn btn-ghost" href="#timeline">Jump to the timeline</a>
         </div>
       </header>
 
@@ -32,11 +33,11 @@
 
       <section id="live-lab">
         <div class="section-head">
-          <h2>Live lab</h2>
+          <h2>Running it</h2>
           <p>
-            The CLI stays in the
-            <a href="https://github.com/BPForbes/KeyQuorum">KeyQuorum repo</a>.
-            This page only hosts the window chrome — nothing is attached yet.
+            KeyQuorum is a command-line tool. There is no web build, so nothing on this page
+            executes it — the panel below states that rather than pretending otherwise, and
+            points at the repository instead.
           </p>
         </div>
         <div data-guest-window data-guest="keyquorum" data-guest-solo id="live-lab-window"></div>
@@ -87,9 +88,10 @@
         </p>
       </section>
 
-      <section>
+      <section id="timeline">
         <div class="section-head">
           <h2>Timeline</h2>
+          <p>Merged pull requests and commit subjects, in the order they landed.</p>
         </div>
         <div data-timeline data-project="keyquorum" data-hide-project-chip></div>
       </section>

@@ -8,7 +8,7 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400&family=Sora:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body data-page="projects">
@@ -23,8 +23,8 @@
           React workbench that compiles those processes in the browser.
         </p>
         <div class="hero-actions">
-          <button type="button" class="btn btn-primary" data-guest-launch="qpu">Launch workbench</button>
-          <a class="btn btn-ghost" href="https://github.com/BPForbes/BPForbes.QPU.github.io">Workbench</a>
+          <a class="btn btn-primary" href="#live-lab">Run the workbench</a>
+          <a class="btn btn-ghost" href="https://github.com/BPForbes/BPForbes.QPU.github.io">Source on GitHub</a>
         </div>
       </header>
 
@@ -32,11 +32,12 @@
 
       <section id="live-lab">
         <div class="section-head">
-          <h2>Live lab</h2>
+          <h2>Run the workbench</h2>
           <p>
-            The workbench stays on
+            The workbench is published from
             <a href="https://github.com/BPForbes/BPForbes.QPU.github.io">BPForbes.QPU.github.io</a>
-            and loads here as a guest. Launch workbench opens this same window fullscreen.
+            and loads below as a guest window. It is the real build, not a recording. If it does
+            not attach within twelve seconds the window says so and offers a reload.
           </p>
         </div>
         <div data-guest-window data-guest="qpu" data-guest-solo id="live-lab-window"></div>

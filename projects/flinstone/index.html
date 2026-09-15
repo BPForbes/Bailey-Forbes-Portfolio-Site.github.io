@@ -8,7 +8,7 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400&family=Sora:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body data-page="projects">
@@ -24,8 +24,8 @@
           so a release can move without silently breaking the last one.
         </p>
         <div class="hero-actions">
-          <button type="button" class="btn btn-primary" data-guest-launch="flinstone">Launch lab</button>
-          <a class="btn btn-ghost" href="https://github.com/BPForbes/Bailey-Forbes-Flinstone">Kernel repo</a>
+          <a class="btn btn-primary" href="#live-lab">Run the kernel lab</a>
+          <a class="btn btn-ghost" href="https://github.com/BPForbes/Bailey-Forbes-Flinstone">Source on GitHub</a>
         </div>
       </header>
 
@@ -33,17 +33,21 @@
 
       <section id="live-lab">
         <div class="section-head">
-          <h2>Live lab</h2>
+          <h2>Run the kernel lab</h2>
           <p>
             The freestanding x86 kernel lab is published from
             <a href="https://github.com/BPForbes/Bailey-Forbes-Flinstone">Bailey-Forbes-Flinstone</a>
-            to GitHub Pages and loads here as a guest. Launch lab opens this window fullscreen.
-            If the guest does not boot on first visit, open the
-            <a href="https://bpforbes.github.io/Bailey-Forbes-Flinstone/">lab top-level</a>
-            once (cross-origin isolation), then return here.
+            to GitHub Pages and boots below as a guest window.
           </p>
         </div>
         <div data-guest-window data-guest="flinstone" data-guest-solo id="live-lab-window"></div>
+        <p class="note">
+          <strong>Known limitation.</strong> The lab needs cross-origin isolation, which some
+          browsers only grant after the page has been visited on its own origin. If the window
+          above reports that it could not attach, open
+          <a href="https://bpforbes.github.io/Bailey-Forbes-Flinstone/">the lab top-level</a>
+          once and come back — the window has a reload button for exactly this.
+        </p>
       </section>
 
       <section class="prose">
@@ -88,7 +92,7 @@
       <section>
         <div class="section-head">
           <h2>Named releases</h2>
-          <p>From <code>version/entries</code> on Bailey-Forbes-Flinstone.</p>
+          <p>From <code>version/entries</code> on Bailey-Forbes-Flinstone, GM=1 promotes only.</p>
         </div>
         <div class="experience">
           <article class="entry">

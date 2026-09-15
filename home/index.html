@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bailey Forbes — Software Engineer</title>
-  <meta name="description" content="Bailey Forbes is an Indiana software engineer who cooks Cajun, Italian, and Japanese food, plays Euro and card games, and ships C#/.NET, TypeScript, and systems work." />
+  <meta name="description" content="Bailey Forbes builds production APIs, a portable kernel, and community platforms in C#/.NET, TypeScript, Rust, and C. Project write-ups with timelines from public git history." />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400&family=Sora:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body data-page="home">
@@ -16,24 +16,24 @@
 
   <main id="main">
     <div class="wrap">
-      <section class="hero">
+      <section class="hero" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="kicker">Software engineer · C# / TypeScript / systems</p>
-          <h1>Bailey Forbes</h1>
+          <p class="kicker">Software engineer · C# / TypeScript / Rust / C</p>
+          <h1 id="hero-title">Bailey Forbes</h1>
           <p class="lede">
-            I build production APIs, community platforms, and kernels that keep their contracts
-            across releases. Off the clock I cook, play board games, and stay in the mix online —
-            I was at Gen Con this year, a few hours up the road from home.
+            I build production APIs, a portable kernel, and community platforms that keep their
+            contracts across releases. Every project below has a write-up and a timeline built
+            from its own commit history — two of them you can run in the browser.
           </p>
           <ul class="hero-pills">
-            <li>Indiana</li>
+            <li>Sellersburg, Indiana</li>
             <li>Homework Central lead</li>
-            <li>Recently: Gen Con · Baker Hill</li>
-            <li>Flinstone 4.2 · KeyQuorum · QPU</li>
+            <li>Flinstone 4.2.0</li>
+            <li>Open to software roles</li>
           </ul>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#about">About me</a>
-            <a class="btn btn-ghost" href="/projects/">Read the projects</a>
+            <a class="btn btn-primary" href="#projects">View the projects</a>
+            <a class="btn btn-ghost" href="#about">Read about Bailey</a>
           </div>
         </div>
         <div class="hero-portrait">
@@ -48,84 +48,15 @@
                 fetchpriority="high"
               />
             </picture>
-            <div class="portrait-glow" aria-hidden="true"></div>
-            <figcaption class="portrait-caption">
-              <b>Bailey Forbes</b>
-              <span>Indiana</span>
-            </figcaption>
-          </figure>
-        </div>
-      </section>
-
-      <section id="about">
-        <div class="about-layout">
-          <figure class="about-print">
-            <img
-              src="/images/bailey-cutout.webp"
-              alt="Cutout portrait of Bailey Forbes in a navy suit and red tie"
-              width="900"
-              height="1197"
-              loading="lazy"
-            />
             <figcaption>Bailey Forbes · Indiana</figcaption>
           </figure>
-          <p class="kicker about-kicker">About</p>
-          <h2 class="about-title">Off the clock</h2>
-          <div class="about-copy">
-            <p>
-              Away from production APIs and kernel contracts, I cook, play games, and keep up with
-              people online. None of that is a personal-brand strategy — it is just how I spend a
-              week that is not only git history.
-            </p>
-            <p>
-              I am a foodie, and I rotate through three kitchens: Cajun, Italian, and Japanese.
-              One night that means real heat in a pot, the next a sauce that takes patience, then
-              something precise with rice and a pan. If I am not shipping code, there is a decent
-              chance I am grocery-listing the next one of those.
-            </p>
-            <p>
-              Board games take the rest of the table. Euro games when I want an engine to build,
-              card games when the conversation should stay in the round, and press-your-luck titles
-              when I want that extra draw I probably should not take. KeyForge is a regular
-              favorite: every deck is unique, and I like sitting down knowing nobody else is
-              holding the same cards. I was at Gen Con this year in Indianapolis — the closest
-              thing tabletop has to a home game when you live in Indiana.
-            </p>
-            <p>
-              I also spend a healthy amount of time on social media. It is how I stay in the mix
-              with friends, food, and the hobby. That same community streak shows up in the work:
-              years tutoring STEM at Indiana University, then building Homework Central for the
-              people who used to live in a Discord.
-            </p>
-          </div>
-        </div>
-        <div class="interest-grid">
-          <article class="interest">
-            <h3>In the kitchen</h3>
-            <p>Cajun, Italian, and Japanese — heat, patience, and a hot pan.</p>
-          </article>
-          <article class="interest">
-            <h3>At the table</h3>
-            <p>Euros, cards, press-your-luck, and KeyForge. Recently: Gen Con.</p>
-          </article>
-          <article class="interest">
-            <h3>Online</h3>
-            <p>Social media for friends, food, and the next game night.</p>
-          </article>
         </div>
       </section>
 
-      <div class="stats" aria-label="Selected results">
-        <div class="stat"><b>16k</b><span>Discord members moving to a purpose-built web platform</span></div>
-        <div class="stat"><b>584M</b><span>Records in production systems supported at Baker Hill</span></div>
-        <div class="stat"><b>70+</b><span>Versioned Flinstone subsystem contracts kept compatible</span></div>
-        <div class="stat"><b>4</b><span>Core kernel releases, 2.2 through 4.2, with migration notes</span></div>
-      </div>
-
-      <section id="projects">
+      <section id="projects" aria-labelledby="projects-title">
         <div class="section-head">
-          <h2>Featured work</h2>
-          <p>Each project has its own timeline.</p>
+          <h2 id="projects-title">Featured work</h2>
+          <p>Five projects, newest first. Each one opens to a write-up and its own timeline.</p>
         </div>
         <div class="card-grid">
           <article class="card">
@@ -145,13 +76,14 @@
               <span class="chip">76 PRs</span>
             </div>
             <div class="card-actions">
-              <a class="btn btn-primary" href="/projects/homework-central/">View project</a>
+              <a class="btn btn-primary" href="/projects/homework-central/">Read the write-up<span class="visually-hidden"> about Homework Central</span></a>
             </div>
           </article>
+
           <article class="card">
             <div class="card-top">
               <p class="eyebrow">2023 – present · repo 2025</p>
-              <span class="chip">390 commits</span>
+              <span class="chip">Creator</span>
             </div>
             <h3>Flinstone Kernel</h3>
             <p>
@@ -163,21 +95,24 @@
               <span class="chip">Assembly</span>
               <span class="chip">Networking</span>
               <span class="chip">4.2.0</span>
+              <span class="chip">390 commits</span>
             </div>
             <div class="card-actions">
-              <span class="btn btn-primary btn-static">Try it Out!</span>
-              <a class="btn btn-primary" href="/projects/flinstone/">View project</a>
+              <a class="btn btn-primary" href="/projects/flinstone/">Read the write-up<span class="visually-hidden"> about the Flinstone Kernel</span></a>
+              <a class="btn btn-ghost" href="/projects/flinstone/#live-lab">Run the kernel lab</a>
             </div>
           </article>
+
           <article class="card">
             <div class="card-top">
               <p class="eyebrow">Aug – Sep 2026</p>
-              <span class="chip">Rust</span>
+              <span class="chip">Solo build</span>
             </div>
             <h3>KeyQuorum</h3>
             <p>
               Hardware-key file sharing: recursive M-of-N trees, PIN windows, sealed mailbox
-              envelopes, and a CLI that refuses to take secrets as argv.
+              envelopes, and a CLI that refuses to take secrets as argv. Command line only —
+              there is no web build.
             </p>
             <div class="chips">
               <span class="chip">Rust</span>
@@ -185,14 +120,14 @@
               <span class="chip">Axum</span>
             </div>
             <div class="card-actions">
-              <span class="btn btn-primary btn-static">Try it Out!</span>
-              <a class="btn btn-primary" href="/projects/keyquorum/">View project</a>
+              <a class="btn btn-primary" href="/projects/keyquorum/">Read the write-up<span class="visually-hidden"> about KeyQuorum</span></a>
             </div>
           </article>
+
           <article class="card">
             <div class="card-top">
               <p class="eyebrow">Jun 2026</p>
-              <span class="chip">TypeScript</span>
+              <span class="chip">Solo build</span>
             </div>
             <h3>QPU</h3>
             <p>
@@ -204,14 +139,15 @@
               <span class="chip">Vite</span>
             </div>
             <div class="card-actions">
-              <span class="btn btn-primary btn-static">Try it Out!</span>
-              <a class="btn btn-primary" href="/projects/qpu/">View project</a>
+              <a class="btn btn-primary" href="/projects/qpu/">Read the write-up<span class="visually-hidden"> about QPU</span></a>
+              <a class="btn btn-ghost" href="/projects/qpu/#live-lab">Run the workbench</a>
             </div>
           </article>
+
           <article class="card">
             <div class="card-top">
               <p class="eyebrow">Aug 2021 – May 2022</p>
-              <span class="chip">Client</span>
+              <span class="chip">Team of five</span>
             </div>
             <h3>Electronic medical record</h3>
             <p>
@@ -225,18 +161,43 @@
               <span class="chip">HIPAA testing</span>
             </div>
             <div class="card-actions">
-              <a class="btn btn-primary" href="/projects/emr/">View project</a>
+              <a class="btn btn-primary" href="/projects/emr/">Read the write-up<span class="visually-hidden"> about the electronic medical record</span></a>
             </div>
           </article>
         </div>
       </section>
 
-      <section id="experience">
+      <section id="experience" aria-labelledby="experience-title">
         <div class="section-head">
-          <h2>Experience</h2>
+          <h2 id="experience-title">Experience</h2>
           <p>Production finance systems, then an independent platform migration I still lead.</p>
         </div>
-        <div class="experience">
+
+        <dl class="stat-list">
+          <div>
+            <dt>16,000</dt>
+            <dd>Discord members the Homework Central platform is being built to replace</dd>
+          </div>
+          <div>
+            <dt>584 million</dt>
+            <dd>Records in the Baker Hill production systems I supported</dd>
+          </div>
+          <div>
+            <dt>~70</dt>
+            <dd>Versioned Flinstone subsystem contracts kept backward compatible</dd>
+          </div>
+          <div>
+            <dt>4</dt>
+            <dd>Core kernel releases, 4.0.0 through 4.2.0, each with migration notes</dd>
+          </div>
+        </dl>
+        <p class="source-note">
+          Figures are from my résumé and the public
+          <a href="https://github.com/BPForbes">BPForbes</a> git history, compiled 11 Sep 2026.
+          They are counts of work, not performance benchmarks.
+        </p>
+
+        <div class="experience" style="margin-top: 2rem;">
           <article class="entry">
             <div class="entry-head">
               <div>
@@ -296,9 +257,9 @@
         </div>
       </section>
 
-      <section id="education">
+      <section id="education" aria-labelledby="education-title">
         <div class="section-head">
-          <h2>Education and skills</h2>
+          <h2 id="education-title">Education and skills</h2>
         </div>
         <div class="experience">
           <article class="entry">
@@ -329,35 +290,76 @@
             </div>
           </article>
         </div>
-        <div class="skills" style="margin-top: 1rem;">
-          <div class="skill-block">
-            <h3>Languages</h3>
-            <p>C#, C, C++, Rust, TypeScript, JavaScript, Python, SQL, Java, Kotlin, Assembly</p>
+
+        <h3 style="margin: 2rem 0 0.75rem;">Skills</h3>
+        <dl class="spec-list">
+          <dt>Languages</dt>
+          <dd>C#, C, C++, Rust, TypeScript, JavaScript, Python, SQL, Java, Kotlin, Assembly</dd>
+          <dt>Web and APIs</dt>
+          <dd>.NET, React, REST, HTML/CSS, IIS, Azure DevOps, Docker</dd>
+          <dt>Data and systems</dt>
+          <dd>PostgreSQL, SQL Server, Firebase, Linux/UNIX, networking, hardware abstraction</dd>
+          <dt>Delivery and security</dt>
+          <dd>CI/CD, production support, RBAC, HIPAA-focused testing, dependency injection</dd>
+        </dl>
+      </section>
+
+      <section id="about" aria-labelledby="about-title">
+        <div class="section-head">
+          <h2 id="about-title">Off the clock</h2>
+          <p>The week that is not only git history.</p>
+        </div>
+        <div class="about-layout">
+          <div class="about-copy">
+            <p>
+              Away from production APIs and kernel contracts, I cook, play games, and keep up with
+              people online. None of that is a personal-brand strategy — it is just how I spend a
+              week that is not only git history.
+            </p>
+            <p>
+              I am a foodie, and I rotate through three kitchens: Cajun, Italian, and Japanese.
+              One night that means real heat in a pot, the next a sauce that takes patience, then
+              something precise with rice and a pan. If I am not shipping code, there is a decent
+              chance I am grocery-listing the next one of those.
+            </p>
+            <p>
+              Board games take the rest of the table. Euro games when I want an engine to build,
+              card games when the conversation should stay in the round, and press-your-luck titles
+              when I want that extra draw I probably should not take. KeyForge is a regular
+              favorite: every deck is unique, and I like sitting down knowing nobody else is
+              holding the same cards. I was at Gen Con this year in Indianapolis — the closest
+              thing tabletop has to a home game when you live in Indiana.
+            </p>
+            <p>
+              I also spend a healthy amount of time on social media. It is how I stay in the mix
+              with friends, food, and the hobby. That same community streak shows up in the work:
+              years tutoring STEM at Indiana University, then building Homework Central for the
+              people who used to live in a Discord.
+            </p>
           </div>
-          <div class="skill-block">
-            <h3>Web and APIs</h3>
-            <p>.NET, React, REST, HTML/CSS, IIS, Azure DevOps, Docker</p>
-          </div>
-          <div class="skill-block">
-            <h3>Data and systems</h3>
-            <p>PostgreSQL, SQL Server, Firebase, Linux/UNIX, networking, hardware abstraction</p>
-          </div>
-          <div class="skill-block">
-            <h3>Delivery and security</h3>
-            <p>CI/CD, production support, RBAC, HIPAA-focused testing, dependency injection</p>
-          </div>
+          <figure class="paper-figure">
+            <img
+              src="/images/bailey-cutout.webp"
+              alt="Cutout portrait of Bailey Forbes in a navy suit and red tie"
+              width="900"
+              height="1197"
+              loading="lazy"
+            />
+            <figcaption>Bailey Forbes · Indiana</figcaption>
+          </figure>
         </div>
       </section>
 
-      <section id="contact">
+      <section id="contact" aria-labelledby="contact-title">
         <div class="section-head">
-          <h2>Contact</h2>
+          <h2 id="contact-title">Contact</h2>
+          <p>Email is the fastest way to reach me.</p>
         </div>
         <ul class="contact-list">
-          <li><a href="mailto:baileyforbes@rocketmail.com">baileyforbes@rocketmail.com</a></li>
-          <li><a href="tel:+13175003621">(317) 500-3621</a></li>
-          <li><a href="https://www.linkedin.com/in/bailey-preston-forbes">LinkedIn</a></li>
-          <li><a href="https://github.com/BPForbes">GitHub · BPForbes</a></li>
+          <li><a href="mailto:baileyforbes@rocketmail.com">Email baileyforbes@rocketmail.com</a></li>
+          <li><a href="tel:+13175003621">Call (317) 500-3621</a></li>
+          <li><a href="https://www.linkedin.com/in/bailey-preston-forbes">LinkedIn — bailey-preston-forbes</a></li>
+          <li><a href="https://github.com/BPForbes">GitHub — BPForbes</a></li>
         </ul>
       </section>
     </div>

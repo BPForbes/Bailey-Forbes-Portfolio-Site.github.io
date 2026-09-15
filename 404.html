@@ -3,8 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Not found — Bailey Forbes</title>
+  <title>Page not found — Bailey Forbes</title>
+  <meta name="robots" content="noindex" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400&family=Sora:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body data-page="">
@@ -12,12 +16,39 @@
   <main id="main">
     <div class="wrap page-hero">
       <p class="kicker">404</p>
-      <h1>That path is not in the tree.</h1>
-      <p class="lede">The page may have moved. Start from home or the project index.</p>
+      <h1>That page does not exist</h1>
+      <p class="lede">
+        The address may be mistyped, or the page may have moved when the site switched from
+        <code>/projects/qpu.html</code>-style paths to folders. Every project still has a page —
+        the index below lists all five.
+      </p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="/home/">Home</a>
-        <a class="btn btn-ghost" href="/projects/">Projects</a>
+        <a class="btn btn-primary" href="/projects/">See all five projects</a>
+        <a class="btn btn-ghost" href="/home/">Go to the home page</a>
       </div>
+    </div>
+    <div class="wrap">
+      <section aria-labelledby="pages-title">
+        <div class="section-head">
+          <h2 id="pages-title">Every page on this site</h2>
+        </div>
+        <dl class="spec-list">
+          <dt><a href="/home/">Home</a></dt>
+          <dd>Featured work, experience, education, and contact details.</dd>
+          <dt><a href="/projects/">Projects</a></dt>
+          <dd>The index of all five write-ups.</dd>
+          <dt><a href="/projects/homework-central/">Homework Central</a></dt>
+          <dd>C#/.NET and React platform replacing a 16,000-member Discord.</dd>
+          <dt><a href="/projects/flinstone/">Flinstone Kernel</a></dt>
+          <dd>Portable C and Assembly kernel, with a lab that runs in the browser.</dd>
+          <dt><a href="/projects/keyquorum/">KeyQuorum</a></dt>
+          <dd>Rust hardware-key quorum sharing, command line only.</dd>
+          <dt><a href="/projects/qpu/">QPU</a></dt>
+          <dd>Quantum process language and workbench, runs in the browser.</dd>
+          <dt><a href="/projects/emr/">Electronic medical record</a></dt>
+          <dd>Client-sponsored hospital system, 2021–2022.</dd>
+        </dl>
+      </section>
     </div>
   </main>
   <footer class="site-footer" data-site-footer></footer>
