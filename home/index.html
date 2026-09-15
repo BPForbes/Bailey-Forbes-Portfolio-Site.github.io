@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bailey Forbes — Software Engineer</title>
-  <meta name="description" content="Portfolio of Bailey P Forbes: C#/.NET, TypeScript, systems programming, and public project release timelines compiled from git history." />
+  <meta name="description" content="Bailey Forbes is an Indiana software engineer who cooks Cajun, Italian, and Japanese food, plays Euro and card games, and ships C#/.NET, TypeScript, and systems work." />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,41 +17,102 @@
   <main id="main">
     <div class="wrap">
       <section class="hero">
-        <div>
+        <div class="hero-copy">
           <p class="kicker">Software engineer · C# / TypeScript / systems</p>
           <h1>Bailey Forbes</h1>
           <p class="lede">
             I build production APIs, community platforms, and kernels that keep their contracts
-            across releases. This site expands the public BPForbes record — not as a repo list,
-            but as a timeline of what each project actually shipped.
+            across releases. Off the clock I cook, play board games, and stay in the mix online —
+            I was at Gen Con this year, a few hours up the road from home.
           </p>
+          <ul class="hero-pills">
+            <li>Indiana</li>
+            <li>Homework Central lead</li>
+            <li>Recently: Gen Con · Baker Hill</li>
+            <li>Flinstone 4.2 · KeyQuorum · QPU</li>
+          </ul>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="/projects/">Read the projects</a>
-            <a class="btn btn-ghost" href="/projects/">See project timelines</a>
+            <a class="btn btn-primary" href="#about">About me</a>
+            <a class="btn btn-ghost" href="/projects/">Read the projects</a>
           </div>
         </div>
-        <dl class="hero-meta">
-          <div class="meta-row">
-            <dt>Based</dt>
-            <dd>Indiana</dd>
+        <div class="hero-portrait">
+          <figure class="portrait-frame">
+            <picture>
+              <source srcset="/images/bailey-studio.webp" type="image/webp" />
+              <img
+                src="/images/bailey-studio.jpg"
+                alt="Bailey Forbes, smiling, in a navy suit and red tie"
+                width="1024"
+                height="1536"
+                fetchpriority="high"
+              />
+            </picture>
+            <div class="portrait-glow" aria-hidden="true"></div>
+            <figcaption class="portrait-caption">
+              <b>Bailey Forbes</b>
+              <span>Indiana</span>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="about">
+        <div class="about-layout">
+          <figure class="about-print">
+            <img
+              src="/images/bailey-cutout.webp"
+              alt="Cutout portrait of Bailey Forbes in a navy suit and red tie"
+              width="900"
+              height="1197"
+              loading="lazy"
+            />
+            <figcaption>Bailey Forbes · Indiana</figcaption>
+          </figure>
+          <p class="kicker about-kicker">About</p>
+          <h2 class="about-title">Off the clock</h2>
+          <div class="about-copy">
+            <p>
+              Away from production APIs and kernel contracts, I cook, play games, and keep up with
+              people online. None of that is a personal-brand strategy — it is just how I spend a
+              week that is not only git history.
+            </p>
+            <p>
+              I am a foodie, and I rotate through three kitchens: Cajun, Italian, and Japanese.
+              One night that means real heat in a pot, the next a sauce that takes patience, then
+              something precise with rice and a pan. If I am not shipping code, there is a decent
+              chance I am grocery-listing the next one of those.
+            </p>
+            <p>
+              Board games take the rest of the table. Euro games when I want an engine to build,
+              card games when the conversation should stay in the round, and press-your-luck titles
+              when I want that extra draw I probably should not take. KeyForge is a regular
+              favorite: every deck is unique, and I like sitting down knowing nobody else is
+              holding the same cards. I was at Gen Con this year in Indianapolis — the closest
+              thing tabletop has to a home game when you live in Indiana.
+            </p>
+            <p>
+              I also spend a healthy amount of time on social media. It is how I stay in the mix
+              with friends, food, and the hobby. That same community streak shows up in the work:
+              years tutoring STEM at Indiana University, then building Homework Central for the
+              people who used to live in a Discord.
+            </p>
           </div>
-          <div class="meta-row">
-            <dt>Now</dt>
-            <dd>Homework Central lead</dd>
-          </div>
-          <div class="meta-row">
-            <dt>Recently</dt>
-            <dd>Baker Hill intern, NextGen / NuComply</dd>
-          </div>
-          <div class="meta-row">
-            <dt>Public line</dt>
-            <dd>Flinstone 4.2, KeyQuorum, QPU</dd>
-          </div>
-          <div class="meta-row">
-            <dt>Contact</dt>
-            <dd><a href="mailto:baileyforbes@rocketmail.com">baileyforbes@rocketmail.com</a></dd>
-          </div>
-        </dl>
+        </div>
+        <div class="interest-grid">
+          <article class="interest">
+            <h3>In the kitchen</h3>
+            <p>Cajun, Italian, and Japanese — heat, patience, and a hot pan.</p>
+          </article>
+          <article class="interest">
+            <h3>At the table</h3>
+            <p>Euros, cards, press-your-luck, and KeyForge. Recently: Gen Con.</p>
+          </article>
+          <article class="interest">
+            <h3>Online</h3>
+            <p>Social media for friends, food, and the next game night.</p>
+          </article>
+        </div>
       </section>
 
       <div class="stats" aria-label="Selected results">

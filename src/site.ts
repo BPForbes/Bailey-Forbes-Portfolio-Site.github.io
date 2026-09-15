@@ -11,15 +11,16 @@ if (header) {
       <a class="skip-link" href="#main">Skip to content</a>
       <div class="nav-wrap">
         <a class="brand" href="${ROUTES.home}">
-          <span class="brand-mark">BF</span>
+          <img class="brand-photo" src="/images/bailey-avatar.jpg" width="36" height="36" alt="" />
           <span class="brand-text">
             <strong>Bailey Forbes</strong>
-            <span>Timeline</span>
+            <span>Indiana</span>
           </span>
         </a>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
         <ul class="nav-links" id="site-nav">
           <li><a data-nav="home" href="${ROUTES.home}">Home</a></li>
+          <li><a data-nav="about" href="${ROUTES.about}">About</a></li>
           <li><a data-nav="projects" href="${ROUTES.projects}">Projects</a></li>
           <li><a data-nav="experience" href="${ROUTES.experience}">Experience</a></li>
         </ul>
