@@ -1,7 +1,6 @@
 import {
   GUEST_ORDER,
   GUESTS,
-  QPU_GUEST_ORIGIN,
   isGuestId,
   isGuestReadyMessage,
   isLiveGuest,
@@ -94,7 +93,7 @@ function createGuestWindow(mount: HTMLElement): GuestController {
       </div>
       <div class="guest-boot" data-guest-boot hidden>
         <p class="eyebrow">Guest</p>
-        <p>Attaching QPU…</p>
+        <p data-guest-boot-text>Connecting…</p>
       </div>
     </div>
   `;
@@ -111,6 +110,7 @@ function createGuestWindow(mount: HTMLElement): GuestController {
   const offlineNoteEl = mustQuery(shell, "[data-guest-offline-note]");
   const offlineRepoEl = mustQuery(shell, "[data-guest-offline-repo]", HTMLAnchorElement);
   const bootEl = mustQuery(shell, "[data-guest-boot]");
+  const bootTextEl = mustQuery(shell, "[data-guest-boot-text]");
   const fullscreenBtn = mustQuery(shell, "[data-guest-fullscreen]", HTMLButtonElement);
   const restoreBtn = mustQuery(shell, "[data-guest-restore]", HTMLButtonElement);
   const closeBtn = mustQuery(shell, "[data-guest-close]", HTMLButtonElement);
@@ -211,7 +211,8 @@ function createGuestWindow(mount: HTMLElement): GuestController {
     forgetSlot();
   }
 
-  function showBoot(): void {
+  function showBoot(guestName: string): void {
+    bootTextEl.textContent = `Attaching ${guestName}…`;
     bootEl.hidden = false;
     window.clearTimeout(bootTimer);
     bootTimer = window.setTimeout(() => {
@@ -229,8 +230,10 @@ function createGuestWindow(mount: HTMLElement): GuestController {
     guestReady = false;
     offlineEl.hidden = true;
     iframe.hidden = false;
-    iframe.title = `${guest.name} workbench`;
-    showBoot();
+    iframe.title = guest.id === "flinstone" ? "Flinstone lab" : "QPU workbench";
+    iframe.setAttribute("allow", guest.iframeAllow);
+    iframe.referrerPolicy = guest.id === "flinstone" ? "strict-origin" : "strict-origin-when-cross-origin";
+    showBoot(guest.name);
     setStatus("Connecting…", "wait");
     iframe.src = guest.src;
   }
@@ -305,7 +308,12 @@ function createGuestWindow(mount: HTMLElement): GuestController {
   }
 
   window.addEventListener("message", (event: MessageEvent<unknown>) => {
-    if (event.origin !== QPU_GUEST_ORIGIN) {
+    const guest = GUESTS[currentId];
+    if (!isLiveGuest(guest) || iframe.hidden) {
+      return;
+    }
+
+    if (event.origin !== guest.origin) {
       return;
     }
 
@@ -313,11 +321,7 @@ function createGuestWindow(mount: HTMLElement): GuestController {
       return;
     }
 
-    if (!isGuestReadyMessage(event.data)) {
-      return;
-    }
-
-    if (!isLiveGuest(GUESTS[currentId]) || iframe.hidden) {
+    if (!isGuestReadyMessage(guest, event.data)) {
       return;
     }
 
