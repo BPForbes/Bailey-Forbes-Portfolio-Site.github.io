@@ -24,22 +24,18 @@
   --p-patina: #7ea36a;
   --p-patina-soft: #9dc389;
   --p-rust: #e0685c;
-  --p-paper: #f3ead8;
-  --p-paper-ink: #2a2418;
   --p-ink: #0b0c0a;
 
   /* Surfaces */
   --surface-page: var(--p-near-black);
   --surface-raised: var(--p-bark);
   --surface-sunken: var(--p-moss-dark);
-  --surface-invert: var(--p-paper);
 
   /* Text */
   --text: var(--p-bone);
   --text-muted: var(--p-linen);
   --text-subtle: var(--p-ash);
   --text-on-action: var(--p-ink);
-  --text-on-invert: var(--p-paper-ink);
 
   /* Borders. --border-interactive is the only one allowed to be a control's
      visible boundary: it holds >=3:1 against all three surfaces (WCAG 1.4.11). */
@@ -148,7 +144,6 @@ a:hover {
   border-radius: var(--radius-sm);
 }
 
-
 .skip-link {
   position: absolute;
   left: var(--space-4);
@@ -194,13 +189,21 @@ a:hover {
   text-decoration: none;
 }
 
-.brand-photo {
+/* The BF monogram, drawn to match favicon.svg: same rounded square, same
+   copper hairline, same serif initials, so the tab and the header read as one
+   mark. */
+.brand-mark {
+  flex: none;
   width: 36px;
   height: 36px;
-  border: 1px solid var(--border-interactive);
-  border-radius: 50%;
-  object-fit: cover;
-  background: var(--surface-sunken);
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--action);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .brand-text {
@@ -287,7 +290,6 @@ main {
 section {
   padding: var(--space-4) 0 var(--space-8);
 }
-
 
 h1,
 h2,
@@ -709,13 +711,6 @@ code {
 
 /* ---------------------------------------------------------------- about --- */
 
-.about-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 15rem);
-  gap: var(--space-6);
-  align-items: start;
-}
-
 .about-copy p {
   margin: 0 0 var(--space-4);
   color: var(--text-muted);
@@ -724,32 +719,6 @@ code {
 
 .about-copy p:last-child {
   margin-bottom: 0;
-}
-
-/* Recorded exception (DESIGN.md B4): the site's only inverted surface. It is a
-   photographic print, so it gets paper stock. Used once, nowhere else. */
-.paper-figure {
-  margin: 0;
-  background: var(--surface-invert);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-md);
-  padding: var(--space-4) var(--space-4) 0;
-  color: var(--text-on-invert);
-}
-
-.paper-figure img {
-  display: block;
-  width: 100%;
-}
-
-.paper-figure figcaption {
-  padding: var(--space-3) 0;
-  color: var(--text-on-invert);
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
-  text-align: center;
-  text-transform: uppercase;
 }
 
 /* -------------------------------------------------------------- timeline -- */
@@ -1229,16 +1198,6 @@ body.guest-overlay-open {
   .portrait-frame img {
     aspect-ratio: 1 / 1;
     object-position: center 10%;
-  }
-
-  .about-layout {
-    grid-template-columns: 1fr;
-  }
-
-
-  .paper-figure {
-    max-width: 15rem;
-    margin-inline: auto;
   }
 
   .spec-list {

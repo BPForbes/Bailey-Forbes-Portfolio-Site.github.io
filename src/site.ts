@@ -11,7 +11,7 @@ if (header) {
       <a class="skip-link" href="#main">Skip to content</a>
       <div class="nav-wrap">
         <a class="brand" href="${ROUTES.home}">
-          <img class="brand-photo" src="/images/bailey-avatar.jpg" width="36" height="36" alt="" />
+          <span class="brand-mark" aria-hidden="true">BF</span>
           <span class="brand-text">
             <strong>Bailey Forbes</strong>
             <span>Indiana</span>

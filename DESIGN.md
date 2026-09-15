@@ -94,7 +94,10 @@ visual_direction: >
   headings (editorial, slightly bookish), Sora for reading text, IBM Plex Mono
   reserved for dates, versions, labels and code — the things that are literally
   machine records. Boxes are earned: prose stays unboxed on a plain ground, and
-  a bordered surface means a discrete destination or a repeated record.
+  a bordered surface means a discrete destination or a repeated record. The
+  mark is the BF monogram, drawn once in favicon.svg and repeated in the header
+  as `.brand-mark`; the one photograph of Bailey lives in the home hero and
+  nowhere else, so the site is identified by the mark, not by a face.
 references:
   - url: "https://design-system.service.gov.uk/patterns/"
     borrow: "Task-first page order and plain outcome-named actions"
@@ -404,7 +407,7 @@ disagree, the stylesheet is wrong.
 ## B1. Token roles (R12)
 
 Semantic role tokens are defined in `:root` and are the only names components
-may use. The raw palette (`--copper`, `--patina`, `--paper`, …) exists solely to
+may use. The raw palette (`--copper`, `--patina`, `--stone`, …) exists solely to
 give the role tokens a value; do not reference a raw palette name from a
 component rule.
 
@@ -413,12 +416,10 @@ component rule.
 | `--surface-page` | `#10120f` | Page ground |
 | `--surface-raised` | `#181a16` | Cards, entries, guest window |
 | `--surface-sunken` | `#1f221c` | Titlebars, notes, inset strips |
-| `--surface-invert` | `#f3ead8` | The one paper-stock figure |
 | `--text` | `#ebe6d8` | Headings and body |
 | `--text-muted` | `#c4bdae` | Supporting prose |
 | `--text-subtle` | `#8f897b` | Metadata, captions, legends |
 | `--text-on-action` | `#0b0c0a` | Label on a filled action |
-| `--text-on-invert` | `#2a2418` | Text on `--surface-invert` |
 | `--border` | `#2c2f28` | Separation between static surfaces |
 | `--border-strong` | `#3d4036` | Emphasised static separation |
 | `--border-interactive` | `#6d7264` | Any border that *is* the control's visible boundary (≥3:1, WCAG 1.4.11) |
@@ -464,7 +465,6 @@ and "Bailey Forbes" inside a 320 CSS px viewport without horizontal overflow.
 
 | Exception | Reason | How to evaluate |
 |---|---|---|
-| `.paper-figure` is the site's only inverted surface | R11 allows a small set of recognisable characteristics; this is the one, used once, for the physical-print portrait in "Off the clock". It is not repeated per section. | If a second inverted surface appears anywhere, this exception is void — merge it back into `--surface-raised`. |
 | Links inside a sentence are under 24 × 24 CSS px | WCAG 2.5.8's inline exception: their size is constrained by the line-height of the surrounding text. Every *standalone* link (card action, nav item, timeline heading, 404 index, `.entry .org`) is given a real target box. | The rendered-page audit treats a link as inline only when its parent holds more text than the link itself. A standalone link under 24px is a defect, not an exception. |
 | The Flinstone lab may never attach | Third-party cross-origin isolation; outside this repo's control (R21's "prototype limitation" is stated on the page, not hidden) | The guest window must reach the `could not attach` state with a working retry and an open-in-new-tab escape within 12 s. Verified by throttling/blocking the guest origin. |
 | KeyQuorum's live lab shows a permanent "not attached" panel | There is no web build. The panel says so and links the repository instead of pretending. | If a web build ships, replace the panel with a live guest; do not leave a decorative window. |
