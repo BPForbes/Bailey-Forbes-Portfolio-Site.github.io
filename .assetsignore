@@ -1,0 +1,16 @@
+.git
+.github
+.gitignore
+.wrangler
+.dev.vars
+.env
+.env.*
+node_modules
+src
+package.json
+package-lock.json
+tsconfig.json
+wrangler.jsonc
+README.md
+CNAME
+

@@ -1,9 +1,13 @@
-export const QPU_GUEST_ORIGIN = "https://bpforbes.github.io";
+export const GITHUB_PAGES_ORIGIN = "https://bpforbes.github.io";
 
 export const QPU_GUEST_SRC =
   "https://bpforbes.github.io/BPForbes.QPU.github.io/?embed=1";
 
+export const FLINTSTONE_GUEST_SRC =
+  "https://bpforbes.github.io/Bailey-Forbes-Flinstone/";
+
 export const QPU_EMBED_SOURCE = "qpu-guest";
+export const FLINTSTONE_EMBED_SOURCE = "flinstone-guest";
 
 export type GuestId = "qpu" | "flinstone" | "keyquorum";
 
@@ -13,17 +17,20 @@ interface GuestBase {
   repo: string;
 }
 
-export interface LiveGuest extends GuestBase {
-  id: "qpu";
+interface LiveGuestBase extends GuestBase {
   kind: "live";
   src: string;
   origin: string;
+  embedSource: string;
+  iframeAllow: string;
 }
 
-export interface FlinstoneGuest extends GuestBase {
+export interface QpuGuest extends LiveGuestBase {
+  id: "qpu";
+}
+
+export interface FlinstoneGuest extends LiveGuestBase {
   id: "flinstone";
-  kind: "offline";
-  note: string;
 }
 
 export interface KeyQuorumGuest extends GuestBase {
@@ -32,8 +39,8 @@ export interface KeyQuorumGuest extends GuestBase {
   note: string;
 }
 
-export type OfflineGuest = FlinstoneGuest | KeyQuorumGuest;
-
+export type LiveGuest = QpuGuest | FlinstoneGuest;
+export type OfflineGuest = KeyQuorumGuest;
 export type GuestApp = LiveGuest | OfflineGuest;
 
 export const GUESTS: { readonly [K in GuestId]: Extract<GuestApp, { id: K }> } = {
@@ -44,15 +51,20 @@ export const GUESTS: { readonly [K in GuestId]: Extract<GuestApp, { id: K }> } =
     subtitle: "Circuit workbench",
     repo: "https://github.com/BPForbes/BPForbes.QPU.github.io",
     src: QPU_GUEST_SRC,
-    origin: QPU_GUEST_ORIGIN,
+    origin: GITHUB_PAGES_ORIGIN,
+    embedSource: QPU_EMBED_SOURCE,
+    iframeAllow: "fullscreen; clipboard-write",
   },
   flinstone: {
     id: "flinstone",
-    kind: "offline",
+    kind: "live",
     name: "Flinstone",
-    subtitle: "Kernel host",
+    subtitle: "Kernel lab",
     repo: "https://github.com/BPForbes/Bailey-Forbes-Flinstone",
-    note: "Not attached. The Emscripten host stays in the Flinstone repo — this site does not vendor WASM or kernel binaries.",
+    src: FLINTSTONE_GUEST_SRC,
+    origin: GITHUB_PAGES_ORIGIN,
+    embedSource: FLINTSTONE_EMBED_SOURCE,
+    iframeAllow: "cross-origin-isolated; fullscreen; clipboard-write",
   },
   keyquorum: {
     id: "keyquorum",
@@ -74,7 +86,7 @@ export function isLiveGuest(guest: GuestApp): guest is LiveGuest {
   return guest.kind === "live";
 }
 
-export function isGuestReadyMessage(data: unknown): boolean {
+export function isGuestReadyMessage(guest: LiveGuest, data: unknown): boolean {
   if (typeof data !== "object" || data === null) {
     return false;
   }
@@ -83,5 +95,19 @@ export function isGuestReadyMessage(data: unknown): boolean {
     return false;
   }
 
-  return data.source === QPU_EMBED_SOURCE && data.type === "ready";
+  if (data.source !== guest.embedSource || data.type !== "ready") {
+    return false;
+  }
+
+  if (guest.id === "flinstone") {
+    return (
+      "schemaVersion" in data &&
+      data.schemaVersion === 1 &&
+      "commit" in data &&
+      typeof data.commit === "string" &&
+      data.commit.length > 0
+    );
+  }
+
+  return true;
 }

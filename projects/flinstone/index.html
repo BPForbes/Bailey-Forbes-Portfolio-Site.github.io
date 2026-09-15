@@ -24,7 +24,8 @@
           so a release can move without silently breaking the last one.
         </p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="https://github.com/BPForbes/Bailey-Forbes-Flinstone">Kernel repo</a>
+          <button type="button" class="btn btn-primary" data-guest-launch="flinstone">Launch lab</button>
+          <a class="btn btn-ghost" href="https://github.com/BPForbes/Bailey-Forbes-Flinstone">Kernel repo</a>
         </div>
       </header>
 
@@ -34,9 +35,12 @@
         <div class="section-head">
           <h2>Live lab</h2>
           <p>
-            The Emscripten host stays in the
-            <a href="https://github.com/BPForbes/Bailey-Forbes-Flinstone">Flinstone repo</a>.
-            This page only hosts the window chrome — nothing is attached yet.
+            The freestanding x86 kernel lab is published from
+            <a href="https://github.com/BPForbes/Bailey-Forbes-Flinstone">Bailey-Forbes-Flinstone</a>
+            to GitHub Pages and loads here as a guest. Launch lab opens this window fullscreen.
+            If the guest does not boot on first visit, open the
+            <a href="https://bpforbes.github.io/Bailey-Forbes-Flinstone/">lab top-level</a>
+            once (cross-origin isolation), then return here.
           </p>
         </div>
         <div data-guest-window data-guest="flinstone" data-guest-solo id="live-lab-window"></div>
