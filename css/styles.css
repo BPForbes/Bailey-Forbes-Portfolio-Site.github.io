@@ -201,7 +201,11 @@ main {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
   gap: 2.75rem;
-  align-items: center;
+  align-items: start;
+}
+
+.hero-copy {
+  padding-top: 2.4rem;
 }
 
 .kicker {
@@ -279,9 +283,9 @@ h1 {
 }
 
 .portrait-frame img {
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 4 / 5;
   object-fit: cover;
-  object-position: center 12%;
+  object-position: center 10%;
 }
 
 .portrait-glow {
@@ -423,12 +427,21 @@ section {
 
 .about-layout {
   display: grid;
-  grid-template-columns: 0.82fr 1.18fr;
-  gap: 2.25rem;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  grid-template-areas:
+    "print kicker"
+    "print title"
+    "print copy";
+  column-gap: 2.25rem;
+  row-gap: 0.35rem;
   align-items: start;
+  margin-bottom: 1.15rem;
 }
 
 .about-print {
+  grid-area: print;
+  position: sticky;
+  top: calc(var(--nav-h) + 1rem);
   margin: 0;
   background:
     radial-gradient(520px 220px at 50% 0%, rgba(196, 69, 60, 0.12), transparent 60%),
@@ -456,13 +469,19 @@ section {
   text-transform: uppercase;
 }
 
-.about-copy .kicker {
+.about-kicker {
+  grid-area: kicker;
   color: var(--crimson);
 }
 
-.about-copy h2 {
-  margin: 0 0 1rem;
+.about-title {
+  grid-area: title;
+  margin: 0 0 0.65rem;
   font-size: clamp(1.9rem, 3vw, 2.6rem);
+}
+
+.about-copy {
+  grid-area: copy;
 }
 
 .about-copy p {
@@ -471,8 +490,8 @@ section {
   max-width: 42rem;
 }
 
-.about-copy p:last-of-type {
-  margin-bottom: 1.25rem;
+.about-copy p:last-child {
+  margin-bottom: 0;
 }
 
 .interest-grid {
@@ -1140,18 +1159,35 @@ body.guest-overlay-open {
   .stats,
   .card-grid,
   .skills,
-  .about-layout,
   .interest-grid {
     grid-template-columns: 1fr;
   }
 
+  .hero-copy {
+    padding-top: 0;
+  }
+
+  .about-layout {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "kicker"
+      "title"
+      "print"
+      "copy";
+    row-gap: 0.7rem;
+  }
+
   .about-print {
-    max-width: 22rem;
+    position: static;
+    max-width: 16.5rem;
     margin-inline: auto;
+    padding: 1rem 0.85rem 0;
   }
 
   .portrait-frame img {
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 1 / 1;
+    max-height: 22rem;
+    object-position: center 8%;
   }
 
   .nav-toggle {
