@@ -1106,44 +1106,54 @@ code {
 /* --- the deck ------------------------------------------------------------- */
 
 /*
- * One card is readable at a time and the rest recede into the page, which is
- * what the perspective is for. Card geometry is written from src/timeline.ts,
- * because the deck is scrubbed continuously and CSS can only name the ends —
- * the same split DESIGN.md records for the off-the-clock stacks.
+ * A fixed-height window onto the history. The track inside is absolutely
+ * positioned and moved from src/timeline.ts, so opening a card never changes
+ * the rail's own height — a rail that grew and shrank while you scrolled would
+ * move the page under the reader.
  */
-.tl-deck {
+.tl-window {
   position: relative;
+  overflow: hidden;
+  /* Rows leaving the window fade out rather than being cut off mid-letter. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+}
+
+.tl-deck {
+  position: absolute;
+  inset: 0 0 auto 0;
   display: grid;
-  min-height: 21rem;
+  gap: var(--space-2);
   margin: 0;
-  /* Room above for the cards standing up behind the front one. Transforms do
-     not take part in layout, so the space has to be reserved here. */
-  padding: 5.5rem 0 0;
+  padding: 0;
   list-style: none;
-  perspective: 900px;
-  perspective-origin: 50% 35%;
 }
 
 .tl-item {
-  grid-area: 1 / 1;
-  transform-origin: 50% 90%;
-  backface-visibility: hidden;
+  transform-origin: 0 50%;
   will-change: transform, opacity;
 }
 
+/* The same dark surface the rest of the site uses. */
 .tl-card {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-4);
-  /* Same card stock as the off-the-clock decks: this is the site's one light
-     surface, and a commit card is the same kind of object (DESIGN.md B4). */
-  background: var(--surface-invert);
-  color: var(--text-on-invert);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: inherit;
   text-decoration: none;
+}
+
+.tl-item[data-current="true"] .tl-card {
+  border-color: var(--border-interactive);
+  background: var(--surface-sunken);
+}
+
+a.tl-card:hover {
+  border-color: var(--action);
 }
 
 .tl-card-head {
@@ -1157,71 +1167,63 @@ code {
   height: 11px;
   flex: none;
   border-radius: 50%;
-  background: transparent;
-  border: 2px solid var(--p-patina);
+  background: var(--surface-page);
+  border: 2px solid var(--accent);
 }
 
 .tl-item[data-kind="release"] .tl-mark {
-  background: var(--p-copper);
-  border-color: var(--p-copper);
+  background: var(--action);
+  border-color: var(--action);
 }
 
 .tl-date {
-  color: var(--text-on-invert-muted);
+  color: var(--text-subtle);
   font-family: var(--font-mono);
   font-size: 0.72rem;
 }
 
 .tl-step {
   margin-left: auto;
-  color: var(--text-on-invert-muted);
+  color: var(--text-subtle);
   font-family: var(--font-mono);
   font-size: 0.68rem;
 }
 
 .tl-title {
   font-family: var(--font-display);
-  font-size: 1.15rem;
-  line-height: 1.25;
-  padding-bottom: var(--space-2);
-  border-bottom: 2px solid rgba(196, 69, 60, 0.45);
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+.tl-item[data-current="true"] .tl-title {
+  color: var(--action-hover);
+}
+
+/* Height and opacity are written per frame by the scrub; only the current
+   card is open, and between two cards the two crossfade. */
+.tl-detail {
+  display: block;
+  overflow: hidden;
+  height: 0;
 }
 
 .tl-summary {
-  color: var(--text-on-invert);
-  font-size: 0.9rem;
-  line-height: 1.6rem;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent calc(1.6rem - 1px),
-    rgba(42, 36, 24, 0.13) calc(1.6rem - 1px),
-    rgba(42, 36, 24, 0.13) 1.6rem
-  );
+  display: block;
+  padding-top: var(--space-2);
+  color: var(--text-muted);
+  font-size: 0.88rem;
 }
 
 .tl-meta {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  margin-top: auto;
   padding-top: var(--space-3);
 }
 
-.tl-card .chip {
-  min-height: var(--tap-min);
-  border-color: rgba(42, 36, 24, 0.3);
-  color: var(--text-on-invert-muted);
-}
-
 .tl-open {
-  border-color: rgba(42, 36, 24, 0.45);
-  color: var(--text-on-invert);
-}
-
-/* Only the front card is a live target; the rest are previews behind it. */
-a.tl-card[data-front="true"]:hover {
-  border-color: var(--action);
+  border-color: var(--border-interactive);
+  color: var(--action-hover);
 }
 
 .timeline-empty {

@@ -1,77 +1,50 @@
 /**
- * The project timeline: a deck of commit cards on the right rail.
+ * The project timeline: a scrubbing deck of commit cards on the right rail.
  *
- * Newest first. Scrolling the page scrubs the deck — position is continuous,
- * so the page drives it directly, and the deal is sampled at ~24fps for the
- * same reason the off-the-clock stacks are: stepped motion reads as cards being
- * turned one at a time where a smooth tween reads as a glide.
+ * Newest commit first. Scrolling the page moves through history, and only the
+ * card you are on is expanded — the rest collapse to a date and a title, so the
+ * whole history stays scannable while exactly one commit is readable. Between
+ * two cards the expansion crossfades, which is what makes it a scrub rather
+ * than a jump.
  *
- * The card in front sits square on and is fully readable. The ones behind
- * recede and tip back toward 45 degrees, which is what makes it a deck rather
- * than a list — but text at 45 degrees is not text anyone reads, so the tilt is
- * strictly for the cards you are not reading yet (DESIGN.md R14: an effect has
- * to leave the content legible).
+ * Everything advances on one ~24fps clock, the same one the off-the-clock decks
+ * use: stepped motion reads as cards being turned one at a time.
  *
- * Every card is a link to its commit and stays in the tab order, and focusing
- * one brings it to the front. That is the whole keyboard path: Tab walks the
- * history and each commit becomes readable as you reach it.
+ * There is no dramatic tilt. An earlier pass leaned the deck back to 45 degrees
+ * and it cost more legibility than it bought, so the depth cue is now a small
+ * scale and fade — a deck you can still read (DESIGN.md R14).
+ *
+ * The track is absolutely positioned inside a fixed-height window, so opening a
+ * card never changes the rail's own height. A rail that grew and shrank while
+ * you scrolled would move the page under the reader.
  */
 
 const FRAMES_PER_SECOND = 24;
 const STEP_MS = 1000 / FRAMES_PER_SECOND;
 
-/** Cards drawn behind the front one before they are faded out entirely. */
-const DEPTH = 4;
+/** Where the current card's top sits inside the window, as a fraction. */
+const ANCHOR = 0.3;
 
-/** How far the deck tips back. The front card is never tilted. */
-const MAX_TILT_DEG = 45;
+/** Cards this far from the current one have faded out entirely. */
+const FADE_OVER = 5;
 
-interface Pose {
-  y: number;
-  z: number;
-  rx: number;
-  rz: number;
-  o: number;
+interface Card {
+  item: HTMLElement;
+  detail: HTMLElement;
+  /** Height of the collapsed row: the header alone. */
+  head: number;
+  /** Natural height of the detail when fully open. */
+  open: number;
 }
 
 function clamp(v: number, lo: number, hi: number): number {
   return Math.min(hi, Math.max(lo, v));
 }
 
-/**
- * Where a card sits when it is `d` cards behind the front. Negative d is a card
- * the scroll has already passed: it lifts away and tips back as it goes.
- */
-function poseAt(d: number): Pose {
-  if (d <= 0) {
-    const t = clamp(-d, 0, 1);
-    return {
-      y: -t * 42,
-      z: -t * 150,
-      rx: t * MAX_TILT_DEG,
-      rz: 0,
-      o: 1 - t,
-    };
-  }
-
-  const ahead = clamp(d, 0, DEPTH + 1);
-  return {
-    // Cards behind stand up out of the top of the pile, the same way the
-    // off-the-clock decks show what is next rather than hiding it.
-    // The perspective shrink already pulls a receding card's top edge down, so
-    // the lift has to beat it before any of the next card shows at all.
-    y: -ahead * 58,
-    z: -ahead * 95,
-    // Reaches the full tilt by the second card back, so only the front card and
-    // its immediate follower carry readable type.
-    rx: Math.min(MAX_TILT_DEG, ahead * 26),
-    rz: 0,
-    o: Math.max(0, 1 - ahead * 0.3),
-  };
-}
-
 export function mountTimelineDeck(
   graph: HTMLElement,
+  window_: HTMLElement,
+  track: HTMLElement,
   items: HTMLElement[],
   links: HTMLElement[],
   region: HTMLElement,
@@ -81,81 +54,111 @@ export function mountTimelineDeck(
   }
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const cards: Card[] = [];
   let position = 0;
-  let target = 0;
-  let speed = 0;
   let raf = 0;
   let lastStep = 0;
   let phase = 0;
+  let speed = 0;
   let focusLock = -1;
+  // Scroll position is continuous, so a rest between two commits would leave
+  // both part-open. While scrolling they crossfade; once it stops, the deck
+  // settles onto exactly one card.
+  let scrolling = false;
+  let idleTimer = 0;
+
+  function measure(): void {
+    cards.length = 0;
+    for (const item of items) {
+      const detail = item.querySelector<HTMLElement>(".tl-detail");
+      if (detail === null) {
+        continue;
+      }
+
+      // Measure open, then leave it to the paint below.
+      detail.style.height = "auto";
+      detail.style.opacity = "1";
+      const open = detail.scrollHeight;
+      detail.style.height = "0px";
+      const head = item.getBoundingClientRect().height;
+      cards.push({ item, detail, head, open });
+    }
+
+    const tallest = cards.reduce((m, c) => Math.max(m, c.open), 0);
+    const heads = cards.reduce((m, c) => m + c.head, 0);
+    // The window shows a few rows either side of the open one. Sized so the
+    // open card always fits, whichever one it is.
+    const visibleHeads = Math.min(heads, cards[0] !== undefined ? cards[0].head * 8 : 0);
+    window_.style.height = `${Math.round(visibleHeads + tallest)}px`;
+  }
 
   function scrollTarget(): number {
     if (focusLock >= 0) {
       return focusLock;
     }
 
-    // How far the page has read through the section the rail belongs to.
     const box = region.getBoundingClientRect();
-    const travel = Math.max(1, box.height - window.innerHeight * 0.6);
-    const progress = clamp((window.innerHeight * 0.35 - box.top) / travel, 0, 1);
-    return progress * (items.length - 1);
+    const travel = Math.max(1, box.height - globalThis.innerHeight * 0.55);
+    const progress = clamp((globalThis.innerHeight * 0.3 - box.top) / travel, 0, 1);
+    const raw = progress * (cards.length - 1);
+    return scrolling ? raw : Math.round(raw);
   }
 
-  function paint(_now: number): void {
-    // One radian step per ~24fps frame keeps the roll on the same clock.
+  function paint(): void {
     const wavePhase = phase * 0.26;
+    const amp = reduced.matches ? 0 : 0.35 + speed * 2.2;
 
-    items.forEach((card, index) => {
+    let y = 0;
+    let anchorY = 0;
+
+    cards.forEach((card, index) => {
       const d = index - position;
-      const pose = poseAt(d);
+      const open = clamp(1 - Math.abs(d), 0, 1);
+      const away = Math.abs(d);
 
-      // The wave: a slow travelling roll down the deck. Its amplitude rises
-      // with scroll activity and settles to a small idle float, so it never
-      // becomes constant motion competing with the prose beside it (R27).
-      const amp = reduced.matches ? 0 : 0.7 + speed * 5.5;
-      const rz = Math.sin(wavePhase + index * 0.85) * amp;
-      const lift = Math.sin(wavePhase * 1.15 + index * 0.7) * amp * 1.4;
+      card.detail.style.height = `${(card.open * open).toFixed(1)}px`;
+      card.detail.style.opacity = open.toFixed(3);
 
-      const front = Math.abs(d) < 0.5;
-      card.style.transform =
-        `translate3d(0, ${pose.y + lift}px, ${pose.z}px) ` +
-        `rotateX(${pose.rx}deg) rotateZ(${pose.rz + rz}deg)`;
-      card.style.opacity = String(pose.o);
-      // Strictly monotonic in distance from the front. Rounding to whole card
-      // indices lets two cards mid-scrub share a z-index, and the one behind
-      // paints over the one being read.
-      card.style.zIndex = String(Math.round(1000 - Math.abs(d) * 12));
-      card.dataset.front = String(front);
-      // A card you cannot read should not be a click target sitting over one
-      // you can.
-      card.style.pointerEvents = pose.o < 0.35 ? "none" : "auto";
+      if (index === Math.round(position)) {
+        anchorY = y;
+      }
+
+      // Depth cue: a small recede and fade, no dramatic tilt.
+      const scale = 1 - Math.min(0.1, away * 0.03);
+      const tilt = reduced.matches ? 0 : Math.sin(wavePhase + index * 0.85) * amp;
+      const float = reduced.matches ? 0 : Math.sin(wavePhase * 1.15 + index * 0.7) * amp;
+
+      card.item.style.transform = `translateY(${float.toFixed(2)}px) scale(${scale.toFixed(3)}) rotate(${tilt.toFixed(2)}deg)`;
+      card.item.style.opacity = clamp(1 - away / FADE_OVER, 0, 1).toFixed(3);
+      card.item.dataset.current = String(open > 0.5);
+      // A row faded out should not sit over one you can read.
+      card.item.style.pointerEvents = away > FADE_OVER - 0.6 ? "none" : "auto";
+
+      y += card.head + card.open * open;
     });
 
-    graph.style.setProperty("--tl-progress", String(position / Math.max(1, items.length - 1)));
+    const windowHeight = window_.getBoundingClientRect().height;
+    track.style.transform = `translateY(${(windowHeight * ANCHOR - anchorY).toFixed(1)}px)`;
+
+    graph.style.setProperty("--tl-progress", String(position / Math.max(1, cards.length - 1)));
     graph.style.setProperty("--tl-speed", speed.toFixed(3));
   }
 
-  /**
-   * The single clock. Position, wave and paint all advance on the same ~24fps
-   * grid — painting every display frame would put the deck back at 60fps even
-   * with the position stepping, because the wave moves on every frame it is
-   * given.
-   */
   function tick(now: number): void {
     raf = 0;
-    target = scrollTarget();
+    const target = scrollTarget();
 
     if (reduced.matches) {
       position = target;
       speed = 0;
-      paint(lastStep);
+      paint();
       return;
     }
 
     if (now - lastStep >= STEP_MS) {
-      // Advance the grid by exactly one step rather than snapping it to now.
-      // A display frame is 16.7ms and a step is 41.7ms, so snapping rounds
-      // every step up to three frames and the deck turns at 20fps, not 24.
+      // Advance the grid by one step rather than snapping it to now: a step is
+      // 41.7ms and a display frame 16.7ms, so snapping rounds every step up to
+      // three frames and the deck turns at 20fps, not 24.
       lastStep = now - lastStep > STEP_MS * 3 ? now : lastStep + STEP_MS;
       const delta = target - position;
       position += delta * 0.45;
@@ -167,7 +170,7 @@ export function mountTimelineDeck(
         speed = 0;
       }
       phase += 1;
-      paint(lastStep);
+      paint();
     }
 
     raf = requestAnimationFrame(tick);
@@ -179,8 +182,23 @@ export function mountTimelineDeck(
     }
   }
 
-  window.addEventListener("scroll", schedule, { passive: true });
-  window.addEventListener("resize", schedule);
+  globalThis.addEventListener(
+    "scroll",
+    () => {
+      scrolling = true;
+      globalThis.clearTimeout(idleTimer);
+      idleTimer = globalThis.setTimeout(() => {
+        scrolling = false;
+        schedule();
+      }, 140);
+      schedule();
+    },
+    { passive: true },
+  );
+  globalThis.addEventListener("resize", () => {
+    measure();
+    schedule();
+  });
   reduced.addEventListener("change", schedule);
 
   links.forEach((link, index) => {
@@ -194,5 +212,13 @@ export function mountTimelineDeck(
     });
   });
 
+  measure();
   schedule();
+  // Webfonts landing late change every row's height.
+  if ("fonts" in document) {
+    void document.fonts.ready.then(() => {
+      measure();
+      schedule();
+    });
+  }
 }

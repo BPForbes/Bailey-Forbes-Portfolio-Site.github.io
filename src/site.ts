@@ -176,6 +176,9 @@ function renderTimeline(mount: HTMLElement): void {
   glow.setAttribute("aria-hidden", "true");
   graph.appendChild(glow);
 
+  const deckWindow = document.createElement("div");
+  deckWindow.className = "tl-window";
+
   const deck = document.createElement("ol");
   deck.className = "tl-deck";
 
@@ -243,18 +246,25 @@ function renderTimeline(mount: HTMLElement): void {
       meta.appendChild(open);
     }
 
-    card.append(head, title, detail, meta);
+    // Only the current card is expanded, so the detail and its actions live in
+    // one wrapper the scrub can open and close as a unit.
+    const body = document.createElement("span");
+    body.className = "tl-detail";
+    body.append(detail, meta);
+
+    card.append(head, title, body);
     item.appendChild(card);
     deck.appendChild(item);
     items.push(item);
     links.push(card);
   });
 
-  graph.appendChild(deck);
+  deckWindow.appendChild(deck);
+  graph.appendChild(deckWindow);
   mount.appendChild(graph);
 
   const region = mount.closest<HTMLElement>(".project-layout") ?? graph;
-  mountTimelineDeck(graph, items, links, region);
+  mountTimelineDeck(graph, deckWindow, deck, items, links, region);
 }
 
 document.querySelectorAll<HTMLElement>("[data-timeline]").forEach(renderTimeline);
