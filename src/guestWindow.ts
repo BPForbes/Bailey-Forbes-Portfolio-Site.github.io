@@ -54,10 +54,10 @@ function createGuestWindow(mount: HTMLElement): void {
       </div>
       <p class="guest-status" data-guest-status data-tone="wait" role="status">Connecting…</p>
       <div class="guest-title-actions">
-        <button type="button" class="guest-btn" data-guest-retry hidden>Reload the lab</button>
-        <button type="button" class="guest-btn" data-guest-fullscreen>Fullscreen</button>
-        <button type="button" class="guest-btn" data-guest-restore hidden>Exit fullscreen</button>
-        <button type="button" class="guest-btn" data-guest-min>Minimize</button>
+        <button type="button" class="guest-btn" data-guest-retry hidden>${icon("rotate-right")}Reload the lab</button>
+        <button type="button" class="guest-btn" data-guest-fullscreen>${icon("expand")}Fullscreen</button>
+        <button type="button" class="guest-btn" data-guest-restore hidden>${icon("compress")}Exit fullscreen</button>
+        <button type="button" class="guest-btn" data-guest-min>${icon("compress")}Minimize</button>
       </div>
     </header>
     <nav class="guest-dock" data-guest-dock aria-label="Choose a lab"></nav>
@@ -96,7 +96,7 @@ function createGuestWindow(mount: HTMLElement): void {
     </div>
     <div class="guest-restore-bar" data-guest-restore-bar hidden>
       <span data-guest-restore-text>The lab is minimized.</span>
-      <button type="button" class="guest-btn" data-guest-show>Show the lab</button>
+      <button type="button" class="guest-btn" data-guest-show>${icon("expand")}Show the lab</button>
     </div>
   `;
 

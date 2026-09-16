@@ -191,9 +191,13 @@ function renderTimeline(mount: HTMLElement): void {
         meta.appendChild(projectChip);
       }
 
+      // The kind is already a word; the glyph just makes the two sorts of
+      // entry tellable apart at a glance down the column (R25: not colour or
+      // shape alone).
       const kindChip = document.createElement("span");
       kindChip.className = "chip";
-      kindChip.textContent = event.kind;
+      kindChip.innerHTML = icon(event.kind === "release" ? "tag" : "code-branch");
+      kindChip.append(event.kind);
       meta.appendChild(kindChip);
 
       body.append(heading, detail, meta);

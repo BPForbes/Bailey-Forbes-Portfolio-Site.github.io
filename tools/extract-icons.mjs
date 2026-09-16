@@ -8,6 +8,11 @@ const WANTED = {
   code: 'solid', globe: 'solid', database: 'solid', 'shield-halved': 'solid',
   'dice-five': 'solid', utensils: 'solid', 'location-dot': 'solid',
   'circle-check': 'solid', 'circle-exclamation': 'solid', 'circle-notch': 'solid',
+  'folder-open': 'solid', user: 'solid', briefcase: 'solid', 'graduation-cap': 'solid',
+  terminal: 'solid', 'lock': 'solid', tag: 'solid', 'code-branch': 'solid',
+  expand: 'solid', 'compress': 'solid', 'rotate-right': 'solid', house: 'solid',
+  'microchip': 'solid', 'atom': 'solid', 'hospital': 'solid',
+  'people-group': 'solid', 'triangle-exclamation': 'solid',
   'linkedin-in': 'brands', github: 'brands', tiktok: 'brands', 'reddit-alien': 'brands',
 };
 

@@ -454,7 +454,21 @@ Heading sizes use `clamp()` with a floor that fits "Electronic medical record"
 and "Bailey Forbes" inside a 320 CSS px viewport without horizontal overflow.
 
 **Icons** are Font Awesome Free 6.7.2, inlined as `<svg class="icon">` at each
-use site from the subset in `tools/icons.json`. Every icon sits beside text that
+use site from the subset in `tools/icons.json`. They go where a repeated,
+nameable kind of thing benefits from a mark: actions, contact and social
+destinations, skill categories, record types (job, degree, release), the two
+deck collections, timeline entry kinds, lab chrome and status, and limitation
+callouts.
+
+They are deliberately absent from five places, and that is the design, not an
+omission: **site navigation** (the quick-replacement guide prefers text labels
+there, and five short words gain nothing); **section headings** (decorating
+every `h2` is the per-section theme R11 warns about — the two deck headings are
+marked because they identify two parallel collections, not because headings get
+glyphs); **technology chips** (eighteen in a row is noise, and the free set has
+no marks for most of these languages); **résumé figures** (the number is the
+point); and **timeline entry titles** (the kind chip in the same row already
+carries the mark, and a second would double up). Every icon sits beside text that
 already says what it means, so all of them are `aria-hidden` and none is ever a
 control's only label (R17, R25). They are sized in `em` so they track their
 label, except beside the small mono labels where an em-sized glyph lands around

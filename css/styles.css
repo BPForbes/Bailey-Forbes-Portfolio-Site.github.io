@@ -186,6 +186,27 @@ dt > .icon,
  * a smudge, which defeats the point of it. These are sized in rem so they sit
  * independent of the label and anchor it instead of vanishing into it.
  */
+/* A callout names a limitation; the glyph takes the rule's colour so the two
+   read as one marker rather than two. */
+.icon-note {
+  margin-right: 0.5em;
+  color: var(--action);
+  vertical-align: -0.15em;
+}
+
+/* Inside a chip the glyph shares a small pill with its word. */
+.chip > .icon {
+  margin-right: 0.4em;
+  opacity: 0.9;
+}
+
+/* Beside an entry heading it labels the kind of record without competing. */
+.entry h3 > .icon,
+.spec-list dt a > .icon {
+  margin-right: 0.5em;
+  color: var(--action);
+}
+
 .spec-list dt > .icon,
 .contact-label > .icon {
   width: 1rem;
