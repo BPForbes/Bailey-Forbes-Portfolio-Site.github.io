@@ -1063,35 +1063,35 @@ code {
   position: relative;
   --tl-progress: 0;
   --tl-speed: 0;
+  padding-left: var(--space-5);
 }
 
-/* The spine: the trunk of the branch every node hangs off. */
+/* The spine the deck is dealt off: still a vertical git branch. */
 .tl-graph::before {
   content: "";
   position: absolute;
   left: 7px;
-  top: 0.5rem;
-  bottom: 0.5rem;
+  top: 1rem;
+  bottom: 1rem;
   width: 2px;
   background: var(--border-strong);
   border-radius: 2px;
 }
 
 /*
- * The scrub glow. It travels the spine from the bottom up, and its length and
- * brightness come from scroll speed, so reading barely shows it and a fast
- * scrub pulls it into a streak. Purely decorative: no state depends on it, and
- * a still graph simply never shows it.
+ * The scrub glow, travelling the spine. Position follows reading position and
+ * length follows scroll speed, so a fast scrub streaks and reading barely shows
+ * it. Nothing depends on it; a still graph never draws it.
  */
 .tl-glow {
   position: absolute;
   left: 0;
   width: 16px;
   top: calc(var(--tl-progress) * 100%);
-  height: calc(6rem + var(--tl-speed) * 26rem);
+  height: calc(5rem + var(--tl-speed) * 22rem);
   transform: translateY(-50%);
   pointer-events: none;
-  opacity: calc(0.18 + var(--tl-speed) * 0.82);
+  opacity: calc(0.16 + var(--tl-speed) * 0.84);
   background: linear-gradient(
     to top,
     transparent 0%,
@@ -1103,131 +1103,125 @@ code {
   border-radius: 999px;
 }
 
-.tl-graph[data-still="true"] .tl-glow {
-  display: none;
-}
+/* --- the deck ------------------------------------------------------------- */
 
-.tl-list {
+/*
+ * One card is readable at a time and the rest recede into the page, which is
+ * what the perspective is for. Card geometry is written from src/timeline.ts,
+ * because the deck is scrubbed continuously and CSS can only name the ends —
+ * the same split DESIGN.md records for the off-the-clock stacks.
+ */
+.tl-deck {
+  position: relative;
   display: grid;
-  gap: var(--space-2);
-  list-style: none;
+  min-height: 21rem;
   margin: 0;
-  padding: 0;
-  counter-reset: none;
+  /* Room above for the cards standing up behind the front one. Transforms do
+     not take part in layout, so the space has to be reserved here. */
+  padding: 5.5rem 0 0;
+  list-style: none;
+  perspective: 900px;
+  perspective-origin: 50% 35%;
 }
 
 .tl-item {
-  position: relative;
+  grid-area: 1 / 1;
+  transform-origin: 50% 90%;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
 }
 
-/* --- a node --------------------------------------------------------------- */
-
-.tl-node {
-  display: grid;
-  grid-template-columns: 16px minmax(0, 1fr);
-  gap: 0 var(--space-3);
-  padding: var(--space-2) var(--space-2) var(--space-2) 0;
-  border-radius: var(--radius-md);
-  color: inherit;
+.tl-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  /* Same card stock as the off-the-clock decks: this is the site's one light
+     surface, and a commit card is the same kind of object (DESIGN.md B4). */
+  background: var(--surface-invert);
+  color: var(--text-on-invert);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
   text-decoration: none;
 }
 
-a.tl-node:hover,
-.tl-item[data-active="true"] .tl-node {
-  background: var(--surface-raised);
-}
-
-/* The commit dot, and the stub that ties it to the spine. */
-.tl-mark {
-  position: relative;
-  grid-row: 1 / span 2;
-  width: 16px;
-  margin-top: 0.42rem;
-}
-
-.tl-mark::before {
-  content: "";
-  position: absolute;
-  left: 1px;
-  top: 0;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--surface-page);
-  border: 2px solid var(--accent);
-}
-
-/* A release is a filled tag on the trunk; a feature is an open node. */
-.tl-item[data-kind="release"] .tl-mark::before {
-  background: var(--action);
-  border-color: var(--action);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--action) 25%, transparent);
-}
-
-.tl-head {
+.tl-card-head {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0 var(--space-3);
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.tl-mark {
+  width: 11px;
+  height: 11px;
+  flex: none;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid var(--p-patina);
+}
+
+.tl-item[data-kind="release"] .tl-mark {
+  background: var(--p-copper);
+  border-color: var(--p-copper);
 }
 
 .tl-date {
-  color: var(--text-subtle);
+  color: var(--text-on-invert-muted);
   font-family: var(--font-mono);
   font-size: 0.72rem;
 }
 
+.tl-step {
+  margin-left: auto;
+  color: var(--text-on-invert-muted);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+}
+
 .tl-title {
   font-family: var(--font-display);
-  font-size: 1rem;
-  line-height: 1.3;
-}
-
-a.tl-node:hover .tl-title,
-.tl-item[data-active="true"] .tl-title {
-  color: var(--action-hover);
-}
-
-/*
- * The reveal. Collapsed by default, opened by hover, by keyboard focus, and by
- * being the entry the page is scrolled to — so it is reachable without a
- * pointer.
- */
-.tl-detail {
-  display: grid;
-  grid-template-rows: 0fr;
-  overflow: hidden;
-  transition: grid-template-rows var(--motion-base) ease;
-}
-
-.tl-node:hover .tl-detail,
-.tl-node:focus-visible .tl-detail,
-.tl-item[data-active="true"] .tl-detail {
-  grid-template-rows: 1fr;
-}
-
-.tl-detail-inner {
-  display: block;
-  min-height: 0;
+  font-size: 1.15rem;
+  line-height: 1.25;
+  padding-bottom: var(--space-2);
+  border-bottom: 2px solid rgba(196, 69, 60, 0.45);
 }
 
 .tl-summary {
-  display: block;
-  padding-top: var(--space-2);
-  color: var(--text-muted);
-  font-size: 0.88rem;
+  color: var(--text-on-invert);
+  font-size: 0.9rem;
+  line-height: 1.6rem;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(1.6rem - 1px),
+    rgba(42, 36, 24, 0.13) calc(1.6rem - 1px),
+    rgba(42, 36, 24, 0.13) 1.6rem
+  );
 }
 
 .tl-meta {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
+  margin-top: auto;
   padding-top: var(--space-3);
 }
 
+.tl-card .chip {
+  min-height: var(--tap-min);
+  border-color: rgba(42, 36, 24, 0.3);
+  color: var(--text-on-invert-muted);
+}
+
 .tl-open {
-  border-color: var(--border-interactive);
-  color: var(--action-hover);
+  border-color: rgba(42, 36, 24, 0.45);
+  color: var(--text-on-invert);
+}
+
+/* Only the front card is a live target; the rest are previews behind it. */
+a.tl-card[data-front="true"]:hover {
+  border-color: var(--action);
 }
 
 .timeline-empty {

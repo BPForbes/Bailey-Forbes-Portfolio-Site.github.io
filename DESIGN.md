@@ -498,7 +498,8 @@ anchor the label instead of vanishing into it.
 | Exception | Reason | How to evaluate |
 |---|---|---|
 | The project timeline's scrub glow | R14 asks a decorative effect to justify itself. This one reports scroll: it sits on the spine, its position tracks reading position and its length and brightness track scroll speed, so a fast scrub streaks and reading barely shows it. Nothing depends on it — every state it hints at is also carried by the active entry's own styling. | It must decay to zero once the page stops moving; a glow frozen part-lit means the settle loop is broken. Under `prefers-reduced-motion` the graph is marked still and the glow is never drawn (R26). |
-| The timeline reveal answers to hover | R24 forbids essential content behind hover. It is not behind hover here: an entry opens on hover, on keyboard focus, **and** when it is the entry the page is scrolled to, so a touch user reaches every entry by scrolling and a keyboard user by tabbing. | Scroll the rail with no pointer and no keyboard: each entry must open as it reaches the focus line. Tab through it: each focused entry must open. |
+| Only one timeline card is readable at a time, and the rest tip back to 45° | The deck is the point: a stack of commit cards receding into the page reads as history, where a flat list reads as rows. Text at 45° is not text anyone reads, so the tilt is strictly for the cards you are *not* reading — the front card is square on and fully legible, and the tilt reaches 45° only from the second card back. Scrolling brings any card to the front, and so does focusing it, so nothing is unreachable. | The front card must measure `rotateX` under about 2°. Tab through the deck with no pointer: each focused commit must come to the front and be readable. Every card stays in the DOM and in source order, so assistive technology reads the whole history regardless of which is in front. |
+| The timeline cards wave continuously | R27 warns against constant decorative motion beside reading content, and this is the exception to it, asked for deliberately. The amplitude is scaled to scroll activity: about 0.7° at rest, up to ~6° during a scrub, so the resting state is a float rather than an animation competing with the prose. It stops dead under `prefers-reduced-motion`. | With reduced motion set, two samples 700ms apart must give a byte-identical transform. If the resting amplitude is ever raised much past 1°, it stops being a float and R27 applies again. |
 | The card stack's geometry lives in `src/deck.ts`, not the stylesheet | Moving between cards is a transition, not a swap: every card is posed from one continuous progress value so a drag and a button press run the same code, and half way through a drag the stack really is half way between two states. CSS can name the resting poses but cannot be sampled at arbitrary points between them. | The stylesheet still owns how a card *looks*; only the poses and the tween moved. If a pose is ever duplicated in CSS, one of the two is wrong. The no-JS path does not depend on it — unstacked cards are a plain list. |
 | The deal is sampled at ~24fps rather than every display frame | Asked for, and the point of it: stepped motion reads as cards being dealt one at a time, where a smooth 60fps tween reads as a single glide. `FRAMES_PER_SECOND` in `deck.ts` is the one place to change it. | Sample the front card's transform across a transition: there should be about eight distinct poses for a 340ms deal, with a mean gap near 41.7ms. Derive the step from elapsed time, not from counting animation frames — counting rounds every step up to three display frames and yields 20fps. |
 | `.note-card` uses card stock — the one light surface on a dark site | R11 asks for a small set of recognisable characteristics repeated with restraint. This is that one characteristic: index-card stock, a red title rule and ruled note lines, used for both off-the-clock decks and nowhere else. It is a motif, not the one-off inverted panel that was removed before it. | If card stock appears outside a `.deck`, the motif has become decoration and this is void. The ruled lines depend on `.note-card-note` keeping a fixed `line-height` in the same unit as the gradient; change one and you must change the other, or the ruling drifts under the text. |
@@ -542,12 +543,15 @@ Chromium (Playwright), not read off the source:
   threshold advances while a short nudge snaps back and clears its inline
   transform; all five cards stay in the accessibility tree at their source
   position whichever is on top; and no page-level horizontal overflow.
-- **Timeline rail**: 18 entries on the Flinstone page, 7 of them linking to the
-  commit that carries them; the rail sits right of the prose and scrolls with
-  the page rather than being its own scroll area; the active entry tracks
-  scroll position; inactive entries measure exactly 0px tall, so none overlaps
-  its neighbour; the glow's position and speed both follow scroll and decay to
-  zero on settle.
+- **Timeline deck**, on three project pages: newest commit first on every one,
+  including ties on the same date; scrolling scrubs the deck and turned up 12
+  distinct front cards across one page; the transform advances at 24.2fps
+  measured, on one clock shared by position, wave and paint; the front card's
+  `rotateX` is under 1° while the cards behind reach the full 45°; z-order is
+  strictly monotonic in distance from the front, so no card behind ever paints
+  over the one being read; focusing the seventh card brings card 7 to the
+  front; under reduced motion the deck is byte-identically still between
+  frames; and the glow's position and length both follow scroll.
 - **Icons**: 193 rendered across the eight pages. Every one is `aria-hidden`,
   `focusable="false"`, has a non-zero box, inherits `currentColor`, and none is
   the whole accessible name of the control it sits in. The lab's error panel

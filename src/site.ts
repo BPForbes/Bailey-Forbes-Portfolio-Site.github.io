@@ -2,6 +2,7 @@ import { PORTFOLIO } from "./data.js";
 import { icon } from "./icons.js";
 import { mountDecks } from "./deck.js";
 import { mountGuestWindows } from "./guestWindow.js";
+import { mountTimelineDeck } from "./timeline.js";
 import { ROUTES } from "./routes.js";
 import type { ProjectId } from "./types.js";
 
@@ -139,7 +140,14 @@ document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
  * not (R21).
  */
 function renderTimeline(mount: HTMLElement): void {
-  const events = [...PORTFOLIO.events].sort((a, b) => a.date.localeCompare(b.date));
+  // Newest first: the most recent commit is the card you land on. Dates are
+  // month- or day-granular and several releases share one, so ties fall back to
+  // authoring order reversed — otherwise 4.5.4 and 4.5.2 land in whichever
+  // order the sort happened to leave them.
+  const events = PORTFOLIO.events
+    .map((event, index) => ({ event, index }))
+    .sort((a, b) => b.event.date.localeCompare(a.event.date) || b.index - a.index)
+    .map((row) => row.event);
   const allowed = (mount.getAttribute("data-project") ?? "")
     .split(",")
     .map((value) => value.trim())
@@ -163,58 +171,53 @@ function renderTimeline(mount: HTMLElement): void {
   const graph = document.createElement("div");
   graph.className = "tl-graph";
 
-  // The travelling glow. It is one element behind the spine, moved and scaled
-  // from scroll position, so it costs a transform rather than a repaint.
   const glow = document.createElement("span");
   glow.className = "tl-glow";
   glow.setAttribute("aria-hidden", "true");
   graph.appendChild(glow);
 
-  const list = document.createElement("ol");
-  list.className = "tl-list";
+  const deck = document.createElement("ol");
+  deck.className = "tl-deck";
 
-  for (const event of visible) {
+  const items: HTMLElement[] = [];
+  const links: HTMLElement[] = [];
+
+  visible.forEach((event, index) => {
     const item = document.createElement("li");
     item.className = "tl-item";
     item.dataset.kind = event.kind;
 
-    const row = document.createElement(event.href === undefined ? "span" : "a");
-    row.className = "tl-node";
-    if (row instanceof HTMLAnchorElement && event.href !== undefined) {
-      row.href = event.href;
-      row.rel = "noopener";
+    const card = document.createElement(event.href === undefined ? "span" : "a");
+    card.className = "tl-card";
+    if (card instanceof HTMLAnchorElement && event.href !== undefined) {
+      card.href = event.href;
+      card.rel = "noopener";
     }
+
+    const head = document.createElement("span");
+    head.className = "tl-card-head";
 
     const mark = document.createElement("span");
     mark.className = "tl-mark";
     mark.setAttribute("aria-hidden", "true");
-
-    const head = document.createElement("span");
-    head.className = "tl-head";
 
     const date = document.createElement("time");
     date.className = "tl-date";
     date.dateTime = event.date;
     date.textContent = event.date;
 
+    const step = document.createElement("span");
+    step.className = "tl-step";
+    step.textContent = `${index + 1} / ${visible.length}`;
+    head.append(mark, date, step);
+
     const title = document.createElement("span");
     title.className = "tl-title";
     title.textContent = event.title;
-    head.append(date, title);
-
-    const body = document.createElement("span");
-    body.className = "tl-detail";
-
-    // One child only: the 0fr -> 1fr collapse sizes a single row, so a second
-    // direct child would land in an implicit auto row and escape the collapse.
-    const inner = document.createElement("span");
-    inner.className = "tl-detail-inner";
-    body.appendChild(inner);
 
     const detail = document.createElement("span");
     detail.className = "tl-summary";
     detail.textContent = event.detail;
-    inner.appendChild(detail);
 
     const meta = document.createElement("span");
     meta.className = "tl-meta";
@@ -240,97 +243,18 @@ function renderTimeline(mount: HTMLElement): void {
       meta.appendChild(open);
     }
 
-    inner.appendChild(meta);
-    row.append(mark, head, body);
-    item.appendChild(row);
-    list.appendChild(item);
-  }
+    card.append(head, title, detail, meta);
+    item.appendChild(card);
+    deck.appendChild(item);
+    items.push(item);
+    links.push(card);
+  });
 
-  graph.appendChild(list);
+  graph.appendChild(deck);
   mount.appendChild(graph);
-  trackTimeline(graph, list);
-}
 
-/**
- * Marks the entry the page is scrolled to, and drives the glow. The glow
- * stretches with scroll speed — slow reading barely shows it, a fast scrub
- * pulls it into a streak — and fades out once the page stops moving.
- */
-function trackTimeline(graph: HTMLElement, list: HTMLElement): void {
-  const items = Array.from(list.querySelectorAll<HTMLElement>(".tl-item"));
-  if (items.length === 0) {
-    return;
-  }
-
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    // Still mark the active entry; just never animate the spine (R26).
-    graph.dataset.still = "true";
-  }
-
-  let lastY = window.scrollY;
-  let lastT = performance.now();
-  let speed = 0;
-  let queued = false;
-
-  const update = (): void => {
-    queued = false;
-    const now = performance.now();
-    const dt = Math.max(16, now - lastT);
-    const dy = window.scrollY - lastY;
-    // px per frame, smoothed, so one jumpy frame does not spike the streak
-    speed = speed * 0.72 + Math.min(1, Math.abs(dy) / dt / 2.2) * 0.28;
-    lastY = window.scrollY;
-    lastT = now;
-
-    const box = graph.getBoundingClientRect();
-    const focusLine = window.innerHeight * 0.42;
-
-    let active = -1;
-    let best = Infinity;
-    items.forEach((item, index) => {
-      const r = item.getBoundingClientRect();
-      const d = Math.abs(r.top + r.height / 2 - focusLine);
-      if (d < best) {
-        best = d;
-        active = index;
-      }
-    });
-
-    items.forEach((item, index) => {
-      item.dataset.active = String(index === active);
-    });
-
-    // Where the glow sits along the spine, 0 at the top of the graph.
-    const progress = Math.min(1, Math.max(0, (focusLine - box.top) / Math.max(1, box.height)));
-    graph.style.setProperty("--tl-progress", progress.toFixed(4));
-    graph.style.setProperty("--tl-speed", speed.toFixed(3));
-  };
-
-  // Scroll events stop the moment the page does, so the smoothed speed would
-  // freeze part-lit. Keep stepping until it has actually decayed to nothing.
-  const settle = (): void => {
-    if (speed <= 0.002) {
-      speed = 0;
-      graph.style.setProperty("--tl-speed", "0");
-      return;
-    }
-    update();
-    requestAnimationFrame(settle);
-  };
-
-  let settling = 0;
-  const onScroll = (): void => {
-    if (!queued) {
-      queued = true;
-      requestAnimationFrame(update);
-    }
-    window.clearTimeout(settling);
-    settling = window.setTimeout(settle, 90);
-  };
-
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll);
-  update();
+  const region = mount.closest<HTMLElement>(".project-layout") ?? graph;
+  mountTimelineDeck(graph, items, links, region);
 }
 
 document.querySelectorAll<HTMLElement>("[data-timeline]").forEach(renderTimeline);
