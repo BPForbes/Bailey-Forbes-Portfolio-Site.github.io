@@ -453,6 +453,14 @@ ramp); radii `--radius-sm/md/lg`; `--elevation-1`; `--motion-fast` 120ms and
 Heading sizes use `clamp()` with a floor that fits "Electronic medical record"
 and "Bailey Forbes" inside a 320 CSS px viewport without horizontal overflow.
 
+**Icons** are Font Awesome Free 6.7.2, inlined as `<svg class="icon">` at each
+use site from the subset in `tools/icons.json`. Every icon sits beside text that
+already says what it means, so all of them are `aria-hidden` and none is ever a
+control's only label (R17, R25). They are sized in `em` so they track their
+label, except beside the small mono labels where an em-sized glyph lands around
+11px and reads as a smudge; there they are 1rem and take `--action`, so they
+anchor the label instead of vanishing into it.
+
 ## B3. Container rules (R07)
 
 - **`.card`** — only for a discrete destination: one project the visitor can
@@ -474,6 +482,8 @@ and "Bailey Forbes" inside a 320 CSS px viewport without horizontal overflow.
 
 | Exception | Reason | How to evaluate |
 |---|---|---|
+| The card stack's geometry lives in `src/deck.ts`, not the stylesheet | Moving between cards is a transition, not a swap: every card is posed from one continuous progress value so a drag and a button press run the same code, and half way through a drag the stack really is half way between two states. CSS can name the resting poses but cannot be sampled at arbitrary points between them. | The stylesheet still owns how a card *looks*; only the poses and the tween moved. If a pose is ever duplicated in CSS, one of the two is wrong. The no-JS path does not depend on it — unstacked cards are a plain list. |
+| The deal is sampled at ~24fps rather than every display frame | Asked for, and the point of it: stepped motion reads as cards being dealt one at a time, where a smooth 60fps tween reads as a single glide. `FRAMES_PER_SECOND` in `deck.ts` is the one place to change it. | Sample the front card's transform across a transition: there should be about eight distinct poses for a 340ms deal, with a mean gap near 41.7ms. Derive the step from elapsed time, not from counting animation frames — counting rounds every step up to three display frames and yields 20fps. |
 | `.note-card` uses card stock — the one light surface on a dark site | R11 asks for a small set of recognisable characteristics repeated with restraint. This is that one characteristic: index-card stock, a red title rule and ruled note lines, used for both off-the-clock decks and nowhere else. It is a motif, not the one-off inverted panel that was removed before it. | If card stock appears outside a `.deck`, the motif has become decoration and this is void. The ruled lines depend on `.note-card-note` keeping a fixed `line-height` in the same unit as the gradient; change one and you must change the other, or the ruling drifts under the text. |
 | The deck's previous/next controls are arrow glyphs with no visible text | The quick-replacement guide allows icon-only controls that are "familiar controls with accessible names and sufficient context". Prev/next on a pager is that case: each has an `aria-label` naming its deck ("Next game"), each is 44 × 44, and they sit either side of a visible "n of m". | If the arrows ever become the *only* way to reach a card, they need text labels. Verify by cycling each deck with the keyboard alone. |
 | Tapping a card behind the front one deals it forward, and that shortcut is pointer-only | It is a convenience on top of controls that already do the job: the arrow buttons and the stack's own arrow keys reach every card, so no function is pointer-exclusive (WCAG 2.1.1 is met by the equivalent path, not by the shortcut). Making the peeking cards focusable would put four extra stops in the tab order for something the buttons already do. | If the tap ever becomes the only way to reach a card, it needs a keyboard equivalent. Verify by cycling a deck end to end with Tab and the arrow keys and no pointer. |
@@ -515,6 +525,16 @@ Chromium (Playwright), not read off the source:
   threshold advances while a short nudge snaps back and clears its inline
   transform; all five cards stay in the accessibility tree at their source
   position whichever is on top; and no page-level horizontal overflow.
+- **Icons**: 61 rendered across the eight pages. Every one is `aria-hidden`,
+  `focusable="false"`, has a non-zero box, inherits `currentColor`, and none is
+  the whole accessible name of the control it sits in. The lab's error panel
+  was checked with the panel open, which is how a real bug surfaced: setting
+  `textContent` on those two controls to relabel them per guest was deleting
+  the icon beside the text. They now relabel a child span.
+- **The transition has real frames**: sampling the front card's inline
+  transform across a deal gives eight distinct poses and a mean gap of 40.5ms,
+  about 24.7fps, with opacity swept across nine values. A press during a deal
+  lands the current card and starts the next rather than being dropped.
 - **The stack degrades**: with JavaScript disabled the cards render as a plain
   vertical list, each at its own position, and the nav stays `hidden` — so the
   section is readable and carries no control that cannot work.

@@ -151,6 +151,50 @@ a:hover {
   border-radius: var(--radius-sm);
 }
 
+/*
+ * Icons (Font Awesome Free 6.7.2, inlined — see tools/README.md).
+ *
+ * Every one sits next to text that already says what it means, so none is
+ * load-bearing: they are aria-hidden, sized in em so they track their label,
+ * and filled with currentColor so they inherit whatever state the text is in.
+ */
+.icon {
+  width: 1em;
+  height: 1em;
+  flex: none;
+  fill: currentColor;
+  vertical-align: -0.125em;
+}
+
+/* Beside a heading the glyph reads better a little smaller and set back. */
+.icon-head {
+  width: 0.78em;
+  height: 0.78em;
+  margin-right: 0.45em;
+  color: var(--action);
+}
+
+/* Inline (non-flex) contexts need the gap the flex ones get from `gap`. */
+li > .icon,
+dt > .icon,
+.contact-label > .icon {
+  margin-right: 0.5em;
+}
+
+/*
+ * Beside the small mono labels an em-sized glyph lands around 11px and reads as
+ * a smudge, which defeats the point of it. These are sized in rem so they sit
+ * independent of the label and anchor it instead of vanishing into it.
+ */
+.spec-list dt > .icon,
+.contact-label > .icon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.55rem;
+  vertical-align: -0.22rem;
+  color: var(--action);
+}
+
 .skip-link {
   position: absolute;
   left: var(--space-4);
@@ -874,88 +918,31 @@ code {
   touch-action: pan-y;
 }
 
+/*
+ * Resting poses and the tween between them live in src/deck.ts, because the
+ * transition has to sample arbitrary points between two depths and CSS can
+ * only name the ends. What stays here is everything that is not geometry.
+ */
 .deck-stack.is-stacked .note-card {
   grid-area: 1 / 1;
-  transform:
-    translate(calc(var(--depth-x) + var(--bias-x)), var(--depth-y))
-    rotate(calc(var(--depth-r) + var(--bias-r)))
-    scale(var(--depth-s));
-  transition:
-    transform var(--motion-base) ease,
-    opacity var(--motion-base) ease;
   will-change: transform;
-}
-
-/* Depth 0 is the readable card. Each step back rises, shrinks and tips. */
-.deck-stack.is-stacked .note-card[data-depth="0"] {
-  --depth-x: 0px;
-  --depth-y: 0px;
-  --depth-r: 0deg;
-  --depth-s: 1;
-}
-
-.deck-stack.is-stacked .note-card[data-depth="1"] {
-  --depth-x: 13px;
-  --depth-y: -4.45rem;
-  --depth-r: 2.4deg;
-  --depth-s: 0.975;
-}
-
-.deck-stack.is-stacked .note-card[data-depth="2"] {
-  --depth-x: -11px;
-  --depth-y: -5.65rem;
-  --depth-r: -3deg;
-  --depth-s: 0.95;
-}
-
-.deck-stack.is-stacked .note-card[data-depth="3"] {
-  --depth-x: 7px;
-  --depth-y: -6.45rem;
-  --depth-r: 1.7deg;
-  --depth-s: 0.925;
 }
 
 /* Deeper than the visible stack. Still in the accessibility tree and still
    read in source order — only the eye loses it. */
 .deck-stack.is-stacked .note-card[data-depth="4"] {
-  --depth-x: 0px;
-  --depth-y: -6.45rem;
-  --depth-r: 0deg;
-  --depth-s: 0.925;
-  opacity: 0;
   pointer-events: none;
 }
 
-/* Per-card bias, so the pile looks hand-stacked instead of machined. Fixed
-   values, not random: a stack that re-tilts on every render looks broken. */
-.deck-stack.is-stacked .note-card {
-  --bias-x: 0px;
-  --bias-r: 0deg;
-}
-
-.deck-stack.is-stacked .note-card:nth-child(2n) {
-  --bias-x: -6px;
-  --bias-r: -0.9deg;
-}
-
-.deck-stack.is-stacked .note-card:nth-child(3n) {
-  --bias-x: 7px;
-  --bias-r: 1.1deg;
-}
-
-.deck-stack.is-stacked .note-card:nth-child(5n) {
-  --bias-x: -3px;
-  --bias-r: 1.4deg;
-}
-
-/* Clicking a card behind brings it forward. The nav buttons do the same job
-   for the keyboard, so this is a convenience, not the only route (B4). */
+/* Clicking a card behind deals down to it. The nav buttons and the arrow keys
+   do the same job for the keyboard, so this is a convenience, not the only
+   route (DESIGN.md B4). */
 .deck-stack.is-stacked .note-card:not([data-depth="0"]) {
   cursor: pointer;
 }
 
-.deck-stack.is-dragging .note-card {
-  transition: none;
+.deck-stack.is-stacked .note-card[data-depth="0"] {
+  cursor: grab;
 }
 
 .deck-stack.is-stacked .note-card[data-depth="0"] {
@@ -1235,15 +1222,6 @@ code {
   font-family: var(--font-mono);
   font-size: 0.74rem;
   letter-spacing: 0.04em;
-}
-
-.guest-status::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: currentcolor;
-  flex: none;
 }
 
 .guest-status[data-tone="live"] {

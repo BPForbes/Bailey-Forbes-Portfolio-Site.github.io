@@ -6,6 +6,7 @@ import {
   isLiveGuest,
 } from "./apps.js";
 import type { GuestApp, GuestId, LiveGuest } from "./apps.js";
+import { icon } from "./icons.js";
 
 /**
  * The live-lab window.
@@ -74,7 +75,7 @@ function createGuestWindow(mount: HTMLElement): void {
         <h3 data-guest-offline-title>Nothing to run here yet</h3>
         <p data-guest-offline-note></p>
         <div class="guest-panel-actions">
-          <a class="btn btn-ghost" data-guest-offline-repo href="#">Repository</a>
+          <a class="btn btn-ghost" data-guest-offline-repo href="#">${icon("github")}<span data-guest-offline-repo-text>Repository</span></a>
         </div>
       </div>
       <div class="guest-panel guest-error" data-guest-error hidden>
@@ -82,9 +83,9 @@ function createGuestWindow(mount: HTMLElement): void {
         <h3 data-guest-error-title>The lab did not respond</h3>
         <p data-guest-error-note></p>
         <div class="guest-panel-actions">
-          <button type="button" class="btn btn-primary" data-guest-error-retry>Try attaching again</button>
+          <button type="button" class="btn btn-primary" data-guest-error-retry>${icon("play")}Try attaching again</button>
           <a class="btn btn-ghost" data-guest-error-open href="#" target="_blank" rel="noopener">
-            Open the lab in a new tab
+            ${icon("arrow-up-right-from-square")}<span data-guest-error-open-text>Open the lab in a new tab</span>
           </a>
         </div>
       </div>
@@ -111,11 +112,13 @@ function createGuestWindow(mount: HTMLElement): void {
   const offlineTitleEl = mustQuery(shell, "[data-guest-offline-title]");
   const offlineNoteEl = mustQuery(shell, "[data-guest-offline-note]");
   const offlineRepoEl = mustQuery(shell, "[data-guest-offline-repo]", HTMLAnchorElement);
+  const offlineRepoTextEl = mustQuery(shell, "[data-guest-offline-repo-text]");
   const errorEl = mustQuery(shell, "[data-guest-error]");
   const errorTitleEl = mustQuery(shell, "[data-guest-error-title]");
   const errorNoteEl = mustQuery(shell, "[data-guest-error-note]");
   const errorRetryEl = mustQuery(shell, "[data-guest-error-retry]", HTMLButtonElement);
   const errorOpenEl = mustQuery(shell, "[data-guest-error-open]", HTMLAnchorElement);
+  const errorOpenTextEl = mustQuery(shell, "[data-guest-error-open-text]");
   const bootEl = mustQuery(shell, "[data-guest-boot]");
   const bootTextEl = mustQuery(shell, "[data-guest-boot-text]");
   const retryBtn = mustQuery(shell, "[data-guest-retry]", HTMLButtonElement);
@@ -167,8 +170,16 @@ function createGuestWindow(mount: HTMLElement): void {
     }
   }
 
+  const STATUS_ICON = {
+    live: "circle-check",
+    wait: "circle-notch",
+    error: "circle-exclamation",
+    off: "circle-notch",
+  } as const;
+
   function setStatus(text: string, tone: StatusTone): void {
-    statusEl.textContent = text;
+    // The glyph repeats what the word says; the word is what carries it (R25).
+    statusEl.innerHTML = `${icon(STATUS_ICON[tone])}<span>${text}</span>`;
     statusEl.dataset.tone = tone;
   }
 
@@ -240,7 +251,7 @@ function createGuestWindow(mount: HTMLElement): void {
       ? `${guest.name} responded but never completed its handshake, so this page cannot tell whether it is running. It may have failed to load inside the frame, or your browser may be blocking it. Opening it on its own origin is the reliable check.`
       : `${guest.name} is served from ${guest.origin} and did not respond within ${Math.round(ATTACH_TIMEOUT_MS / 1000)} seconds. It may be offline, or your browser may be blocking the embedded frame.`;
     errorOpenEl.href = guest.src;
-    errorOpenEl.textContent = `Open ${guest.name} in a new tab`;
+    errorOpenTextEl.textContent = `Open ${guest.name} in a new tab`;
     errorEl.hidden = false;
     retryBtn.hidden = false;
     setStatus("Could not attach", "error");
@@ -290,7 +301,7 @@ function createGuestWindow(mount: HTMLElement): void {
     offlineTitleEl.textContent = `${guest.name} has no web build`;
     offlineNoteEl.textContent = guest.note;
     offlineRepoEl.href = guest.repo;
-    offlineRepoEl.textContent = `Open the ${guest.name} repository`;
+    offlineRepoTextEl.textContent = `Open the ${guest.name} repository`;
     offlineEl.hidden = false;
     setStatus("Not attached", "off");
   }

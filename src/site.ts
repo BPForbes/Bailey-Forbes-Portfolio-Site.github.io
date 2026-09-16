@@ -1,4 +1,5 @@
 import { PORTFOLIO } from "./data.js";
+import { icon } from "./icons.js";
 import { mountDecks } from "./deck.js";
 import { mountGuestWindows } from "./guestWindow.js";
 import { ROUTES } from "./routes.js";
@@ -39,9 +40,9 @@ if (footer) {
           <a href="https://github.com/BPForbes">github.com/BPForbes</a>, 11 Sep 2026.
         </p>
         <ul class="footer-links">
-          <li><a href="mailto:baileyforbes@rocketmail.com">Email Bailey</a></li>
-          <li><a href="https://www.linkedin.com/in/bailey-preston-forbes">LinkedIn</a></li>
-          <li><a href="https://github.com/BPForbes">GitHub</a></li>
+          <li><a href="mailto:baileyforbes@rocketmail.com">${icon("envelope")}Email Bailey</a></li>
+          <li><a href="https://www.linkedin.com/in/bailey-preston-forbes">${icon("linkedin-in")}LinkedIn</a></li>
+          <li><a href="https://github.com/BPForbes">${icon("github")}GitHub</a></li>
         </ul>
       </div>
     `;
