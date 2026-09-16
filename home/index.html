@@ -333,17 +333,18 @@
                 August — the closest thing tabletop has to a home game when you live in Indiana.
               </p>
             </div>
-            <div class="deck-nav">
-              <button type="button" class="deck-btn" data-deck-prev aria-label="Scroll games back">
+            <div class="deck-nav" data-deck-nav hidden>
+              <button type="button" class="deck-btn" data-deck-prev aria-label="Previous game">
                 <span aria-hidden="true">←</span>
               </button>
-              <button type="button" class="deck-btn" data-deck-next aria-label="Scroll games forward">
+              <p class="deck-count" data-deck-count></p>
+              <button type="button" class="deck-btn" data-deck-next aria-label="Next game">
                 <span aria-hidden="true">→</span>
               </button>
             </div>
           </div>
-          <div class="deck-scroller" data-deck-scroller tabindex="0" role="region" aria-labelledby="deck-games-title">
-            <ul class="deck-track">
+          <div class="deck-frame" data-deck-frame role="group" aria-labelledby="deck-games-title">
+            <ul class="deck-stack" data-deck-stack>
               <li class="note-card">
                 <p class="note-card-label">Unique-deck card game</p>
                 <h4>KeyForge</h4>
@@ -391,6 +392,7 @@
               </li>
             </ul>
           </div>
+          <p class="visually-hidden" role="status" data-deck-status></p>
         </div>
 
         <div class="deck" data-deck>
@@ -403,17 +405,18 @@
                 and it is still my “healthy” cheat meal.
               </p>
             </div>
-            <div class="deck-nav">
-              <button type="button" class="deck-btn" data-deck-prev aria-label="Scroll dishes back">
+            <div class="deck-nav" data-deck-nav hidden>
+              <button type="button" class="deck-btn" data-deck-prev aria-label="Previous dish">
                 <span aria-hidden="true">←</span>
               </button>
-              <button type="button" class="deck-btn" data-deck-next aria-label="Scroll dishes forward">
+              <p class="deck-count" data-deck-count></p>
+              <button type="button" class="deck-btn" data-deck-next aria-label="Next dish">
                 <span aria-hidden="true">→</span>
               </button>
             </div>
           </div>
-          <div class="deck-scroller" data-deck-scroller tabindex="0" role="region" aria-labelledby="deck-food-title">
-            <ul class="deck-track">
+          <div class="deck-frame" data-deck-frame role="group" aria-labelledby="deck-food-title">
+            <ul class="deck-stack" data-deck-stack>
               <li class="note-card">
                 <p class="note-card-label">Cajun · Louisiana</p>
                 <h4>Gumbo</h4>
@@ -455,12 +458,13 @@
               </li>
             </ul>
           </div>
+          <p class="visually-hidden" role="status" data-deck-status></p>
         </div>
 
         <h3 class="sub-head">Elsewhere</h3>
         <div class="about-copy">
           <p>
-            Classical and orchestral music. College football in the fall — SEC and Big Ten — and
+            Classical and orchestral music, theatrical arts, and pop. College football in the fall — SEC and Big Ten — and
             baseball the rest of the year. And a fair amount of time online, which is how I keep
             up with friends, food, and the hobby.
           </p>

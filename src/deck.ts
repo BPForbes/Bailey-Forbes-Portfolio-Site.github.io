@@ -1,155 +1,251 @@
 /**
- * The off-the-clock card decks.
+ * The off-the-clock card stacks.
  *
- * The scroller is a plain overflow container, so touch swipe, trackpad,
- * shift+wheel and arrow keys are the browser's, not ours. Everything here only
- * drives that same scroller:
+ * One card is readable at a time; the ones behind rise out of the top of the
+ * pile so you can see what is next, the way cards stand in a recipe box.
+ * Advancing sends the front card to the back, so the stack cycles and never
+ * dead-ends — which is why there is a visible "n of m" count, otherwise there
+ * would be no way to tell you had been all the way round (DESIGN.md R19).
  *
- *   - the arrow buttons scroll by one card and disable at each end, so their
- *     state is real rather than decorative (DESIGN.md R21);
- *   - pointer drag is added for mice, which get no swipe. It waits for a real
- *     drag before it starts, so clicking and selecting text still work;
- *   - the edge fade is set from scroll position, so it says "there is more
- *     this way" instead of decorating the edge permanently (R10).
+ * The stacking is applied by this module, never by the markup. Without it the
+ * cards are a plain vertical list and the nav stays `hidden`, because five
+ * cards piled on top of each other with nothing to cycle them is unreadable
+ * and a control that cannot work should not be on the page (R21).
  *
- * Nothing here animates on its own, and every scroll respects
- * prefers-reduced-motion (R26, R27).
+ * Every card stays in the DOM and in the accessibility tree at its source
+ * position, so assistive technology reads all five in order regardless of
+ * which one is on top. Only the eye is asked to take them one at a time.
  */
 
-const DRAG_THRESHOLD_PX = 6;
+/** Cards drawn behind the front one. Deeper cards are transparent. */
+const VISIBLE_BEHIND = 3;
 
-function prefersReducedMotion(): boolean {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
+/** Pointer travel before a press counts as a swipe rather than a click. */
+const SWIPE_THRESHOLD_PX = 48;
+
+/** Travel before we take over the pointer and stop treating it as a click. */
+const DRAG_THRESHOLD_PX = 6;
 
 export function mountDecks(): void {
   document.querySelectorAll<HTMLElement>("[data-deck]").forEach(mountDeck);
 }
 
 function mountDeck(deck: HTMLElement): void {
-  const scroller = deck.querySelector<HTMLElement>("[data-deck-scroller]");
-  if (scroller === null) {
+  const stack = deck.querySelector<HTMLElement>("[data-deck-stack]");
+  const frame = deck.querySelector<HTMLElement>("[data-deck-frame]");
+  if (stack === null || frame === null) {
     return;
   }
 
-  const prev = deck.querySelector<HTMLButtonElement>("[data-deck-prev]");
-  const next = deck.querySelector<HTMLButtonElement>("[data-deck-next]");
-
-  function step(): number {
-    const first = scroller?.querySelector<HTMLElement>(".note-card");
-    if (!first || !scroller) {
-      return 320;
-    }
-
-    const gap = parseFloat(getComputedStyle(scroller.firstElementChild ?? first).gap) || 0;
-    return first.getBoundingClientRect().width + gap;
+  const cards = Array.from(stack.querySelectorAll<HTMLElement>(".note-card"));
+  if (cards.length < 2) {
+    return;
   }
 
-  function sync(): void {
-    if (scroller === null) {
+  const nav = deck.querySelector<HTMLElement>("[data-deck-nav]");
+  const prev = deck.querySelector<HTMLButtonElement>("[data-deck-prev]");
+  const next = deck.querySelector<HTMLButtonElement>("[data-deck-next]");
+  const count = deck.querySelector<HTMLElement>("[data-deck-count]");
+  const status = deck.querySelector<HTMLElement>("[data-deck-status]");
+
+  let front = 0;
+
+  stack.classList.add("is-stacked");
+  if (nav !== null) {
+    nav.hidden = false;
+  }
+
+  // Now that the cards are one on top of another, the pile is the thing you
+  // step to, and the arrow keys move through it.
+  frame.tabIndex = 0;
+
+  function depthOf(index: number): number {
+    return (index - front + cards.length) % cards.length;
+  }
+
+  function nameOf(index: number): string {
+    const card = cards[index];
+    return card?.querySelector("h4")?.textContent?.trim() ?? "";
+  }
+
+  function apply(announce: boolean): void {
+    cards.forEach((card, index) => {
+      const depth = depthOf(index);
+      card.dataset.depth = String(Math.min(depth, VISIBLE_BEHIND + 1));
+      card.style.zIndex = String(cards.length - depth);
+    });
+
+    const position = `${front + 1} of ${cards.length}`;
+    if (count !== null) {
+      count.textContent = position;
+    }
+    // The visible count is not a live region, so this is the only announcement
+    // and it does not double up.
+    if (status !== null && announce) {
+      status.textContent = `${position}: ${nameOf(front)}`;
+    }
+  }
+
+  function go(direction: -1 | 1): void {
+    front = (front + direction + cards.length) % cards.length;
+    apply(true);
+  }
+
+  function bringToFront(index: number): void {
+    if (index === front) {
       return;
     }
 
-    // Sub-pixel layout means scrollLeft rarely lands exactly on the maximum.
-    const max = scroller.scrollWidth - scroller.clientWidth;
-    const atStart = scroller.scrollLeft <= 1;
-    const atEnd = scroller.scrollLeft >= max - 1;
-    const scrolls = max > 1;
-
-    scroller.dataset.overflowStart = String(scrolls && !atStart);
-    scroller.dataset.overflowEnd = String(scrolls && !atEnd);
-
-    if (prev !== null) {
-      prev.disabled = !scrolls || atStart;
-    }
-    if (next !== null) {
-      next.disabled = !scrolls || atEnd;
-    }
-  }
-
-  function scrollByCards(direction: -1 | 1): void {
-    scroller?.scrollBy({
-      left: step() * direction,
-      behavior: prefersReducedMotion() ? "auto" : "smooth",
-    });
+    front = index;
+    apply(true);
   }
 
   prev?.addEventListener("click", () => {
-    scrollByCards(-1);
+    go(-1);
   });
   next?.addEventListener("click", () => {
-    scrollByCards(1);
+    go(1);
   });
 
-  scroller.addEventListener("scroll", sync, { passive: true });
-  window.addEventListener("resize", sync);
+  frame.addEventListener("keydown", (event: KeyboardEvent) => {
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      event.preventDefault();
+      go(1);
+    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      event.preventDefault();
+      go(-1);
+    }
+  });
 
-  // Fonts landing late change card widths, so re-measure once they do.
-  if ("fonts" in document) {
-    void document.fonts.ready.then(sync);
-  }
+  attachPointer(stack, cards, {
+    depthOf,
+    bringToFront,
+    go,
+    reset: () => {
+      apply(false);
+    },
+  });
 
-  attachPointerDrag(scroller);
-  sync();
+  apply(false);
+}
+
+interface PointerHooks {
+  depthOf: (index: number) => number;
+  bringToFront: (index: number) => void;
+  go: (direction: -1 | 1) => void;
+  reset: () => void;
 }
 
 /**
- * Drag-to-scroll for pointers that cannot swipe. Touch is left alone — it
- * already scrolls natively, and hijacking it would break momentum and snap.
+ * One pointer handler covers touch swipe, mouse drag and the tap-a-card-behind
+ * shortcut, because they are the same gesture at different distances: a press
+ * that barely moves is a tap, and one that travels is a swipe.
  */
-function attachPointerDrag(scroller: HTMLElement): void {
+function attachPointer(stack: HTMLElement, cards: HTMLElement[], hooks: PointerHooks): void {
   let pointerId: number | null = null;
   let startX = 0;
-  let startScroll = 0;
+  let startY = 0;
   let dragging = false;
+  let frontCard: HTMLElement | null = null;
+  let pressedIndex = -1;
 
-  scroller.addEventListener("pointerdown", (event: PointerEvent) => {
-    if (event.pointerType === "touch" || event.button !== 0) {
+  function clear(): void {
+    if (frontCard !== null) {
+      frontCard.style.transform = "";
+      frontCard.style.opacity = "";
+    }
+    stack.classList.remove("is-dragging");
+    pointerId = null;
+    dragging = false;
+    frontCard = null;
+    pressedIndex = -1;
+  }
+
+  stack.addEventListener("pointerdown", (event: PointerEvent) => {
+    if (event.button !== 0) {
+      return;
+    }
+
+    const card = (event.target as Element | null)?.closest<HTMLElement>(".note-card") ?? null;
+    if (card === null) {
       return;
     }
 
     pointerId = event.pointerId;
+    pressedIndex = cards.indexOf(card);
     startX = event.clientX;
-    startScroll = scroller.scrollLeft;
+    startY = event.clientY;
     dragging = false;
+    const frontIndex = cards.findIndex((_, i) => hooks.depthOf(i) === 0);
+    frontCard = frontIndex >= 0 ? (cards[frontIndex] ?? null) : null;
   });
 
-  scroller.addEventListener("pointermove", (event: PointerEvent) => {
-    if (pointerId !== event.pointerId) {
+  stack.addEventListener("pointermove", (event: PointerEvent) => {
+    if (pointerId !== event.pointerId || frontCard === null) {
       return;
     }
 
-    const delta = event.clientX - startX;
+    const dx = event.clientX - startX;
+    const dy = event.clientY - startY;
+
     if (!dragging) {
-      // Until the pointer has actually travelled, this is still a click or a
-      // text selection and must be left alone.
-      if (Math.abs(delta) < DRAG_THRESHOLD_PX) {
+      if (Math.abs(dx) < DRAG_THRESHOLD_PX) {
+        return;
+      }
+      // A mostly-vertical drag is the page scrolling, not a swipe. Let it go.
+      if (Math.abs(dy) > Math.abs(dx)) {
+        clear();
         return;
       }
 
       dragging = true;
-      scroller.classList.add("is-dragging");
-      scroller.setPointerCapture(event.pointerId);
+      stack.classList.add("is-dragging");
+      stack.setPointerCapture(event.pointerId);
     }
 
     event.preventDefault();
-    scroller.scrollLeft = startScroll - delta;
+    const tilt = dx / 26;
+    frontCard.style.transform = `translate(${dx}px, 0) rotate(${tilt}deg)`;
+    frontCard.style.opacity = String(Math.max(0.45, 1 - Math.abs(dx) / 420));
   });
 
-  const end = (event: PointerEvent): void => {
+  function finish(event: PointerEvent): void {
     if (pointerId !== event.pointerId) {
       return;
     }
 
-    if (dragging && scroller.hasPointerCapture(event.pointerId)) {
-      scroller.releasePointerCapture(event.pointerId);
+    const dx = event.clientX - startX;
+    const wasDragging = dragging;
+    const tappedIndex = pressedIndex;
+
+    if (wasDragging && stack.hasPointerCapture(event.pointerId)) {
+      stack.releasePointerCapture(event.pointerId);
     }
 
-    pointerId = null;
-    dragging = false;
-    scroller.classList.remove("is-dragging");
-  };
+    clear();
 
-  scroller.addEventListener("pointerup", end);
-  scroller.addEventListener("pointercancel", end);
+    if (wasDragging) {
+      if (Math.abs(dx) >= SWIPE_THRESHOLD_PX) {
+        hooks.go(dx < 0 ? 1 : -1);
+      } else {
+        hooks.reset();
+      }
+      return;
+    }
+
+    // A press that never travelled: if it landed on a card behind, deal that
+    // one to the front.
+    if (tappedIndex >= 0 && hooks.depthOf(tappedIndex) !== 0) {
+      hooks.bringToFront(tappedIndex);
+    }
+  }
+
+  stack.addEventListener("pointerup", finish);
+  stack.addEventListener("pointercancel", () => {
+    const wasDragging = dragging;
+    clear();
+    if (wasDragging) {
+      hooks.reset();
+    }
+  });
 }

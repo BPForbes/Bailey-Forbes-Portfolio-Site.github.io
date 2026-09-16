@@ -461,9 +461,9 @@ and "Bailey Forbes" inside a 320 CSS px viewport without horizontal overflow.
   release/date/summary).
 - **`.note-card` in a `.deck`** — one item in a browsable collection that is
   read, not opened (a dish, a game). It is a card because the items are
-  discrete and parallel, and a horizontal deck because the collection is worth
-  skimming and is not ranked. It is never a link; if one ever needs to be, it
-  becomes a `.card` instead.
+  discrete and parallel, and a cycling stack because the collection is short,
+  unranked, and meant to be gone through one at a time. It is never a link; if
+  one ever needs to be, it becomes a `.card` instead.
 - **`.spec-list` (`<dl>`)** — label/value pairs: skills, release specs. Not
   cards; there is nowhere to go.
 - **`.stat-list`** — résumé figures as a captioned `<dl>` with the source
@@ -475,7 +475,9 @@ and "Bailey Forbes" inside a 320 CSS px viewport without horizontal overflow.
 | Exception | Reason | How to evaluate |
 |---|---|---|
 | `.note-card` uses card stock — the one light surface on a dark site | R11 asks for a small set of recognisable characteristics repeated with restraint. This is that one characteristic: index-card stock, a red title rule and ruled note lines, used for both off-the-clock decks and nowhere else. It is a motif, not the one-off inverted panel that was removed before it. | If card stock appears outside a `.deck`, the motif has become decoration and this is void. The ruled lines depend on `.note-card-note` keeping a fixed `line-height` in the same unit as the gradient; change one and you must change the other, or the ruling drifts under the text. |
-| The deck's previous/next controls are arrow glyphs with no visible text | The quick-replacement guide allows icon-only controls that are "familiar controls with accessible names and sufficient context". Prev/next on a scroller is that case: each has an `aria-label` naming its deck ("Scroll games forward"), each is 44 × 44, and neither is the only way to move — native swipe, the keyboard and pointer drag all work without them. | If the arrows ever become the *only* way to reach a card, they need text labels. Verify by scrolling each deck end to end with the keyboard alone. |
+| The deck's previous/next controls are arrow glyphs with no visible text | The quick-replacement guide allows icon-only controls that are "familiar controls with accessible names and sufficient context". Prev/next on a pager is that case: each has an `aria-label` naming its deck ("Next game"), each is 44 × 44, and they sit either side of a visible "n of m". | If the arrows ever become the *only* way to reach a card, they need text labels. Verify by cycling each deck with the keyboard alone. |
+| Tapping a card behind the front one deals it forward, and that shortcut is pointer-only | It is a convenience on top of controls that already do the job: the arrow buttons and the stack's own arrow keys reach every card, so no function is pointer-exclusive (WCAG 2.1.1 is met by the equivalent path, not by the shortcut). Making the peeking cards focusable would put four extra stops in the tab order for something the buttons already do. | If the tap ever becomes the only way to reach a card, it needs a keyboard equivalent. Verify by cycling a deck end to end with Tab and the arrow keys and no pointer. |
+| The stack cycles, so there is no last card | A pile you keep dealing through has no natural end, which would leave no way to tell you had seen everything. The visible "n of m" is what supplies that, and it is why the count is not optional chrome. | If the count is ever removed, the cycling has to go with it. |
 | Links inside a sentence are under 24 × 24 CSS px | WCAG 2.5.8's inline exception: their size is constrained by the line-height of the surrounding text. Every *standalone* link (card action, nav item, timeline heading, 404 index, `.entry .org`) is given a real target box. | The rendered-page audit treats a link as inline only when its parent holds more text than the link itself. A standalone link under 24px is a defect, not an exception. |
 | The Flinstone lab may never attach | Third-party cross-origin isolation; outside this repo's control (R21's "prototype limitation" is stated on the page, not hidden) | The guest window must reach the `could not attach` state with a working retry and an open-in-new-tab escape within 12 s. Verified by throttling/blocking the guest origin. |
 | KeyQuorum's live lab shows a permanent "not attached" panel | There is no web build. The panel says so and links the repository instead of pretending. | If a web build ships, replace the panel with a live guest; do not leave a decorative window. |
@@ -501,12 +503,16 @@ Chromium (Playwright), not read off the source:
 - **Live lab**: connecting → could-not-attach → retry exercised with the guest
   origin blocked at the network layer, and minimize → restore exercised.
   KeyQuorum's "no web build" panel checked separately.
-- **Card decks**, at 1280 px and 375 px: the next/previous buttons move the
-  scroller and genuinely disable at each end; the edge fade follows scroll
-  position; the scroller takes focus and responds to arrow keys; pointer drag
-  scrolls without swallowing clicks or text selection; no page-level horizontal
-  overflow at any width; and a reduced-motion context jumps instead of
-  animating.
+- **Card stacks**, at 1280 px and 390 px: next and previous cycle in both
+  directions and wrap; a full cycle returns to the first card; the count and
+  the polite status line follow the front card; the stack takes focus and
+  answers arrow keys; tapping a peeking card deals it forward; a swipe past the
+  threshold advances while a short nudge snaps back and clears its inline
+  transform; all five cards stay in the accessibility tree at their source
+  position whichever is on top; and no page-level horizontal overflow.
+- **The stack degrades**: with JavaScript disabled the cards render as a plain
+  vertical list, each at its own position, and the nav stays `hidden` — so the
+  section is readable and carries no control that cannot work.
 - **Reduced motion**: `scroll-behavior` falls back to `auto` and transitions
   collapse under `prefers-reduced-motion: reduce`.
 - **Navigation**: the narrow-screen menu opens, closes on Escape, and closes

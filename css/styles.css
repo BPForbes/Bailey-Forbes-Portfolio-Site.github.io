@@ -768,16 +768,7 @@ code {
 }
 
 .deck-head {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: end;
-  gap: var(--space-3) var(--space-5);
   margin-bottom: var(--space-4);
-}
-
-.deck-head > div:first-child {
-  flex: 1 1 22rem;
 }
 
 .deck-head h3 {
@@ -793,7 +784,11 @@ code {
 
 .deck-nav {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: var(--space-2);
+  max-width: 34rem;
+  margin-top: var(--space-4);
 }
 
 .deck-btn {
@@ -823,47 +818,140 @@ code {
   cursor: default;
 }
 
-.deck-scroller {
-  overflow-x: auto;
-  /* Vertical only. Horizontal padding would offset the first snap point, so
-     the scroller could never report scrollLeft 0 and "at start" would never
-     be true. This leaves room for the card shadow instead. */
-  padding-block: var(--space-2);
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: 0;
-  /* The right edge fades only while there is more to reach, so the cue is
-     information rather than ornament (R10, R14). */
-  -webkit-mask-image: var(--deck-mask, none);
-  mask-image: var(--deck-mask, none);
+/*
+ * Without JS the stack must not exist: five cards laid on top of each other
+ * with no way to cycle them is a pile of unreadable text. The default is a
+ * plain vertical list, .is-stacked is added by the script, and the nav is
+ * `hidden` in the markup until the script that drives it has run (R21).
+ */
+.deck-frame {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 34rem;
 }
 
-.deck-scroller[data-overflow-end="true"] {
-  --deck-mask: linear-gradient(to right, #000 calc(100% - 4rem), transparent 100%);
-}
-
-.deck-scroller[data-overflow-start="true"] {
-  --deck-mask: linear-gradient(to right, transparent 0, #000 4rem);
-}
-
-.deck-scroller[data-overflow-start="true"][data-overflow-end="true"] {
-  --deck-mask: linear-gradient(to right, transparent 0, #000 4rem, #000 calc(100% - 4rem), transparent 100%);
-}
-
-.deck-scroller.is-dragging {
-  cursor: grabbing;
-  scroll-snap-type: none;
-  user-select: none;
-}
-
-.deck-track {
-  display: flex;
-  align-items: stretch;
+.deck-stack {
+  display: grid;
   gap: var(--space-4);
   list-style: none;
   margin: 0;
   padding: 0;
 }
+
+.deck-count {
+  margin: 0;
+  min-width: 4.5rem;
+  text-align: center;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+/* --- the stack ------------------------------------------------------------ */
+
+.deck-stack.is-stacked {
+  /* Cards behind sit higher, the way they do standing in a recipe box, so the
+     peek shows the next card's label and title rather than the tail of its
+     note. Transforms do not take part in layout, so the room they need has to
+     be reserved here. */
+  padding-top: 7.15rem;
+  gap: 0;
+  touch-action: pan-y;
+}
+
+.deck-stack.is-stacked .note-card {
+  grid-area: 1 / 1;
+  transform:
+    translate(calc(var(--depth-x) + var(--bias-x)), var(--depth-y))
+    rotate(calc(var(--depth-r) + var(--bias-r)))
+    scale(var(--depth-s));
+  transition:
+    transform var(--motion-base) ease,
+    opacity var(--motion-base) ease;
+  will-change: transform;
+}
+
+/* Depth 0 is the readable card. Each step back rises, shrinks and tips. */
+.deck-stack.is-stacked .note-card[data-depth="0"] {
+  --depth-x: 0px;
+  --depth-y: 0px;
+  --depth-r: 0deg;
+  --depth-s: 1;
+}
+
+.deck-stack.is-stacked .note-card[data-depth="1"] {
+  --depth-x: 13px;
+  --depth-y: -4.45rem;
+  --depth-r: 2.4deg;
+  --depth-s: 0.975;
+}
+
+.deck-stack.is-stacked .note-card[data-depth="2"] {
+  --depth-x: -11px;
+  --depth-y: -5.65rem;
+  --depth-r: -3deg;
+  --depth-s: 0.95;
+}
+
+.deck-stack.is-stacked .note-card[data-depth="3"] {
+  --depth-x: 7px;
+  --depth-y: -6.45rem;
+  --depth-r: 1.7deg;
+  --depth-s: 0.925;
+}
+
+/* Deeper than the visible stack. Still in the accessibility tree and still
+   read in source order — only the eye loses it. */
+.deck-stack.is-stacked .note-card[data-depth="4"] {
+  --depth-x: 0px;
+  --depth-y: -6.45rem;
+  --depth-r: 0deg;
+  --depth-s: 0.925;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Per-card bias, so the pile looks hand-stacked instead of machined. Fixed
+   values, not random: a stack that re-tilts on every render looks broken. */
+.deck-stack.is-stacked .note-card {
+  --bias-x: 0px;
+  --bias-r: 0deg;
+}
+
+.deck-stack.is-stacked .note-card:nth-child(2n) {
+  --bias-x: -6px;
+  --bias-r: -0.9deg;
+}
+
+.deck-stack.is-stacked .note-card:nth-child(3n) {
+  --bias-x: 7px;
+  --bias-r: 1.1deg;
+}
+
+.deck-stack.is-stacked .note-card:nth-child(5n) {
+  --bias-x: -3px;
+  --bias-r: 1.4deg;
+}
+
+/* Clicking a card behind brings it forward. The nav buttons do the same job
+   for the keyboard, so this is a convenience, not the only route (B4). */
+.deck-stack.is-stacked .note-card:not([data-depth="0"]) {
+  cursor: pointer;
+}
+
+.deck-stack.is-dragging .note-card {
+  transition: none;
+}
+
+.deck-stack.is-stacked .note-card[data-depth="0"] {
+  cursor: grab;
+}
+
+.deck-stack.is-dragging .note-card[data-depth="0"] {
+  cursor: grabbing;
+}
+
+/* --- the card ------------------------------------------------------------- */
 
 /*
  * Card stock: the one light surface on the site, and the only place the
@@ -871,11 +959,9 @@ code {
  * aligned even when the webfont has not loaded.
  */
 .note-card {
-  flex: 0 0 min(19rem, 78vw);
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  scroll-snap-align: start;
   padding: var(--space-4) var(--space-4) var(--space-5);
   background: var(--surface-invert);
   color: var(--text-on-invert);
