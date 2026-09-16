@@ -37,46 +37,47 @@
         <h2 id="hc-run-title"><svg class="icon icon-head" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80L0 432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg>Running it</h2>
         <p>
           The stack runs end to end: the ASP.NET Core API on .NET 10 against PostgreSQL, the
-          React frontend on top of it, and SignalR between them. Below is a public room after
-          signing in through <code>/devlogin</code> as one of the seeded personas — messages
-          posted and persisted, the role resolved to <strong>VerifiedEducator</strong>, and the
-          composer’s formatting bar with code, LaTeX and colour.
+          React frontend on top of it, and SignalR between them. Below is the General public room
+          after signing in through <code>/devlogin</code> as one of the seeded personas: a plain
+          chat message, a second message with real Markdown and LaTeX rendered by KaTeX, and a
+          reply from a second, distinct account with an <code>@mention</code> in it.
         </p>
         <figure class="shot">
           <img
             src="/images/hc-chat.webp"
-            alt="Homework Central signed in as a seeded developer persona: a Chats sidebar on the left, the General public room with three timestamped messages, and a message composer with bold, italic, link, code, square-root and sigma controls."
+            alt="Homework Central's General public room signed in as the persona MarieCurie: a good-morning message, then a message rendering a LaTeX display equation and an inline fraction, bold text, a two-item checklist and inline code together, and below it a reply from a different account, DevAdmin, with a highlighted @MarieCurie mention."
             width="1400"
-            height="672"
+            height="1210"
             loading="lazy"
           />
           <figcaption>
-            Captured 16 Sep 2026 from a local run at commit <code>d3e7878</code> — API, database
-            and frontend all started from this repository. The accounts are the repository’s own
-            development seed data, not real members: each developer account provisions its own
-            tenant database, which is the isolation this page describes.
+            Captured 16 Sep 2026 from a local run at commit <code>d3e7878</code>. Every message
+            shown was written for this capture, not organic chat content — MarieCurie posted the
+            first two, DevAdmin the third. The accounts are the repository’s own development seed
+            data, not real members: each developer persona provisions its own tenant database,
+            which is the isolation this page describes.
           </figcaption>
         </figure>
         <p>
-          That formatting bar is a live Markdown-plus-LaTeX pipeline, not a static toolbar: raw
-          source typed in the composer — <code>$$N(t) = N_0 e^{-\lambda t}$$</code>, a checklist,
-          bold and inline code — round-trips through the API and comes back rendered, math set by
-          KaTeX, in the same message bubble.
+          That <code>@mention</code> is a real, resolved one, not just styled text — it went
+          through the API, matched a recipient, and created a notification MarieCurie can read in
+          her own inbox below. Getting there surfaced a real edge of the isolation above: two
+          ordinary personas can only notify each other inside the same tenant database, and each
+          persona here is the sole user of its own, so only DevAdmin — the developer-tools admin
+          account, a real login rather than a persona, which the notify policy lets reach every
+          tenant — could actually ping her.
         </p>
         <figure class="shot">
           <img
-            src="/images/hc-latex.webp"
-            alt="A sent chat message rendering Markdown and LaTeX together: a display equation N(t) equals N-naught times e to the negative lambda t, an inline fraction ln 2 over t one-half, bold text, a checked and an unchecked checklist item, inline code, and italic text, all inside one message bubble with a UTC timestamp."
+            src="/images/hc-inbox-mention.webp"
+            alt="Homework Central's inbox signed in as MarieCurie: one entry under General from DevAdmin, with the message text and an @MarieCurie mention highlighted, timestamped in UTC."
             width="1400"
-            height="1006"
+            height="583"
             loading="lazy"
           />
           <figcaption>
-            Same run, commit <code>d3e7878</code>, 16 Sep 2026 — a message written and sent through
-            the composer to exercise its formatting, not organic chat content. The raw source was
-            Markdown with two <code>$…$</code>/<code>$$…$$</code> LaTeX spans and a
-            <code>- [x]</code>/<code>- [ ]</code> checklist; KaTeX renders the math and
-            markdown-it the rest, sanitized with DOMPurify before it reaches the DOM.
+            Same run, commit <code>d3e7878</code>, 16 Sep 2026 — the notification the message
+            above created, read from MarieCurie’s own inbox.
           </figcaption>
         </figure>
       </section>

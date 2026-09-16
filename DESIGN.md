@@ -560,10 +560,12 @@ Chromium (Playwright), not read off the source:
   is a host `make all` build whose `version` line independently confirms the
   4.5.4 this site claims; KeyQuorum's is a 2-of-3 split, its tree, and a
   reconstruct that returned the original secret from two shares; Homework
-  Central's screenshot is its own React frontend against its own ASP.NET Core
-  API and PostgreSQL, all three started from the repository, showing a public
-  room whose messages were posted during the run and persisted. Captions carry
-  the commit and the date.
+  Central's two screenshots are its own React frontend against its own
+  ASP.NET Core API and PostgreSQL, all three started from the repository: one
+  shows a public room with a plain message, a message with real Markdown and
+  LaTeX rendered by KaTeX, and a reply from a second account with a resolved
+  `@mention`; the other shows that mention's notification in the recipient's
+  own inbox. Captions carry the commit and the date.
 - **Icons**: 197 rendered across the eight pages. Every one is `aria-hidden`,
   `focusable="false"`, has a non-zero box, inherits `currentColor`, and none is
   the whole accessible name of the control it sits in. The lab's error panel
@@ -603,6 +605,20 @@ Not verified, and not claimed anywhere on the site:
   in the scratch copy alone (the original is kept beside it), and the API's two
   "must be set" secrets were supplied as a throwaway dev value and the
   repository's own documented development placeholder.
+- **Getting a real mention notification took one more local-only adjustment,
+  on top of finding that DevAdmin — not a second persona — had to send it.**
+  The app's `@mention` regex, front and back end, stops at the first space, so
+  a persona whose seeded username is two words (`Marie Curie`) can never be
+  pinged as typed; a local, disclosed rename to `MarieCurie` in the scratch
+  database (not the repository, not the catalog it reseeds from) fixed that
+  half. The other half was tenant isolation, working as documented in the
+  source repo's own `docs/tenancy-isolation.md`
+  ([BPForbes/Homework-Central](https://github.com/BPForbes/Homework-Central)):
+  an ordinary developer persona's eligible-recipient list is scoped to its own
+  tenant database, and every persona here is the sole user of its own, so two
+  personas can never notify each other. Only DevAdmin, whose recipient list
+  spans every tenant, could actually reach her — which is why the second
+  screenshot's message is from DevAdmin rather than a persona.
 
 - Real assistive-technology output. There is no screen reader in the build
   environment, so the semantics were checked structurally (roles, accessible
