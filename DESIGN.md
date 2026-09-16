@@ -559,9 +559,12 @@ Chromium (Playwright), not read off the source:
   and running the repository's `TwoBitFullAdder` sample; Flinstone's transcript
   is a host `make all` build whose `version` line independently confirms the
   4.5.4 this site claims; KeyQuorum's is a 2-of-3 split, its tree, and a
-  reconstruct that returned the original secret from two shares. Captions carry
+  reconstruct that returned the original secret from two shares; Homework
+  Central's screenshot is its own React frontend against its own ASP.NET Core
+  API and PostgreSQL, all three started from the repository, showing a public
+  room whose messages were posted during the run and persisted. Captions carry
   the commit and the date.
-- **Icons**: 196 rendered across the eight pages. Every one is `aria-hidden`,
+- **Icons**: 197 rendered across the eight pages. Every one is `aria-hidden`,
   `focusable="false"`, has a non-zero box, inherits `currentColor`, and none is
   the whole accessible name of the control it sits in. The lab's error panel
   was checked with the panel open, which is how a real bug surfaced: setting
@@ -582,12 +585,24 @@ Chromium (Playwright), not read off the source:
 
 Not verified, and not claimed anywhere on the site:
 
-- **Homework Central and the EMR have no screenshot, on purpose.** Homework
-  Central's frontend builds and serves but renders only "UI connecting to
-  backend" without its .NET API, and this environment has no .NET SDK and no
-  running Docker daemon, so there is nothing honest to capture. The EMR tree is
-  not public at all. Inventing a mockup for either would be exactly the
-  fabricated evidence R15 forbids, so both pages stay as prose.
+- **The EMR has no screenshot, and cannot have one.** Its tree is not public, so
+  there is nothing here to build or run. Inventing a mockup would be exactly the
+  fabricated evidence R15 forbids, so that page stays as prose.
+- **Homework Central's screenshot came from a run this environment first looked
+  unable to host, and the correction is worth recording.** An earlier pass
+  claimed here that there was no .NET SDK and no Docker daemon and therefore
+  nothing honest to capture. Only the first half was true, and only of one
+  source: Microsoft's own CDN is blocked by the proxy, but Ubuntu's archive
+  carries `dotnet-sdk-10.0`, so the SDK installed and the API built clean. The
+  capture is a real run — PostgreSQL 16 on the port the repository's own config
+  names, the API issuing its own dev JWTs, the frontend's `/devlogin` bypass,
+  and one of the repository's seeded personas — and the caption says so. Two
+  details of that run are worth knowing before repeating it, neither of which
+  touched this repository or theirs: the scratch clone's `global.json` pins SDK
+  feature band 10.0.3xx and Ubuntu ships 10.0.112, so it was relaxed to 10.0.100
+  in the scratch copy alone (the original is kept beside it), and the API's two
+  "must be set" secrets were supplied as a throwaway dev value and the
+  repository's own documented development placeholder.
 
 - Real assistive-technology output. There is no screen reader in the build
   environment, so the semantics were checked structurally (roles, accessible

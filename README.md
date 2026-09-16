@@ -14,10 +14,13 @@ Read it before changing layout, tokens, or component behaviour.
 
 ## Project evidence
 
-The QPU screenshot and the Flinstone and KeyQuorum transcripts on the project
-pages come from building and running those repositories locally; each caption
-names the commit and the capture date. Homework Central and the EMR have no
-screenshot because neither can be run honestly here — see DESIGN.md B5.
+The QPU and Homework Central screenshots and the Flinstone and KeyQuorum
+transcripts on the project pages come from building and running those
+repositories locally; each caption names the commit and the capture date.
+Homework Central's is a live run of its ASP.NET Core API, PostgreSQL database
+and React frontend together, signed in as one of the repository's own seeded
+development personas. The EMR has no screenshot because its tree is not public,
+so there is nothing to run — see DESIGN.md B5.
 
 ## Hosting and TLS
 
