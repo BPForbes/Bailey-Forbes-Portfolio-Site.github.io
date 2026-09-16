@@ -125,6 +125,19 @@ document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
   el.append(bar, legend);
 });
 
+/**
+ * The project timeline: a vertical git graph down the right rail.
+ *
+ * Each entry is a link to the commit that carries it, so the whole row is one
+ * target and the keyboard gets the reveal for free — the detail and the commit
+ * line are shown on hover, on focus, and on whichever entry the page is
+ * currently scrolled to. That last one matters: a reveal that only answers to
+ * hover is unreachable on a touch screen (DESIGN.md R24).
+ *
+ * Entries without a commit are still rendered, as a span rather than a link,
+ * because pretending they link somewhere would be worse than saying they do
+ * not (R21).
+ */
 function renderTimeline(mount: HTMLElement): void {
   const events = [...PORTFOLIO.events].sort((a, b) => a.date.localeCompare(b.date));
   const allowed = (mount.getAttribute("data-project") ?? "")
@@ -133,82 +146,191 @@ function renderTimeline(mount: HTMLElement): void {
     .filter(isProjectId);
   const hideProjectChip = mount.hasAttribute("data-hide-project-chip");
 
-  const render = (): void => {
-    const visible = events.filter(
-      (event) => allowed.length === 0 || allowed.includes(event.project),
-    );
+  const visible = events.filter(
+    (event) => allowed.length === 0 || allowed.includes(event.project),
+  );
 
-    mount.replaceChildren();
+  mount.replaceChildren();
 
-    if (visible.length === 0) {
-      const empty = document.createElement("p");
-      empty.className = "timeline-empty";
-      empty.textContent =
-        "No timeline entries have been compiled for this project yet.";
-      mount.appendChild(empty);
-      return;
+  if (visible.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "timeline-empty";
+    empty.textContent = "No timeline entries have been compiled for this project yet.";
+    mount.appendChild(empty);
+    return;
+  }
+
+  const graph = document.createElement("div");
+  graph.className = "tl-graph";
+
+  // The travelling glow. It is one element behind the spine, moved and scaled
+  // from scroll position, so it costs a transform rather than a repaint.
+  const glow = document.createElement("span");
+  glow.className = "tl-glow";
+  glow.setAttribute("aria-hidden", "true");
+  graph.appendChild(glow);
+
+  const list = document.createElement("ol");
+  list.className = "tl-list";
+
+  for (const event of visible) {
+    const item = document.createElement("li");
+    item.className = "tl-item";
+    item.dataset.kind = event.kind;
+
+    const row = document.createElement(event.href === undefined ? "span" : "a");
+    row.className = "tl-node";
+    if (row instanceof HTMLAnchorElement && event.href !== undefined) {
+      row.href = event.href;
+      row.rel = "noopener";
     }
 
-    const list = document.createElement("div");
-    list.className = "timeline";
+    const mark = document.createElement("span");
+    mark.className = "tl-mark";
+    mark.setAttribute("aria-hidden", "true");
 
-    for (const event of visible) {
-      const item = document.createElement("article");
-      item.className = "tl-item";
-      item.dataset.kind = event.kind;
+    const head = document.createElement("span");
+    head.className = "tl-head";
 
-      const heading = document.createElement("h3");
-      if (event.href !== undefined) {
-        const link = document.createElement("a");
-        link.href = event.href;
-        link.textContent = event.title;
-        heading.appendChild(link);
-      } else {
-        heading.textContent = event.title;
-      }
+    const date = document.createElement("time");
+    date.className = "tl-date";
+    date.dateTime = event.date;
+    date.textContent = event.date;
 
-      const date = document.createElement("p");
-      date.className = "tl-date";
-      date.textContent = event.date;
+    const title = document.createElement("span");
+    title.className = "tl-title";
+    title.textContent = event.title;
+    head.append(date, title);
 
-      const dot = document.createElement("span");
-      dot.className = "tl-dot";
-      dot.setAttribute("aria-hidden", "true");
+    const body = document.createElement("span");
+    body.className = "tl-detail";
 
-      const body = document.createElement("div");
-      body.className = "tl-body";
+    // One child only: the 0fr -> 1fr collapse sizes a single row, so a second
+    // direct child would land in an implicit auto row and escape the collapse.
+    const inner = document.createElement("span");
+    inner.className = "tl-detail-inner";
+    body.appendChild(inner);
 
-      const detail = document.createElement("p");
-      detail.textContent = event.detail;
+    const detail = document.createElement("span");
+    detail.className = "tl-summary";
+    detail.textContent = event.detail;
+    inner.appendChild(detail);
 
-      const meta = document.createElement("div");
-      meta.className = "tl-meta";
+    const meta = document.createElement("span");
+    meta.className = "tl-meta";
 
-      if (!hideProjectChip) {
-        const projectChip = document.createElement("span");
-        projectChip.className = "chip";
-        projectChip.textContent = PORTFOLIO.projects[event.project];
-        meta.appendChild(projectChip);
-      }
-
-      // The kind is already a word; the glyph just makes the two sorts of
-      // entry tellable apart at a glance down the column (R25: not colour or
-      // shape alone).
-      const kindChip = document.createElement("span");
-      kindChip.className = "chip";
-      kindChip.innerHTML = icon(event.kind === "release" ? "tag" : "code-branch");
-      kindChip.append(event.kind);
-      meta.appendChild(kindChip);
-
-      body.append(heading, detail, meta);
-      item.append(date, dot, body);
-      list.appendChild(item);
+    if (!hideProjectChip) {
+      const projectChip = document.createElement("span");
+      projectChip.className = "chip";
+      projectChip.textContent = PORTFOLIO.projects[event.project];
+      meta.appendChild(projectChip);
     }
 
-    mount.appendChild(list);
+    const kindChip = document.createElement("span");
+    kindChip.className = "chip";
+    kindChip.innerHTML = icon(event.kind === "release" ? "tag" : "code-branch");
+    kindChip.append(event.kind);
+    meta.appendChild(kindChip);
+
+    if (event.href !== undefined) {
+      const open = document.createElement("span");
+      open.className = "chip tl-open";
+      open.innerHTML = icon("arrow-up-right-from-square");
+      open.append("View the commit");
+      meta.appendChild(open);
+    }
+
+    inner.appendChild(meta);
+    row.append(mark, head, body);
+    item.appendChild(row);
+    list.appendChild(item);
+  }
+
+  graph.appendChild(list);
+  mount.appendChild(graph);
+  trackTimeline(graph, list);
+}
+
+/**
+ * Marks the entry the page is scrolled to, and drives the glow. The glow
+ * stretches with scroll speed — slow reading barely shows it, a fast scrub
+ * pulls it into a streak — and fades out once the page stops moving.
+ */
+function trackTimeline(graph: HTMLElement, list: HTMLElement): void {
+  const items = Array.from(list.querySelectorAll<HTMLElement>(".tl-item"));
+  if (items.length === 0) {
+    return;
+  }
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    // Still mark the active entry; just never animate the spine (R26).
+    graph.dataset.still = "true";
+  }
+
+  let lastY = window.scrollY;
+  let lastT = performance.now();
+  let speed = 0;
+  let queued = false;
+
+  const update = (): void => {
+    queued = false;
+    const now = performance.now();
+    const dt = Math.max(16, now - lastT);
+    const dy = window.scrollY - lastY;
+    // px per frame, smoothed, so one jumpy frame does not spike the streak
+    speed = speed * 0.72 + Math.min(1, Math.abs(dy) / dt / 2.2) * 0.28;
+    lastY = window.scrollY;
+    lastT = now;
+
+    const box = graph.getBoundingClientRect();
+    const focusLine = window.innerHeight * 0.42;
+
+    let active = -1;
+    let best = Infinity;
+    items.forEach((item, index) => {
+      const r = item.getBoundingClientRect();
+      const d = Math.abs(r.top + r.height / 2 - focusLine);
+      if (d < best) {
+        best = d;
+        active = index;
+      }
+    });
+
+    items.forEach((item, index) => {
+      item.dataset.active = String(index === active);
+    });
+
+    // Where the glow sits along the spine, 0 at the top of the graph.
+    const progress = Math.min(1, Math.max(0, (focusLine - box.top) / Math.max(1, box.height)));
+    graph.style.setProperty("--tl-progress", progress.toFixed(4));
+    graph.style.setProperty("--tl-speed", speed.toFixed(3));
   };
 
-  render();
+  // Scroll events stop the moment the page does, so the smoothed speed would
+  // freeze part-lit. Keep stepping until it has actually decayed to nothing.
+  const settle = (): void => {
+    if (speed <= 0.002) {
+      speed = 0;
+      graph.style.setProperty("--tl-speed", "0");
+      return;
+    }
+    update();
+    requestAnimationFrame(settle);
+  };
+
+  let settling = 0;
+  const onScroll = (): void => {
+    if (!queued) {
+      queued = true;
+      requestAnimationFrame(update);
+    }
+    window.clearTimeout(settling);
+    settling = window.setTimeout(settle, 90);
+  };
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  update();
 }
 
 document.querySelectorAll<HTMLElement>("[data-timeline]").forEach(renderTimeline);

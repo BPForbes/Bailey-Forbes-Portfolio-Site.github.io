@@ -1036,86 +1036,198 @@ code {
 
 /* -------------------------------------------------------------- timeline -- */
 
-.timeline {
-  position: relative;
+/*
+ * The project page is prose on the left and the timeline on the right rail.
+ * The rail scrolls with the page rather than being its own scroll area — a
+ * nested scroller inside a page scroller is the thing R10 warns about.
+ */
+.project-layout {
   display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 23rem);
+  align-items: start;
+  gap: var(--space-8) var(--space-7);
 }
 
-.timeline::before {
+.project-rail {
+  position: sticky;
+  top: calc(var(--nav-h) + var(--space-4));
+}
+
+.project-rail .section-head {
+  margin-bottom: var(--space-4);
+}
+
+/* --- the graph ------------------------------------------------------------ */
+
+.tl-graph {
+  position: relative;
+  --tl-progress: 0;
+  --tl-speed: 0;
+}
+
+/* The spine: the trunk of the branch every node hangs off. */
+.tl-graph::before {
   content: "";
   position: absolute;
-  left: 7.4rem;
-  top: var(--space-2);
-  bottom: var(--space-2);
-  width: 1px;
+  left: 7px;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  width: 2px;
   background: var(--border-strong);
+  border-radius: 2px;
+}
+
+/*
+ * The scrub glow. It travels the spine from the bottom up, and its length and
+ * brightness come from scroll speed, so reading barely shows it and a fast
+ * scrub pulls it into a streak. Purely decorative: no state depends on it, and
+ * a still graph simply never shows it.
+ */
+.tl-glow {
+  position: absolute;
+  left: 0;
+  width: 16px;
+  top: calc(var(--tl-progress) * 100%);
+  height: calc(6rem + var(--tl-speed) * 26rem);
+  transform: translateY(-50%);
+  pointer-events: none;
+  opacity: calc(0.18 + var(--tl-speed) * 0.82);
+  background: linear-gradient(
+    to top,
+    transparent 0%,
+    color-mix(in srgb, var(--action) 45%, transparent) 30%,
+    color-mix(in srgb, var(--status-ok) 85%, transparent) 62%,
+    transparent 100%
+  );
+  filter: blur(5px);
+  border-radius: 999px;
+}
+
+.tl-graph[data-still="true"] .tl-glow {
+  display: none;
+}
+
+.tl-list {
+  display: grid;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: none;
 }
 
 .tl-item {
+  position: relative;
+}
+
+/* --- a node --------------------------------------------------------------- */
+
+.tl-node {
   display: grid;
-  grid-template-columns: 6.6rem 1.6rem minmax(0, 1fr);
-  gap: var(--space-3);
-  padding: var(--space-3) 0;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: 0 var(--space-3);
+  padding: var(--space-2) var(--space-2) var(--space-2) 0;
+  border-radius: var(--radius-md);
+  color: inherit;
+  text-decoration: none;
+}
+
+a.tl-node:hover,
+.tl-item[data-active="true"] .tl-node {
+  background: var(--surface-raised);
+}
+
+/* The commit dot, and the stub that ties it to the spine. */
+.tl-mark {
+  position: relative;
+  grid-row: 1 / span 2;
+  width: 16px;
+  margin-top: 0.42rem;
+}
+
+.tl-mark::before {
+  content: "";
+  position: absolute;
+  left: 1px;
+  top: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--surface-page);
+  border: 2px solid var(--accent);
+}
+
+/* A release is a filled tag on the trunk; a feature is an open node. */
+.tl-item[data-kind="release"] .tl-mark::before {
+  background: var(--action);
+  border-color: var(--action);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--action) 25%, transparent);
+}
+
+.tl-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-3);
 }
 
 .tl-date {
-  margin: 0;
   color: var(--text-subtle);
   font-family: var(--font-mono);
-  font-size: 0.78rem;
-  text-align: right;
+  font-size: 0.72rem;
 }
 
-.tl-dot {
-  width: 11px;
-  height: 11px;
-  margin: var(--space-2) auto 0;
-  border-radius: 50%;
-  background: var(--surface-page);
-  border: 2px solid var(--action);
-  position: relative;
-  z-index: 1;
+.tl-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  line-height: 1.3;
 }
 
-/* Kind is also written out as a chip in .tl-meta, so the dot never carries
-   meaning on its own (R25: not colour alone). */
-.tl-item[data-kind="release"] .tl-dot {
-  background: var(--action);
+a.tl-node:hover .tl-title,
+.tl-item[data-active="true"] .tl-title {
+  color: var(--action-hover);
 }
 
-.tl-item[data-kind="feature"] .tl-dot {
-  border-color: var(--accent);
+/*
+ * The reveal. Collapsed by default, opened by hover, by keyboard focus, and by
+ * being the entry the page is scrolled to — so it is reachable without a
+ * pointer.
+ */
+.tl-detail {
+  display: grid;
+  grid-template-rows: 0fr;
+  overflow: hidden;
+  transition: grid-template-rows var(--motion-base) ease;
 }
 
-.tl-body {
-  padding: var(--space-3) var(--space-4);
-  background: var(--surface-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+.tl-node:hover .tl-detail,
+.tl-node:focus-visible .tl-detail,
+.tl-item[data-active="true"] .tl-detail {
+  grid-template-rows: 1fr;
 }
 
-.tl-body h3 {
-  margin: 0 0 var(--space-1);
-  font-size: 1.05rem;
+.tl-detail-inner {
+  display: block;
+  min-height: 0;
 }
 
-.tl-body h3 a {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--tap-min);
-}
-
-.tl-body p {
-  margin: 0;
+.tl-summary {
+  display: block;
+  padding-top: var(--space-2);
   color: var(--text-muted);
-  font-size: 0.95rem;
+  font-size: 0.88rem;
 }
 
 .tl-meta {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+}
+
+.tl-open {
+  border-color: var(--border-interactive);
+  color: var(--action-hover);
 }
 
 .timeline-empty {
@@ -1571,22 +1683,15 @@ body.guest-overlay-open {
     padding: 0 var(--space-2);
   }
 
-  .timeline::before {
-    left: 0.45rem;
+  /* No rail on a narrow screen: the timeline goes under the prose, full width,
+     and the entries open by scroll position instead of hover. */
+  .project-layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-7);
   }
 
-  .tl-item {
-    grid-template-columns: 1.15rem minmax(0, 1fr);
-  }
-
-  .tl-date {
-    grid-column: 2;
-    text-align: left;
-  }
-
-  .tl-dot {
-    grid-row: 1 / span 2;
-    margin-top: var(--space-1);
+  .project-rail {
+    position: static;
   }
 
   .guest-title-actions {

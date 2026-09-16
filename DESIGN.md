@@ -460,12 +460,13 @@ destinations, skill categories, record types (job, degree, release), the two
 deck collections, timeline entry kinds, lab chrome and status, and limitation
 callouts.
 
-They are deliberately absent from five places, and that is the design, not an
+Section headings on the project pages carry one too, at Bailey's request, so
+those pages read in the same language as "Off the clock". Each is chosen for
+what the section is about rather than applied as decoration.
+
+They are deliberately absent from four places, and that is the design, not an
 omission: **site navigation** (the quick-replacement guide prefers text labels
-there, and five short words gain nothing); **section headings** (decorating
-every `h2` is the per-section theme R11 warns about — the two deck headings are
-marked because they identify two parallel collections, not because headings get
-glyphs); **technology chips** (eighteen in a row is noise, and the free set has
+there, and five short words gain nothing); **technology chips** (eighteen in a row is noise, and the free set has
 no marks for most of these languages); **résumé figures** (the number is the
 point); and **timeline entry titles** (the kind chip in the same row already
 carries the mark, and a second would double up). Every icon sits beside text that
@@ -496,6 +497,8 @@ anchor the label instead of vanishing into it.
 
 | Exception | Reason | How to evaluate |
 |---|---|---|
+| The project timeline's scrub glow | R14 asks a decorative effect to justify itself. This one reports scroll: it sits on the spine, its position tracks reading position and its length and brightness track scroll speed, so a fast scrub streaks and reading barely shows it. Nothing depends on it — every state it hints at is also carried by the active entry's own styling. | It must decay to zero once the page stops moving; a glow frozen part-lit means the settle loop is broken. Under `prefers-reduced-motion` the graph is marked still and the glow is never drawn (R26). |
+| The timeline reveal answers to hover | R24 forbids essential content behind hover. It is not behind hover here: an entry opens on hover, on keyboard focus, **and** when it is the entry the page is scrolled to, so a touch user reaches every entry by scrolling and a keyboard user by tabbing. | Scroll the rail with no pointer and no keyboard: each entry must open as it reaches the focus line. Tab through it: each focused entry must open. |
 | The card stack's geometry lives in `src/deck.ts`, not the stylesheet | Moving between cards is a transition, not a swap: every card is posed from one continuous progress value so a drag and a button press run the same code, and half way through a drag the stack really is half way between two states. CSS can name the resting poses but cannot be sampled at arbitrary points between them. | The stylesheet still owns how a card *looks*; only the poses and the tween moved. If a pose is ever duplicated in CSS, one of the two is wrong. The no-JS path does not depend on it — unstacked cards are a plain list. |
 | The deal is sampled at ~24fps rather than every display frame | Asked for, and the point of it: stepped motion reads as cards being dealt one at a time, where a smooth 60fps tween reads as a single glide. `FRAMES_PER_SECOND` in `deck.ts` is the one place to change it. | Sample the front card's transform across a transition: there should be about eight distinct poses for a 340ms deal, with a mean gap near 41.7ms. Derive the step from elapsed time, not from counting animation frames — counting rounds every step up to three display frames and yields 20fps. |
 | `.note-card` uses card stock — the one light surface on a dark site | R11 asks for a small set of recognisable characteristics repeated with restraint. This is that one characteristic: index-card stock, a red title rule and ruled note lines, used for both off-the-clock decks and nowhere else. It is a motif, not the one-off inverted panel that was removed before it. | If card stock appears outside a `.deck`, the motif has become decoration and this is void. The ruled lines depend on `.note-card-note` keeping a fixed `line-height` in the same unit as the gradient; change one and you must change the other, or the ruling drifts under the text. |
@@ -539,7 +542,13 @@ Chromium (Playwright), not read off the source:
   threshold advances while a short nudge snaps back and clears its inline
   transform; all five cards stay in the accessibility tree at their source
   position whichever is on top; and no page-level horizontal overflow.
-- **Icons**: 61 rendered across the eight pages. Every one is `aria-hidden`,
+- **Timeline rail**: 18 entries on the Flinstone page, 7 of them linking to the
+  commit that carries them; the rail sits right of the prose and scrolls with
+  the page rather than being its own scroll area; the active entry tracks
+  scroll position; inactive entries measure exactly 0px tall, so none overlaps
+  its neighbour; the glow's position and speed both follow scroll and decay to
+  zero on settle.
+- **Icons**: 193 rendered across the eight pages. Every one is `aria-hidden`,
   `focusable="false"`, has a non-zero box, inherits `currentColor`, and none is
   the whole accessible name of the control it sits in. The lab's error panel
   was checked with the panel open, which is how a real bug surfaced: setting

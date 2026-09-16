@@ -32,6 +32,14 @@ TypeScript in `src/` is the source of truth. `npm run build` (`tsc`) emits ES mo
 
 Cloudflare Workers Builds uses [`wrangler.jsonc`](wrangler.jsonc) to publish this tree as static assets after `npm run build`. Preview branches run `npx wrangler versions upload`. GitHub Pages remains the current host for `bailey-forbes.com` until that custom domain is attached to the Worker.
 
+## Project data
+
+`src/data.ts` holds the language splits and every timeline event. The splits are
+measured from each repository's working tree (bytes per language, skipping
+vendor and build trees) rather than read off GitHub's language bar, and the
+timeline entries carry the commit they describe so each one links to it.
+Recompiled 16 Sep 2026.
+
 ## Routes
 
 GitHub Pages serves each folder’s `index.html` without showing the filename. Old `.html` paths redirect.
