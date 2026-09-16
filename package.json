@@ -7,7 +7,9 @@
     "watch": "tsc --watch"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260916.1",
     "@fortawesome/fontawesome-free": "^6.7.2",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "wrangler": "^4.132.0"
   }
 }

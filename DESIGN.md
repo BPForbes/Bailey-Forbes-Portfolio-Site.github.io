@@ -657,3 +657,13 @@ Not verified, and not claimed anywhere on the site:
   every screenshot above shows the **fallback** stack. That is a useful worst
   case and the layout holds in it, but the intended Fraunces / Sora / IBM Plex
   Mono rendering has not been seen.
+
+## Contact form addition (2026-09-16)
+The user authorized a Turnstile-protected contact form, a separate workers.dev
+API, and Resend email delivery. Namecheap DNS and GitHub Pages remain in place.
+The form extends the existing single-column contact section and semantic tokens.
+It preserves the direct email link and announces pending, failure and success
+states. The frontend remains unpublished until Resend domain verification and
+its encrypted API key are ready. Automated backend tests and TypeScript compile
+pass; production email delivery and interactive browser verification remain
+pending those prerequisites.

@@ -1,0 +1,15 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "portfolio-contact",
+  "main": "index.mjs",
+  "account_id": "8ef26ceeda68e802067b590ffcc1e79d",
+  "compatibility_date": "2026-09-16",
+  "workers_dev": true,
+  "preview_urls": false,
+  "routes": [],
+  "vars": {
+    "CONTACT_TO": "baileyforbes@rocketmail.com",
+    "CONTACT_FROM": "Bailey Forbes Portfolio <contact@bailey-forbes.com>"
+  },
+  "observability": { "enabled": false }
+}

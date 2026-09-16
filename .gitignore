@@ -2,3 +2,6 @@ node_modules/
 js/
 .wrangler/
 .dev.vars
+.env
+.env.*
+contact-worker/worker-configuration.d.ts

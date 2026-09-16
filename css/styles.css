@@ -1807,3 +1807,12 @@ body.guest-overlay-open {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Contact form: existing semantic tokens, plain single-column layout. */
+.contact-form { display: grid; gap: var(--space-4); max-width: 40rem; margin-block: var(--space-6); }
+.contact-form label { display: grid; gap: var(--space-2); }
+.contact-form input, .contact-form textarea { box-sizing: border-box; width: 100%; padding: var(--space-3); border: 1px solid var(--border-interactive); border-radius: var(--radius-sm); background: var(--surface-raised); color: var(--text); font: inherit; }
+.contact-form textarea { resize: vertical; min-height: 10rem; }
+.contact-form button { justify-self: start; }
+.contact-form button:disabled { opacity: .6; cursor: not-allowed; }
+.contact-form [role="status"] { min-height: 1.5em; }
