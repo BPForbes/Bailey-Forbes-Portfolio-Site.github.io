@@ -503,6 +503,11 @@ Chromium (Playwright), not read off the source:
 - **Live lab**: connecting → could-not-attach → retry exercised with the guest
   origin blocked at the network layer, and minimize → restore exercised.
   KeyQuorum's "no web build" panel checked separately.
+- **Right-hand gutters**, measured as the rightmost painted ink per section
+  against the content column: every section now reaches it. Before this pass
+  "Off the clock" left 407 px empty and "Contact" left 765 px — 71% of the
+  column. The fix was to use the width (two columns, the two piles side by
+  side, contact on one row), never to stretch prose past its reading measure.
 - **Card stacks**, at 1280 px and 390 px: next and previous cycle in both
   directions and wrap; a full cycle returns to the first card; the count and
   the polite status line follow the front card; the stack takes focus and
@@ -530,9 +535,14 @@ Not verified, and not claimed anywhere on the site:
   third-party guest origin blocked.
 - Whether a real hiring engineer can complete the primary task unaided. No
   users were observed (R10 of the workflow, and the closing note in §10).
-- Two lines in the food deck — Spaghetti and Pizza — describe the dish rather
-  than Bailey's relationship to it, because no personal detail was supplied for
-  those two. They are marked here rather than invented around (R01, R15).
+- One line in the food deck — Spaghetti — describes the dish rather than
+  Bailey's relationship to it, because no personal detail was supplied for it.
+  It is marked here rather than invented around (R01, R15). Every other card in
+  both decks carries detail he gave.
+- The two decks sit in adjacent grid columns, so their piles line up only while
+  their intro paragraphs wrap to the same number of lines. Lengthen one blurb
+  and the stacks will sit at different heights. `grid-template-rows: subgrid`
+  would hold them, and is worth adding if the copy changes.
 - The Google Fonts stylesheet was blocked by the build environment's proxy, so
   every screenshot above shows the **fallback** stack. That is a useful worst
   case and the layout holds in it, but the intended Fraunces / Sora / IBM Plex

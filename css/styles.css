@@ -718,14 +718,23 @@ code {
 
 /* ---------------------------------------------------------------- about --- */
 
-/* Sub-headings inside a section that is already introduced by .section-head. */
+/* Sub-headings inside a section that is already introduced by .section-head.
+   Spacing between blocks comes from the grid, not from the heading. */
 .sub-head {
-  margin: var(--space-7) 0 var(--space-3);
+  margin: 0 0 var(--space-3);
   font-size: clamp(1.25rem, 2vw, 1.5rem);
 }
 
-.sub-head:first-of-type {
-  margin-top: var(--space-2);
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--space-8) var(--space-6);
+  margin-top: var(--space-5);
+}
+
+.about-outro {
+  margin-top: var(--space-8);
 }
 
 .now-list {
@@ -764,7 +773,7 @@ code {
  * buttons and the card stock.
  */
 .deck {
-  margin: 0 0 var(--space-7);
+  margin: 0;
 }
 
 .deck-head {
@@ -828,6 +837,12 @@ code {
   display: grid;
   gap: var(--space-4);
   max-width: 34rem;
+}
+
+.about-grid .deck-frame,
+.about-grid .deck-nav,
+.about-grid .deck-head p {
+  max-width: none;
 }
 
 .deck-stack {
@@ -1443,13 +1458,38 @@ body.guest-overlay-open {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: var(--space-2);
+  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+  gap: var(--space-2) var(--space-5);
 }
 
+/* Label above value, so four entries sit on one row without some of them
+   wrapping to two lines and others not. The label is inside the link, so the
+   accessible name reads "LinkedIn bailey-preston-forbes". */
 .contact-list a {
-  display: inline-flex;
-  align-items: center;
+  display: grid;
+  gap: 2px;
+  padding: var(--space-2) 0;
   min-height: var(--tap-comfortable);
+  text-decoration: none;
+}
+
+.contact-label {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.contact-value {
+  color: var(--action-hover);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  overflow-wrap: anywhere;
+}
+
+.contact-list a:hover .contact-value {
+  color: var(--text);
 }
 
 /*
@@ -1493,6 +1533,12 @@ body.guest-overlay-open {
   .spec-list {
     grid-template-columns: 1fr;
     gap: 0;
+  }
+
+  /* No room to pair anything; the columns become one run. */
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-7);
   }
 
   .spec-list dt {
