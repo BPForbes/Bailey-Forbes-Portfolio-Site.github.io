@@ -1,34 +1,28 @@
 /**
- * The project timeline: a scrubbing deck of commit cards on the right rail.
+ * The project timeline: a vertical git branch down the right rail.
  *
- * Newest commit first. Scrolling the page moves through history, and only the
- * card you are on is expanded — the rest collapse to a date and a title, so the
- * whole history stays scannable while exactly one commit is readable. Between
- * two cards the expansion crossfades, which is what makes it a scrub rather
- * than a jump.
+ * Newest commit first. The spine is the trunk, each dot is a commit on it, and
+ * only the entry you have scrolled to is expanded — the rest stay as a date and
+ * a title, so an eighteen-entry history is still scannable while exactly one
+ * commit is readable. Between two entries the open crossfades, which is the
+ * gradual part; once scrolling stops it settles onto one.
  *
- * Everything advances on one ~24fps clock, the same one the off-the-clock decks
- * use: stepped motion reads as cards being turned one at a time.
+ * The open/close runs on a ~24fps clock, the same one the off-the-clock decks
+ * use: stepped motion reads as turning through something rather than sliding.
  *
- * There is no dramatic tilt. An earlier pass leaned the deck back to 45 degrees
- * and it cost more legibility than it bought, so the depth cue is now a small
- * scale and fade — a deck you can still read (DESIGN.md R14).
- *
- * The track is absolutely positioned inside a fixed-height window, so opening a
- * card never changes the rail's own height. A rail that grew and shrank while
- * you scrolled would move the page under the reader.
+ * Entries sit in normal flow, so opening one moves the ones below it. That is
+ * fine here and a fixed-height window is not needed, because the rail is always
+ * shorter than the prose column beside it — the grid row is sized by the prose,
+ * so the page's own height never changes and the reader is never moved.
  */
 
 const FRAMES_PER_SECOND = 24;
 const STEP_MS = 1000 / FRAMES_PER_SECOND;
 
-/** Where the current card's top sits inside the window, as a fraction. */
-const ANCHOR = 0.3;
+/** Where down the viewport an entry counts as the one being read. */
+const FOCUS = 0.38;
 
-/** Cards this far from the current one have faded out entirely. */
-const FADE_OVER = 5;
-
-interface Card {
+interface Row {
   item: HTMLElement;
   detail: HTMLElement;
   /** Height of the collapsed row: the header alone. */
@@ -43,104 +37,115 @@ function clamp(v: number, lo: number, hi: number): number {
 
 export function mountTimelineDeck(
   graph: HTMLElement,
-  window_: HTMLElement,
-  track: HTMLElement,
   items: HTMLElement[],
   links: HTMLElement[],
-  region: HTMLElement,
 ): void {
   if (items.length === 0) {
     return;
   }
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const cards: Card[] = [];
+  const rows: Row[] = [];
   let position = 0;
   let raf = 0;
   let lastStep = 0;
-  let phase = 0;
   let speed = 0;
   let focusLock = -1;
-  // Scroll position is continuous, so a rest between two commits would leave
-  // both part-open. While scrolling they crossfade; once it stops, the deck
-  // settles onto exactly one card.
   let scrolling = false;
   let idleTimer = 0;
 
   function measure(): void {
-    cards.length = 0;
+    rows.length = 0;
     for (const item of items) {
       const detail = item.querySelector<HTMLElement>(".tl-detail");
       if (detail === null) {
         continue;
       }
 
-      // Measure open, then leave it to the paint below.
+      const previous = detail.style.height;
       detail.style.height = "auto";
-      detail.style.opacity = "1";
       const open = detail.scrollHeight;
       detail.style.height = "0px";
       const head = item.getBoundingClientRect().height;
-      cards.push({ item, detail, head, open });
+      detail.style.height = previous === "" ? "0px" : previous;
+      rows.push({ item, detail, head, open });
     }
-
-    const tallest = cards.reduce((m, c) => Math.max(m, c.open), 0);
-    const heads = cards.reduce((m, c) => m + c.head, 0);
-    // The window shows a few rows either side of the open one. Sized so the
-    // open card always fits, whichever one it is.
-    const visibleHeads = Math.min(heads, cards[0] !== undefined ? cards[0].head * 8 : 0);
-    window_.style.height = `${Math.round(visibleHeads + tallest)}px`;
   }
 
+  /**
+   * Which entry the page is on. Measured from the rail's own top plus the
+   * heights this module already knows, so it never reads back a layout it just
+   * wrote — reading positions that the open state had changed would let the
+   * open entry push itself off the focus line and oscillate.
+   */
   function scrollTarget(): number {
     if (focusLock >= 0) {
       return focusLock;
     }
 
-    const box = region.getBoundingClientRect();
-    const travel = Math.max(1, box.height - globalThis.innerHeight * 0.55);
-    const progress = clamp((globalThis.innerHeight * 0.3 - box.top) / travel, 0, 1);
-    const raw = progress * (cards.length - 1);
-    return scrolling ? raw : Math.round(raw);
+    const top = graph.getBoundingClientRect().top;
+    const focusY = window.innerHeight * FOCUS;
+
+    let y = 0;
+    let best = 0;
+    let bestDistance = Infinity;
+
+    rows.forEach((row, index) => {
+      const openness = clamp(1 - Math.abs(index - position), 0, 1);
+      const centre = top + y + row.head / 2;
+      const distance = Math.abs(centre - focusY);
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        best = index;
+      }
+      y += row.head + row.open * openness;
+    });
+
+    if (scrolling) {
+      // Nudge toward the neighbour the focus line is heading for, so the two
+      // crossfade instead of snapping.
+      const row = rows[best];
+      if (row !== undefined) {
+        const offset = clamp((focusY - (top + centreOf(best))) / row.head, -0.5, 0.5);
+        return clamp(best - offset, 0, rows.length - 1);
+      }
+    }
+
+    return best;
+  }
+
+  function centreOf(target: number): number {
+    let y = 0;
+    for (let i = 0; i < target; i += 1) {
+      const row = rows[i];
+      if (row === undefined) {
+        continue;
+      }
+      y += row.head + row.open * clamp(1 - Math.abs(i - position), 0, 1);
+    }
+    const row = rows[target];
+    return y + (row === undefined ? 0 : row.head / 2);
   }
 
   function paint(): void {
-    const wavePhase = phase * 0.26;
-    const amp = reduced.matches ? 0 : 0.35 + speed * 2.2;
-
     let y = 0;
-    let anchorY = 0;
+    let currentY = 0;
+    let total = 0;
 
-    cards.forEach((card, index) => {
-      const d = index - position;
-      const open = clamp(1 - Math.abs(d), 0, 1);
-      const away = Math.abs(d);
-
-      card.detail.style.height = `${(card.open * open).toFixed(1)}px`;
-      card.detail.style.opacity = open.toFixed(3);
+    rows.forEach((row, index) => {
+      const openness = clamp(1 - Math.abs(index - position), 0, 1);
+      row.detail.style.height = `${(row.open * openness).toFixed(1)}px`;
+      row.detail.style.opacity = openness.toFixed(3);
+      row.item.dataset.current = String(openness > 0.5);
 
       if (index === Math.round(position)) {
-        anchorY = y;
+        currentY = y + row.head / 2;
       }
-
-      // Depth cue: a small recede and fade, no dramatic tilt.
-      const scale = 1 - Math.min(0.1, away * 0.03);
-      const tilt = reduced.matches ? 0 : Math.sin(wavePhase + index * 0.85) * amp;
-      const float = reduced.matches ? 0 : Math.sin(wavePhase * 1.15 + index * 0.7) * amp;
-
-      card.item.style.transform = `translateY(${float.toFixed(2)}px) scale(${scale.toFixed(3)}) rotate(${tilt.toFixed(2)}deg)`;
-      card.item.style.opacity = clamp(1 - away / FADE_OVER, 0, 1).toFixed(3);
-      card.item.dataset.current = String(open > 0.5);
-      // A row faded out should not sit over one you can read.
-      card.item.style.pointerEvents = away > FADE_OVER - 0.6 ? "none" : "auto";
-
-      y += card.head + card.open * open;
+      y += row.head + row.open * openness;
     });
 
-    const windowHeight = window_.getBoundingClientRect().height;
-    track.style.transform = `translateY(${(windowHeight * ANCHOR - anchorY).toFixed(1)}px)`;
-
-    graph.style.setProperty("--tl-progress", String(position / Math.max(1, cards.length - 1)));
+    total = Math.max(1, y);
+    graph.style.setProperty("--tl-progress", String(clamp(currentY / total, 0, 1)));
     graph.style.setProperty("--tl-speed", speed.toFixed(3));
   }
 
@@ -158,7 +163,7 @@ export function mountTimelineDeck(
     if (now - lastStep >= STEP_MS) {
       // Advance the grid by one step rather than snapping it to now: a step is
       // 41.7ms and a display frame 16.7ms, so snapping rounds every step up to
-      // three frames and the deck turns at 20fps, not 24.
+      // three frames and it runs at 20fps, not 24.
       lastStep = now - lastStep > STEP_MS * 3 ? now : lastStep + STEP_MS;
       const delta = target - position;
       position += delta * 0.45;
@@ -169,7 +174,6 @@ export function mountTimelineDeck(
       if (speed < 0.004) {
         speed = 0;
       }
-      phase += 1;
       paint();
     }
 
@@ -182,12 +186,15 @@ export function mountTimelineDeck(
     }
   }
 
-  globalThis.addEventListener(
+  window.addEventListener(
     "scroll",
     () => {
       scrolling = true;
-      globalThis.clearTimeout(idleTimer);
-      idleTimer = globalThis.setTimeout(() => {
+      window.clearTimeout(idleTimer);
+      // Once scrolling stops the deck settles onto exactly one entry; scroll
+      // position is continuous, so a rest between two would leave both part
+      // open.
+      idleTimer = window.setTimeout(() => {
         scrolling = false;
         schedule();
       }, 140);
@@ -195,7 +202,7 @@ export function mountTimelineDeck(
     },
     { passive: true },
   );
-  globalThis.addEventListener("resize", () => {
+  window.addEventListener("resize", () => {
     measure();
     schedule();
   });
@@ -214,6 +221,7 @@ export function mountTimelineDeck(
 
   measure();
   schedule();
+
   // Webfonts landing late change every row's height.
   if ("fonts" in document) {
     void document.fonts.ready.then(() => {

@@ -1048,9 +1048,13 @@ code {
   gap: var(--space-8) var(--space-7);
 }
 
+/*
+ * Not sticky. The entries have to travel past the focus line for the next one
+ * to open as you reach it; pinned, the rail never moves relative to the
+ * viewport and the same entry stays open the whole way down.
+ */
 .project-rail {
-  position: sticky;
-  top: calc(var(--nav-h) + var(--space-4));
+  position: relative;
 }
 
 .project-rail .section-head {
@@ -1063,7 +1067,6 @@ code {
   position: relative;
   --tl-progress: 0;
   --tl-speed: 0;
-  padding-left: var(--space-5);
 }
 
 /* The spine the deck is dealt off: still a vertical git branch. */
@@ -1103,108 +1106,117 @@ code {
   border-radius: 999px;
 }
 
-/* --- the deck ------------------------------------------------------------- */
+/* --- the branch ----------------------------------------------------------- */
 
-/*
- * A fixed-height window onto the history. The track inside is absolutely
- * positioned and moved from src/timeline.ts, so opening a card never changes
- * the rail's own height — a rail that grew and shrank while you scrolled would
- * move the page under the reader.
- */
-.tl-window {
-  position: relative;
-  overflow: hidden;
-  /* Rows leaving the window fade out rather than being cut off mid-letter. */
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
-  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
-}
-
-.tl-deck {
-  position: absolute;
-  inset: 0 0 auto 0;
+.tl-list {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-1);
+  list-style: none;
   margin: 0;
   padding: 0;
-  list-style: none;
 }
 
 .tl-item {
-  transform-origin: 0 50%;
-  will-change: transform, opacity;
+  position: relative;
 }
 
-/* The same dark surface the rest of the site uses. */
-.tl-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-4);
-  background: var(--surface-raised);
-  border: 1px solid var(--border);
+/*
+ * One row of the branch. The dot column is fixed so every dot lands on the
+ * spine behind it, whatever the title does.
+ */
+.tl-node {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: 0 var(--space-3);
+  padding: var(--space-2) var(--space-3) var(--space-2) 0;
   border-radius: var(--radius-md);
   color: inherit;
   text-decoration: none;
 }
 
-.tl-item[data-current="true"] .tl-card {
-  border-color: var(--border-interactive);
-  background: var(--surface-sunken);
+.tl-item[data-current="true"] .tl-node {
+  background: var(--surface-raised);
+  padding-right: var(--space-4);
 }
 
-a.tl-card:hover {
-  border-color: var(--action);
+a.tl-node:hover {
+  background: var(--surface-raised);
 }
 
-.tl-card-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
+/* The commit dot, sitting on the trunk. */
 .tl-mark {
-  width: 11px;
-  height: 11px;
-  flex: none;
+  grid-row: 1 / span 2;
+  position: relative;
+  width: 16px;
+  margin-top: 0.45rem;
+}
+
+.tl-mark::before {
+  content: "";
+  position: absolute;
+  left: 1px;
+  top: 0;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: var(--surface-page);
   border: 2px solid var(--accent);
 }
 
-.tl-item[data-kind="release"] .tl-mark {
+/* A release is a filled commit on the trunk; a feature is an open node. */
+.tl-item[data-kind="release"] .tl-mark::before {
   background: var(--action);
   border-color: var(--action);
 }
 
+/* Date and counter share the first line, the title takes the second. Letting
+   these wrap freely put the counter in a different place on every row. */
+.tl-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: var(--space-3);
+}
+
 .tl-date {
+  grid-area: 1 / 1;
   color: var(--text-subtle);
   font-family: var(--font-mono);
   font-size: 0.72rem;
 }
 
+.tl-title {
+  grid-area: 2 / 1 / 3 / 3;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
 .tl-step {
-  margin-left: auto;
+  grid-area: 1 / 2;
   color: var(--text-subtle);
   font-family: var(--font-mono);
   font-size: 0.68rem;
-}
-
-.tl-title {
-  font-family: var(--font-display);
-  font-size: 1rem;
-  line-height: 1.3;
 }
 
 .tl-item[data-current="true"] .tl-title {
   color: var(--action-hover);
 }
 
-/* Height and opacity are written per frame by the scrub; only the current
-   card is open, and between two cards the two crossfade. */
+/*
+ * Height and opacity are written per frame by the scrub, stepped at 24fps.
+ * Only the current entry is open; two are only ever part-open mid-scrub, as
+ * the crossfade between them.
+ */
 .tl-detail {
   display: block;
   overflow: hidden;
   height: 0;
+}
+
+.tl-detail-inner {
+  display: block;
+  min-height: 0;
 }
 
 .tl-summary {
@@ -1686,9 +1698,6 @@ body.guest-overlay-open {
     gap: var(--space-7);
   }
 
-  .project-rail {
-    position: static;
-  }
 
   .guest-title-actions {
     margin-left: 0;

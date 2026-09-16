@@ -171,16 +171,14 @@ function renderTimeline(mount: HTMLElement): void {
   const graph = document.createElement("div");
   graph.className = "tl-graph";
 
+  // The travelling glow on the spine. One element, moved by transform.
   const glow = document.createElement("span");
   glow.className = "tl-glow";
   glow.setAttribute("aria-hidden", "true");
   graph.appendChild(glow);
 
-  const deckWindow = document.createElement("div");
-  deckWindow.className = "tl-window";
-
-  const deck = document.createElement("ol");
-  deck.className = "tl-deck";
+  const list = document.createElement("ol");
+  list.className = "tl-list";
 
   const items: HTMLElement[] = [];
   const links: HTMLElement[] = [];
@@ -190,37 +188,47 @@ function renderTimeline(mount: HTMLElement): void {
     item.className = "tl-item";
     item.dataset.kind = event.kind;
 
-    const card = document.createElement(event.href === undefined ? "span" : "a");
-    card.className = "tl-card";
-    if (card instanceof HTMLAnchorElement && event.href !== undefined) {
-      card.href = event.href;
-      card.rel = "noopener";
+    const node = document.createElement(event.href === undefined ? "span" : "a");
+    node.className = "tl-node";
+    if (node instanceof HTMLAnchorElement && event.href !== undefined) {
+      node.href = event.href;
+      node.rel = "noopener";
     }
 
-    const head = document.createElement("span");
-    head.className = "tl-card-head";
-
+    // The dot sits on the spine; it is the commit on the branch.
     const mark = document.createElement("span");
     mark.className = "tl-mark";
     mark.setAttribute("aria-hidden", "true");
+
+    const head = document.createElement("span");
+    head.className = "tl-head";
 
     const date = document.createElement("time");
     date.className = "tl-date";
     date.dateTime = event.date;
     date.textContent = event.date;
 
-    const step = document.createElement("span");
-    step.className = "tl-step";
-    step.textContent = `${index + 1} / ${visible.length}`;
-    head.append(mark, date, step);
-
     const title = document.createElement("span");
     title.className = "tl-title";
     title.textContent = event.title;
 
+    const step = document.createElement("span");
+    step.className = "tl-step";
+    step.textContent = `${index + 1} / ${visible.length}`;
+    head.append(date, title, step);
+
+    // One wrapper only: the open/close is driven by the wrapper's height, and a
+    // second direct child would sit outside it and escape the collapse.
     const detail = document.createElement("span");
-    detail.className = "tl-summary";
-    detail.textContent = event.detail;
+    detail.className = "tl-detail";
+
+    const inner = document.createElement("span");
+    inner.className = "tl-detail-inner";
+
+    const summary = document.createElement("span");
+    summary.className = "tl-summary";
+    summary.textContent = event.detail;
+    inner.appendChild(summary);
 
     const meta = document.createElement("span");
     meta.className = "tl-meta";
@@ -246,25 +254,20 @@ function renderTimeline(mount: HTMLElement): void {
       meta.appendChild(open);
     }
 
-    // Only the current card is expanded, so the detail and its actions live in
-    // one wrapper the scrub can open and close as a unit.
-    const body = document.createElement("span");
-    body.className = "tl-detail";
-    body.append(detail, meta);
+    inner.appendChild(meta);
+    detail.appendChild(inner);
 
-    card.append(head, title, body);
-    item.appendChild(card);
-    deck.appendChild(item);
+    node.append(mark, head, detail);
+    item.appendChild(node);
+    list.appendChild(item);
     items.push(item);
-    links.push(card);
+    links.push(node);
   });
 
-  deckWindow.appendChild(deck);
-  graph.appendChild(deckWindow);
+  graph.appendChild(list);
   mount.appendChild(graph);
 
-  const region = mount.closest<HTMLElement>(".project-layout") ?? graph;
-  mountTimelineDeck(graph, deckWindow, deck, items, links, region);
+  mountTimelineDeck(graph, items, links);
 }
 
 document.querySelectorAll<HTMLElement>("[data-timeline]").forEach(renderTimeline);

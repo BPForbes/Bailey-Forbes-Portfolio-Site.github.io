@@ -498,8 +498,9 @@ anchor the label instead of vanishing into it.
 | Exception | Reason | How to evaluate |
 |---|---|---|
 | The project timeline's scrub glow | R14 asks a decorative effect to justify itself. This one reports scroll: it sits on the spine, its position tracks reading position and its length and brightness track scroll speed, so a fast scrub streaks and reading barely shows it. Nothing depends on it — every state it hints at is also carried by the active entry's own styling. | It must decay to zero once the page stops moving; a glow frozen part-lit means the settle loop is broken. Under `prefers-reduced-motion` the graph is marked still and the glow is never drawn (R26). |
-| Only the current timeline card is expanded | The history stays scannable as dates and titles while exactly one commit is readable, which is what keeps an eighteen-entry rail from being a wall. Scrolling scrubs which one is open, and so does focusing a card, so every entry is reachable without a pointer. | Exactly one card may have a non-zero detail height once scrolling has settled; two part-open cards are only correct mid-scrub, as the crossfade. Every card stays in the DOM in source order, so assistive technology reads the whole history regardless of which is open. |
-| The rail's window has a fixed height and its track is absolutely positioned | Opening a card would otherwise change the rail's height, which changes the page's height, which moves the reader under their own scroll — and since scroll position is what picks the open card, that is a feedback loop. | The window's measured height must not change across a full scrub. |
+| Only the current timeline entry is expanded | The history stays scannable as dates and titles while exactly one commit is readable, which is what keeps an eighteen-entry rail from being a wall. Scrolling scrubs which one is open, and so does focusing a card, so every entry is reachable without a pointer. | Exactly one card may have a non-zero detail height once scrolling has settled; two part-open cards are only correct mid-scrub, as the crossfade. Every card stays in the DOM in source order, so assistive technology reads the whole history regardless of which is open. |
+| The rail is a plain column, not pinned | Entries have to travel past the focus line for the next one to open as you reach it; pinned, the rail never moves relative to the viewport and one entry stays open the whole way down. The cost is that the rail ends before the prose column does, leaving the right side empty low on a long page — an ordinary sidebar, and the readable choice. | Scroll the page: the open entry must change, and must stay on screen while any of the rail is. |
+| Opening an entry changes the rail's height | Entries are in normal flow, so the one below moves. That is safe only because the rail is always shorter than the prose column beside it, so the grid row is sized by the prose and the page's own height never changes — if it did, the reader would be moved by the thing their scroll position controls. | If a project page ever has a rail taller than its prose column, this is void: opening an entry would resize the page and feed back into the scroll that picked it. |
 | The timeline cards float continuously | R27 warns against constant decorative motion beside reading content, and this is the exception to it, asked for deliberately. The amplitude is scaled to scroll activity: about 0.35° at rest, roughly 1° during a scrub, so the resting state is a float rather than an animation competing with the prose. It stops dead under `prefers-reduced-motion`. | With reduced motion set, two samples 700ms apart must give a byte-identical transform. If the resting amplitude is ever raised much past 1°, it stops being a float and R27 applies again. A previous pass tipped the deck back to 45° for depth; it cost more legibility than it bought and was removed, so the depth cue is a small scale and fade. |
 | The card stack's geometry lives in `src/deck.ts`, not the stylesheet | Moving between cards is a transition, not a swap: every card is posed from one continuous progress value so a drag and a button press run the same code, and half way through a drag the stack really is half way between two states. CSS can name the resting poses but cannot be sampled at arbitrary points between them. | The stylesheet still owns how a card *looks*; only the poses and the tween moved. If a pose is ever duplicated in CSS, one of the two is wrong. The no-JS path does not depend on it — unstacked cards are a plain list. |
 | The deal is sampled at ~24fps rather than every display frame | Asked for, and the point of it: stepped motion reads as cards being dealt one at a time, where a smooth 60fps tween reads as a single glide. `FRAMES_PER_SECOND` in `deck.ts` is the one place to change it. | Sample the front card's transform across a transition: there should be about eight distinct poses for a 340ms deal, with a mean gap near 41.7ms. Derive the step from elapsed time, not from counting animation frames — counting rounds every step up to three display frames and yields 20fps. |
@@ -544,14 +545,14 @@ Chromium (Playwright), not read off the source:
   threshold advances while a short nudge snaps back and clears its inline
   transform; all five cards stay in the accessibility tree at their source
   position whichever is on top; and no page-level horizontal overflow.
-- **Timeline deck**, on three project pages: newest commit first on every one,
-  including ties on the same date; scrolling scrubs it at 24.0fps measured, on
-  one clock shared by position, float and paint; exactly one card carries a
-  non-zero detail height once settled, with every other at 0; the rail's window
-  measured one single height across a full scrub, so the page never moves under
-  the reader; cards use the site's own dark surfaces; the float peaks at about
-  1°; focusing the seventh card opens card 7; and under reduced motion the deck
-  is byte-identically still between frames.
+- **Timeline branch**, on three project pages: newest commit first on every
+  one, including ties on the same date; the spine renders and every dot lands
+  on it; scrolling opens entries in order and the open one stays on screen for
+  the whole length of the rail; exactly one entry carries a non-zero detail
+  height once settled, with every other at 0; no entry's box overlaps its
+  neighbour at any scroll position; the current index does not oscillate while
+  the page is idle; focusing the seventh entry opens entry 7; and under reduced
+  motion the open heights are byte-identical between frames.
 - **Icons**: 193 rendered across the eight pages. Every one is `aria-hidden`,
   `focusable="false"`, has a non-zero box, inherits `currentColor`, and none is
   the whole accessible name of the control it sits in. The lab's error panel
