@@ -57,6 +57,28 @@
             tenant database, which is the isolation this page describes.
           </figcaption>
         </figure>
+        <p>
+          That formatting bar is a live Markdown-plus-LaTeX pipeline, not a static toolbar: raw
+          source typed in the composer — <code>$$N(t) = N_0 e^{-\lambda t}$$</code>, a checklist,
+          bold and inline code — round-trips through the API and comes back rendered, math set by
+          KaTeX, in the same message bubble.
+        </p>
+        <figure class="shot">
+          <img
+            src="/images/hc-latex.webp"
+            alt="A sent chat message rendering Markdown and LaTeX together: a display equation N(t) equals N-naught times e to the negative lambda t, an inline fraction ln 2 over t one-half, bold text, a checked and an unchecked checklist item, inline code, and italic text, all inside one message bubble with a UTC timestamp."
+            width="1400"
+            height="1006"
+            loading="lazy"
+          />
+          <figcaption>
+            Same run, commit <code>d3e7878</code>, 16 Sep 2026 — a message written and sent through
+            the composer to exercise its formatting, not organic chat content. The raw source was
+            Markdown with two <code>$…$</code>/<code>$$…$$</code> LaTeX spans and a
+            <code>- [x]</code>/<code>- [ ]</code> checklist; KaTeX renders the math and
+            markdown-it the rest, sanitized with DOMPurify before it reaches the DOM.
+          </figcaption>
+        </figure>
       </section>
 
       <section class="prose">
