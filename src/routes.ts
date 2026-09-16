@@ -1,8 +1,10 @@
 export const ROUTES = {
   home: "/home/",
+  about: "/home/#about",
   projects: "/projects/",
   timeline: "/projects/",
   experience: "/home/#experience",
+  contact: "/home/#contact",
 } as const;
 
 export const PROJECT_PATHS = {

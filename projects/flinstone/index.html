@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flinstone Kernel — Bailey Forbes</title>
-  <meta name="description" content="Flinstone: portable C/Assembly kernel with versioned contracts and a documented 2.2–4.2 release train from git history." />
+  <meta name="description" content="Flinstone: portable C/Assembly kernel with versioned contracts and a documented 2.2–4.5 release train from git history." />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400&family=Sora:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body data-page="projects">
@@ -24,30 +24,83 @@
           so a release can move without silently breaking the last one.
         </p>
         <div class="hero-actions">
-          <button type="button" class="btn btn-primary" data-guest-launch="flinstone">Launch lab</button>
-          <a class="btn btn-ghost" href="https://github.com/BPForbes/Bailey-Forbes-Flinstone">Kernel repo</a>
+          <a class="btn btn-primary" href="#live-lab"><svg class="icon" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80L0 432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg>Run the kernel lab</a>
+          <a class="btn btn-ghost" href="https://github.com/BPForbes/Bailey-Forbes-Flinstone"><svg class="icon" viewBox="0 0 496 512" aria-hidden="true" focusable="false"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>Source on GitHub</a>
         </div>
       </header>
 
       <div data-lang-bar="flinstone"></div>
 
+      <div class="project-layout">
+        <div class="project-main">
       <section id="live-lab">
         <div class="section-head">
-          <h2>Live lab</h2>
+          <h2><svg class="icon icon-head" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80L0 432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg>Run the kernel lab</h2>
           <p>
             The freestanding x86 kernel lab is published from
             <a href="https://github.com/BPForbes/Bailey-Forbes-Flinstone">Bailey-Forbes-Flinstone</a>
-            to GitHub Pages and loads here as a guest. Launch lab opens this window fullscreen.
-            If the guest does not boot on first visit, open the
-            <a href="https://bpforbes.github.io/Bailey-Forbes-Flinstone/">lab top-level</a>
-            once (cross-origin isolation), then return here.
+            to GitHub Pages and boots below as a guest window.
           </p>
         </div>
         <div data-guest-window data-guest="flinstone" data-guest-solo id="live-lab-window"></div>
+        <p class="note">
+          <svg class="icon icon-note" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480L40 480c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24l0 112c0 13.3 10.7 24 24 24s24-10.7 24-24l0-112c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg><strong>Known limitation.</strong> The lab needs cross-origin isolation, which some
+          browsers only grant after the page has been visited on its own origin. If the window
+          above reports that it could not attach, open
+          <a href="https://bpforbes.github.io/Bailey-Forbes-Flinstone/">the lab top-level</a>
+          once and come back — the window has a reload button for exactly this.
+        </p>
+        <p class="note">
+          <svg class="icon icon-note" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M352 256c0 22.2-1.2 43.6-3.3 64l-185.3 0c-2.2-20.4-3.3-41.8-3.3-64s1.2-43.6 3.3-64l185.3 0c2.2 20.4 3.3 41.8 3.3 64zm28.8-64l123.1 0c5.3 20.5 8.1 41.9 8.1 64s-2.8 43.5-8.1 64l-123.1 0c2.1-20.6 3.2-42 3.2-64s-1.1-43.4-3.2-64zm112.6-32l-116.7 0c-10-63.9-29.8-117.4-55.3-151.6c78.3 20.7 142 77.5 171.9 151.6zm-149.1 0l-176.6 0c6.1-36.4 15.5-68.6 27-94.7c10.5-23.6 22.2-40.7 33.5-51.5C239.4 3.2 248.7 0 256 0s16.6 3.2 27.8 13.8c11.3 10.8 23 27.9 33.5 51.5c11.6 26 20.9 58.2 27 94.7zm-209 0L18.6 160C48.6 85.9 112.2 29.1 190.6 8.4C165.1 42.6 145.3 96.1 135.3 160zM8.1 192l123.1 0c-2.1 20.6-3.2 42-3.2 64s1.1 43.4 3.2 64L8.1 320C2.8 299.5 0 278.1 0 256s2.8-43.5 8.1-64zM194.7 446.6c-11.6-26-20.9-58.2-27-94.6l176.6 0c-6.1 36.4-15.5 68.6-27 94.6c-10.5 23.6-22.2 40.7-33.5 51.5C272.6 508.8 263.3 512 256 512s-16.6-3.2-27.8-13.8c-11.3-10.8-23-27.9-33.5-51.5zM135.3 352c10 63.9 29.8 117.4 55.3 151.6C112.2 482.9 48.6 426.1 18.6 352l116.7 0zm358.1 0c-30 74.1-93.6 130.9-171.9 151.6c25.5-34.2 45.2-87.7 55.3-151.6l116.7 0z"/></svg><strong>How it is served.</strong> The lab is published over HTTPS and
+          boots from a Cloudflare Worker on first visit; visitors share a chat room backed by a
+          Cloudflare Durable Object, and the guest falls back to a same-origin BroadcastChannel
+          if that hub is unreachable. Guest DNS resolves through same-origin <code>/lab-dns</code>
+          first and only then Cloudflare DoH.
+        </p>
+      </section>
+
+      <section class="prose" aria-labelledby="fl-run-title">
+        <h2 id="fl-run-title"><svg class="icon icon-head" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path d="M9.4 86.6C-3.1 74.1-3.1 53.9 9.4 41.4s32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 9.4 86.6zM256 416l288 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-288 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/></svg>Running it</h2>
+        <p>
+          The kernel builds and runs on a Linux host as well as in the browser lab.
+          <code>make all</code> produces <code>BPForbes_Flinstone_Shell</code>; the session below
+          is that binary reporting its version and dumping the contract bundle — the versioned
+          P0–P9 surfaces this page describes, with their revisions.
+        </p>
+        <div class="transcript">
+          <p class="transcript-bar">BPForbes_Flinstone_Shell · x86-64 host build</p>
+          <pre><code><b>$ make all &amp;&amp; ./BPForbes_Flinstone_Shell</b>
+user_db: refusing known default passwords; set FL_USERS_LAB_DEFAULTS=1 for lab seeds
+Loaded disk (FAT32 image FLINT.DAT): drive.img | Clusters: 32 | Cluster Size: 512 bytes
+[drivers] block: REAL | kbd: REAL | display: REAL | timer: REAL | pic: REAL | pci: REAL
+ [INTERACTIVE MODE] Type &#x27;exit&#x27; to leave interactive mode.
+
+<b>shell&gt; version</b>
+Shell version: 4.5.4
+
+<b>shell&gt; contracts</b>
+contracts: bundle rev 9, P0 foundations rev 5
+  P3 networking: umbrella rev 18, wire rev 4 (extends P0-P1; P2-3 authz ops only)
+  P4 drivers: umbrella rev 4 (extends P0-P1; no P3 include)
+  P8 virtualization: umbrella rev 2 (extends P0 only; no P4 include)
+    browser artifact: interchange rev 4, JSON schema 2, marker FLINTSTONE_KERNEL_BOOT_OK
+  P9 hardening: umbrella rev 2 (extends P0 only; no P8 include)
+  fl_result_t: OK=0 ERR=-1 INVAL=-22 NOSYS=-38
+  surfaces (6):
+    0 DRIVER_OPS      1 NETDEV      2 LOG_SINK
+    3 AUTHZ           4 FS_JAIL     5 BROWSER_ARTIFACT
+  shell authz: FL_PRINCIPAL=guest denies destructive builtins and
+    foreign execvp before dispatch
+</code></pre>
+        </div>
+        <p class="evidence-note">
+          Real output, captured 16 Sep 2026 from a host build at commit <code>da46784</code>.
+          The surface list is reflowed onto two lines to fit; nothing else is edited.
+        </p>
       </section>
 
       <section class="prose">
-        <h2>What it is</h2>
+        <h2><svg class="icon icon-head" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 40c-35.3 0-64 28.7-64 64l-40 0c-13.3 0-24 10.7-24 24s10.7 24 24 24l40 0 0 56-40 0c-13.3 0-24 10.7-24 24s10.7 24 24 24l40 0 0 56-40 0c-13.3 0-24 10.7-24 24s10.7 24 24 24l40 0c0 35.3 28.7 64 64 64l0 40c0 13.3 10.7 24 24 24s24-10.7 24-24l0-40 56 0 0 40c0 13.3 10.7 24 24 24s24-10.7 24-24l0-40 56 0 0 40c0 13.3 10.7 24 24 24s24-10.7 24-24l0-40c35.3 0 64-28.7 64-64l40 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-40 0 0-56 40 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-40 0 0-56 40 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-40 0c0-35.3-28.7-64-64-64l0-40c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 40-56 0 0-40c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 40-56 0 0-40zM160 128l192 0c17.7 0 32 14.3 32 32l0 192c0 17.7-14.3 32-32 32l-192 0c-17.7 0-32-14.3-32-32l0-192c0-17.7 14.3-32 32-32zm192 32l-192 0 0 192 192 0 0-192z"/></svg>What it is</h2>
         <p>
           The public kernel repo opens 28 May 2025 as a C filesystem and shell. The resume dates
           the project to 2023. The C line grew a versioning machine:
@@ -56,13 +109,13 @@
         <p>
           About 70 versioned contracts cover networking, storage, drivers, diagnostics, and
           identity. Backward compatibility is explicit — metadata and migration notes, not
-          “we’ll fix the callers.” Four core releases on that policy are 4.0.0, 4.0.1, 4.1.x,
-          and 4.2.0, after a 2.x/3.x train that installed the versioning itself.
+          “we’ll fix the callers.” The 4.x train on that policy runs 4.0.0, 4.0.1, 4.1.x, 4.2.0, 4.3.0, 4.4.0 and
+          4.5.0 through 4.5.4, after a 2.x/3.x train that installed the versioning itself.
         </p>
       </section>
 
       <section class="prose">
-        <h2>How the system grew</h2>
+        <h2><svg class="icon icon-head" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M80 104a24 24 0 1 0 0-48 24 24 0 1 0 0 48zm80-24c0 32.8-19.7 61-48 73.3l0 87.8c18.8-10.9 40.7-17.1 64-17.1l96 0c35.3 0 64-28.7 64-64l0-6.7C307.7 141 288 112.8 288 80c0-44.2 35.8-80 80-80s80 35.8 80 80c0 32.8-19.7 61-48 73.3l0 6.7c0 70.7-57.3 128-128 128l-96 0c-35.3 0-64 28.7-64 64l0 6.7c28.3 12.3 48 40.5 48 73.3c0 44.2-35.8 80-80 80s-80-35.8-80-80c0-32.8 19.7-61 48-73.3l0-6.7 0-198.7C19.7 141 0 112.8 0 80C0 35.8 35.8 0 80 0s80 35.8 80 80zm232 0a24 24 0 1 0 -48 0 24 24 0 1 0 48 0zM80 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/></svg>How the system grew</h2>
         <p>
           <strong>Hosted filesystem, then a machine.</strong> February 2026 turns the shell into
           an OS sketch: ASM memory primitives, Facade/Strategy/Command file management, port I/O
@@ -73,8 +126,9 @@
           <strong>Contracts before more surface.</strong> 3.3.0 (12 May) splits audit from
           command history and documents fs_jail. 4.0.0 (18 May) is the major bump: inheritable
           P0–P9 bundles (foundations through hardening). 4.1.0 wires identity — SQLite users,
-          PBKDF2, login/su/sudo, elevation. 4.1.1 is a 50-issue hardening sweep. 4.2.0 (19 Jun)
-          is the networking milestone.
+          PBKDF2, login/su/sudo, elevation. 4.1.1 is a 50-issue hardening sweep. 4.2.0 (19 Jun) is the networking
+          milestone, and the September 4.3–4.5 train takes it to production Wi-Fi, a
+          browser-kernel contract, and a freestanding boot path.
         </p>
         <p>
           <strong>Networking from the metal up.</strong> The 4.2.0 <code>.ver</code> file lists
@@ -87,39 +141,62 @@
 
       <section>
         <div class="section-head">
-          <h2>Named releases</h2>
-          <p>From <code>version/entries</code> on Bailey-Forbes-Flinstone.</p>
+          <h2><svg class="icon icon-head" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M0 80L0 229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7L48 32C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>Named releases</h2>
+          <p>From <code>version/entries</code> on Bailey-Forbes-Flinstone, GM=1 promotes only.</p>
         </div>
         <div class="experience">
           <article class="entry">
-            <div class="entry-head"><h3>2.2.4 – 3.2.3</h3><p class="when">2026-05-11 – 05-12</p></div>
+            <div class="entry-head"><h3><svg class="icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M0 80L0 229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7L48 32C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>2.2.4 – 3.2.3</h3><p class="when">2026-05-11 – 05-12</p></div>
             <p>Syscall-style shell dispatch, FAT32 host volumes, AArch64/Pi defaults, disk-backed history, OS roadmap.</p>
           </article>
           <article class="entry">
-            <div class="entry-head"><h3>3.3.0</h3><p class="when">2026-05-12</p></div>
+            <div class="entry-head"><h3><svg class="icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M0 80L0 229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7L48 32C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>3.3.0</h3><p class="when">2026-05-12</p></div>
             <p>Contract surfaces for fs_jail and audit; FL1 history vs post-exec audit log.</p>
           </article>
           <article class="entry">
-            <div class="entry-head"><h3>4.0.0 / 4.0.1</h3><p class="when">2026-05-18 – 05-19</p></div>
+            <div class="entry-head"><h3><svg class="icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M0 80L0 229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7L48 32C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>4.0.0 / 4.0.1</h3><p class="when">2026-05-18 – 05-19</p></div>
             <p>Inheritable system contracts; then IPC/VFS/shell hardening and serial <code>-j1</code> default builds.</p>
           </article>
           <article class="entry">
-            <div class="entry-head"><h3>4.1.0 / 4.1.1</h3><p class="when">2026-05-23 – 05-24</p></div>
+            <div class="entry-head"><h3><svg class="icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M0 80L0 229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7L48 32C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>4.1.0 / 4.1.1</h3><p class="when">2026-05-23 – 05-24</p></div>
             <p>Identity stack; then issues #169–#222 (ARM ABI, sessions, batch argv, SHA-256 fetches, threadpool).</p>
           </article>
           <article class="entry">
-            <div class="entry-head"><h3>4.2.0</h3><p class="when">2026-06-19</p></div>
-            <p>P3 networking, server foundations, WSL and native Linux integration. Latest GM promote on main.</p>
+            <div class="entry-head"><h3><svg class="icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M0 80L0 229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7L48 32C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>4.2.0</h3><p class="when">2026-06-19</p></div>
+            <p>P3 networking, server foundations, WSL and native Linux integration.</p>
+          </article>
+          <article class="entry">
+            <div class="entry-head"><h3><svg class="icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M0 80L0 229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7L48 32C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>4.3.0</h3><p class="when">2026-09-13</p></div>
+            <p>Production Wi-Fi: 802.11ax drivers, WPA2 and WPA3-SAE supplication, FullMAC and nl80211 backends, TWT, and post-association DHCP.</p>
+          </article>
+          <article class="entry">
+            <div class="entry-head"><h3><svg class="icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M0 80L0 229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7L48 32C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>4.4.0</h3><p class="when">2026-09-14</p></div>
+            <p>Schema-versioned P8 browser-kernel artifact contract, a static lab harness, and a fail-closed CI promotion gate.</p>
+          </article>
+          <article class="entry">
+            <div class="entry-head"><h3><svg class="icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M0 80L0 229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7L48 32C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>4.5.0</h3><p class="when">2026-09-14</p></div>
+            <p>Freestanding x86-64 BIOS boot candidate with long-mode entry, lab identity, and concurrent sessions. States plainly that the guest is not the hosted ELF.</p>
+          </article>
+          <article class="entry">
+            <div class="entry-head"><h3><svg class="icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M0 80L0 229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7L48 32C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>4.5.1 – 4.5.3</h3><p class="when">2026-09-15</p></div>
+            <p>Relay CI stabilised and Cloudflare Worker artifacts for first-visit lab boot; the QMP <code>cont</code> timeout fixed; guest DNS moved to same-origin <code>/lab-dns</code> with a Cloudflare DoH fallback.</p>
+          </article>
+          <article class="entry">
+            <div class="entry-head"><h3><svg class="icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M0 80L0 229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7L48 32C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>4.5.4</h3><p class="when">2026-09-15</p></div>
+            <p>Sandboxed Emscripten Flinstone Shell as the default lab, and a shared relay room on a Cloudflare Durable Object with BroadcastChannel fallback. Latest GM promote on main.</p>
           </article>
         </div>
       </section>
-
-      <section>
-        <div class="section-head">
-          <h2>Kernel timeline</h2>
         </div>
-        <div data-timeline data-project="flinstone" data-hide-project-chip></div>
-      </section>
+
+        <aside class="project-rail" aria-labelledby="tl-flinstone-title">
+          <div class="section-head">
+            <h2 id="tl-flinstone-title"><svg class="icon icon-head" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M80 104a24 24 0 1 0 0-48 24 24 0 1 0 0 48zm80-24c0 32.8-19.7 61-48 73.3l0 87.8c18.8-10.9 40.7-17.1 64-17.1l96 0c35.3 0 64-28.7 64-64l0-6.7C307.7 141 288 112.8 288 80c0-44.2 35.8-80 80-80s80 35.8 80 80c0 32.8-19.7 61-48 73.3l0 6.7c0 70.7-57.3 128-128 128l-96 0c-35.3 0-64 28.7-64 64l0 6.7c28.3 12.3 48 40.5 48 73.3c0 44.2-35.8 80-80 80s-80-35.8-80-80c0-32.8 19.7-61 48-73.3l0-6.7 0-198.7C19.7 141 0 112.8 0 80C0 35.8 35.8 0 80 0s80 35.8 80 80zm232 0a24 24 0 1 0 -48 0 24 24 0 1 0 48 0zM80 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/></svg>Kernel timeline</h2>
+            <p>Compiled from public git history. An entry opens as you reach it; follow it to the commit.</p>
+          </div>
+          <div data-timeline data-project="flinstone" data-hide-project-chip></div>
+        </aside>
+      </div>
     </div>
   </main>
   <footer class="site-footer" data-site-footer></footer>

@@ -7,8 +7,6 @@ export type ProjectId =
   | "keyquorum"
   | "qpu";
 
-export type TimelineFilter = "all" | ProjectId;
-
 export interface LanguageShare {
   name: string;
   pct: number;
