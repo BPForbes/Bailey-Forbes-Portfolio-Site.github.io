@@ -1053,8 +1053,15 @@ code {
  * to open as you reach it; pinned, the rail never moves relative to the
  * viewport and the same entry stays open the whole way down.
  */
+/* A grid item defaults to min-width:auto, so the transcript's long lines push
+   this column wider than its own track and the page scrolls sideways. */
+.project-main {
+  min-width: 0;
+}
+
 .project-rail {
   position: relative;
+  min-width: 0;
 }
 
 .project-rail .section-head {
@@ -1245,6 +1252,83 @@ a.tl-node:hover {
   border: 1px dashed var(--border-strong);
   border-radius: var(--radius-md);
   color: var(--text-muted);
+}
+
+/* ------------------------------------------------------------- evidence --- */
+
+/*
+ * A screenshot of the project actually running. R15 asks for real evidence, so
+ * the caption carries what produced it and when — a picture with no provenance
+ * is decoration.
+ */
+.shot {
+  margin: var(--space-5) 0 0;
+}
+
+.shot img {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface-page);
+}
+
+.shot figcaption {
+  margin-top: var(--space-3);
+  color: var(--text-subtle);
+  font-size: 0.85rem;
+}
+
+/*
+ * A terminal transcript, kept as text rather than a picture of text: it stays
+ * selectable, searchable, legible at any zoom, and reflows on a phone, none of
+ * which a screenshot of a shell does.
+ */
+.transcript {
+  margin: var(--space-5) 0 0;
+  min-width: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--surface-page);
+}
+
+.transcript-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--surface-sunken);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.transcript pre {
+  margin: 0;
+  padding: var(--space-4);
+  overflow-x: auto;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  tab-size: 2;
+}
+
+/* The command the operator typed, so the eye can find it in the output. */
+.transcript b {
+  color: var(--action-hover);
+  font-weight: 400;
+}
+
+.transcript + figcaption,
+.evidence-note {
+  margin: var(--space-3) 0 0;
+  color: var(--text-subtle);
+  font-size: 0.85rem;
 }
 
 /* ------------------------------------------------------------ lang bars --- */

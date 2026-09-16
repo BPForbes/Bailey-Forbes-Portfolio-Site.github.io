@@ -59,6 +59,46 @@
         </p>
       </section>
 
+      <section class="prose" aria-labelledby="fl-run-title">
+        <h2 id="fl-run-title"><svg class="icon icon-head" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path d="M9.4 86.6C-3.1 74.1-3.1 53.9 9.4 41.4s32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 9.4 86.6zM256 416l288 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-288 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/></svg>Running it</h2>
+        <p>
+          The kernel builds and runs on a Linux host as well as in the browser lab.
+          <code>make all</code> produces <code>BPForbes_Flinstone_Shell</code>; the session below
+          is that binary reporting its version and dumping the contract bundle — the versioned
+          P0–P9 surfaces this page describes, with their revisions.
+        </p>
+        <div class="transcript">
+          <p class="transcript-bar">BPForbes_Flinstone_Shell · x86-64 host build</p>
+          <pre><code><b>$ make all &amp;&amp; ./BPForbes_Flinstone_Shell</b>
+user_db: refusing known default passwords; set FL_USERS_LAB_DEFAULTS=1 for lab seeds
+Loaded disk (FAT32 image FLINT.DAT): drive.img | Clusters: 32 | Cluster Size: 512 bytes
+[drivers] block: REAL | kbd: REAL | display: REAL | timer: REAL | pic: REAL | pci: REAL
+ [INTERACTIVE MODE] Type &#x27;exit&#x27; to leave interactive mode.
+
+<b>shell&gt; version</b>
+Shell version: 4.5.4
+
+<b>shell&gt; contracts</b>
+contracts: bundle rev 9, P0 foundations rev 5
+  P3 networking: umbrella rev 18, wire rev 4 (extends P0-P1; P2-3 authz ops only)
+  P4 drivers: umbrella rev 4 (extends P0-P1; no P3 include)
+  P8 virtualization: umbrella rev 2 (extends P0 only; no P4 include)
+    browser artifact: interchange rev 4, JSON schema 2, marker FLINTSTONE_KERNEL_BOOT_OK
+  P9 hardening: umbrella rev 2 (extends P0 only; no P8 include)
+  fl_result_t: OK=0 ERR=-1 INVAL=-22 NOSYS=-38
+  surfaces (6):
+    0 DRIVER_OPS      1 NETDEV      2 LOG_SINK
+    3 AUTHZ           4 FS_JAIL     5 BROWSER_ARTIFACT
+  shell authz: FL_PRINCIPAL=guest denies destructive builtins and
+    foreign execvp before dispatch
+</code></pre>
+        </div>
+        <p class="evidence-note">
+          Real output, captured 16 Sep 2026 from a host build at commit <code>da46784</code>.
+          The surface list is reflowed onto two lines to fit; nothing else is edited.
+        </p>
+      </section>
+
       <section class="prose">
         <h2><svg class="icon icon-head" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 40c-35.3 0-64 28.7-64 64l-40 0c-13.3 0-24 10.7-24 24s10.7 24 24 24l40 0 0 56-40 0c-13.3 0-24 10.7-24 24s10.7 24 24 24l40 0 0 56-40 0c-13.3 0-24 10.7-24 24s10.7 24 24 24l40 0c0 35.3 28.7 64 64 64l0 40c0 13.3 10.7 24 24 24s24-10.7 24-24l0-40 56 0 0 40c0 13.3 10.7 24 24 24s24-10.7 24-24l0-40 56 0 0 40c0 13.3 10.7 24 24 24s24-10.7 24-24l0-40c35.3 0 64-28.7 64-64l40 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-40 0 0-56 40 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-40 0 0-56 40 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-40 0c0-35.3-28.7-64-64-64l0-40c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 40-56 0 0-40c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 40-56 0 0-40zM160 128l192 0c17.7 0 32 14.3 32 32l0 192c0 17.7-14.3 32-32 32l-192 0c-17.7 0-32-14.3-32-32l0-192c0-17.7 14.3-32 32-32zm192 32l-192 0 0 192 192 0 0-192z"/></svg>What it is</h2>
         <p>

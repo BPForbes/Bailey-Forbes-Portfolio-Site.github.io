@@ -45,6 +45,49 @@
         <div data-guest-window data-guest="keyquorum" data-guest-solo id="live-lab-window"></div>
       </section>
 
+      <section class="prose" aria-labelledby="kq-run-title">
+        <h2 id="kq-run-title"><svg class="icon icon-head" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path d="M9.4 86.6C-3.1 74.1-3.1 53.9 9.4 41.4s32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 9.4 86.6zM256 416l288 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-288 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/></svg>Running it</h2>
+        <p>
+          A 2-of-3 split across three departments, the tree it produces, and a reconstruct that
+          returns the original secret from two shares while the third is skipped. The prompt on
+          the last command is the point: the CLI asks for the missing key rather than accepting
+          it as an argument, so secrets stay out of shell history.
+        </p>
+        <div class="transcript">
+          <p class="transcript-bar">keyquorum 0.1.0 · throwaway demo database</p>
+          <pre><code><b>$ keyquorum split --label master --threshold 2 \</b>
+<b>    --leaf Acme.Engineering=engineering.pub \</b>
+<b>    --leaf Acme.Finance=finance.pub \</b>
+<b>    --leaf Acme.Security=security.pub --generate-keys --register</b>
+Registered Acme.Engineering as hardware key 1
+Registered Acme.Finance as hardware key 2
+Registered Acme.Security as hardware key 3
+44ccc34d660a918017…
+Split key 1; secret printed to stdout above — this tool keeps no copy of it.
+
+<b>$ keyquorum tree 1</b>
+master (key 1)
+Acme (node 1) [2 of 3]
+  Acme.Engineering (node 2) -&gt; hardware key 1 (Acme.Engineering)
+    allowed bridges: Acme.Finance, Acme.Security
+  Acme.Finance (node 3) -&gt; hardware key 2 (Acme.Finance)
+    allowed bridges: Acme.Engineering, Acme.Security
+  Acme.Security (node 4) -&gt; hardware key 3 (Acme.Security)
+    allowed bridges: Acme.Engineering, Acme.Finance
+
+<b>$ keyquorum reconstruct 1 --share-file engineering.key --share-file finance.key</b>
+Key for &#x27;Acme.Security&#x27; (node 4, hardware key 3; blank to skip): 
+44ccc34d660a918017…
+</code></pre>
+        </div>
+        <p class="evidence-note">
+          Real output, captured 16 Sep 2026 from <code>cargo build --release</code> at commit
+          <code>c576804</code>, against a throwaway database created for this run. The secret is
+          abbreviated here; in the session the reconstructed value matched the one
+          <code>split</code> printed, character for character.
+        </p>
+      </section>
+
       <section class="prose">
         <h2><svg class="icon icon-head" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M144 144l0 48 160 0 0-48c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192l0-48C80 64.5 144.5 0 224 0s144 64.5 144 144l0 48 16 0c35.3 0 64 28.7 64 64l0 192c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 256c0-35.3 28.7-64 64-64l16 0z"/></svg>What it is</h2>
         <p>

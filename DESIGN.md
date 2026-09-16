@@ -497,6 +497,7 @@ anchor the label instead of vanishing into it.
 
 | Exception | Reason | How to evaluate |
 |---|---|---|
+| The two CLI projects show a styled text transcript, not a screenshot | R15 asks for real evidence of the product running, and for a terminal that evidence *is* text. Kept as text it stays selectable, searchable, legible at any zoom and reflows on a phone; a PNG of a shell does none of that and is heavier. The transcripts are literal output from a real local run, with the command lines marked so they can be picked out. | Every line must be reproducible by running the stated command at the stated commit. Any edit for layout must be disclosed in the caption — the Flinstone one reflows a six-item list onto two lines and says so; the KeyQuorum one abbreviates a secret and says so. Nothing else may be changed. |
 | The project timeline's scrub glow | R14 asks a decorative effect to justify itself. This one reports scroll: it sits on the spine, its position tracks reading position and its length and brightness track scroll speed, so a fast scrub streaks and reading barely shows it. Nothing depends on it — every state it hints at is also carried by the active entry's own styling. | It must decay to zero once the page stops moving; a glow frozen part-lit means the settle loop is broken. Under `prefers-reduced-motion` the graph is marked still and the glow is never drawn (R26). |
 | Only the current timeline entry is expanded | The history stays scannable as dates and titles while exactly one commit is readable, which is what keeps an eighteen-entry rail from being a wall. Scrolling scrubs which one is open, and so does focusing a card, so every entry is reachable without a pointer. | Exactly one card may have a non-zero detail height once scrolling has settled; two part-open cards are only correct mid-scrub, as the crossfade. Every card stays in the DOM in source order, so assistive technology reads the whole history regardless of which is open. |
 | The rail is a plain column, not pinned | Entries have to travel past the focus line for the next one to open as you reach it; pinned, the rail never moves relative to the viewport and one entry stays open the whole way down. The cost is that the rail ends before the prose column does, leaving the right side empty low on a long page — an ordinary sidebar, and the readable choice. | Scroll the page: the open entry must change, and must stay on screen while any of the rail is. |
@@ -553,7 +554,14 @@ Chromium (Playwright), not read off the source:
   neighbour at any scroll position; the current index does not oscillate while
   the page is idle; focusing the seventh entry opens entry 7; and under reduced
   motion the open heights are byte-identical between frames.
-- **Icons**: 193 rendered across the eight pages. Every one is `aria-hidden`,
+- **Project evidence**: each project was built and run locally before anything
+  was published. QPU's screenshot is the workbench's own canvas after compiling
+  and running the repository's `TwoBitFullAdder` sample; Flinstone's transcript
+  is a host `make all` build whose `version` line independently confirms the
+  4.5.4 this site claims; KeyQuorum's is a 2-of-3 split, its tree, and a
+  reconstruct that returned the original secret from two shares. Captions carry
+  the commit and the date.
+- **Icons**: 196 rendered across the eight pages. Every one is `aria-hidden`,
   `focusable="false"`, has a non-zero box, inherits `currentColor`, and none is
   the whole accessible name of the control it sits in. The lab's error panel
   was checked with the panel open, which is how a real bug surfaced: setting
@@ -573,6 +581,13 @@ Chromium (Playwright), not read off the source:
 - **No console or page errors** on any page.
 
 Not verified, and not claimed anywhere on the site:
+
+- **Homework Central and the EMR have no screenshot, on purpose.** Homework
+  Central's frontend builds and serves but renders only "UI connecting to
+  backend" without its .NET API, and this environment has no .NET SDK and no
+  running Docker daemon, so there is nothing honest to capture. The EMR tree is
+  not public at all. Inventing a mockup for either would be exactly the
+  fabricated evidence R15 forbids, so both pages stay as prose.
 
 - Real assistive-technology output. There is no screen reader in the build
   environment, so the semantics were checked structurally (roles, accessible

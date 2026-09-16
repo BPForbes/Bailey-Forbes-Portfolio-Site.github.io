@@ -12,6 +12,23 @@ roles in `css/styles.css`, which container each kind of content gets, the
 exceptions that were granted and why, and exactly what was and was not verified.
 Read it before changing layout, tokens, or component behaviour.
 
+## Project evidence
+
+The QPU screenshot and the Flinstone and KeyQuorum transcripts on the project
+pages come from building and running those repositories locally; each caption
+names the commit and the capture date. Homework Central and the EMR have no
+screenshot because neither can be run honestly here — see DESIGN.md B5.
+
+## Hosting and TLS
+
+`bailey-forbes.com` is served over HTTPS; the certificate is issued and renewed
+by the host, so there is nothing to rotate by hand. GitHub Pages is the current
+origin for the custom domain (see [`CNAME`](CNAME)); the same tree also
+publishes to Cloudflare Workers as static assets via
+[`wrangler.jsonc`](wrangler.jsonc), with preview branches going out through
+`wrangler versions upload`. The Flinstone lab's shared relay runs as a
+Cloudflare Durable Object on its own subdomain.
+
 ## Credits
 
 Icons are [Font Awesome Free](https://fontawesome.com) 6.7.2 — icon shapes
