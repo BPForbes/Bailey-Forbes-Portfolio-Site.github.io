@@ -46,8 +46,8 @@
           <img
             src="/images/hc-chat.webp"
             alt="Homework Central's General public room signed in as the persona MarieCurie: a good-morning message, then a message rendering a LaTeX display equation and an inline fraction, bold text, a two-item checklist and inline code together, and below it a reply from a different account, DevAdmin, with a highlighted @MarieCurie mention."
-            width="1400"
-            height="1210"
+            width="1170"
+            height="887"
             loading="lazy"
           />
           <figcaption>
@@ -71,8 +71,8 @@
           <img
             src="/images/hc-inbox-mention.webp"
             alt="Homework Central's inbox signed in as MarieCurie: one entry under General from DevAdmin, with the message text and an @MarieCurie mention highlighted, timestamped in UTC."
-            width="1400"
-            height="583"
+            width="1180"
+            height="370"
             loading="lazy"
           />
           <figcaption>
@@ -132,8 +132,30 @@
           neural-net work through August, DevOps documentation and training-pause in early
           September, and open branches for memory optimization (Rust LRU with C# fallback) and
           a safer Postgres reset that must not wipe Ollama, uploads, or MinIO. The product is
-          mid-migration, not archived.
+          mid-migration, not archived. Below is that neural-net branch actually running: a
+          two-stage cascade — a small context router feeding a much larger evidence-and-category
+          model — that scores chat messages for moderation and tutoring, visualized as the
+          architecture really is, node for node and edge for edge.
         </p>
+        <figure class="shot">
+          <img
+            src="/images/hc-neuralnet-mesh.webp"
+            alt="Homework Central's admin-only Neural Network page: a moderation cascade map showing stage 1, a small concept-context router network diagram, feeding stage 2, a larger evidence-and-category network, with runtime HashedMlpV8, 21,887 parameters, 12 support and 101 softmax classes, above a 3D mesh visualization of the stage-2 network's 429 nodes and 21,544 edges, labeled input through output along its layers."
+            width="1400"
+            height="1588"
+            loading="lazy"
+          />
+          <figcaption>
+            Captured 23 Jul 2026 at commit <code>59e153d</code> on the unmerged
+            <code>cursor/training-speed-c7b9</code> branch, signed in as DevAdmin — the only
+            account with the <code>ManageServerInfrastructure</code> permission this page
+            requires. This shows the real, initialized architecture, not a trained result:
+            generating training examples calls a local Ollama model this environment doesn’t
+            have, so no training pass was run here. The database is seeded but otherwise empty —
+            12 approved examples, 0 pending feedback — which is what a fresh install of this
+            branch actually looks like.
+          </figcaption>
+        </figure>
       </section>
         </div>
 

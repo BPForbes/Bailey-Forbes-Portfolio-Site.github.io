@@ -560,12 +560,14 @@ Chromium (Playwright), not read off the source:
   is a host `make all` build whose `version` line independently confirms the
   4.5.4 this site claims; KeyQuorum's is a 2-of-3 split, its tree, and a
   reconstruct that returned the original secret from two shares; Homework
-  Central's two screenshots are its own React frontend against its own
+  Central's three screenshots are its own React frontend against its own
   ASP.NET Core API and PostgreSQL, all three started from the repository: one
   shows a public room with a plain message, a message with real Markdown and
   LaTeX rendered by KaTeX, and a reply from a second account with a resolved
-  `@mention`; the other shows that mention's notification in the recipient's
-  own inbox. Captions carry the commit and the date.
+  `@mention`; the second shows that mention's notification in the recipient's
+  own inbox; the third, from the unmerged neural-net branch, shows the
+  moderation model's real two-stage architecture and its 3D mesh, initialized
+  but untrained. Captions carry the commit and the date.
 - **Icons**: 197 rendered across the eight pages. Every one is `aria-hidden`,
   `focusable="false"`, has a non-zero box, inherits `currentColor`, and none is
   the whole accessible name of the control it sits in. The lab's error panel
@@ -619,6 +621,20 @@ Not verified, and not claimed anywhere on the site:
   personas can never notify each other. Only DevAdmin, whose recipient list
   spans every tenant, could actually reach her — which is why the second
   screenshot's message is from DevAdmin rather than a persona.
+- **The neural-net screenshot is from a second checkout of an unmerged
+  branch, run against its own database, and shows an untrained model.** The
+  feature (`/server/NeuralNet/*`, gated on `ManageServerInfrastructure`) lives
+  on `cursor/training-speed-c7b9`, which `main` has not absorbed — the same
+  `global.json` relaxation applied there, in a separate git worktree, on a
+  separate local database so it could not touch the run behind the other two
+  screenshots. Generating synthetic training examples calls a local Ollama
+  model (`qwen3:0.6b`) this environment does not have and cannot reach —
+  ollama.com and its GitHub releases are both proxy-blocked — so no training
+  pass was run and none is claimed. What the screenshot shows is real:
+  the architecture's own reported shape (`HashedMlpV8`, 21,887 parameters,
+  429 nodes, 21,544 edges) and the database's actual, honestly-empty state
+  (12 seeded approved examples, 0 pending feedback) from a fresh install of
+  that branch.
 
 - Real assistive-technology output. There is no screen reader in the build
   environment, so the semantics were checked structurally (roles, accessible
