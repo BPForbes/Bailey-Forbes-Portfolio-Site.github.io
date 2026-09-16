@@ -1,4 +1,5 @@
 import { PORTFOLIO } from "./data.js";
+import { mountDecks } from "./deck.js";
 import { mountGuestWindows } from "./guestWindow.js";
 import { ROUTES } from "./routes.js";
 import type { ProjectId } from "./types.js";
@@ -208,3 +209,4 @@ function renderTimeline(mount: HTMLElement): void {
 document.querySelectorAll<HTMLElement>("[data-timeline]").forEach(renderTimeline);
 
 mountGuestWindows();
+mountDecks();

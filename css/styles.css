@@ -24,18 +24,25 @@
   --p-patina: #7ea36a;
   --p-patina-soft: #9dc389;
   --p-rust: #e0685c;
+  --p-paper: #f3ead8;
+  --p-paper-ink: #2a2418;
+  --p-paper-ink-soft: #6b5e48;
   --p-ink: #0b0c0a;
 
   /* Surfaces */
   --surface-page: var(--p-near-black);
   --surface-raised: var(--p-bark);
   --surface-sunken: var(--p-moss-dark);
+  /* Card stock. Used only by .note-card — see DESIGN.md B4. */
+  --surface-invert: var(--p-paper);
 
   /* Text */
   --text: var(--p-bone);
   --text-muted: var(--p-linen);
   --text-subtle: var(--p-ash);
   --text-on-action: var(--p-ink);
+  --text-on-invert: var(--p-paper-ink);
+  --text-on-invert-muted: var(--p-paper-ink-soft);
 
   /* Borders. --border-interactive is the only one allowed to be a control's
      visible boundary: it holds >=3:1 against all three surfaces (WCAG 1.4.11). */
@@ -710,6 +717,203 @@ code {
 }
 
 /* ---------------------------------------------------------------- about --- */
+
+/* Sub-headings inside a section that is already introduced by .section-head. */
+.sub-head {
+  margin: var(--space-7) 0 var(--space-3);
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+}
+
+.sub-head:first-of-type {
+  margin-top: var(--space-2);
+}
+
+.now-list {
+  margin: 0;
+  padding-left: var(--space-5);
+  max-width: var(--measure-prose);
+  color: var(--text-muted);
+}
+
+.now-list li + li {
+  margin-top: var(--space-2);
+}
+
+.link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  list-style: none;
+  margin: var(--space-4) 0 0;
+  padding: 0;
+}
+
+.link-row a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-comfortable);
+}
+
+/* ------------------------------------------------------------------ deck -- */
+
+/*
+ * A browsable collection of discrete items (dishes, games). Scrolling is the
+ * native overflow scroller, so touch swipe, trackpad, shift+wheel and the
+ * keyboard all work without being reimplemented; the buttons and the pointer
+ * drag only drive that same scroller. DESIGN.md B4 records the arrow-only
+ * buttons and the card stock.
+ */
+.deck {
+  margin: 0 0 var(--space-7);
+}
+
+.deck-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: end;
+  gap: var(--space-3) var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
+.deck-head > div:first-child {
+  flex: 1 1 22rem;
+}
+
+.deck-head h3 {
+  margin: 0 0 var(--space-2);
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+}
+
+.deck-head p {
+  margin: 0;
+  max-width: var(--measure-prose);
+  color: var(--text-muted);
+}
+
+.deck-nav {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.deck-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-comfortable);
+  height: var(--tap-comfortable);
+  border: 1px solid var(--border-interactive);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.deck-btn:hover:not(:disabled) {
+  border-color: var(--action);
+  color: var(--action-hover);
+}
+
+/* A real disabled state driven by scroll position, not decoration (R21). */
+.deck-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.deck-scroller {
+  overflow-x: auto;
+  /* Vertical only. Horizontal padding would offset the first snap point, so
+     the scroller could never report scrollLeft 0 and "at start" would never
+     be true. This leaves room for the card shadow instead. */
+  padding-block: var(--space-2);
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 0;
+  /* The right edge fades only while there is more to reach, so the cue is
+     information rather than ornament (R10, R14). */
+  -webkit-mask-image: var(--deck-mask, none);
+  mask-image: var(--deck-mask, none);
+}
+
+.deck-scroller[data-overflow-end="true"] {
+  --deck-mask: linear-gradient(to right, #000 calc(100% - 4rem), transparent 100%);
+}
+
+.deck-scroller[data-overflow-start="true"] {
+  --deck-mask: linear-gradient(to right, transparent 0, #000 4rem);
+}
+
+.deck-scroller[data-overflow-start="true"][data-overflow-end="true"] {
+  --deck-mask: linear-gradient(to right, transparent 0, #000 4rem, #000 calc(100% - 4rem), transparent 100%);
+}
+
+.deck-scroller.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  user-select: none;
+}
+
+.deck-track {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-4);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Card stock: the one light surface on the site, and the only place the
+ * inverted tokens are used. Ruled lines sit on a fixed line-height so they stay
+ * aligned even when the webfont has not loaded.
+ */
+.note-card {
+  flex: 0 0 min(19rem, 78vw);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  scroll-snap-align: start;
+  padding: var(--space-4) var(--space-4) var(--space-5);
+  background: var(--surface-invert);
+  color: var(--text-on-invert);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.note-card-label {
+  margin: 0;
+  color: var(--text-on-invert-muted);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.note-card h4 {
+  margin: 0;
+  padding-bottom: var(--space-2);
+  border-bottom: 2px solid rgba(196, 69, 60, 0.45);
+  font-size: 1.3rem;
+  color: var(--text-on-invert);
+}
+
+.note-card-note {
+  margin: 0;
+  font-size: 0.95rem;
+  /* Fixed, so the ruling below repeats on the same rhythm in any font. */
+  line-height: 1.6rem;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(1.6rem - 1px),
+    rgba(42, 36, 24, 0.13) calc(1.6rem - 1px),
+    rgba(42, 36, 24, 0.13) 1.6rem
+  );
+}
 
 .about-copy p {
   margin: 0 0 var(--space-4);
