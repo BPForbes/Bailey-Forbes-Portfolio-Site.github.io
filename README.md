@@ -2,7 +2,7 @@
 
 Static site for [bailey-forbes.com](https://bailey-forbes.com), deployed with GitHub Pages.
 
-The copy is written from Bailey’s résumé plus **public git history** on [BPForbes](https://github.com/BPForbes): commit subjects, merged pull requests, and Flinstone `version/entries` GM=1 notes (compiled 11 Sep 2026).
+The copy is written from Bailey’s résumé plus **public git history** on [BPForbes](https://github.com/BPForbes): commit subjects, merged pull requests, and Flinstone `version/entries` GM=1 notes. Language splits, commit counts, versions and recent milestones are refreshed automatically from the GitHub API — see [Project data](#project-data).
 
 ## Design rules
 
@@ -60,11 +60,186 @@ Cloudflare Workers Builds uses [`wrangler.jsonc`](wrangler.jsonc) to publish thi
 
 ## Project data
 
-`src/data.ts` holds the language splits and every timeline event. The splits are
-measured from each repository's working tree (bytes per language, skipping
-vendor and build trees) rather than read off GitHub's language bar, and the
-timeline entries carry the commit they describe so each one links to it.
-Recompiled 16 Sep 2026.
+Project data comes from two places, and the split between them is deliberate.
+
+**Curated — `src/data.ts`.** Hand-written prose: the project blurbs, the
+engagement history, the descriptive chips, and every timeline entry written by a
+person. The sync never edits this file.
+
+**Generated — `data/project-metadata.json` and `src/generated/projectMetadata.ts`.**
+Facts read back from GitHub. Both files are written by
+`scripts/sync-project-metadata.mjs` and carry a do-not-edit header; the JSON is
+the durable snapshot, the TypeScript module is its typed projection for the
+browser build.
+
+`src/projectMetadata.ts` merges the two at runtime. Generated data wins for
+repository facts; curated copy wins for anything written by a person.
+
+### What is automated
+
+| Field | Source |
+|-------|--------|
+| Language names, byte counts, percentages | GitHub `GET /repos/{owner}/{repo}/languages` (Linguist), percentages derived from the byte counts |
+| Commit count on the default branch | `GET /repos/{owner}/{repo}/commits?per_page=1`, read from the `rel="last"` link — one request, no history download |
+| Merged pull request count | `GET /repos/{owner}/{repo}/pulls?state=closed`, filtered to merged |
+| Current version | Newest published release → highest stable semver tag → repository version manifest |
+| Recent timeline milestones | Merged pull requests and published releases that clear the significance bar below |
+
+### What stays manual
+
+- Every descriptive chip that is not a repository fact: `Networking`,
+  `PostgreSQL`, `Docker`, `Vite`, `Creator`, `Lead`, `Solo build`,
+  `Team of five`, `HIPAA testing`. These describe the work, not the tree, and
+  GitHub cannot know them.
+- All curated timeline prose in `src/data.ts`.
+- Everything about the **EMR**, which has no public repository. Its page says so,
+  and its language split is explicitly labelled an estimate.
+- Résumé figures such as the "11 core kernel releases" count.
+- The captured shell transcripts on the project pages, which are records of a
+  real session and are not re-derived.
+
+### Where the mapping lives
+
+`scripts/project-sources.mjs`, and nowhere else:
+
+```js
+export const PROJECT_SOURCES = {
+  flinstone: { repo: "BPForbes/Bailey-Forbes-Flinstone", … },
+  qpu: { repo: "BPForbes/BPForbes.QPU.github.io", … },
+  "homework-central": { repo: "BPForbes/Homework-Central" },
+  keyquorum: { repo: "BPForbes/KeyQuorum" },
+};
+```
+
+**To add a future project:** publish its page as usual, then add one entry here
+with its `repo`. Nothing else needs editing — the sync picks it up, the language
+bar and chips start resolving, and a project id that is not a published
+portfolio project is rejected rather than silently generated.
+
+**To remove one:** delete its entry. The site falls back to whatever
+`src/data.ts` says about it.
+
+### Projects that publish their own metadata
+
+Flinstone and QPU each generate a `project-metadata.json` (schemaVersion 1)
+inside their own validated build and publish it with their GitHub Pages
+deployment. Flinstone's `docs/project-metadata.md` states the intent directly:
+that repository is the source of truth for its own state, and the portfolio
+should not maintain a second copy of it.
+
+Where a project declares a `contractUrl`, the sync prefers that document over
+re-deriving the same facts from the REST API. If it is unreachable, the wrong
+schema, or describes a different repository, the run logs the reason and falls
+back to the REST API, which produces the same normalized shape. A contract is an
+improvement in provenance, never a dependency.
+
+### Timeline significance
+
+The timeline is a curated history, not `git log`, so the default answer for any
+given pull request is no. Individual commits are never entries.
+
+An entry has to look like a milestone: `feat:`, `release:`, `perf:`,
+`security:`, `major:`, `milestone:`, `architecture:`, a conventional type marked
+breaking with `!`, or prose about adding, introducing, implementing, shipping,
+rewriting or hardening something. Everything unmatched is dropped.
+
+Dropped outright: dependency bumps, `chore`/`ci`/`docs`/`style`/`test`/`refactor`
+prefixes, merges, reverts, typo and formatting work, README-only changes,
+version-lock commits, bot-authored chores, and review-bot chatter. A `fix:` is a
+repair, not a milestone — so a fix cannot qualify by mentioning "migration" or
+"architecture" in passing.
+
+Two rules keep generated entries from trampling written ones:
+
+1. An entry matching a curated one — by link, or by the same project, date and
+   normalised title — loses to the curated copy.
+2. A generated entry older than the newest curated entry for that project is
+   dropped. That window is already covered by hand, in better prose.
+
+So generation extends the timeline forward and leaves the written history alone.
+Today that means the 50 curated entries are untouched and one generated entry
+sits on top of them.
+
+### Running the sync
+
+```bash
+npm run sync:metadata                     # refresh everything
+npm run sync:metadata -- --project qpu    # one project
+npm run sync:metadata:check               # report drift, write nothing, exit 1 if stale
+```
+
+Every repository is public, so an unauthenticated run works against GitHub's
+60-requests/hour budget. Export `GITHUB_TOKEN` for a comfortable one. Tokens are
+sent as request headers only — never written into generated files, logs, or
+anything the browser receives.
+
+### Scheduled syncing
+
+[`.github/workflows/sync-project-metadata.yml`](.github/workflows/sync-project-metadata.yml)
+runs daily at 05:20 UTC, and on demand from the Actions tab (optionally for a
+single project). It installs, syncs, runs `npm test` against the fresh data, and
+commits `chore(portfolio): sync project metadata` **only if the generated files
+actually changed** — the run-to-run timestamps are ignored when deciding that, so
+a quiet day produces no commit and no deployment.
+
+It authenticates with the workflow's own `GITHUB_TOKEN`; the repositories are
+public, so no PAT is needed. A `PORTFOLIO_GITHUB_TOKEN` secret is honoured if one
+is ever set, for a project repository that turns private.
+
+Because a push made with `GITHUB_TOKEN` does not trigger other workflows — which
+is what stops this job re-triggering itself — the final step hands the Pages
+deployment off explicitly with `gh workflow run static.yml`. `static.yml` has no
+metadata trigger of its own, so the chain ends there.
+
+### Notifying the portfolio immediately
+
+A project repository can push an update the moment it ships, instead of waiting
+for the next scheduled run:
+
+```bash
+curl -X POST \
+  https://api.github.com/repos/BPForbes/Bailey-Forbes-Portfolio-Site.github.io/dispatches \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Accept: application/vnd.github+json" \
+  -d '{"event_type":"portfolio-project-updated"}'
+```
+
+`$TOKEN` needs `contents: write` on this repository. This is entirely optional —
+the daily schedule covers the same ground within a day.
+
+### When GitHub is unavailable
+
+The site must not degrade because an API call failed, so the sync never
+publishes an absence as a fact:
+
+- A repository that fails to fetch keeps its **previous** snapshot, untouched.
+  The failure is reported in the run log, not written into the published file —
+  so an outage produces a byte-identical snapshot, and therefore no commit and
+  no redeploy.
+- A repository that fails with no previous snapshot is omitted entirely, and the
+  site falls back to the curated values in `src/data.ts`.
+- A languages response with no positive bytes is refused rather than published
+  as an empty bar.
+- Generated output is validated before it is written: percentages must sum to
+  100, counts must be non-negative integers, a fresh zero commit count is
+  rejected, URLs must be GitHub URLs, dates must parse, project ids must be
+  published projects, and timeline identities must be unique. A document that
+  fails validation is not written at all.
+
+So "0 commits", "0%", and "unknown version" are not reachable states.
+
+### Tests
+
+```bash
+npm test      # builds first, then runs tests/
+```
+
+Covers the percentage maths and rounding, languages appearing and disappearing,
+single- and many-language repositories, unknown-colour fallback, version
+precedence and semver extraction, commit-count parsing, timeline significance
+and deduplication, contract parsing, malformed API responses, and the
+API-failure path that preserves existing data. No test touches the network —
+every GitHub response is injected through a fake transport.
 
 ## Routes
 
@@ -90,7 +265,11 @@ GitHub Pages serves each folder’s `index.html` without showing the filename. O
 | `home/index.html` | Home, experience, education |
 | `projects/` | Project write-ups; Flinstone and QPU load live guests from GitHub Pages; KeyQuorum has no web build and its page states that rather than showing an empty window |
 | `projects/*/index.html` | Project write-up and that project’s timeline |
-| `src/` | TypeScript source (`apps.ts`, `data.ts`, `deck.ts`, `guestWindow.ts`, `icons.ts`, `routes.ts`, `site.ts`, `types.d.ts`) |
+| `src/` | TypeScript source (`apps.ts`, `data.ts`, `deck.ts`, `guestWindow.ts`, `icons.ts`, `languageColors.ts`, `projectMetadata.ts`, `routes.ts`, `site.ts`, `types.d.ts`) |
+| `src/generated/` | Written by the sync; do not edit by hand |
+| `scripts/` | `sync-project-metadata.mjs` and its libraries; the project→repository mapping lives in `project-sources.mjs`. Not deployed |
+| `tests/` | Unit tests for the sync and the merge layer (`npm test`). Not deployed |
+| `data/project-metadata.json` | Generated snapshot of GitHub facts, and the fallback the next sync reads |
 | `tools/` | Dev-only helpers; not deployed. Font Awesome subset extraction |
 | `css/styles.css` | The only stylesheet. Components use the semantic role tokens; see DESIGN.md B1 |
 | `DESIGN.md` | UI/UX rules, the project brief, token roles, and the verification record |

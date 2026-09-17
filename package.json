@@ -4,7 +4,11 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "sync:metadata": "node scripts/sync-project-metadata.mjs",
+    "sync:metadata:check": "node scripts/sync-project-metadata.mjs --check",
+    "pretest": "npm run build",
+    "test": "node --test \"tests/**/*.test.mjs\""
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260916.1",

@@ -1343,8 +1343,18 @@ a.tl-node:hover {
   margin: var(--space-4) 0 var(--space-2);
 }
 
+/*
+ * Segment widths are set inline from the synced percentages and always total
+ * 100%. flex-shrink is disabled so a repository with a dozen languages keeps
+ * those proportions instead of letting flex renegotiate them, and the min-width
+ * keeps a 0.1% language visible as a hairline rather than collapsing to
+ * nothing. Both together can overflow the track by a pixel or two on a very
+ * narrow phone, which is what the overflow:hidden on .lang-bar is already for.
+ */
 .lang-seg {
   height: 100%;
+  flex: 0 0 auto;
+  min-width: 2px;
 }
 
 .lang-legend {
@@ -1356,10 +1366,23 @@ a.tl-node:hover {
   font-size: 0.74rem;
 }
 
+/*
+ * The legend is generated, so its length and its longest word are both unknown
+ * at authoring time: "Linker Script" and "Jupyter Notebook" are real Linguist
+ * names. Each item stays on one line and the row wraps between items; max-width
+ * stops a single long name forcing a horizontal scrollbar at 320px.
+ */
 .lang-legend span {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
+  white-space: nowrap;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.lang-legend span > .lang-swatch {
+  flex: 0 0 auto;
 }
 
 .lang-swatch {

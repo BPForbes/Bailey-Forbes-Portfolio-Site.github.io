@@ -1,4 +1,11 @@
 import { PORTFOLIO } from "./data.js";
+import {
+  commitCountFor,
+  languagesFor,
+  mergedPullRequestsFor,
+  timelineEvents,
+  versionFor,
+} from "./projectMetadata.js";
 import { icon } from "./icons.js";
 import { mountDecks } from "./deck.js";
 import { mountGuestWindows } from "./guestWindow.js";
@@ -85,14 +92,28 @@ function isProjectId(value: string): value is ProjectId {
   return Object.prototype.hasOwnProperty.call(PORTFOLIO.projects, value);
 }
 
+/**
+ * One decimal, with a trailing ".0" trimmed.
+ *
+ * The sync rounds to a tenth and balances the remainder so a bar's figures add
+ * up to 100.0. Printing "Rust 100%" rather than "Rust 100.0%" keeps the legend
+ * reading the way the hand-written one did.
+ */
+function formatPct(pct: number): string {
+  return pct.toFixed(1).replace(/\.0$/, "");
+}
+
 document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
   const key = el.getAttribute("data-lang-bar");
   if (!key || !isProjectId(key)) {
     return;
   }
 
-  const langs = PORTFOLIO.languages[key];
-  if (!langs) {
+  // Generated GitHub Linguist data when the project has a repository, the
+  // curated split when it does not. Either way the renderer below is unchanged:
+  // it has never assumed a language count, and must not start now.
+  const langs = languagesFor(key);
+  if (!langs || langs.length === 0) {
     return;
   }
 
@@ -101,7 +122,7 @@ document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
   bar.setAttribute("role", "img");
   bar.setAttribute(
     "aria-label",
-    `Language split: ${langs.map((lang) => `${lang.name} ${lang.pct} percent`).join(", ")}`,
+    `Language split: ${langs.map((lang) => `${lang.name} ${formatPct(lang.pct)} percent`).join(", ")}`,
   );
 
   const legend = document.createElement("div");
@@ -119,7 +140,7 @@ document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
     swatch.className = "lang-swatch";
     swatch.style.background = lang.color;
     swatch.setAttribute("aria-hidden", "true");
-    item.append(swatch, document.createTextNode(`${lang.name} ${lang.pct}%`));
+    item.append(swatch, document.createTextNode(`${lang.name} ${formatPct(lang.pct)}%`));
     legend.appendChild(item);
   }
 
@@ -144,7 +165,7 @@ function renderTimeline(mount: HTMLElement): void {
   // month- or day-granular and several releases share one, so ties fall back to
   // authoring order reversed — otherwise 4.5.4 and 4.5.2 land in whichever
   // order the sort happened to leave them.
-  const events = PORTFOLIO.events
+  const events = timelineEvents()
     .map((event, index) => ({ event, index }))
     .sort((a, b) => b.event.date.localeCompare(a.event.date) || b.index - a.index)
     .map((row) => row.event);
@@ -274,3 +295,48 @@ document.querySelectorAll<HTMLElement>("[data-timeline]").forEach(renderTimeline
 
 mountGuestWindows();
 mountDecks();
+
+/**
+ * Repository-derived figures on otherwise static pages.
+ *
+ * Each hook names the project it belongs to, so the markup carries the
+ * relationship and this code does no string matching against page copy:
+ *
+ *   <span data-project-version="flinstone">4.5.4</span>
+ *   <span data-project-commits="flinstone">390 commits</span>
+ *   <span data-project-prs="homework-central">76 PRs</span>
+ *
+ * The literal text in the HTML is the fallback, not the source of truth. It is
+ * what a visitor sees before the module runs, and what stays if a project has
+ * no generated metadata yet — so the page is never blank or wrong, just
+ * occasionally a sync behind.
+ *
+ * `data-project-label="false"` renders the bare number, for prose that supplies
+ * its own noun.
+ */
+function mountRepositoryFacts(): void {
+  const render = (
+    attribute: string,
+    value: (project: ProjectId) => number | string | undefined,
+    label: (text: string) => string,
+  ): void => {
+    document.querySelectorAll<HTMLElement>(`[${attribute}]`).forEach((el) => {
+      const key = el.getAttribute(attribute);
+      if (!key || !isProjectId(key)) {
+        return;
+      }
+      const resolved = value(key);
+      if (resolved === undefined) {
+        return;
+      }
+      const text = String(resolved);
+      el.textContent = el.getAttribute("data-project-label") === "false" ? text : label(text);
+    });
+  };
+
+  render("data-project-version", versionFor, (text) => text);
+  render("data-project-commits", commitCountFor, (text) => `${text} commits`);
+  render("data-project-prs", mergedPullRequestsFor, (text) => `${text} merged PRs`);
+}
+
+mountRepositoryFacts();
