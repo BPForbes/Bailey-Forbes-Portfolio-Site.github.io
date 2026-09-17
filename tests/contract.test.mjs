@@ -137,6 +137,39 @@ test("entries with unparsable dates or non-GitHub links are discarded", () => {
   assert.equal(result.generatedTimelineEvents[0].href, undefined);
 });
 
+test("a release URL that is not a GitHub URL is dropped, not propagated", () => {
+  // Left in place it would be overlaid onto valid REST metadata and then
+  // rejected by the document validator, failing the entire sync — so one bad
+  // link upstream would stop every scheduled refresh.
+  const result = normalizeContract(
+    contract({
+      timeline: [
+        {
+          type: "release",
+          date: "2026-09-15T00:00:00Z",
+          tag: "v4.5.4",
+          title: "Flintstone Kernel v4.5.4",
+          url: "https://evil.example/releases/tag/v4.5.4",
+          prerelease: false,
+        },
+      ],
+    }),
+    CONTEXT,
+  );
+  assert.equal(result.latestVersion, "v4.5.4", "the release itself is still usable");
+  assert.equal(result.latestReleaseUrl, undefined, "but the bad link never escapes");
+});
+
+test("an empty contract timeline is distinguished from an absent one", () => {
+  const present = normalizeContract(contract({ timeline: [] }), CONTEXT);
+  assert.equal(present.hasTimeline, true);
+  assert.deepEqual(present.generatedTimelineEvents, []);
+
+  const absent = normalizeContract(contract({ timeline: undefined }), CONTEXT);
+  assert.equal(absent.hasTimeline, false);
+  assert.deepEqual(absent.generatedTimelineEvents, []);
+});
+
 test("an unreachable contract reports a reason instead of throwing", async () => {
   const result = await fetchContract("https://example.invalid/project-metadata.json", {
     ...CONTEXT,

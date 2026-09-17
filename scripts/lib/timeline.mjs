@@ -26,6 +26,20 @@ const NOISE = [
   /^revert\b/i,
   /\b(typo|typos|whitespace|formatting|reformat|lint|linting|prettier|eslint|clippy|rustfmt)\b/i,
   /^(update|fix|tidy|clean up|cleanup)\s+(the\s+)?(readme|changelog|comments?|docs?)\b/i,
+  // Documentation carries no product change, however it is phrased. Without
+  // this, "Add README with local dev setup instructions" qualifies on the word
+  // "Add" — BPForbes/Homework-Central#34, which touched README.md and nothing
+  // else, reached the generated timeline that way.
+  //
+  // The trailing group matters: the documentation noun has to be what the verb
+  // acts on, so "Add a docs generator to the build" stays eligible. That is a
+  // title-level test rather than a per-pull-request file listing, which would
+  // cost one extra API request for every candidate; it catches the phrasings
+  // that occur in practice and errs towards dropping, which is the direction
+  // this whole classifier already leans.
+  /^(add|adds|create|creates|write|writes|improve|improves|expand|expands)\s+(a\s+|an\s+|the\s+)?(readme|changelog|contributing|licence|license|code of conduct|docs?|documentation)(\s+(file|files|entry|entries|section|sections|guide|notes?|badge|instructions))*(\s*$|[.,:;!?]|\s+(with|for|to|and|about|on|in|covering|explaining|documenting|describing))/i,
+  // "Document the release process" — the verb alone is enough here.
+  /^documents?(ing)?\b/i,
   /\bversion lock\b/i,
   /^\s*wip\b/i,
   // A repair is not a milestone. "fix" is deliberately absent from the
@@ -171,7 +185,9 @@ export function eventFromPullRequest(pull, projectId, repo) {
  */
 export function eventFromRelease(release, projectId, repo) {
   if (release === null || typeof release !== "object") return undefined;
-  if (release.draft === true) return undefined;
+  // Drafts are unpublished and prereleases are not shipped versions. The
+  // contract path already drops both; this is the same bar for the REST path.
+  if (release.draft === true || release.prerelease === true) return undefined;
   const tag = typeof release.tag_name === "string" ? release.tag_name.trim() : "";
   if (tag === "") return undefined;
   const published = typeof release.published_at === "string" ? release.published_at : "";

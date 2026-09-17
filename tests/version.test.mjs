@@ -115,6 +115,27 @@ test("the highest declared manifest version wins regardless of filename", () => 
   assert.equal(version.raw, "5.0.0");
 });
 
+test("every matching manifest is offered, not just the top few", () => {
+  // Capping the candidate list would let a file whose name understates its
+  // contents be skipped before it was parsed, publishing an older version.
+  const names = Array.from({ length: 24 }, (_, index) => `${index}_0_0_entry.ver`);
+  names.push("ABOUT.txt");
+
+  const candidates = shortlistManifestFiles(names, "flinstone-ver");
+  assert.equal(candidates.length, 24, "all 24 .ver files must be read");
+  assert.ok(!candidates.includes("ABOUT.txt"));
+
+  // And the declared fields still decide, even from a low-ranked filename.
+  const version = pickLatestManifestVersion(
+    [
+      { name: "23_0_0_entry.ver", text: "MAJOR_VERSION=4\nSTANDARD_VERSION=5\nRELEASE_VERSION=4" },
+      { name: "001_2_2_4_baseline.ver", text: "MAJOR_VERSION=9\nSTANDARD_VERSION=9\nRELEASE_VERSION=9" },
+    ],
+    "flinstone-ver",
+  );
+  assert.equal(version.raw, "9.9.9");
+});
+
 test("the manifest shortlist ranks by embedded semver, newest first", () => {
   const names = [
     "001_2_2_4_baseline.ver",

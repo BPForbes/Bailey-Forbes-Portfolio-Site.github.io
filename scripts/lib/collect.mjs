@@ -174,10 +174,18 @@ async function overlayContract(metadata, options, maxTimeline) {
   }
 
   const contract = result.value;
+  // Languages deliberately keep the length check. An empty result here means the
+  // contract reported no positive bytes, and rendering an empty language bar is
+  // the one outcome this project refuses outright; the REST figures are a better
+  // answer than a blank track.
   if (contract.languages.length > 0) {
     metadata.languages = contract.languages;
   }
-  if (contract.generatedTimelineEvents.length > 0) {
+  // Presence, not length: an empty timeline in the contract means "no
+  // milestones", and keeping the REST-derived ones would leave a milestone on
+  // display after upstream removed it. Languages are treated differently on
+  // purpose — see below.
+  if (contract.hasTimeline) {
     metadata.generatedTimelineEvents = contract.generatedTimelineEvents;
   }
   if (contract.description !== undefined && metadata.description === undefined) {
@@ -239,15 +247,20 @@ async function resolveVersion({ client, source, releases, tags, log }) {
     log(`    version manifest ${manifest.dir} is empty or missing`);
     return {};
   }
-  const shortlist = shortlistManifestFiles(names, manifest.format);
+  // Every candidate is read, so a file whose name understates its contents
+  // cannot be skipped before it is parsed. Concurrently, because that is a
+  // couple of dozen small blobs rather than four.
+  const candidates = shortlistManifestFiles(names, manifest.format);
+  const bodies = await Promise.all(
+    candidates.map(async (name) => ({
+      name,
+      text: await client.readFile(source.repo, `${manifest.dir}/${name}`),
+    })),
+  );
   /** @type {{ name: string, text: string }[]} */
-  const files = [];
-  for (const name of shortlist) {
-    const text = await client.readFile(source.repo, `${manifest.dir}/${name}`);
-    if (typeof text === "string") {
-      files.push({ name, text });
-    }
-  }
+  const files = bodies.filter(
+    (file) => typeof file.text === "string",
+  );
   const version = pickLatestManifestVersion(files, manifest.format);
   if (!version) {
     log(`    no parsable version in ${manifest.dir}`);

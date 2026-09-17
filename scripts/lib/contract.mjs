@@ -20,6 +20,7 @@
 
 import { computeLanguageShares } from "./languages.mjs";
 import { cleanTitle, dedupeEvents, isSignificantTitle, isValidDate, orderEvents } from "./timeline.mjs";
+import { isGitHubUrl } from "./validate.mjs";
 
 /** The only schema this consumer understands. */
 export const SUPPORTED_SCHEMA_VERSION = 1;
@@ -79,6 +80,11 @@ export function normalizeContract(document, context) {
 
   return {
     languages: normalizeContractLanguages(doc.languages),
+    // Whether the document carried a timeline at all, which is not the same
+    // question as whether it produced any events. A contract that publishes an
+    // empty timeline is asserting it has no milestones, and the caller must be
+    // able to honour that instead of silently keeping REST-derived ones.
+    hasTimeline: Array.isArray(doc.timeline),
     generatedTimelineEvents: normalizeContractTimeline(doc.timeline, context),
     ...(typeof repository.defaultBranch === "string" && repository.defaultBranch !== ""
       ? { defaultBranch: repository.defaultBranch }
@@ -205,7 +211,12 @@ function normalizeContractRelease(timeline) {
     newest = {
       date,
       tag,
-      ...(typeof entry.url === "string" ? { url: entry.url } : {}),
+      // Checked here, the same way the timeline path checks its links. An
+      // unchecked URL would be overlaid onto otherwise valid REST metadata and
+      // then rejected by the document validator, failing the whole sync — so a
+      // single bad link upstream would stop every scheduled refresh instead of
+      // falling back to the REST API. Dropping it keeps the release usable.
+      ...(isGitHubUrl(entry.url) ? { url: entry.url } : {}),
     };
   }
   if (!newest) {

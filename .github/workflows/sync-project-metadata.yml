@@ -58,6 +58,12 @@ jobs:
 
       - name: Fetch and regenerate project metadata
         env:
+          # Passed through the environment rather than interpolated into the
+          # script. A ${{ }} expression is substituted into the shell source
+          # before bash parses it, so a dispatched value containing quotes or
+          # shell syntax would run as code — with the write-capable tokens below
+          # in scope.
+          PROJECT: ${{ inputs.project }}
           # Every repository read here is public, so the workflow's own token is
           # enough — no PAT is required. PORTFOLIO_GITHUB_TOKEN is honoured if a
           # future project repository turns private and needs wider access; the
@@ -65,8 +71,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PORTFOLIO_GITHUB_TOKEN: ${{ secrets.PORTFOLIO_GITHUB_TOKEN }}
         run: |
-          if [ -n "${{ inputs.project }}" ]; then
-            npm run sync:metadata -- --project "${{ inputs.project }}"
+          if [ -n "$PROJECT" ]; then
+            npm run sync:metadata -- --project "$PROJECT"
           else
             npm run sync:metadata
           fi

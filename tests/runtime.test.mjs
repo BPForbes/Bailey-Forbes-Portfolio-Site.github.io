@@ -121,12 +121,34 @@ test("the merge introduces no duplicate entries", () => {
   assert.equal(new Set(keys).size, keys.length, "a milestone appears twice");
 });
 
+/**
+ * The last day a curated date covers. Mirrors coverageEnd in
+ * src/projectMetadata.ts: curated dates are mixed precision, and a
+ * month-granular entry stands for its whole month.
+ */
+function coverageEnd(date) {
+  return /^\d{4}-\d{2}$/.test(date) ? `${date}-31` : date;
+}
+
+test("a month-granular curated entry covers its whole month", () => {
+  // The rule has to hold for the EMR-style "2021-08" dates too, or a generated
+  // 2021-08-15 would compare greater than the curated cutoff and backfill a
+  // month that is already written by hand.
+  assert.ok("2021-08-15" > "2021-08", "raw comparison is the trap being avoided");
+  assert.ok("2021-08-15" <= coverageEnd("2021-08"), "expanded cutoff covers the month");
+  assert.ok("2021-08-31" <= coverageEnd("2021-08"));
+  assert.ok("2021-09-01" > coverageEnd("2021-08"), "the next month is still open");
+  // A day-granular cutoff is unchanged.
+  assert.equal(coverageEnd("2026-09-15"), "2026-09-15");
+});
+
 test("generated events never backfill a period already written by hand", () => {
   const curatedNewest = new Map();
   for (const event of PORTFOLIO.events) {
+    const covered = coverageEnd(event.date);
     const seen = curatedNewest.get(event.project);
-    if (seen === undefined || event.date > seen) {
-      curatedNewest.set(event.project, event.date);
+    if (seen === undefined || covered > seen) {
+      curatedNewest.set(event.project, covered);
     }
   }
 

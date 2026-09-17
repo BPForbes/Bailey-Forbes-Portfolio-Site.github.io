@@ -1,7 +1,13 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { hasMeaningfulChange, normalizeDocument, renderJson, renderTypeScript } from "../scripts/lib/emit.mjs";
+import {
+  hasGeneratedDrift,
+  hasMeaningfulChange,
+  normalizeDocument,
+  renderJson,
+  renderTypeScript,
+} from "../scripts/lib/emit.mjs";
 import { isGitHubUrl, validateDocument } from "../scripts/lib/validate.mjs";
 import { PORTFOLIO_PROJECT_IDS } from "../scripts/project-sources.mjs";
 
@@ -227,6 +233,30 @@ test("an outage changes the published snapshot in no way at all", () => {
   assert.equal(renderJson(outage), json);
   assert.ok(!renderJson(outage).includes("lastError"));
   assert.ok(!renderJson(outage).includes("503"));
+});
+
+test("a missing or edited TypeScript artifact is detected and repaired", () => {
+  // Checking only the JSON would report "no change" and leave the module
+  // broken, so every later build fails with nothing repairing it.
+  const doc = document({ keyquorum: project() });
+  const ts = renderTypeScript(doc);
+
+  assert.equal(hasGeneratedDrift(undefined, doc), true, "a missing module is drift");
+  assert.equal(hasGeneratedDrift("", doc), true, "an empty module is drift");
+  assert.equal(
+    hasGeneratedDrift(ts.replace("24", "999"), doc),
+    true,
+    "a hand-edited module is drift",
+  );
+  assert.equal(hasGeneratedDrift(ts, doc), false, "an up-to-date module is not drift");
+
+  // Run stamps alone are never drift, or every scheduled run would rewrite it.
+  const later = {
+    ...doc,
+    generatedAt: "2026-09-30T00:00:00Z",
+    projects: { keyquorum: project({ fetchedAt: "2026-09-30T00:00:00Z" }) },
+  };
+  assert.equal(hasGeneratedDrift(ts, later), false);
 });
 
 test("generated output is deterministic and carries the do-not-edit header", () => {

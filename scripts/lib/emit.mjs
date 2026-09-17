@@ -149,6 +149,37 @@ export function hasMeaningfulChange(previousJson, next) {
 }
 
 /**
+ * Whether the generated TypeScript module on disk still matches what this
+ * document would render.
+ *
+ * Checked separately from the JSON because the two files can diverge: the
+ * module can be deleted, half-written, or hand-edited while the snapshot stays
+ * current. Comparing only the JSON would then report "no change" and leave the
+ * module broken, so `tsc` fails on every later run with nothing repairing it.
+ *
+ * The run stamps are blanked on both sides, which keeps the outage guarantee
+ * intact — a run that finds nothing new still renders an identical module.
+ *
+ * @param {string|undefined} previousTs
+ * @param {import("./types.mjs").ProjectMetadataDocument} next
+ * @returns {boolean}
+ */
+export function hasGeneratedDrift(previousTs, next) {
+  if (previousTs === undefined) {
+    return true;
+  }
+  return blankStamps(previousTs) !== blankStamps(renderTypeScript(next));
+}
+
+/**
+ * @param {string} text
+ * @returns {string}
+ */
+function blankStamps(text) {
+  return text.replace(/"(generatedAt|fetchedAt)": "[^"]*"/g, '"$1": "<stamp>"');
+}
+
+/**
  * @param {any} document
  * @returns {any}
  */

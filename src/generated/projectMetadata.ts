@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-17T17:39:58.309Z",
+  "generatedAt": "2026-09-17T19:53:13.102Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -198,7 +198,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-09-17T17:39:55.322Z"
+      "fetchedAt": "2026-09-17T19:53:09.967Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -331,15 +331,6 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "date": "2026-07-08",
           "kind": "feature",
           "project": "homework-central",
-          "title": "Add README with local dev setup instructions",
-          "detail": "Adds a root `README.md` documenting how to run Homework Central locally on Windows and Unix.",
-          "href": "https://github.com/BPForbes/Homework-Central/pull/34",
-          "identity": "pr:BPForbes/Homework-Central#34"
-        },
-        {
-          "date": "2026-07-08",
-          "kind": "feature",
-          "project": "homework-central",
           "title": "Add inbox clear-all and delete-selected actions",
           "detail": "Adds the ability to manage inbox notifications by deleting selected items or clearing the entire inbox.",
           "href": "https://github.com/BPForbes/Homework-Central/pull/28",
@@ -362,10 +353,19 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "detail": "Adds a reusable text captcha module (arithmetic or retype-code challenges, backed by IMemoryCache, single-use). Signup grants VerifiedUser instead of Guest when the captcha is solved correctly;",
           "href": "https://github.com/BPForbes/Homework-Central/pull/21",
           "identity": "pr:BPForbes/Homework-Central#21"
+        },
+        {
+          "date": "2026-07-01",
+          "kind": "feature",
+          "project": "homework-central",
+          "title": "Add resource visibility primitive and chat room access model (issue #10)",
+          "detail": "- **Resource visibility policy** (issue #10): JWT `account_class` claim, EF global query filters via `IScopedResource`/`IAccessScopeAccessor` so Real/Developer/DevAdmin accounts only see data in their own scope, docs + tests.",
+          "href": "https://github.com/BPForbes/Homework-Central/pull/12",
+          "identity": "pr:BPForbes/Homework-Central#12"
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-09-17T17:39:57.481Z"
+      "fetchedAt": "2026-09-17T19:53:12.146Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -443,7 +443,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-09-17T17:39:58.309Z"
+      "fetchedAt": "2026-09-17T19:53:13.102Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -553,7 +553,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-09-17T17:39:56.410Z"
+      "fetchedAt": "2026-09-17T19:53:11.102Z"
     }
   }
 };

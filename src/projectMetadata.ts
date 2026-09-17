@@ -59,9 +59,10 @@ export function languagesFor(project: ProjectId): readonly LanguageShare[] | und
  *
  *   1. An event that matches a curated one — by link, or by the same project,
  *      date and normalised title — is dropped in favour of the curated copy.
- *   2. A generated event older than the newest curated event for that project
- *      is dropped outright. That window is already covered by hand, in better
- *      prose, and backfilling it would only produce thinner duplicates.
+ *   2. A generated event falling inside the period the curated entries already
+ *      cover for that project is dropped outright. That window is written by
+ *      hand, in better prose, and backfilling it would only produce thinner
+ *      duplicates. "Covered" respects mixed-precision dates — see coverageEnd.
  *
  * Rule 2 means generated entries extend the timeline forward, which is what
  * automation is for, and leaves the written history alone.
@@ -76,9 +77,12 @@ export function timelineEvents(): readonly TimelineEvent[] {
     if (event.href !== undefined) {
       curatedKeys.add(`href:${event.href}`);
     }
+    // Tracked as coverage ends, so a month-granular entry protects its whole
+    // month even when a later day-granular entry sits inside it.
+    const covered = coverageEnd(event.date);
     const seen = newestCuratedByProject.get(event.project);
-    if (seen === undefined || event.date > seen) {
-      newestCuratedByProject.set(event.project, event.date);
+    if (seen === undefined || covered > seen) {
+      newestCuratedByProject.set(event.project, covered);
     }
   }
 
@@ -114,6 +118,20 @@ export function timelineEvents(): readonly TimelineEvent[] {
   }
 
   return merged;
+}
+
+/**
+ * The last day a curated date covers.
+ *
+ * Curated dates are mixed precision: the EMR engagement is recorded by month
+ * ("2021-08"), everything repository-era by day. A month-granular entry stands
+ * for the whole month, so comparing it raw would let a generated "2026-09-01"
+ * look newer than a curated "2026-09" and backfill a month already written by
+ * hand. Expanding to day 31 gives a correct upper bound under the plain string
+ * comparison used everywhere else here, because no real day sorts above it.
+ */
+function coverageEnd(date: string): string {
+  return /^\d{4}-\d{2}$/.test(date) ? `${date}-31` : date;
 }
 
 /**

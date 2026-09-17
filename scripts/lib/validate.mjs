@@ -74,9 +74,12 @@ export function validateDocument(document, context) {
     if (project.latestReleaseUrl !== undefined && !isGitHubUrl(project.latestReleaseUrl)) {
       problems.push(`${where}.latestReleaseUrl: not a github.com URL`);
     }
+    // The whole value, not its first ten characters: slicing would accept
+    // "2026-09-17-invalid" and the emitter would then publish it verbatim.
     if (
       project.latestReleaseDate !== undefined &&
-      !isValidDate(String(project.latestReleaseDate).slice(0, 10))
+      (typeof project.latestReleaseDate !== "string" ||
+        !isValidDate(project.latestReleaseDate))
     ) {
       problems.push(`${where}.latestReleaseDate: not a valid date`);
     }

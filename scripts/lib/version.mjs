@@ -143,7 +143,8 @@ export function pickLatestTag(tags) {
  * The format is documented in that repository's version/entries/ABOUT.txt. The
  * declared fields are authoritative — ABOUT.txt says ordering "uses
  * MAJOR/STANDARD/RELEASE inside the file, not the filename prefix" — so the
- * filename is only ever used to shortlist candidates, never to decide.
+ * filename only ever decides what order the files are read in, never which
+ * version wins.
  *
  * Rows carrying PRERELEASE=1 are in-flight and are not the shipped version.
  *
@@ -229,18 +230,26 @@ export function pickLatestManifestVersion(files, format) {
 }
 
 /**
- * Shortlist manifest filenames worth fetching, newest-looking first.
+ * Every manifest filename worth fetching, newest-looking first.
  *
- * The declared fields inside the files decide the winner, but fetching two
- * dozen blobs to find that out is wasteful, so filenames that embed a semver
- * are used to rank candidates and the top few are read in full.
+ * The declared fields inside the files decide the winner — that repository's
+ * ABOUT.txt is explicit that ordering "uses MAJOR/STANDARD/RELEASE inside the
+ * file, not the filename prefix" — so the ranking here only decides read order,
+ * never the outcome. Every candidate is returned: capping the list would let a
+ * file whose name understates its contents (a 9.9.9 declared inside
+ * `001_2_2_4_baseline.ver`) be skipped before it was ever parsed, and publish an
+ * older version. Reading a couple of dozen small blobs once a day is the
+ * cheaper mistake.
+ *
+ * `limit` remains for callers that genuinely want a subset, with a high default
+ * guarding against a pathological directory.
  *
  * @param {string[]} names
  * @param {keyof typeof MANIFEST_PARSERS} format
  * @param {number} [limit]
  * @returns {string[]}
  */
-export function shortlistManifestFiles(names, format, limit = 4) {
+export function shortlistManifestFiles(names, format, limit = 200) {
   const parser = MANIFEST_PARSERS[format];
   if (!parser) {
     return [];

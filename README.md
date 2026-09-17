@@ -116,8 +116,8 @@ with its `repo`. Nothing else needs editing — the sync picks it up, the langua
 bar and chips start resolving, and a project id that is not a published
 portfolio project is rejected rather than silently generated.
 
-**To remove one:** delete its entry. The site falls back to whatever
-`src/data.ts` says about it.
+**To remove one:** delete its entry. The next sync drops its snapshot, and the
+site falls back to whatever `src/data.ts` says about it.
 
 ### Projects that publish their own metadata
 
@@ -144,17 +144,29 @@ breaking with `!`, or prose about adding, introducing, implementing, shipping,
 rewriting or hardening something. Everything unmatched is dropped.
 
 Dropped outright: dependency bumps, `chore`/`ci`/`docs`/`style`/`test`/`refactor`
-prefixes, merges, reverts, typo and formatting work, README-only changes,
-version-lock commits, bot-authored chores, and review-bot chatter. A `fix:` is a
-repair, not a milestone — so a fix cannot qualify by mentioning "migration" or
-"architecture" in passing.
+prefixes, merges, reverts, typo and formatting work, documentation-only changes,
+version-lock commits, bot-authored chores, and review-bot chatter. Two of those
+are worth spelling out:
+
+- A `fix:` is a repair, not a milestone, so a fix cannot qualify by mentioning
+  "migration" or "architecture" in passing.
+- Documentation is excluded by title, however phrased — "Add README with local
+  dev setup instructions" does not qualify on the word "Add". The documentation
+  noun has to be what the verb acts on, so "Add a docs generator to the build"
+  is still eligible. This is a title test rather than a per-pull-request file
+  listing, which would cost an extra API request for every candidate.
+
+Drafts and prereleases are never milestones, on either the REST or the contract
+path.
 
 Two rules keep generated entries from trampling written ones:
 
 1. An entry matching a curated one — by link, or by the same project, date and
    normalised title — loses to the curated copy.
-2. A generated entry older than the newest curated entry for that project is
-   dropped. That window is already covered by hand, in better prose.
+2. A generated entry falling inside the period the curated entries already cover
+   for that project is dropped. That window is written by hand, in better prose.
+   Curated dates are mixed precision — the EMR engagement is recorded by month —
+   so a month-granular entry protects its whole month.
 
 So generation extends the timeline forward and leaves the written history alone.
 Today that means the 50 curated entries are untouched and one generated entry
@@ -225,6 +237,14 @@ publishes an absence as a fact:
   rejected, URLs must be GitHub URLs, dates must parse, project ids must be
   published projects, and timeline identities must be unique. A document that
   fails validation is not written at all.
+- A malformed field inside a reachable contract — a release link that is not a
+  GitHub URL, say — is discarded during normalization rather than overlaid onto
+  otherwise valid data. Left in, it would fail the whole document and stop every
+  later scheduled refresh.
+- Both generated artefacts are checked for drift, not just the JSON. If the
+  TypeScript module is deleted or hand-edited while the snapshot is current, the
+  next sync notices and rewrites it instead of reporting "no change" and leaving
+  the build broken.
 
 So "0 commits", "0%", and "unknown version" are not reachable states.
 

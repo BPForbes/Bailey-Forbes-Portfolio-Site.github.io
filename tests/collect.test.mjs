@@ -226,6 +226,45 @@ test("a version manifest is the last resort before curated data", async () => {
   assert.equal(metadata.latestVersionSource, "version-manifest:version/locked");
 });
 
+test("an empty contract timeline clears the REST-derived events", async () => {
+  // The contract is the upstream source of truth for its own milestones, so an
+  // empty timeline means "none" — not "fall back to whatever REST found".
+  const contract = {
+    schemaVersion: 1,
+    repository: { owner: "BPForbes", name: "KeyQuorum", defaultBranch: "main" },
+    languages: [{ name: "Rust", bytes: 48_000 }],
+    timeline: [],
+  };
+
+  const { metadata } = await collectProject({
+    projectId: "keyquorum",
+    source: { repo: REPO, contractUrl: "https://example.invalid/project-metadata.json" },
+    client: client(healthyRoutes()),
+    fetchImpl: async () =>
+      new Response(JSON.stringify(contract), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+  });
+
+  assert.equal(metadata.source, "contract");
+  assert.deepEqual(metadata.generatedTimelineEvents, []);
+});
+
+test("an unreachable contract leaves the REST-derived events in place", async () => {
+  const { metadata } = await collectProject({
+    projectId: "keyquorum",
+    source: { repo: REPO, contractUrl: "https://example.invalid/project-metadata.json" },
+    client: client(healthyRoutes()),
+    fetchImpl: async () => {
+      throw new TypeError("fetch failed");
+    },
+  });
+
+  assert.equal(metadata.source, "github");
+  assert.equal(metadata.generatedTimelineEvents.length, 1);
+});
+
 test("responses are cached so one run never asks the same question twice", async () => {
   const log = [];
   const routes = healthyRoutes();

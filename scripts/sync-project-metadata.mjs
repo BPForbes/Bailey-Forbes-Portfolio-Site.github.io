@@ -28,7 +28,12 @@ import { fileURLToPath } from "node:url";
 
 import { PORTFOLIO_PROJECT_IDS, PROJECT_SOURCES } from "./project-sources.mjs";
 import { collectProject } from "./lib/collect.mjs";
-import { hasMeaningfulChange, renderJson, renderTypeScript } from "./lib/emit.mjs";
+import {
+  hasGeneratedDrift,
+  hasMeaningfulChange,
+  renderJson,
+  renderTypeScript,
+} from "./lib/emit.mjs";
 import { GitHubClient } from "./lib/github.mjs";
 import { validateDocument } from "./lib/validate.mjs";
 
@@ -138,7 +143,18 @@ async function main() {
 
   // Projects not selected this run keep whatever the snapshot already had, so
   // `--project qpu` cannot wipe the others.
+  //
+  // Only for sources that still exist, though. A project deleted from
+  // PROJECT_SOURCES must drop out of the snapshot, otherwise its facts would be
+  // restored here on every later run and the site would keep showing them
+  // forever — the opposite of the documented removal flow, which is that the
+  // project falls back to its curated values in src/data.ts.
   for (const [projectId, metadata] of Object.entries(previousProjects)) {
+    const stillMapped = Object.prototype.hasOwnProperty.call(PROJECT_SOURCES, projectId);
+    if (!stillMapped) {
+      log(`- ${projectId} is no longer in PROJECT_SOURCES; dropping its snapshot`);
+      continue;
+    }
     if (!(projectId in projects)) {
       projects[projectId] = metadata;
     }
@@ -161,7 +177,14 @@ async function main() {
     return;
   }
 
-  const changed = hasMeaningfulChange(previousJson, document);
+  // Both artefacts are checked. The JSON alone is not enough: if the generated
+  // TypeScript module goes missing or is edited by hand while the JSON is
+  // current, comparing only the JSON reports "no change" and leaves the module
+  // broken — `npm run build` then fails on every subsequent run, or the browser
+  // ships data that no longer matches the snapshot.
+  const changed =
+    hasMeaningfulChange(previousJson, document) ||
+    hasGeneratedDrift(readIfPresent(TS_PATH), document);
 
   if (args.check) {
     log(changed ? "Generated metadata is out of date." : "Generated metadata is up to date.");

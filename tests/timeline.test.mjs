@@ -46,6 +46,20 @@ test("routine noise is excluded", () => {
   }
 });
 
+test("documentation-only work is excluded however it is phrased", () => {
+  // BPForbes/Homework-Central#34 touched README.md and nothing else. Its title
+  // starts with "Add", so the significance list alone accepted it.
+  assert.equal(isSignificantTitle("Add README with local dev setup instructions"), false);
+  assert.equal(isSignificantTitle("Create a CONTRIBUTING guide"), false);
+  assert.equal(isSignificantTitle("Expand the documentation for the CLI"), false);
+  assert.equal(isSignificantTitle("Add changelog entries for 2.0"), false);
+  assert.equal(isSignificantTitle("Document the release process."), false);
+  // Real product work that merely mentions docs still qualifies: the doc noun
+  // has to be what the verb acts on, not a modifier on a real deliverable.
+  assert.equal(isSignificantTitle("Add a docs generator to the build"), true);
+  assert.equal(isSignificantTitle("Add documentation search with a Lunr index"), true);
+});
+
 test("a repair is not a milestone even when it name-drops architecture", () => {
   // Real Homework-Central PR title. "migration" used to make this qualify.
   assert.equal(
@@ -125,6 +139,19 @@ test("a published release becomes a release event", () => {
   assert.equal(event.kind, "release");
   assert.equal(event.identity, "release:o/r@v4.5.4");
   assert.equal(event.detail, "Shared relay room and Emscripten shell.");
+});
+
+test("a GitHub prerelease is not a published milestone", () => {
+  // The contract path already dropped these; the REST path must match, or a
+  // v5.0.0-rc.1 shows up on the timeline as a shipped release.
+  assert.equal(
+    eventFromRelease(
+      { tag_name: "v5.0.0-rc.1", prerelease: true, published_at: "2026-09-16T00:00:00Z" },
+      "flinstone",
+      "o/r",
+    ),
+    undefined,
+  );
 });
 
 test("draft and tagless releases produce nothing", () => {
