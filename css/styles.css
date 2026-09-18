@@ -1477,14 +1477,22 @@ code {
 }
 
 /*
- * The pair, joined into one segmented control.
+ * The pair, joined into one segmented control, following the same convention
+ * as .deck-btn (the site's other icon-only arrow control) rather than a
+ * one-off: transparent background, --text at rest, --border-interactive
+ * frame, --action on hover.
  *
- * Measured against the card background (#1f221c), the previous treatment was
- * the problem: a --border-strong outline is 1.52:1 and simply not visible, and
- * the disabled state at 0.35 opacity came to 2.24:1 — under the 3:1 DESIGN.md
- * asks of a non-text control. Both are now above that: the frame is
- * --border-interactive (3.25:1), an enabled arrow is --action (5.54:1) and a
- * disabled one is --text-subtle (4.63:1), dimmer without disappearing.
+ * The first version of this control used --action (copper) at rest and
+ * --text-subtle at 0.35 opacity when disabled, which read as foggy rather
+ * than muted. Both were dimmer than they needed to be: --action is 5.54:1
+ * against the card and reads as a soft, desaturated tone next to the site's
+ * near-white body text, and the disabled state's 0.35 opacity landed at
+ * 2.24:1 — under the 3:1 DESIGN.md asks of a non-text control, so it read as
+ * washed out rather than intentionally dim. Resting is now --text (bone,
+ * ~13:1), the same crisp colour .deck-btn uses at rest, and disabled is that
+ * same colour at 0.5 opacity (4.28:1) rather than a dimmer colour — matching
+ * .deck-btn's opacity-driven disabled state, with more headroom than a bare
+ * 0.4 would give, since a ratio right at the floor still reads as hazy.
  */
 .tl-scrub-buttons {
   display: inline-flex;
@@ -1506,7 +1514,7 @@ code {
   border: 0;
   border-radius: 0;
   background: none;
-  color: var(--action);
+  color: var(--text);
   font-size: 0.95rem;
   cursor: pointer;
 }
@@ -1522,9 +1530,10 @@ code {
   color: var(--action-hover);
 }
 
-/* Colour rather than opacity: opacity dimmed it below the contrast floor. */
+/* Opacity, not a dimmer colour: matches .deck-btn's disabled state, with more
+   margin (0.5 rather than 0.4) so the ratio does not sit right at the floor. */
 .tl-scrub-btn[disabled] {
-  color: var(--text-subtle);
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
