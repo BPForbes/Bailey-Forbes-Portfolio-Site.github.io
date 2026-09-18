@@ -4,7 +4,10 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "generate:metadata": "node tools/generate-project-metadata.mjs",
+    "validate:metadata": "node tools/generate-project-metadata.mjs --validate",
+    "test:metadata": "node --test \"tools/tests/*.test.mjs\""
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260916.1",

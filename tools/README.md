@@ -17,3 +17,21 @@ Icon shapes are CC BY 4.0. Attribution is in the site README.
 
 To add an icon: add its name to `extract-icons.mjs`, run
 `node tools/extract-icons.mjs`, then paste the markup from `icons.json`.
+
+## Project metadata
+
+`projects.registry.mjs` is the single source of truth for the projects this site
+represents. `generate-project-metadata.mjs` iterates it and writes
+`data/projects.generated.json` during the Pages build; the frontend reads only
+that file, so no page queries the GitHub API at runtime.
+
+- `npm run generate:metadata` — refresh from GitHub (needs `GITHUB_TOKEN`)
+- `npm run validate:metadata` — re-check the file on disk
+- `npm run test:metadata` — hermetic tests, no network
+
+The generated file is gitignored: it ships inside the deployment artifact and is
+never committed, which is what stops a project notification from looping back
+into another deployment.
+
+See [`docs/project-metadata.md`](../docs/project-metadata.md) for the full flow,
+the required secrets, and how a new project is onboarded.

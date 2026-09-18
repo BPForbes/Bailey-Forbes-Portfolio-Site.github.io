@@ -1,5 +1,6 @@
 import { PORTFOLIO } from "./data.js";
 import { icon } from "./icons.js";
+import { languageShares, stat, timelineEvents, version } from "./metadata.js";
 import { mountDecks } from "./deck.js";
 import { mountGuestWindows } from "./guestWindow.js";
 import { mountTimelineDeck } from "./timeline.js";
@@ -91,7 +92,7 @@ document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
     return;
   }
 
-  const langs = PORTFOLIO.languages[key];
+  const langs = languageShares(key);
   if (!langs) {
     return;
   }
@@ -127,6 +128,40 @@ document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
 });
 
 /**
+ * Generated repository numbers, written into the markup that already showed
+ * them.
+ *
+ * A `data-metric="<project>:<field>"` element keeps its authored text as the
+ * fallback and is only rewritten when this build actually carries generated
+ * metadata for that project — so a build without `data/projects.generated.json`
+ * renders the page exactly as it was written, and a number is never blanked out
+ * or replaced by a placeholder.
+ *
+ * `data-metric-suffix` carries the unit, so the markup still reads as the chip
+ * it is ("390 commits") rather than a bare count.
+ */
+document.querySelectorAll<HTMLElement>("[data-metric]").forEach((el) => {
+  const [key, field] = (el.getAttribute("data-metric") ?? "").split(":");
+  if (key === undefined || field === undefined || !isProjectId(key)) {
+    return;
+  }
+
+  let value: string | undefined;
+  if (field === "version") {
+    value = version(key);
+  } else {
+    const count = stat(key, field);
+    value = count === undefined ? undefined : count.toLocaleString("en-US");
+  }
+  if (value === undefined) {
+    return;
+  }
+
+  el.textContent = `${value}${el.getAttribute("data-metric-suffix") ?? ""}`;
+  el.setAttribute("data-metric-generated", "true");
+});
+
+/**
  * The project timeline: a vertical git graph down the right rail.
  *
  * Each entry is a link to the commit that carries it, so the whole row is one
@@ -144,7 +179,7 @@ function renderTimeline(mount: HTMLElement): void {
   // month- or day-granular and several releases share one, so ties fall back to
   // authoring order reversed — otherwise 4.5.4 and 4.5.2 land in whichever
   // order the sort happened to leave them.
-  const events = PORTFOLIO.events
+  const events = timelineEvents()
     .map((event, index) => ({ event, index }))
     .sort((a, b) => b.event.date.localeCompare(a.event.date) || b.index - a.index)
     .map((row) => row.event);

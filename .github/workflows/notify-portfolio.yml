@@ -1,0 +1,123 @@
+# Reusable notifier: tells this portfolio that a project it represents changed.
+#
+# Project repositories call this instead of each carrying their own copy of the
+# dispatch logic, so the per-repository configuration stays about a dozen lines
+# and the request shape is maintained in exactly one place:
+#
+#   jobs:
+#     notify:
+#       uses: BPForbes/Bailey-Forbes-Portfolio-Site.github.io/.github/workflows/notify-portfolio.yml@main
+#       secrets:
+#         PORTFOLIO_DISPATCH_TOKEN: ${{ secrets.PORTFOLIO_DISPATCH_TOKEN }}
+#
+# The caller decides *when* to notify (see docs/project-metadata.md — repositories
+# with a build or deployment wait for it to succeed). This workflow only decides
+# *how*, and deliberately sends no metadata: the payload says something changed,
+# and the portfolio re-queries GitHub itself. Anything else would let a project
+# repository put numbers on bailey-forbes.com that nothing verified.
+
+name: Notify portfolio
+
+on:
+  workflow_call:
+    inputs:
+      project:
+        description: Registry id of the project, when it differs from the repository name.
+        type: string
+        required: false
+        default: ''
+      sha:
+        description: Commit that was built. Defaults to the commit this workflow runs on.
+        type: string
+        required: false
+        default: ''
+      ref:
+        description: Branch the change landed on. Defaults to main.
+        type: string
+        required: false
+        default: main
+      source-workflow:
+        description: Name of the workflow whose success triggered this notification.
+        type: string
+        required: false
+        default: ''
+    secrets:
+      PORTFOLIO_DISPATCH_TOKEN:
+        description: >-
+          Fine-grained PAT with Contents: read and write on
+          BPForbes/Bailey-Forbes-Portfolio-Site.github.io only. Contents: write is
+          what the repository_dispatch endpoint requires; it grants no access to
+          any other repository.
+        required: true
+
+# Nothing here touches the calling repository — the dispatch is an outbound call
+# authenticated by the PAT — so GITHUB_TOKEN needs no permissions at all.
+permissions: {}
+
+jobs:
+  dispatch:
+    name: Dispatch project-updated
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Send repository_dispatch to the portfolio
+        env:
+          # Read from the environment rather than interpolated into the script,
+          # so the token is never part of a command line.
+          TOKEN: ${{ secrets.PORTFOLIO_DISPATCH_TOKEN }}
+          SOURCE_REPOSITORY: ${{ github.repository }}
+          SOURCE_SHA: ${{ inputs.sha || github.sha }}
+          SOURCE_REF: ${{ inputs.ref }}
+          SOURCE_WORKFLOW: ${{ inputs.source-workflow || github.workflow }}
+          PROJECT: ${{ inputs.project }}
+        run: |
+          # No `set -x`: tracing would echo the Authorization header.
+          set -euo pipefail
+
+          if [ -z "${TOKEN}" ]; then
+            echo "::error::PORTFOLIO_DISPATCH_TOKEN is not set in ${SOURCE_REPOSITORY}." >&2
+            echo "Add it under Settings → Secrets and variables → Actions." >&2
+            exit 1
+          fi
+
+          payload="$(jq -nc \
+            --arg repository "${SOURCE_REPOSITORY}" \
+            --arg sha "${SOURCE_SHA}" \
+            --arg ref "${SOURCE_REF}" \
+            --arg workflow "${SOURCE_WORKFLOW}" \
+            --arg project "${PROJECT}" \
+            '{
+              event_type: "project-updated",
+              client_payload: ({
+                repository: $repository,
+                sha: $sha,
+                ref: $ref,
+                workflow: $workflow,
+              } + (if $project == "" then {} else { project: $project } end))
+            }')"
+
+          echo "Notifying the portfolio that ${SOURCE_REPOSITORY}@${SOURCE_SHA:0:7} changed."
+
+          # --fail-with-body so a 401/403/404 ends the job with GitHub's own
+          # explanation instead of a silent success. The response body of this
+          # endpoint is empty on success (204) and never contains the token.
+          status="$(curl --silent --show-error --fail-with-body \
+            --retry 3 --retry-delay 5 --retry-connrefused \
+            --output /tmp/dispatch-response.txt \
+            --write-out '%{http_code}' \
+            --request POST \
+            --header "Authorization: Bearer ${TOKEN}" \
+            --header 'Accept: application/vnd.github+json' \
+            --header 'X-GitHub-Api-Version: 2022-11-28' \
+            --header 'Content-Type: application/json' \
+            --data "${payload}" \
+            https://api.github.com/repos/BPForbes/Bailey-Forbes-Portfolio-Site.github.io/dispatches)"
+
+          if [ "${status}" != "204" ]; then
+            echo "::error::Portfolio dispatch returned HTTP ${status}." >&2
+            # Safe to print: this is GitHub's error body, not the request.
+            cat /tmp/dispatch-response.txt >&2 || true
+            exit 1
+          fi
+
+          echo "Portfolio accepted the project-updated event (HTTP 204)."
