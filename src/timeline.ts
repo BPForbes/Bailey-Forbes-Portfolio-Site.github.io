@@ -1,232 +1,405 @@
 /**
- * The project timeline: a vertical git branch down the right rail.
+ * The project timeline: a vertical git branch, five commits at a time.
  *
- * Newest commit first. The spine is the trunk, each dot is a commit on it, and
- * only the entry you have scrolled to is expanded — the rest stay as a date and
- * a title, so an eighteen-entry history is still scannable while exactly one
- * commit is readable. Between two entries the open crossfades, which is the
- * gradual part; once scrolling stops it settles onto one.
+ * This replaces a scroll-driven deck. That version derived which entry was open
+ * from scroll position on a 24fps clock, which read well going slowly and badly
+ * otherwise: scrubbing up and down reopened entries continuously, and because an
+ * open entry is taller than a closed one, every change reflowed the rows below
+ * it. Fast movement fed that back into itself as jitter.
  *
- * The open/close runs on a ~24fps clock, the same one the off-the-clock decks
- * use: stepped motion reads as turning through something rather than sliding.
+ * The fix is to stop deriving selection from scroll at all. The window holds
+ * five entries, selection moves only when someone asks for it, and paging
+ * replaces the contents of a fixed set of rows. Nothing about the page's height
+ * depends on scroll position, so there is nothing left to oscillate.
  *
- * Entries sit in normal flow, so opening one moves the ones below it. That is
- * fine here and a fixed-height window is not needed, because the rail is always
- * shorter than the prose column beside it — the grid row is sized by the prose,
- * so the page's own height never changes and the reader is never moved.
+ * Three levels of detail, so the rail stays scannable while a single commit can
+ * be read in full:
+ *
+ *   collapsed  date and title
+ *   selected   + summary and chips              (one at a time)
+ *   expanded   + the full card, rendered        (only when asked)
+ *
+ * Keyboard: up/down move the selection and page across the boundary, left/right
+ * page directly, Home/End jump to either end, Enter toggles the card.
  */
 
-const FRAMES_PER_SECOND = 24;
-const STEP_MS = 1000 / FRAMES_PER_SECOND;
+import { renderMarkdown, markdownToText } from "./richText.js";
+import { icon, type IconName } from "./icons.js";
 
-/** Where down the viewport an entry counts as the one being read. */
-const FOCUS = 0.38;
+/** Entries visible at once. The sixth is what the pager is for. */
+export const WINDOW_SIZE = 5;
+
+export interface TimelineCard {
+  date: string;
+  /** Display date, already formatted. */
+  dateLabel: string;
+  kind: string;
+  title: string;
+  /** Markdown. */
+  detail: string;
+  href?: string;
+  /** Rows shown in the expanded card, in order. */
+  facts: ReadonlyArray<readonly [string, string]>;
+}
 
 interface Row {
   item: HTMLElement;
+  button: HTMLButtonElement;
   detail: HTMLElement;
-  /** Height of the collapsed row: the header alone. */
-  head: number;
-  /** Natural height of the detail when fully open. */
-  open: number;
+  summary: HTMLElement;
+  card: HTMLElement;
+  expand: HTMLButtonElement;
+  dateEl: HTMLTimeElement;
+  titleEl: HTMLElement;
+  stepEl: HTMLElement;
+  markEl: HTMLElement;
+  linkEl: HTMLAnchorElement;
 }
 
-function clamp(v: number, lo: number, hi: number): number {
-  return Math.min(hi, Math.max(lo, v));
+function chip(label: string, iconName?: IconName): HTMLElement {
+  const el = document.createElement("span");
+  el.className = "chip";
+  if (iconName !== undefined) {
+    el.innerHTML = icon(iconName);
+  }
+  el.append(label);
+  return el;
 }
 
-export function mountTimelineDeck(
-  graph: HTMLElement,
-  items: HTMLElement[],
-  links: HTMLElement[],
+/**
+ * Build the fixed set of rows once, then rebind them as the window moves.
+ *
+ * Rebinding rather than re-creating keeps focus where it is when paging with
+ * the keyboard — re-rendering the list would drop focus to the body on every
+ * page, which makes the whole thing unusable without a mouse.
+ */
+export function mountTimelineWindow(
+  mount: HTMLElement,
+  cards: readonly TimelineCard[],
+  options: { hideProjectChip?: boolean } = {},
 ): void {
-  if (items.length === 0) {
+  if (cards.length === 0) {
     return;
   }
 
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const size = Math.min(WINDOW_SIZE, cards.length);
+  const lastStart = Math.max(0, cards.length - size);
+
+  const graph = document.createElement("div");
+  graph.className = "tl-graph";
+
+  const list = document.createElement("ol");
+  list.className = "tl-list";
+  graph.appendChild(list);
+
+  // Ids are per-mount: a page can hold more than one timeline, and duplicate
+  // ids would point every control at the first card on the page.
+  const mountId = `tl-${(mount.getAttribute("data-project") ?? "all").replace(/[^a-z0-9-]/gi, "")}`;
+
   const rows: Row[] = [];
-  let position = 0;
-  let raf = 0;
-  let lastStep = 0;
-  let speed = 0;
-  let focusLock = -1;
-  let scrolling = false;
-  let idleTimer = 0;
+  for (let offset = 0; offset < size; offset += 1) {
+    const item = document.createElement("li");
+    item.className = "tl-item";
 
-  function measure(): void {
-    rows.length = 0;
-    for (const item of items) {
-      const detail = item.querySelector<HTMLElement>(".tl-detail");
-      if (detail === null) {
-        continue;
-      }
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "tl-node";
 
-      const previous = detail.style.height;
-      detail.style.height = "auto";
-      const open = detail.scrollHeight;
-      detail.style.height = "0px";
-      const head = item.getBoundingClientRect().height;
-      detail.style.height = previous === "" ? "0px" : previous;
-      rows.push({ item, detail, head, open });
-    }
+    const markEl = document.createElement("span");
+    markEl.className = "tl-mark";
+    markEl.setAttribute("aria-hidden", "true");
+
+    const head = document.createElement("span");
+    head.className = "tl-head";
+
+    const dateEl = document.createElement("time");
+    dateEl.className = "tl-date";
+
+    const titleEl = document.createElement("span");
+    titleEl.className = "tl-title";
+
+    const stepEl = document.createElement("span");
+    stepEl.className = "tl-step";
+    head.append(dateEl, titleEl, stepEl);
+
+    const detail = document.createElement("span");
+    detail.className = "tl-detail";
+
+    const summary = document.createElement("span");
+    summary.className = "tl-summary";
+    detail.appendChild(summary);
+
+    button.append(markEl, head, detail);
+    item.appendChild(button);
+
+    // The card sits outside the button: it holds a link and its own control,
+    // and interactive elements cannot be nested inside a button.
+    const card = document.createElement("div");
+    card.className = "tl-card";
+    card.id = `${mountId}-card-${offset}`;
+    card.hidden = true;
+
+    const actions = document.createElement("div");
+    actions.className = "tl-actions";
+
+    const expand = document.createElement("button");
+    expand.type = "button";
+    expand.className = "chip tl-expand";
+    expand.setAttribute("aria-expanded", "false");
+    expand.setAttribute("aria-controls", card.id);
+
+    const linkEl = document.createElement("a");
+    linkEl.className = "chip tl-open";
+    linkEl.rel = "noopener";
+    linkEl.innerHTML = icon("arrow-up-right-from-square");
+    linkEl.append("View the commit");
+
+    actions.append(expand, linkEl);
+    item.append(actions, card);
+    list.appendChild(item);
+
+    rows.push({
+      item, button, detail, summary, card, expand,
+      dateEl, titleEl, stepEl, markEl, linkEl,
+    });
   }
 
-  /**
-   * Which entry the page is on. Measured from the rail's own top plus the
-   * heights this module already knows, so it never reads back a layout it just
-   * wrote — reading positions that the open state had changed would let the
-   * open entry push itself off the focus line and oscillate.
-   */
-  function scrollTarget(): number {
-    if (focusLock >= 0) {
-      return focusLock;
-    }
+  // --- pager ---------------------------------------------------------------
 
-    const top = graph.getBoundingClientRect().top;
-    const focusY = window.innerHeight * FOCUS;
+  const pager = document.createElement("div");
+  pager.className = "tl-pager";
 
-    let y = 0;
-    let best = 0;
-    let bestDistance = Infinity;
+  const older = document.createElement("button");
+  older.type = "button";
+  older.className = "btn btn-ghost tl-page";
+  older.innerHTML = icon("arrow-right");
+  older.append("Older");
 
-    rows.forEach((row, index) => {
-      const openness = clamp(1 - Math.abs(index - position), 0, 1);
-      const centre = top + y + row.head / 2;
-      const distance = Math.abs(centre - focusY);
-      if (distance < bestDistance) {
-        bestDistance = distance;
-        best = index;
+  const newer = document.createElement("button");
+  newer.type = "button";
+  newer.className = "btn btn-ghost tl-page";
+  newer.innerHTML = icon("arrow-left");
+  newer.append("Newer");
+
+  const status = document.createElement("p");
+  status.className = "tl-range";
+  // Announced on change so a screen reader hears the window move; the rows
+  // themselves are not a live region, which would be far too chatty.
+  status.setAttribute("aria-live", "polite");
+
+  pager.append(newer, status, older);
+
+  mount.replaceChildren(graph, pager);
+
+  // --- state ---------------------------------------------------------------
+
+  let start = 0;
+  let selected = 0;
+  let expandedIndex = -1;
+
+  function render(): void {
+    rows.forEach((row, offset) => {
+      const index = start + offset;
+      const card = cards[index];
+      if (card === undefined) {
+        row.item.hidden = true;
+        return;
       }
-      y += row.head + row.open * openness;
+      row.item.hidden = false;
+      row.item.dataset.kind = card.kind;
+
+      row.dateEl.dateTime = card.date;
+      row.dateEl.textContent = card.dateLabel;
+      row.titleEl.textContent = card.title;
+      row.stepEl.textContent = `${index + 1} / ${cards.length}`;
+
+      const isSelected = index === selected;
+      row.item.dataset.current = String(isSelected);
+      if (isSelected) {
+        row.button.setAttribute("aria-current", "true");
+      } else {
+        row.button.removeAttribute("aria-current");
+      }
+      // Only the selected row is a tab stop, so tabbing past the timeline takes
+      // one press rather than five.
+      row.button.tabIndex = isSelected ? 0 : -1;
+
+      const isExpanded = index === expandedIndex;
+
+      // The card carries the same text, rendered. Showing both put the summary
+      // directly above a fuller copy of itself.
+      row.detail.hidden = !isSelected || isExpanded;
+      if (isSelected && !isExpanded) {
+        row.summary.textContent = markdownToText(card.detail);
+      }
+
+      row.card.hidden = !isExpanded;
+      row.expand.hidden = !isSelected;
+      row.expand.setAttribute("aria-expanded", String(isExpanded));
+      row.expand.replaceChildren();
+      row.expand.innerHTML = icon(isExpanded ? "compress" : "expand");
+      row.expand.append(isExpanded ? "Hide details" : "Show details");
+
+      if (card.href === undefined) {
+        row.linkEl.hidden = true;
+      } else {
+        row.linkEl.hidden = !isSelected;
+        row.linkEl.href = card.href;
+      }
+
+      if (isExpanded) {
+        row.card.replaceChildren(buildCard(card, options.hideProjectChip === true));
+      }
     });
 
-    if (scrolling) {
-      // Nudge toward the neighbour the focus line is heading for, so the two
-      // crossfade instead of snapping.
-      const row = rows[best];
-      if (row !== undefined) {
-        const offset = clamp((focusY - (top + centreOf(best))) / row.head, -0.5, 0.5);
-        return clamp(best - offset, 0, rows.length - 1);
-      }
+    const first = start + 1;
+    const last = Math.min(start + size, cards.length);
+    status.textContent = `${first}–${last} of ${cards.length}`;
+    newer.disabled = start === 0;
+    older.disabled = start >= lastStart;
+    graph.dataset.hasOlder = String(start < lastStart);
+    graph.dataset.hasNewer = String(start > 0);
+  }
+
+  /** Move the selection, paging the window when it would leave the view. */
+  function select(next: number, focusRow = false): void {
+    const clamped = Math.min(cards.length - 1, Math.max(0, next));
+    if (clamped !== selected) {
+      // Collapsing on move is what keeps the rail a rail: two open cards would
+      // put the fifth entry off-screen, which is what the window is avoiding.
+      expandedIndex = -1;
     }
-
-    return best;
-  }
-
-  function centreOf(target: number): number {
-    let y = 0;
-    for (let i = 0; i < target; i += 1) {
-      const row = rows[i];
-      if (row === undefined) {
-        continue;
-      }
-      y += row.head + row.open * clamp(1 - Math.abs(i - position), 0, 1);
+    selected = clamped;
+    if (selected < start) {
+      start = selected;
+    } else if (selected >= start + size) {
+      start = Math.min(lastStart, selected - size + 1);
     }
-    const row = rows[target];
-    return y + (row === undefined ? 0 : row.head / 2);
+    render();
+    if (focusRow) {
+      rows[selected - start]?.button.focus();
+    }
   }
 
-  function paint(): void {
-    let y = 0;
-    let currentY = 0;
-    let total = 0;
-
-    rows.forEach((row, index) => {
-      const openness = clamp(1 - Math.abs(index - position), 0, 1);
-      row.detail.style.height = `${(row.open * openness).toFixed(1)}px`;
-      row.detail.style.opacity = openness.toFixed(3);
-      row.item.dataset.current = String(openness > 0.5);
-
-      if (index === Math.round(position)) {
-        currentY = y + row.head / 2;
-      }
-      y += row.head + row.open * openness;
-    });
-
-    total = Math.max(1, y);
-    graph.style.setProperty("--tl-progress", String(clamp(currentY / total, 0, 1)));
-    graph.style.setProperty("--tl-speed", speed.toFixed(3));
-  }
-
-  function tick(now: number): void {
-    raf = 0;
-    const target = scrollTarget();
-
-    if (reduced.matches) {
-      position = target;
-      speed = 0;
-      paint();
+  function page(delta: number): void {
+    const next = Math.min(lastStart, Math.max(0, start + delta * size));
+    if (next === start) {
       return;
     }
-
-    if (now - lastStep >= STEP_MS) {
-      // Advance the grid by one step rather than snapping it to now: a step is
-      // 41.7ms and a display frame 16.7ms, so snapping rounds every step up to
-      // three frames and it runs at 20fps, not 24.
-      lastStep = now - lastStep > STEP_MS * 3 ? now : lastStep + STEP_MS;
-      const delta = target - position;
-      position += delta * 0.45;
-      if (Math.abs(delta) < 0.002) {
-        position = target;
-      }
-      speed = speed * 0.65 + Math.min(1, Math.abs(delta)) * 0.35;
-      if (speed < 0.004) {
-        speed = 0;
-      }
-      paint();
-    }
-
-    raf = requestAnimationFrame(tick);
+    start = next;
+    // Keep the selection inside the window rather than dragging it along, so
+    // paging is a way to look around without losing your place entirely.
+    selected = Math.min(cards.length - 1, Math.max(start, Math.min(selected, start + size - 1)));
+    expandedIndex = -1;
+    render();
   }
 
-  function schedule(): void {
-    if (raf === 0) {
-      raf = requestAnimationFrame(tick);
-    }
+  function toggleExpanded(index: number): void {
+    expandedIndex = expandedIndex === index ? -1 : index;
+    render();
   }
 
-  window.addEventListener(
-    "scroll",
-    () => {
-      scrolling = true;
-      window.clearTimeout(idleTimer);
-      // Once scrolling stops the deck settles onto exactly one entry; scroll
-      // position is continuous, so a rest between two would leave both part
-      // open.
-      idleTimer = window.setTimeout(() => {
-        scrolling = false;
-        schedule();
-      }, 140);
-      schedule();
-    },
-    { passive: true },
-  );
-  window.addEventListener("resize", () => {
-    measure();
-    schedule();
-  });
-  reduced.addEventListener("change", schedule);
-
-  links.forEach((link, index) => {
-    link.addEventListener("focus", () => {
-      focusLock = index;
-      schedule();
+  rows.forEach((row, offset) => {
+    row.button.addEventListener("click", () => {
+      const index = start + offset;
+      if (index === selected) {
+        toggleExpanded(index);
+      } else {
+        select(index);
+      }
     });
-    link.addEventListener("blur", () => {
-      focusLock = -1;
-      schedule();
+    row.expand.addEventListener("click", () => {
+      toggleExpanded(start + offset);
     });
   });
 
-  measure();
-  schedule();
+  newer.addEventListener("click", () => {
+    page(-1);
+  });
+  older.addEventListener("click", () => {
+    page(1);
+  });
 
-  // Webfonts landing late change every row's height.
-  if ("fonts" in document) {
-    void document.fonts.ready.then(() => {
-      measure();
-      schedule();
-    });
+  graph.addEventListener("keydown", (event: KeyboardEvent) => {
+    const handled = (): void => {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+    switch (event.key) {
+      case "ArrowDown":
+        handled();
+        select(selected + 1, true);
+        break;
+      case "ArrowUp":
+        handled();
+        select(selected - 1, true);
+        break;
+      case "ArrowRight":
+      case "PageDown":
+        handled();
+        page(1);
+        break;
+      case "ArrowLeft":
+      case "PageUp":
+        handled();
+        page(-1);
+        break;
+      case "Home":
+        handled();
+        select(0, true);
+        break;
+      case "End":
+        handled();
+        select(cards.length - 1, true);
+        break;
+      case "Enter":
+      case " ":
+        if (event.target === rows[selected - start]?.button) {
+          handled();
+          toggleExpanded(selected);
+        }
+        break;
+      default:
+        break;
+    }
+  });
+
+  render();
+}
+
+/**
+ * The expanded card: the detail as rendered Markdown, then the facts table.
+ *
+ * Everything here comes from the entry itself. A field the data does not carry
+ * is omitted rather than shown empty, so the card never implies it knows
+ * something it does not.
+ */
+function buildCard(card: TimelineCard, hideProjectChip: boolean): DocumentFragment {
+  const fragment = document.createDocumentFragment();
+
+  const body = document.createElement("div");
+  body.className = "tl-card-body rt";
+  body.appendChild(renderMarkdown(card.detail));
+  fragment.appendChild(body);
+
+  const facts = card.facts.filter(([label]) => !(hideProjectChip && label === "Project"));
+  if (facts.length > 0) {
+    const table = document.createElement("dl");
+    table.className = "tl-facts";
+    for (const [label, value] of facts) {
+      const term = document.createElement("dt");
+      term.textContent = label;
+      const description = document.createElement("dd");
+      description.textContent = value;
+      table.append(term, description);
+    }
+    fragment.appendChild(table);
   }
+
+  const chips = document.createElement("div");
+  chips.className = "tl-card-chips";
+  chips.appendChild(chip(card.kind, card.kind === "release" ? "tag" : "code-branch"));
+  fragment.appendChild(chips);
+
+  return fragment;
 }

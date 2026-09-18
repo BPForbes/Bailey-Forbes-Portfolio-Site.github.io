@@ -9,7 +9,7 @@ import {
 import { icon } from "./icons.js";
 import { mountDecks } from "./deck.js";
 import { mountGuestWindows } from "./guestWindow.js";
-import { mountTimelineDeck } from "./timeline.js";
+import { mountTimelineWindow, type TimelineCard } from "./timeline.js";
 import { ROUTES } from "./routes.js";
 import type { ProjectId } from "./types.js";
 
@@ -148,17 +148,51 @@ document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
 });
 
 /**
- * The project timeline: a vertical git graph down the right rail.
+ * Month- or day-granular ISO dates as the site writes them elsewhere.
  *
- * Each entry is a link to the commit that carries it, so the whole row is one
- * target and the keyboard gets the reveal for free — the detail and the commit
- * line are shown on hover, on focus, and on whichever entry the page is
- * currently scrolled to. That last one matters: a reveal that only answers to
- * hover is unreachable on a touch screen (DESIGN.md R24).
+ * Spelled out rather than left to toLocaleDateString: en-GB abbreviates
+ * September as "Sept" and the exact abbreviations depend on a runtime's ICU
+ * data, so a date here would not necessarily match the prose beside it. The
+ * machine-readable value stays on the `datetime` attribute.
+ */
+function formatEventDate(iso: string): string {
+  const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  ] as const;
+  const full = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  if (full !== null) {
+    const month = months[Number(full[2]) - 1];
+    if (month !== undefined) {
+      return `${Number(full[3])} ${month} ${full[1]}`;
+    }
+  }
+  // The EMR engagement is recorded by month; it has no day to show.
+  const partial = /^(\d{4})-(\d{2})$/.exec(iso);
+  if (partial !== null) {
+    const month = months[Number(partial[2]) - 1];
+    if (month !== undefined) {
+      return `${month} ${partial[1]}`;
+    }
+  }
+  return iso;
+}
+
+/**
+ * The project timeline: a vertical git branch, five commits at a time.
  *
- * Entries without a commit are still rendered, as a span rather than a link,
- * because pretending they link somewhere would be worse than saying they do
- * not (R21).
+ * The rail shows a window of five with a pager, rather than every entry at
+ * once: an eighteen-entry history was a wall, and the previous scroll-driven
+ * reveal jittered when scrubbed quickly because it recomputed which entry was
+ * open on every scroll event while open entries changed the page's height.
+ * Selection is now explicit, so nothing here reacts to scrolling at all.
+ *
+ * Detail arrives as Markdown — the sync copies pull request bodies — so the
+ * expanded card renders it rather than printing the asterisks and backticks.
+ *
+ * An entry without a commit link still renders; it just has no link, because
+ * pretending it points somewhere would be worse than saying it does not
+ * (DESIGN.md R21).
  */
 function renderTimeline(mount: HTMLElement): void {
   // Newest first: the most recent commit is the card you land on. Dates are
@@ -189,106 +223,28 @@ function renderTimeline(mount: HTMLElement): void {
     return;
   }
 
-  const graph = document.createElement("div");
-  graph.className = "tl-graph";
-
-  // The travelling glow on the spine. One element, moved by transform.
-  const glow = document.createElement("span");
-  glow.className = "tl-glow";
-  glow.setAttribute("aria-hidden", "true");
-  graph.appendChild(glow);
-
-  const list = document.createElement("ol");
-  list.className = "tl-list";
-
-  const items: HTMLElement[] = [];
-  const links: HTMLElement[] = [];
-
-  visible.forEach((event, index) => {
-    const item = document.createElement("li");
-    item.className = "tl-item";
-    item.dataset.kind = event.kind;
-
-    const node = document.createElement(event.href === undefined ? "span" : "a");
-    node.className = "tl-node";
-    if (node instanceof HTMLAnchorElement && event.href !== undefined) {
-      node.href = event.href;
-      node.rel = "noopener";
-    }
-
-    // The dot sits on the spine; it is the commit on the branch.
-    const mark = document.createElement("span");
-    mark.className = "tl-mark";
-    mark.setAttribute("aria-hidden", "true");
-
-    const head = document.createElement("span");
-    head.className = "tl-head";
-
-    const date = document.createElement("time");
-    date.className = "tl-date";
-    date.dateTime = event.date;
-    date.textContent = event.date;
-
-    const title = document.createElement("span");
-    title.className = "tl-title";
-    title.textContent = event.title;
-
-    const step = document.createElement("span");
-    step.className = "tl-step";
-    step.textContent = `${index + 1} / ${visible.length}`;
-    head.append(date, title, step);
-
-    // One wrapper only: the open/close is driven by the wrapper's height, and a
-    // second direct child would sit outside it and escape the collapse.
-    const detail = document.createElement("span");
-    detail.className = "tl-detail";
-
-    const inner = document.createElement("span");
-    inner.className = "tl-detail-inner";
-
-    const summary = document.createElement("span");
-    summary.className = "tl-summary";
-    summary.textContent = event.detail;
-    inner.appendChild(summary);
-
-    const meta = document.createElement("span");
-    meta.className = "tl-meta";
-
-    if (!hideProjectChip) {
-      const projectChip = document.createElement("span");
-      projectChip.className = "chip";
-      projectChip.textContent = PORTFOLIO.projects[event.project];
-      meta.appendChild(projectChip);
-    }
-
-    const kindChip = document.createElement("span");
-    kindChip.className = "chip";
-    kindChip.innerHTML = icon(event.kind === "release" ? "tag" : "code-branch");
-    kindChip.append(event.kind);
-    meta.appendChild(kindChip);
-
+  const cards: TimelineCard[] = visible.map((event) => {
+    // Kind is not listed here: the card already ends with a chip for it, and
+    // printing "Type: Feature" above a "feature" chip says it twice.
+    const facts: Array<readonly [string, string]> = [
+      ["Project", PORTFOLIO.projects[event.project]],
+      ["Date", formatEventDate(event.date)],
+    ];
     if (event.href !== undefined) {
-      const open = document.createElement("span");
-      open.className = "chip tl-open";
-      open.innerHTML = icon("arrow-up-right-from-square");
-      open.append("View the commit");
-      meta.appendChild(open);
+      facts.push(["Source", event.href]);
     }
-
-    inner.appendChild(meta);
-    detail.appendChild(inner);
-
-    node.append(mark, head, detail);
-    item.appendChild(node);
-    list.appendChild(item);
-    items.push(item);
-    links.push(node);
+    return {
+      date: event.date,
+      dateLabel: formatEventDate(event.date),
+      kind: event.kind,
+      title: event.title,
+      detail: event.detail,
+      ...(event.href === undefined ? {} : { href: event.href }),
+      facts,
+    };
   });
 
-  graph.appendChild(list);
-  mount.appendChild(graph);
-
-  mountTimelineDeck(graph, items, links);
+  mountTimelineWindow(mount, cards, { hideProjectChip });
 }
 
 document.querySelectorAll<HTMLElement>("[data-timeline]").forEach(renderTimeline);

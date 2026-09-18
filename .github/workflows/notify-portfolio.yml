@@ -111,10 +111,16 @@ jobs:
 
           echo "Notifying the portfolio that ${SOURCE_REPOSITORY}@${SOURCE_SHA:0:7} shipped."
 
-          # --fail-with-body so a 401/403/404 ends the job with GitHub's own
-          # explanation instead of a silent success. The response body of this
-          # endpoint is empty on success (204) and never contains the token.
-          status="$(curl --silent --show-error --fail-with-body \
+          # --fail-with-body makes curl exit nonzero on a 4xx/5xx while still
+          # writing GitHub's explanation to --output.
+          #
+          # The call has to sit inside `if !` rather than a bare assignment:
+          # under `set -e` a failing command substitution aborts the step
+          # immediately, so the diagnostics below would never run and the job
+          # would fail with no explanation at all. Negating it puts the failure
+          # under test instead, which suspends errexit for this command.
+          http_status=""
+          if ! http_status="$(curl --silent --show-error --fail-with-body \
             --retry 3 --retry-delay 5 --retry-connrefused \
             --output /tmp/dispatch-response.txt \
             --write-out '%{http_code}' \
@@ -124,11 +130,20 @@ jobs:
             --header 'X-GitHub-Api-Version: 2022-11-28' \
             --header 'Content-Type: application/json' \
             --data "${payload}" \
-            https://api.github.com/repos/BPForbes/Bailey-Forbes-Portfolio-Site.github.io/dispatches)"
+            https://api.github.com/repos/BPForbes/Bailey-Forbes-Portfolio-Site.github.io/dispatches)"; then
+            # Empty when curl never got an HTTP response at all (DNS, TLS,
+            # connection refused past the retries).
+            echo "::error::Portfolio dispatch failed (HTTP ${http_status:-none})." >&2
+            # Safe to print: this is GitHub's response body, not the request, and
+            # this endpoint's body never contains the token.
+            cat /tmp/dispatch-response.txt >&2 || true
+            exit 1
+          fi
 
-          if [ "${status}" != "204" ]; then
-            echo "::error::Portfolio dispatch returned HTTP ${status}." >&2
-            # Safe to print: this is GitHub's error body, not the request.
+          # A 2xx that is not 204 means the endpoint did something other than
+          # accept the dispatch, so treat it as a failure rather than assume.
+          if [ "${http_status}" != "204" ]; then
+            echo "::error::Portfolio dispatch returned HTTP ${http_status}, expected 204." >&2
             cat /tmp/dispatch-response.txt >&2 || true
             exit 1
           fi

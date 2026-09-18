@@ -178,6 +178,21 @@ A notification cannot cause another notification. The dispatch starts
 explicitly. Nothing in that chain reaches back into a project repository, so
 there is no path from a sync to another notification.
 
-Concurrency covers the burst case: the notifier and the sync each use a single
-`concurrency` group, so several projects shipping at once collapse into one
-sync rather than racing to commit the same file.
+Concurrency does less than it might look like, so it is worth being precise
+about what it does and does not guarantee when several projects ship at once.
+
+The notifier's `concurrency` group lives in each **project** repository, so it
+only serialises that one repository's notifications. It cannot combine or
+suppress notifications coming from different repositories — four projects
+shipping together send four dispatches.
+
+The receiver's group prevents two syncs from running at the same time, which is
+what stops them racing to commit the same file. Beyond that, GitHub holds at
+most one pending run per group and a newer pending run replaces the older one,
+so a burst *can* coalesce into fewer syncs than dispatches. It is not guaranteed
+to collapse into exactly one: whether a dispatch starts its own run or replaces
+a pending one depends on what is in flight when it arrives.
+
+None of that affects correctness. Each sync re-derives every figure from
+scratch, so a coalesced run and a run per dispatch produce the same result — the
+only difference is how many times the work is done.
