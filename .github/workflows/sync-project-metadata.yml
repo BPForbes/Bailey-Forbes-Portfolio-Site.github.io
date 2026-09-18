@@ -1,0 +1,120 @@
+name: Sync project metadata
+
+# Refreshes the GitHub-derived facts the portfolio publishes — language splits,
+# commit totals, versions, and recent timeline milestones — and commits them
+# only when something actually moved.
+on:
+  # Run it by hand from the Actions tab.
+  workflow_dispatch:
+    inputs:
+      project:
+        description: "Sync one project only (blank = all)"
+        required: false
+        type: string
+
+  # Daily refresh. 05:20 UTC is deliberately off the hour: the top of the hour
+  # is the busiest slot on shared runners.
+  schedule:
+    - cron: "20 5 * * *"
+
+  # Lets a project repository push its own update the moment it ships something,
+  # instead of waiting for the next scheduled run:
+  #
+  #   curl -X POST https://api.github.com/repos/BPForbes/Bailey-Forbes-Portfolio-Site.github.io/dispatches \
+  #     -H "Authorization: Bearer $TOKEN" \
+  #     -H "Accept: application/vnd.github+json" \
+  #     -d '{"event_type":"portfolio-project-updated"}'
+  #
+  # Entirely optional — the schedule above covers the same ground within a day.
+  repository_dispatch:
+    types: [portfolio-project-updated]
+
+permissions:
+  contents: write
+  # Needed only to hand the Pages deployment off explicitly — see the final step.
+  actions: write
+
+# One sync at a time. A scheduled run and a dispatch landing together would
+# otherwise race to commit the same file.
+concurrency:
+  group: sync-project-metadata
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch and regenerate project metadata
+        env:
+          # Passed through the environment rather than interpolated into the
+          # script. A ${{ }} expression is substituted into the shell source
+          # before bash parses it, so a dispatched value containing quotes or
+          # shell syntax would run as code — with the write-capable tokens below
+          # in scope.
+          PROJECT: ${{ inputs.project }}
+          # Every repository read here is public, so the workflow's own token is
+          # enough — no PAT is required. PORTFOLIO_GITHUB_TOKEN is honoured if a
+          # future project repository turns private and needs wider access; the
+          # script prefers it when set.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PORTFOLIO_GITHUB_TOKEN: ${{ secrets.PORTFOLIO_GITHUB_TOKEN }}
+        run: |
+          if [ -n "$PROJECT" ]; then
+            npm run sync:metadata -- --project "$PROJECT"
+          else
+            npm run sync:metadata
+          fi
+
+      # The build and the tests run against the freshly generated data, so a
+      # sync that would break the site fails here and commits nothing.
+      - name: Typecheck and test
+        run: npm test
+
+      - name: Detect changes
+        id: diff
+        run: |
+          if git diff --quiet -- data/project-metadata.json src/generated/projectMetadata.ts; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No repository facts changed."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git --no-pager diff --stat -- data/project-metadata.json src/generated/projectMetadata.ts
+          fi
+
+      - name: Commit refreshed metadata
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Only the generated artefacts. Nothing else in the tree is this job's
+          # to touch, and js/ is gitignored and rebuilt at deploy time anyway.
+          git add data/project-metadata.json src/generated/projectMetadata.ts
+          git commit -m "chore(portfolio): sync project metadata"
+          # Someone may have pushed while this ran; rebase rather than fail.
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      # A push made with GITHUB_TOKEN deliberately does not trigger other
+      # workflows — that is GitHub's loop protection, and it is why this job can
+      # commit to main without re-triggering itself. The side effect is that the
+      # Pages deployment in static.yml would never see the metadata commit, so
+      # it is started explicitly here. workflow_dispatch is one of the two events
+      # GITHUB_TOKEN is still allowed to raise, so this needs no PAT, and
+      # static.yml has no metadata trigger of its own, so the chain ends here.
+      - name: Deploy the refreshed site
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run static.yml --ref "${GITHUB_REF_NAME}"

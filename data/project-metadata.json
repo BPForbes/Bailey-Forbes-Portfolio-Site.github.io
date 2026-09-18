@@ -1,0 +1,549 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-17T19:53:13.102Z",
+  "projects": {
+    "flinstone": {
+      "repository": "BPForbes/Bailey-Forbes-Flinstone",
+      "repositoryUrl": "https://github.com/BPForbes/Bailey-Forbes-Flinstone",
+      "owner": "BPForbes",
+      "name": "Bailey-Forbes-Flinstone",
+      "defaultBranch": "main",
+      "createdAt": "2025-05-28T17:51:02Z",
+      "pushedAt": "2026-09-17T16:51:50Z",
+      "commitCount": 398,
+      "mergedPullRequestCount": 157,
+      "pullRequestCount": 214,
+      "latestVersion": "5.0.0",
+      "latestVersionSource": "version-manifest:version/locked",
+      "languages": [
+        {
+          "name": "C",
+          "bytes": 2792382,
+          "pct": 77.4
+        },
+        {
+          "name": "Shell",
+          "bytes": 187879,
+          "pct": 5.2
+        },
+        {
+          "name": "Python",
+          "bytes": 160312,
+          "pct": 4.5
+        },
+        {
+          "name": "Assembly",
+          "bytes": 142369,
+          "pct": 4
+        },
+        {
+          "name": "JavaScript",
+          "bytes": 141218,
+          "pct": 3.9
+        },
+        {
+          "name": "Makefile",
+          "bytes": 74680,
+          "pct": 2.1
+        },
+        {
+          "name": "C++",
+          "bytes": 62853,
+          "pct": 1.7
+        },
+        {
+          "name": "CSS",
+          "bytes": 13588,
+          "pct": 0.4
+        },
+        {
+          "name": "CMake",
+          "bytes": 13576,
+          "pct": 0.4
+        },
+        {
+          "name": "HTML",
+          "bytes": 6538,
+          "pct": 0.2
+        },
+        {
+          "name": "Nix",
+          "bytes": 1846,
+          "pct": 0.1
+        },
+        {
+          "name": "Linker Script",
+          "bytes": 252,
+          "pct": 0.1
+        }
+      ],
+      "generatedTimelineEvents": [
+        {
+          "date": "2026-09-17",
+          "kind": "feature",
+          "project": "flinstone",
+          "title": "Publish project-metadata.json with the validated browser lab (v5.0.0)",
+          "detail": "Flintstone becomes the machine-readable source of truth for its own public project metadata. Every validated push to `main` now publishes **`dist/browser-lab/project-metadata.json`** as part of the *same atomic GitHub Pages deployment* the browser lab already uses, so **bailey-forbes.com** can consume it instead of mai…",
+          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/360",
+          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#360"
+        },
+        {
+          "date": "2026-09-15",
+          "kind": "feature",
+          "project": "flinstone",
+          "title": "Emscripten Flinstone Shell sandbox and relay identity fixes",
+          "detail": "The default browser lab now runs the freestanding identity shell as a sandboxed Emscripten **Flinstone Shell**. Operators type at `shell>` in that terminal. Switch user, register, sessions, and `server` chat use the same serial protocol and JS relay as before.",
+          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/359",
+          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#359"
+        },
+        {
+          "date": "2026-09-14",
+          "kind": "feature",
+          "project": "flinstone",
+          "title": "Add x86_64 freestanding BIOS boot candidate, schema-v2 metadata, browser-lab harness, and promotion gate updates",
+          "detail": "- Introduce a true freestanding x86_64 BIOS boot boundary and a schema-v2 artifact manifest so CI, a QEMU probe, and a browser emulator can independently validate promotion while keeping a fail-closed contract.",
+          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/355",
+          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#355"
+        },
+        {
+          "date": "2026-09-14",
+          "kind": "feature",
+          "project": "flinstone",
+          "title": "Add kernel artifact contract and fix network defects",
+          "detail": "- audit the real Flintstone boot/build path and document the x86-64/v86 blockers - add `make browser-kernel`, schema-versioned build metadata, a bounded QEMU probe, and a minimal static metadata-consumption harness - define the browser artifact boundary in the P8 C contract bundle and expose its revision/schema through…",
+          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/354",
+          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#354"
+        },
+        {
+          "date": "2026-09-13",
+          "kind": "feature",
+          "project": "flinstone",
+          "title": "Close #328 — P3-10 / P4-01 production Wi-Fi ✅ (#338)",
+          "detail": "Merged pull request #339: feat(wifi): close #328 — P3-10 / P4-01 production Wi-Fi ✅ (#338).",
+          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/339",
+          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#339"
+        },
+        {
+          "date": "2026-09-13",
+          "kind": "feature",
+          "project": "flinstone",
+          "title": "Close #328 — P3-10 / P4-01 production Wi-Fi ✅",
+          "detail": "Maintainer-confirmed physical evidence closes GitHub issue **#328**. This update flips **P3-10** and **P4-01 / #328** from **~✅** to **✅**, records the closure, and sunsets the issue-specific GitHub Actions job and validator.",
+          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/338",
+          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#338"
+        },
+        {
+          "date": "2026-09-11",
+          "kind": "feature",
+          "project": "flinstone",
+          "title": "Management-frame OTA Phase 2 (#328 Tasks 2.1–2.5)",
+          "detail": "Completes **#328 deferred production-tail items** on top of Phase 2 mgmt OTA (Tasks 2.1–2.5) and physical-vs-lab separation.",
+          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/334",
+          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#334"
+        },
+        {
+          "date": "2026-08-23",
+          "kind": "feature",
+          "project": "flinstone",
+          "title": "RFC 7664 Dragonfly SAE standard for WPA3 OTA connect",
+          "detail": "> [!TIP] > **🎬 Watch the walkthrough: [Implement RFC 7664 Dragonfly SAE for WPA3 OTA connect](https://mainframe.app/v/bb2dade00dbff2c424710e7d81de20b7)** > > <sup>Generated by [Mainframe](https://mainframe.app). Mainframe automatically generates videos when new pull requests are opened.",
+          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/335",
+          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#335"
+        },
+        {
+          "date": "2026-06-22",
+          "kind": "feature",
+          "project": "flinstone",
+          "title": "Fl0 macvlan LAN identity, remove portproxy, fix exit blocking",
+          "detail": "- Add kernel/core/net/net_macvlan.c + net_macvlan.h: creates fl0 macvlan child interface with its own unique MAC, obtains a real DHCP lease from the router via a standalone AF_PACKET/SOCK_DGRAM raw-socket DHCP client (DISCOVER → OFFER → REQUEST → ACK), and assigns the IP with `ip addr add`.",
+          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/322",
+          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#322"
+        },
+        {
+          "date": "2026-06-19",
+          "kind": "feature",
+          "project": "flinstone",
+          "title": "UAC press-any-key gate and deferred hosting line",
+          "detail": "Improves the WSL `server host` / teardown UX around Windows UAC elevation for portproxy and firewall rules, and keeps interactive Ctrl+C behavior on a fresh prompt line.",
+          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/315",
+          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#315"
+        },
+        {
+          "date": "2026-06-17",
+          "kind": "feature",
+          "project": "flinstone",
+          "title": "Home Wi-Fi in lab scan + join by SSID without prior scan match",
+          "detail": "- **Wi-Fi scan (lab backend):** reads `FL_NET_WIFI_HOME_SSID` env var and includes the user's home network in scan results. Optional `FL_NET_WIFI_HOME_AUTH` (`open`/`wpa2`/`wpa3`, default `wpa2`) and `FL_NET_WIFI_HOME_BAND` (`2`/`5`/`6`, default `2`) configure auth mode and band.",
+          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/313",
+          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#313"
+        },
+        {
+          "date": "2026-06-13",
+          "kind": "feature",
+          "project": "flinstone",
+          "title": "First-principles multi-device server and real Wi-Fi scan",
+          "detail": "- Adds Linux host Wi-Fi backends: **wpa_cli** (with auto socket-path probing) and **NetworkManager nmcli** fallback when wpa_supplicant control is unavailable. - Auto-detects the wireless interface (`nmcli`, `/proc/net/wireless`, or `wlan0`) instead of assuming `wlan0`.",
+          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/311",
+          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#311"
+        }
+      ],
+      "source": "github",
+      "fetchedAt": "2026-09-17T19:53:09.967Z"
+    },
+    "homework-central": {
+      "repository": "BPForbes/Homework-Central",
+      "repositoryUrl": "https://github.com/BPForbes/Homework-Central",
+      "owner": "BPForbes",
+      "name": "Homework-Central",
+      "defaultBranch": "main",
+      "description": "A community platform for people to collaborate when it comes to each other’s education.",
+      "createdAt": "2026-06-07T21:07:48Z",
+      "pushedAt": "2026-09-10T16:25:35Z",
+      "commitCount": 15,
+      "mergedPullRequestCount": 51,
+      "pullRequestCount": 67,
+      "languages": [
+        {
+          "name": "C#",
+          "bytes": 784998,
+          "pct": 58.8
+        },
+        {
+          "name": "TypeScript",
+          "bytes": 346044,
+          "pct": 26
+        },
+        {
+          "name": "CSS",
+          "bytes": 101342,
+          "pct": 7.6
+        },
+        {
+          "name": "PowerShell",
+          "bytes": 50822,
+          "pct": 3.8
+        },
+        {
+          "name": "Shell",
+          "bytes": 46221,
+          "pct": 3.5
+        },
+        {
+          "name": "Dockerfile",
+          "bytes": 1755,
+          "pct": 0.1
+        },
+        {
+          "name": "HTML",
+          "bytes": 841,
+          "pct": 0.1
+        },
+        {
+          "name": "JavaScript",
+          "bytes": 709,
+          "pct": 0.1
+        }
+      ],
+      "generatedTimelineEvents": [
+        {
+          "date": "2026-07-23",
+          "kind": "feature",
+          "project": "homework-central",
+          "title": "Add 2D neural mesh slices, worker projection, and k8s training/viz split",
+          "detail": "- Adds **2D slice** mode on the neural mesh: one layer at a time, **top-down** or **side** perspective, with Prev/Next slice navigation (Volume mode unchanged). - Moves mesh build/projection onto a **Web Worker** so orbit/slice stays off the UI thread.",
+          "href": "https://github.com/BPForbes/Homework-Central/pull/62",
+          "identity": "pr:BPForbes/Homework-Central#62"
+        },
+        {
+          "date": "2026-07-21",
+          "kind": "feature",
+          "project": "homework-central",
+          "title": "Add tutor subject text processor (aliases, case-fold, spell-check)",
+          "detail": "Adds a deterministic **tutor subject text processor / extractor** for intake free-text (`tutor-subjects`). This is vocabulary + Levenshtein — not a new neural cascade — so applicants get immediate verify/re-enter feedback before ticket creation.",
+          "href": "https://github.com/BPForbes/Homework-Central/pull/55",
+          "identity": "pr:BPForbes/Homework-Central#55"
+        },
+        {
+          "date": "2026-07-21",
+          "kind": "feature",
+          "project": "homework-central",
+          "title": "Add training session removal and concurrent ticket generation",
+          "detail": "This PR adds the ability to remove neural network training sessions and optimizes synthetic ticket generation by running it concurrently instead of sequentially.",
+          "href": "https://github.com/BPForbes/Homework-Central/pull/52",
+          "identity": "pr:BPForbes/Homework-Central#52"
+        },
+        {
+          "date": "2026-07-15",
+          "kind": "feature",
+          "project": "homework-central",
+          "title": "UI redesign onto main (water theme, Preview editor gate)",
+          "detail": "Replays the water-themed UI redesign and related backend work onto current `main`. The previous `claude/ui-redesign-ground-up-tbtuj5` branch had rewritten SHAs with no common history, so GitHub could not open a PR.",
+          "href": "https://github.com/BPForbes/Homework-Central/pull/47",
+          "identity": "pr:BPForbes/Homework-Central#47"
+        },
+        {
+          "date": "2026-07-15",
+          "kind": "feature",
+          "project": "homework-central",
+          "title": "Claude/UI redesign ground up tbtuj5",
+          "detail": "**Summary**",
+          "href": "https://github.com/BPForbes/Homework-Central/pull/45",
+          "identity": "pr:BPForbes/Homework-Central#45"
+        },
+        {
+          "date": "2026-07-15",
+          "kind": "feature",
+          "project": "homework-central",
+          "title": "Claude/UI redesign custom channels conflicts 4f93xy",
+          "detail": "Merged pull request #43: Claude/UI redesign custom channels conflicts 4f93xy.",
+          "href": "https://github.com/BPForbes/Homework-Central/pull/43",
+          "identity": "pr:BPForbes/Homework-Central#43"
+        },
+        {
+          "date": "2026-07-15",
+          "kind": "feature",
+          "project": "homework-central",
+          "title": "Redesign chat layout with persistent water-themed navigation",
+          "detail": "- keep chat navigation permanently visible and keep formatting controls available in preview mode - optimize water rendering by removing nested blur, repaint-heavy animation, and universal transition fan-out - add compositor-only water motion and throttled backend-mutation droplet feedback - round and fill chat surface…",
+          "href": "https://github.com/BPForbes/Homework-Central/pull/40",
+          "identity": "pr:BPForbes/Homework-Central#40"
+        },
+        {
+          "date": "2026-07-10",
+          "kind": "feature",
+          "project": "homework-central",
+          "title": "Claude/UI redesign custom channels conflicts 4f93xy",
+          "detail": "Merged pull request #39: Claude/UI redesign custom channels conflicts 4f93xy.",
+          "href": "https://github.com/BPForbes/Homework-Central/pull/39",
+          "identity": "pr:BPForbes/Homework-Central#39"
+        },
+        {
+          "date": "2026-07-08",
+          "kind": "feature",
+          "project": "homework-central",
+          "title": "Add inbox clear-all and delete-selected actions",
+          "detail": "Adds the ability to manage inbox notifications by deleting selected items or clearing the entire inbox.",
+          "href": "https://github.com/BPForbes/Homework-Central/pull/28",
+          "identity": "pr:BPForbes/Homework-Central#28"
+        },
+        {
+          "date": "2026-07-08",
+          "kind": "feature",
+          "project": "homework-central",
+          "title": "Message and chat upgrades — mentions, cooldowns, and inbox",
+          "detail": "Includes merge of `cursor/custom-rooms-nav-2fed`:",
+          "href": "https://github.com/BPForbes/Homework-Central/pull/23",
+          "identity": "pr:BPForbes/Homework-Central#23"
+        },
+        {
+          "date": "2026-07-04",
+          "kind": "feature",
+          "project": "homework-central",
+          "title": "Add signup/dashboard captcha verification and self-service Get Roles room",
+          "detail": "Adds a reusable text captcha module (arithmetic or retype-code challenges, backed by IMemoryCache, single-use). Signup grants VerifiedUser instead of Guest when the captcha is solved correctly;",
+          "href": "https://github.com/BPForbes/Homework-Central/pull/21",
+          "identity": "pr:BPForbes/Homework-Central#21"
+        },
+        {
+          "date": "2026-07-01",
+          "kind": "feature",
+          "project": "homework-central",
+          "title": "Add resource visibility primitive and chat room access model (issue #10)",
+          "detail": "- **Resource visibility policy** (issue #10): JWT `account_class` claim, EF global query filters via `IScopedResource`/`IAccessScopeAccessor` so Real/Developer/DevAdmin accounts only see data in their own scope, docs + tests.",
+          "href": "https://github.com/BPForbes/Homework-Central/pull/12",
+          "identity": "pr:BPForbes/Homework-Central#12"
+        }
+      ],
+      "source": "github",
+      "fetchedAt": "2026-09-17T19:53:12.146Z"
+    },
+    "keyquorum": {
+      "repository": "BPForbes/KeyQuorum",
+      "repositoryUrl": "https://github.com/BPForbes/KeyQuorum",
+      "owner": "BPForbes",
+      "name": "KeyQuorum",
+      "defaultBranch": "main",
+      "description": "KeyQuorum is a secure file-sharing system centered on hardware key sharing. Files are encrypted and bound to registered physical tokens, such as USB devices. Access requires the necessary hardware keys to be presented before a protected file can be unlocked, providing layered, hardware-backed access control.",
+      "createdAt": "2026-08-24T17:17:46Z",
+      "pushedAt": "2026-09-02T22:14:00Z",
+      "commitCount": 24,
+      "mergedPullRequestCount": 14,
+      "pullRequestCount": 21,
+      "languages": [
+        {
+          "name": "Rust",
+          "bytes": 569345,
+          "pct": 100
+        }
+      ],
+      "generatedTimelineEvents": [
+        {
+          "date": "2026-09-01",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Harden relay merge, URL, and store integrity from review",
+          "detail": "* **New Features** * Added hosted mailbox relay support for securely pushing and pulling encrypted envelopes. * Added public split-tree publishing, fetching, merging, and personalized topology views. * Added API-key management, validation, expiration, scopes, revocation, and rotation.",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/17",
+          "identity": "pr:BPForbes/KeyQuorum#17"
+        },
+        {
+          "date": "2026-09-01",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Add Axum mailbox relay with API keys and Swagger",
+          "detail": "Closes part of #10: the online mailbox that keeps `.kqpb` envelopes current for every affected store.",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/13",
+          "identity": "pr:BPForbes/KeyQuorum#13"
+        },
+        {
+          "date": "2026-08-29",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Add keyquorum CLI binary",
+          "detail": "Wraps the existing vault, locked_files, and sharing library APIs behind a clap-based command line: vault add/get, lock/unlock, and share create/redeem/revoke. Passwords are always prompted for interactively rather than accepted as arguments, keeping secrets out of shell history and process listings.",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/5",
+          "identity": "pr:BPForbes/KeyQuorum#5"
+        },
+        {
+          "date": "2026-08-25",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Add PIN unlock window and `pin relock` CLI; tighten CLI validation and secure export writes",
+          "detail": "- Provide a cached one-time PIN verification window to avoid repeated prompts for short-lived operations. - Allow callers to explicitly end the cached PIN window via a CLI command. - Improve CLI argument validation for mode-specific options and numeric limits to prevent misuse.",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/7",
+          "identity": "pr:BPForbes/KeyQuorum#7"
+        },
+        {
+          "date": "2026-08-24",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Add local SQLite schema for hardware-key-quorum storage",
+          "detail": "* **New Features** * Added secure password-based encryption for files and stored credentials. * Added local storage for protected files, credentials, hardware keys, sharing links, and audit events. * Added password-protected file locking and unlocking with tamper detection.",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/2",
+          "identity": "pr:BPForbes/KeyQuorum#2"
+        },
+        {
+          "date": "2026-08-24",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Expand .gitignore and add project/agent instruction files",
+          "detail": "Broaden .gitignore to cover env files, IDEs, OS files, logs, Python tooling, future Tauri/frontend output, and security-sensitive local artifacts (keys, secrets, test data).",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/1",
+          "identity": "pr:BPForbes/KeyQuorum#1"
+        }
+      ],
+      "source": "github",
+      "fetchedAt": "2026-09-17T19:53:13.102Z"
+    },
+    "qpu": {
+      "repository": "BPForbes/BPForbes.QPU.github.io",
+      "repositoryUrl": "https://github.com/BPForbes/BPForbes.QPU.github.io",
+      "owner": "BPForbes",
+      "name": "BPForbes.QPU.github.io",
+      "defaultBranch": "main",
+      "createdAt": "2026-06-08T12:42:57Z",
+      "pushedAt": "2026-09-17T15:12:35Z",
+      "commitCount": 48,
+      "mergedPullRequestCount": 34,
+      "pullRequestCount": 38,
+      "languages": [
+        {
+          "name": "TypeScript",
+          "bytes": 512254,
+          "pct": 89.5
+        },
+        {
+          "name": "CSS",
+          "bytes": 32415,
+          "pct": 5.7
+        },
+        {
+          "name": "JavaScript",
+          "bytes": 23893,
+          "pct": 4.2
+        },
+        {
+          "name": "HTML",
+          "bytes": 3562,
+          "pct": 0.6
+        }
+      ],
+      "generatedTimelineEvents": [
+        {
+          "date": "2026-09-12",
+          "kind": "feature",
+          "project": "qpu",
+          "title": "Add compact embed mode for portfolio guest windows",
+          "detail": "This is the **guest** side of the bailey-forbes.com lab window.",
+          "href": "https://github.com/BPForbes/BPForbes.QPU.github.io/pull/33",
+          "identity": "pr:BPForbes/BPForbes.QPU.github.io#33"
+        },
+        {
+          "date": "2026-06-12",
+          "kind": "feature",
+          "project": "qpu",
+          "title": "Colocate module tests and add barrel index files",
+          "detail": "Follow-up to [PR #28](https://github.com/BPForbes/BPForbes.github.io/pull/28), which merged the directory reorganization before this commit was pushed.",
+          "href": "https://github.com/BPForbes/BPForbes.QPU.github.io/pull/29",
+          "identity": "pr:BPForbes/BPForbes.QPU.github.io#29"
+        },
+        {
+          "date": "2026-06-11",
+          "kind": "feature",
+          "project": "qpu",
+          "title": "Add .qpuio truth table metadata and child process correction propagation",
+          "detail": "Adds `.qpuio` truth-table metadata sidecars, child-process correction propagation, protected bundled metadata, agent governance, and catalog persistence on test/correct workflows.",
+          "href": "https://github.com/BPForbes/BPForbes.QPU.github.io/pull/16",
+          "identity": "pr:BPForbes/BPForbes.QPU.github.io#16"
+        },
+        {
+          "date": "2026-06-09",
+          "kind": "feature",
+          "project": "qpu",
+          "title": "Add address clarification for wire bindings (1:0, $A0:1)",
+          "detail": "Extends the chat clarification flow to **wire addresses** used in gate bindings.",
+          "href": "https://github.com/BPForbes/BPForbes.QPU.github.io/pull/15",
+          "identity": "pr:BPForbes/BPForbes.QPU.github.io#15"
+        },
+        {
+          "date": "2026-06-08",
+          "kind": "feature",
+          "project": "qpu",
+          "title": "Add QPU progress visualization, start-state controls, and plain .qpucir export",
+          "detail": "- Replace the embedded PDF that sometimes fails to render with a dedicated HTML iframe wrapper so the docs reliably display in-browser. - Provide an interactive particle visualization and execution timeline so users can watch per-qubit progress and gate interactions during simulation.",
+          "href": "https://github.com/BPForbes/BPForbes.QPU.github.io/pull/4",
+          "identity": "pr:BPForbes/BPForbes.QPU.github.io#4"
+        },
+        {
+          "date": "2026-06-08",
+          "kind": "feature",
+          "project": "qpu",
+          "title": "Add hamburger navigation, docs, PDF embed, .qpucir file tools, and site reset",
+          "detail": "- Reduce visual clutter and provide quick access to the builder, docs, PDF QPU documentation, particle view, and file tools via a compact hamburger menu. - Provide a simple doc/wiki inside the app explaining circuit construction, QPU AST compile semantics, and links to quantum-theory references for users.",
+          "href": "https://github.com/BPForbes/BPForbes.QPU.github.io/pull/3",
+          "identity": "pr:BPForbes/BPForbes.QPU.github.io#3"
+        },
+        {
+          "date": "2026-06-08",
+          "kind": "feature",
+          "project": "qpu",
+          "title": "Add interactive circuit workbench",
+          "detail": "- Provide explicit front-end controls so users can add/measure qubits and gates without relying solely on drag/drop or compiled protocols. - Expose a simple workbench for targeting, selecting controls, and tuning PHASE angle for faster interactive exploration of circuits.",
+          "href": "https://github.com/BPForbes/BPForbes.QPU.github.io/pull/2",
+          "identity": "pr:BPForbes/BPForbes.QPU.github.io#2"
+        },
+        {
+          "date": "2026-06-08",
+          "kind": "feature",
+          "project": "qpu",
+          "title": "Add React QPU Circuit Simulator MVP, QPU AST compiler, and GitHub Pages deployment",
+          "detail": "- Provide a mobile-first, static React/TypeScript MVP for a browser-based quantum circuit playground with an in-browser state-vector simulator and a QPU AST compiler. - Offer starter examples and a simple UI to compose, run, step, reset, and measure circuits in the browser.",
+          "href": "https://github.com/BPForbes/BPForbes.QPU.github.io/pull/1",
+          "identity": "pr:BPForbes/BPForbes.QPU.github.io#1"
+        }
+      ],
+      "source": "github",
+      "fetchedAt": "2026-09-17T19:53:11.102Z"
+    }
+  }
+}
