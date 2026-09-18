@@ -77,7 +77,9 @@ concurrency:
 jobs:
   notify:
     if: github.event.workflow_run.conclusion == 'success'
-    uses: BPForbes/Bailey-Forbes-Portfolio-Site.github.io/.github/workflows/notify-portfolio.yml@main
+    # Pin to a reviewed commit SHA on this repo's main, never @main: this job
+    # hands PORTFOLIO_DISPATCH_TOKEN to whatever the ref currently points at.
+    uses: BPForbes/Bailey-Forbes-Portfolio-Site.github.io/.github/workflows/notify-portfolio.yml@<reviewed-commit-sha>
     with:
       project: <id as keyed in scripts/project-sources.mjs>
       sha: ${{ github.event.workflow_run.head_sha }}

@@ -7,7 +7,11 @@
 #
 #   jobs:
 #     notify:
-#       uses: BPForbes/Bailey-Forbes-Portfolio-Site.github.io/.github/workflows/notify-portfolio.yml@main
+#       # Pin @<commit-sha> to a reviewed commit on this repo's main, never @main:
+#       # this job hands the caller's PORTFOLIO_DISPATCH_TOKEN to whatever this
+#       # workflow's ref currently points at, so a floating branch reference
+#       # would let a change here see that token before anyone reviewed it.
+#       uses: BPForbes/Bailey-Forbes-Portfolio-Site.github.io/.github/workflows/notify-portfolio.yml@<commit-sha>
 #       secrets:
 #         PORTFOLIO_DISPATCH_TOKEN: ${{ secrets.PORTFOLIO_DISPATCH_TOKEN }}
 #
