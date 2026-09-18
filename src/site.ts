@@ -1,6 +1,6 @@
 import { PORTFOLIO } from "./data.js";
 import { icon } from "./icons.js";
-import { languageShares, stat, timelineEvents, version } from "./metadata.js";
+import { generatedProject, languageShares, stat, timelineEvents, version } from "./metadata.js";
 import { mountDecks } from "./deck.js";
 import { mountGuestWindows } from "./guestWindow.js";
 import { mountTimelineDeck } from "./timeline.js";
@@ -154,12 +154,124 @@ document.querySelectorAll<HTMLElement>("[data-metric]").forEach((el) => {
     value = count === undefined ? undefined : count.toLocaleString("en-US");
   }
   if (value === undefined) {
+    // An element with authored text keeps it as the fallback. An empty one was
+    // only ever a placeholder for a generated number, so it leaves rather than
+    // sitting there blank — and nothing on the page becomes a figure nobody
+    // maintains.
+    if (el.textContent?.trim() === "") {
+      el.remove();
+    }
     return;
   }
 
   el.textContent = `${value}${el.getAttribute("data-metric-suffix") ?? ""}`;
+  el.removeAttribute("hidden");
   el.setAttribute("data-metric-generated", "true");
 });
+
+/**
+ * The repository statistics strip under a project's language bar.
+ *
+ * Rendered entirely from generated metadata, so it is absent rather than stale
+ * when a build carries none — and absent for a project with no public
+ * repository, which is why the EMR page does not mount one. Each figure is
+ * whatever GitHub answered at build time; nothing here is maintained by hand.
+ */
+document.querySelectorAll<HTMLElement>("[data-repo-stats]").forEach((el) => {
+  const key = el.getAttribute("data-repo-stats");
+  if (!key || !isProjectId(key)) {
+    return;
+  }
+
+  const project = generatedProject(key);
+  if (project === undefined) {
+    return;
+  }
+
+  const figures: Array<{ label: string; value: string; href?: string }> = [];
+  if (project.version !== undefined) {
+    figures.push({ label: "version", value: project.version });
+  }
+
+  const commits = project.stats["commits"];
+  if (commits !== undefined) {
+    figures.push({ label: "commits", value: commits.toLocaleString("en-US") });
+  }
+
+  const merged = project.stats["mergedPullRequests"];
+  if (merged !== undefined) {
+    figures.push({ label: "merged PRs", value: merged.toLocaleString("en-US") });
+  }
+
+  if (project.latestCommit.shortSha !== "") {
+    figures.push({
+      label: "latest commit",
+      value: project.latestCommit.shortSha,
+      ...(project.latestCommit.url === "" ? {} : { href: project.latestCommit.url }),
+    });
+  }
+
+  if (project.lastUpdated !== "") {
+    figures.push({ label: "updated", value: formatDay(project.lastUpdated) });
+  }
+
+  if (figures.length === 0) {
+    return;
+  }
+
+  for (const figure of figures) {
+    const item = document.createElement("span");
+    item.className = "repo-stat";
+
+    const value = document.createElement(figure.href === undefined ? "strong" : "a");
+    value.textContent = figure.value;
+    if (value instanceof HTMLAnchorElement && figure.href !== undefined) {
+      value.href = figure.href;
+      value.rel = "noopener";
+    }
+
+    const label = document.createElement("span");
+    label.className = "repo-stat-label";
+    label.textContent = figure.label;
+
+    // A real space, not just the flex gap: the gap is invisible to anything
+    // reading text content, and "398commits" is what a screen reader would
+    // otherwise announce.
+    item.append(value, document.createTextNode(" "), label);
+    el.appendChild(item);
+  }
+
+  el.setAttribute("data-repo-stats-generated", "true");
+});
+
+/**
+ * `2026-09-18` as `18 Sep 2026`, matching how dates are written elsewhere on
+ * the site.
+ *
+ * Spelled out rather than left to toLocaleDateString: en-GB abbreviates
+ * September as "Sept", and the exact abbreviations a runtime produces depend on
+ * its ICU data, so a date would not necessarily read the same in the browser as
+ * in the prose beside it.
+ */
+function formatDay(iso: string): string {
+  // Declared inside the function, not beside it: `formatDay` is hoisted and is
+  // called from the rendering above, so a module-level `const` here would still
+  // be in its temporal dead zone by then.
+  const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  ] as const;
+
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  if (match === null) {
+    return iso;
+  }
+  const month = months[Number(match[2]) - 1];
+  if (month === undefined) {
+    return iso;
+  }
+  return `${Number(match[3])} ${month} ${match[1]}`;
+}
 
 /**
  * The project timeline: a vertical git graph down the right rail.

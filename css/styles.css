@@ -1369,6 +1369,44 @@ a.tl-node:hover {
   border: 1px solid var(--border-strong);
 }
 
+/*
+ * Repository statistics, under the language bar on a project page. Generated
+ * from GitHub at build time, so the strip is simply absent when a build carries
+ * no metadata — which is also why the EMR page has none.
+ *
+ * Deliberately the same mono, size and colour as .lang-legend above: both are
+ * the same kind of claim about the repository, and they read as one strip.
+ */
+.repo-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin-top: var(--space-2);
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+}
+
+.repo-stats:empty {
+  display: none;
+}
+
+.repo-stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-1);
+}
+
+.repo-stat > strong,
+.repo-stat > a {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.repo-stat-label {
+  color: var(--text-subtle);
+}
+
 /* ------------------------------------------------------------- live lab --- */
 
 .guest-window {

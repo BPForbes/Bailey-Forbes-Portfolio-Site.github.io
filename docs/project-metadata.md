@@ -106,11 +106,24 @@ The frontend reads only `data/projects.generated.json`:
 - `[data-metric="<id>:<field>"]` — a repository number written into the markup
   that already showed it. `data-metric-suffix` carries the unit, so the chip
   still reads `398 commits`.
+- `[data-repo-stats="<id>"]` — the statistics strip under a project page's
+  language bar: version, commits, merged pull requests, latest commit (linked),
+  and last updated. Rendered entirely from generated metadata.
 
-Both degrade to the curated values in `src/data.ts`. A build without the
+Every project with a public repository carries a strip; the EMR page does not,
+because it has no repository and its page already says its language split is a
+recalled estimate rather than a measurement.
+
+All of it degrades to the curated values in `src/data.ts`. A build without the
 generated file — a plain `git clone` plus `npm run build` — renders exactly as it
-did before this existed. A number is never blanked out or replaced with a
-placeholder.
+did before this existed: authored chip text stands, the strips collapse via
+`.repo-stats:empty`, and the timeline shows curated entries only.
+
+A number is never blanked out or replaced with a placeholder, and the reverse
+holds too: a `data-metric` element with **no** authored text is a placeholder
+for a generated figure and removes itself when there is none, so no new
+hand-maintained number is introduced. That is how the QPU and KeyQuorum cards
+gained commit counts without anyone having to keep them current.
 
 Languages below 0.5%, and anything past the sixth, are folded into an `Other`
 segment so the bar still adds to the whole repository without the legend growing
