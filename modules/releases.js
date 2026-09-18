@@ -1,4 +1,5 @@
 import { icon } from "./icons.js";
+import { attachScrollFade } from "./timeline.js";
 const MONTHS = [
   "Jan",
   "Feb",
@@ -72,18 +73,52 @@ function renderRow(release) {
   toggle.className = "release-toggle";
   toggle.setAttribute("aria-hidden", "true");
   summary.append(marker, main, toggle);
+  const scroller = document.createElement("div");
+  scroller.className = "release-body-scroll";
   const body = document.createElement("div");
-  body.className = "release-body";
-  const description = document.createElement("p");
-  description.textContent = release.description;
+  body.className = "release-body rt";
+  body.tabIndex = 0;
+  body.setAttribute("role", "region");
+  body.setAttribute("aria-label", `${release.version}, full description`);
+  const placeholder = document.createElement("p");
+  placeholder.className = "release-loading";
+  placeholder.textContent = release.summary;
+  body.appendChild(placeholder);
+  scroller.appendChild(body);
   const link = document.createElement("a");
   link.className = "release-link";
   link.href = release.url;
   link.innerHTML = `View release ${icon("arrow-right")}`;
-  body.append(description, link);
-  details.append(summary, body);
+  details.append(summary, scroller, link);
   item.append(details);
+  let rendered = false;
+  details.addEventListener("toggle", () => {
+    if (!details.open || rendered) {
+      return;
+    }
+    rendered = true;
+    void fillReleaseBody(scroller, body, placeholder, release.description);
+  });
   return item;
+}
+async function fillReleaseBody(scroller, body, placeholder, markdown) {
+  try {
+    const { renderCommitBody } = await import("./commitBody.js");
+    if (!body.isConnected) {
+      return;
+    }
+    placeholder.remove();
+    renderCommitBody(body, markdown);
+  } catch (error) {
+    console.warn("Release body renderer failed to load", error);
+    placeholder.classList.add("release-degraded");
+    const note = document.createElement("p");
+    note.className = "release-degraded-note";
+    note.textContent = "The full description could not be loaded.";
+    body.appendChild(note);
+    return;
+  }
+  attachScrollFade(scroller, body);
 }
 function mountNamedReleases(releasesFor, root = document) {
   root.querySelectorAll("[data-named-releases]").forEach((mount) => {

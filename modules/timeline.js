@@ -344,5 +344,6 @@ function attachScrollFade(scroller, body) {
 }
 export {
   WINDOW_SIZE,
+  attachScrollFade,
   mountTimelineWindow
 };

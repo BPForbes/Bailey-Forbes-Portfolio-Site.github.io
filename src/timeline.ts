@@ -523,7 +523,7 @@ async function fillCard(row: Row, card: TimelineCard, hideProjectChip: boolean):
  * what a one-shot measurement would miss — a reflow at a new viewport width,
  * and KaTeX or a webfont landing late and changing the height.
  */
-function attachScrollFade(scroller: HTMLElement, body: HTMLElement): void {
+export function attachScrollFade(scroller: HTMLElement, body: HTMLElement): void {
   const update = (): void => {
     const max = body.scrollHeight - body.clientHeight;
     scroller.dataset.more = String(max > 4 && body.scrollTop < max - 1);

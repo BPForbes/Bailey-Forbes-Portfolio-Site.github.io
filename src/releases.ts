@@ -12,6 +12,7 @@
  */
 
 import { icon } from "./icons.js";
+import { attachScrollFade } from "./timeline.js";
 import type { NamedRelease } from "./types.js";
 
 const MONTHS = [
@@ -104,22 +105,81 @@ function renderRow(release: NamedRelease): HTMLLIElement {
 
   summary.append(marker, main, toggle);
 
-  const body = document.createElement("div");
-  body.className = "release-body";
+  // Bounded and scrollable, same as a commit card's body: an automated GM=1
+  // promotion carries its full internal DESCRIPTION forward as the expanded
+  // text (see docs/versioning.md in Flinstone), which can run to several
+  // paragraphs — nothing like the one- or two-sentence prose a curator writes
+  // by hand for the other rows. A hand-curated release still fits on one
+  // screen either way, so this costs it nothing.
+  const scroller = document.createElement("div");
+  scroller.className = "release-body-scroll";
 
-  const description = document.createElement("p");
-  description.textContent = release.description;
+  const body = document.createElement("div");
+  body.className = "release-body rt";
+  body.tabIndex = 0;
+  body.setAttribute("role", "region");
+  body.setAttribute("aria-label", `${release.version}, full description`);
+
+  // Shown immediately; the loaded renderer replaces it in place once it
+  // resolves, so there is no empty box while React/react-markdown/KaTeX load.
+  const placeholder = document.createElement("p");
+  placeholder.className = "release-loading";
+  placeholder.textContent = release.summary;
+  body.appendChild(placeholder);
+  scroller.appendChild(body);
 
   const link = document.createElement("a");
   link.className = "release-link";
   link.href = release.url;
   link.innerHTML = `View release ${icon("arrow-right")}`;
 
-  body.append(description, link);
-
-  details.append(summary, body);
+  details.append(summary, scroller, link);
   item.append(details);
+
+  // Rendered on first expand, not eagerly for all eleven rows: a visitor who
+  // never opens one should never fetch the renderer chunk at all.
+  let rendered = false;
+  details.addEventListener("toggle", () => {
+    if (!details.open || rendered) {
+      return;
+    }
+    rendered = true;
+    void fillReleaseBody(scroller, body, placeholder, release.description);
+  });
+
   return item;
+}
+
+/**
+ * Replace the placeholder with the rendered description, the same way a
+ * commit card's expanded body loads (see timeline.ts's `fillCard`): both
+ * reach the same lazily-imported react-markdown/KaTeX chunk, so the weight
+ * lands on the interaction that asked for it rather than on every page load.
+ */
+async function fillReleaseBody(
+  scroller: HTMLElement,
+  body: HTMLElement,
+  placeholder: HTMLElement,
+  markdown: string,
+): Promise<void> {
+  try {
+    const { renderCommitBody } = await import("./commitBody.js");
+    // The row may have been collapsed again while the chunk was loading.
+    if (!body.isConnected) {
+      return;
+    }
+    placeholder.remove();
+    renderCommitBody(body, markdown);
+  } catch (error) {
+    console.warn("Release body renderer failed to load", error);
+    placeholder.classList.add("release-degraded");
+    const note = document.createElement("p");
+    note.className = "release-degraded-note";
+    note.textContent = "The full description could not be loaded.";
+    body.appendChild(note);
+    return;
+  }
+  attachScrollFade(scroller, body);
 }
 
 /**

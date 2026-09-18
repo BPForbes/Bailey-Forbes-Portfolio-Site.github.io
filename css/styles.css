@@ -830,17 +830,63 @@ code {
   background: var(--surface-raised);
 }
 
+/*
+ * Bounded and scrollable, mirroring .tl-card-scroll/.tl-card-body: an
+ * automated GM=1 release carries its full internal DESCRIPTION forward as
+ * this text (see Flinstone's docs/versioning.md), which can run to several
+ * paragraphs — nothing like the sentence or two a curator writes by hand for
+ * the others. Scrolling, not truncating, keeps "expand" mean all of it.
+ */
+.release-body-scroll {
+  position: relative;
+  min-width: 0;
+  margin: 0 0 var(--space-3) calc(20px + var(--space-3));
+}
+
 .release-body {
-  margin: 0 0 var(--space-4) calc(20px + var(--space-3));
+  min-width: 0;
+  max-height: 16rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding-top: var(--space-1);
+  padding-right: var(--space-3);
+  scrollbar-width: thin;
   color: var(--text-muted);
+}
+
+.release-body:focus-visible {
+  outline: 2px solid var(--border-interactive);
+  outline-offset: 4px;
 }
 
 .release-body p {
   margin: 0 0 var(--space-3);
 }
 
+/* A fade at the foot, only while there is more below. */
+.release-body-scroll[data-more="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: var(--space-3);
+  bottom: 0;
+  height: 2.5rem;
+  pointer-events: none;
+  background: linear-gradient(to top, var(--surface-page), transparent);
+}
+
+.release-loading {
+  color: var(--text-subtle);
+}
+
+.release-degraded-note {
+  color: var(--status-warn, #c98a4a);
+  font-size: 0.82rem;
+}
+
 .release-link {
+  display: inline-block;
+  margin: 0 0 var(--space-4) calc(20px + var(--space-3));
   color: var(--action-hover);
   text-decoration: none;
 }
