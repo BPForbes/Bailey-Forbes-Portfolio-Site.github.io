@@ -1477,23 +1477,23 @@ code {
 }
 
 /*
- * The pair, joined into one segmented control.
+ * Two complete boxes, kept close together rather than one shared frame.
  *
- * Colour went through three passes. --action at rest with --text-subtle at
- * 0.35 opacity when disabled read as foggy (2.24:1, under the 3:1 floor).
- * Bone (--text) at rest fixed the numbers but lost the accent colour entirely
- * — confirmed against a render, the solid --action copper is the one worth
- * keeping; it was the disabled state's low opacity that read as washed out,
- * not the hue. So --action is back as the resting colour, solid, and disabled
- * dims it by opacity only as far as 0.7 (3.42:1) rather than the 0.35 that
- * caused the original complaint.
+ * The previous version had only the outer pair bordered, with a single
+ * vertical hairline between the two halves — neither arrow had a border of
+ * its own, just a shared frame split down the middle. Each button now carries
+ * its own full border and radius, so the box around one arrow does not depend
+ * on the other button being there.
+ *
+ * Colour is the exact requested #D48B48 (5.82:1 against the card), fixed
+ * rather than switched by state: no hover recolour, no disabled dimming. A
+ * disabled arrow is still inert (cursor, pointer-events, aria-disabled) —
+ * only its colour stays constant.
  */
 .tl-scrub-buttons {
   display: inline-flex;
   flex: none;
-  border: 1px solid var(--border-interactive);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
+  gap: var(--space-1);
 }
 
 .tl-scrub-btn {
@@ -1505,29 +1505,21 @@ code {
   min-width: 2.25rem;
   min-height: 1.9rem;
   padding: 0;
-  border: 0;
-  border-radius: 0;
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--radius-sm);
   background: none;
-  color: var(--action);
+  color: #d48b48;
   font-size: 0.95rem;
   cursor: pointer;
-}
-
-/* One hairline between them, so they read as a single two-part control. */
-.tl-scrub-btn + .tl-scrub-btn {
-  border-left: 1px solid var(--border-interactive);
 }
 
 .tl-scrub-btn:hover:not([disabled]),
 .tl-scrub-btn:focus-visible {
   background: var(--surface-raised);
-  color: var(--action-hover);
+  border-color: var(--action-hover);
 }
 
-/* Opacity kept well clear of the 3:1 floor (3.42:1 at 0.7) rather than the
-   0.35 that made the first version look foggy. */
 .tl-scrub-btn[disabled] {
-  opacity: 0.7;
   cursor: not-allowed;
 }
 
