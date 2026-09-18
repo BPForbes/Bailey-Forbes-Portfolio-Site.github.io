@@ -1477,22 +1477,16 @@ code {
 }
 
 /*
- * The pair, joined into one segmented control, following the same convention
- * as .deck-btn (the site's other icon-only arrow control) rather than a
- * one-off: transparent background, --text at rest, --border-interactive
- * frame, --action on hover.
+ * The pair, joined into one segmented control.
  *
- * The first version of this control used --action (copper) at rest and
- * --text-subtle at 0.35 opacity when disabled, which read as foggy rather
- * than muted. Both were dimmer than they needed to be: --action is 5.54:1
- * against the card and reads as a soft, desaturated tone next to the site's
- * near-white body text, and the disabled state's 0.35 opacity landed at
- * 2.24:1 — under the 3:1 DESIGN.md asks of a non-text control, so it read as
- * washed out rather than intentionally dim. Resting is now --text (bone,
- * ~13:1), the same crisp colour .deck-btn uses at rest, and disabled is that
- * same colour at 0.5 opacity (4.28:1) rather than a dimmer colour — matching
- * .deck-btn's opacity-driven disabled state, with more headroom than a bare
- * 0.4 would give, since a ratio right at the floor still reads as hazy.
+ * Colour went through three passes. --action at rest with --text-subtle at
+ * 0.35 opacity when disabled read as foggy (2.24:1, under the 3:1 floor).
+ * Bone (--text) at rest fixed the numbers but lost the accent colour entirely
+ * — confirmed against a render, the solid --action copper is the one worth
+ * keeping; it was the disabled state's low opacity that read as washed out,
+ * not the hue. So --action is back as the resting colour, solid, and disabled
+ * dims it by opacity only as far as 0.7 (3.42:1) rather than the 0.35 that
+ * caused the original complaint.
  */
 .tl-scrub-buttons {
   display: inline-flex;
@@ -1514,7 +1508,7 @@ code {
   border: 0;
   border-radius: 0;
   background: none;
-  color: var(--text);
+  color: var(--action);
   font-size: 0.95rem;
   cursor: pointer;
 }
@@ -1530,10 +1524,10 @@ code {
   color: var(--action-hover);
 }
 
-/* Opacity, not a dimmer colour: matches .deck-btn's disabled state, with more
-   margin (0.5 rather than 0.4) so the ratio does not sit right at the floor. */
+/* Opacity kept well clear of the 3:1 floor (3.42:1 at 0.7) rather than the
+   0.35 that made the first version look foggy. */
 .tl-scrub-btn[disabled] {
-  opacity: 0.5;
+  opacity: 0.7;
   cursor: not-allowed;
 }
 
