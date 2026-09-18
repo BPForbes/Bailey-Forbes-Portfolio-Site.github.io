@@ -169,6 +169,36 @@ to this file alone:
     repositories: Bailey-Forbes-Portfolio-Site.github.io
 ```
 
+## Commit bodies
+
+The sync captures two forms of each commit's text:
+
+| Field | Where it goes | What it is |
+| --- | --- | --- |
+| `detail` | `src/generated/projectMetadata.ts` | The lossy one-line summary the collapsed row shows: first paragraph, no headings or tables, capped. |
+| `body` | `data/commit-bodies.json` | The author's whole Markdown, for the expanded card. |
+
+They are split deliberately. Bodies total roughly 100 KB across the history and
+are only read when someone expands a card, so inlining them into the module every
+page imports made the entry bundle several times its own size for text almost
+nobody requests. `data/commit-bodies.json` is keyed by event identity
+(`pr:owner/repo#123`) and fetched once, on the first expand.
+
+That file is committed and tracked by the sync's change detection, like the other
+two artefacts — a body edited on GitHub would otherwise change nothing the
+snapshot can see, and the card would serve the old text forever.
+
+Bodies are capped at 40,000 characters as a backstop against a runaway
+description. The longest in this history is about 13,000, so nothing is cut in
+practice and the card never shows an ellipsis it invented.
+
+Rendering is `src/commitBody.tsx` — react-markdown with remark-gfm, remark-math
+and rehype-katex — reached through a dynamic `import()`. The chunk, KaTeX's
+stylesheet and the bodies file are all fetched on the first expand and never for
+a visitor who does not open one. `rehype-raw` is deliberately not enabled, so raw
+HTML in a commit body stays text; link targets are restricted to http, https and
+mailto; and images are not requested, their alt text shown instead.
+
 ## Loops
 
 A notification cannot cause another notification. The dispatch starts

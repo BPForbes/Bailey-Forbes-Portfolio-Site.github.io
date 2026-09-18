@@ -23,7 +23,6 @@
  * page directly, Home/End jump to either end, Enter toggles the card.
  */
 
-import { renderMarkdown, markdownToText } from "./richText.js";
 import { icon, type IconName } from "./icons.js";
 
 /** Entries visible at once. The sixth is what the pager is for. */
@@ -35,11 +34,64 @@ export interface TimelineCard {
   dateLabel: string;
   kind: string;
   title: string;
-  /** Markdown. */
+  /** One-line summary for the collapsed row. May contain inline Markdown. */
   detail: string;
+  /**
+   * Key into data/commit-bodies.json, which the expanded card fetches on
+   * demand. Absent for curated entries and bodyless sources, where `detail`
+   * stands in.
+   */
+  identity?: string;
   href?: string;
   /** Rows shown in the expanded card, in order. */
   facts: ReadonlyArray<readonly [string, string]>;
+}
+
+/**
+ * Full commit bodies, fetched once and shared by every card on the page.
+ *
+ * Kept out of the page bundle on purpose: the bodies run to about 100 KB across
+ * the history, and only an expanded card ever reads one. Memoised as a promise
+ * so five rapid expands make one request, and cached by the browser like any
+ * other static file.
+ */
+const BODIES_URL = "/data/commit-bodies.json";
+let bodiesRequest: Promise<Record<string, string>> | undefined;
+
+function commitBodies(): Promise<Record<string, string>> {
+  if (bodiesRequest === undefined) {
+    bodiesRequest = fetch(BODIES_URL)
+      .then((response) => (response.ok ? response.json() : Promise.reject(new Error(String(response.status)))))
+      .then((data: unknown) => {
+        if (typeof data !== "object" || data === null) {
+          return {};
+        }
+        const bodies = (data as { bodies?: unknown }).bodies;
+        return typeof bodies === "object" && bodies !== null
+          ? (bodies as Record<string, string>)
+          : {};
+      })
+      .catch(() => ({}));
+  }
+  return bodiesRequest;
+}
+
+/**
+ * Strip inline Markdown for the collapsed row's one line.
+ *
+ * Deliberately not the real renderer: that lives behind a dynamic import and
+ * pulls in React and KaTeX, which would defeat the point of loading them only
+ * when a card is expanded. This handles what a summary actually contains —
+ * emphasis, code spans and links — and nothing else.
+ */
+function plainSummary(markdown: string): string {
+  return markdown
+    .replace(/`([^`]*)`/g, "$1")
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/(\*\*|~~)(.*?)\1/g, "$2")
+    .replace(/(^|[\s([{])\*(\S[^*]*?)\*/g, "$1$2")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 interface Row {
@@ -230,7 +282,7 @@ export function mountTimelineWindow(
       // directly above a fuller copy of itself.
       row.detail.hidden = !isSelected || isExpanded;
       if (isSelected && !isExpanded) {
-        row.summary.textContent = markdownToText(card.detail);
+        row.summary.textContent = plainSummary(card.detail);
       }
 
       row.card.hidden = !isExpanded;
@@ -248,7 +300,7 @@ export function mountTimelineWindow(
       }
 
       if (isExpanded) {
-        row.card.replaceChildren(buildCard(card, options.hideProjectChip === true));
+        void fillCard(row, card, options.hideProjectChip === true);
       }
     });
 
@@ -321,6 +373,11 @@ export function mountTimelineWindow(
   });
 
   graph.addEventListener("keydown", (event: KeyboardEvent) => {
+    // Inside an expanded card the arrows belong to the card: it is a scrollable
+    // region, and stealing them would leave a long body unreadable by keyboard.
+    if (event.target instanceof Element && event.target.closest(".tl-card") !== null) {
+      return;
+    }
     const handled = (): void => {
       event.preventDefault();
       event.stopPropagation();
@@ -368,21 +425,37 @@ export function mountTimelineWindow(
 }
 
 /**
- * The expanded card: the detail as rendered Markdown, then the facts table.
+ * Fill an expanded card: the body rendered, then the facts, then the chip.
  *
- * Everything here comes from the entry itself. A field the data does not carry
- * is omitted rather than shown empty, so the card never implies it knows
- * something it does not.
+ * The renderer arrives through a dynamic `import()`, so React, react-markdown
+ * and KaTeX are fetched the first time anyone expands a card and never for a
+ * visitor who does not. Until it lands the card shows the summary it already
+ * has, so there is no empty box and no layout jump into nothing; the rendered
+ * body replaces it in place.
  */
-function buildCard(card: TimelineCard, hideProjectChip: boolean): DocumentFragment {
-  const fragment = document.createDocumentFragment();
-
+async function fillCard(row: Row, card: TimelineCard, hideProjectChip: boolean): Promise<void> {
   const body = document.createElement("div");
   body.className = "tl-card-body rt";
-  body.appendChild(renderMarkdown(card.detail));
-  fragment.appendChild(body);
+  // Bounded and scrollable: bodies run to thousands of words, and a card that
+  // pushed the next four commits off the screen would undo the window.
+  body.tabIndex = 0;
+  body.setAttribute("role", "region");
+  body.setAttribute("aria-label", `${card.title}, full details`);
+
+  // Shown immediately, replaced once the renderer resolves.
+  const placeholder = document.createElement("p");
+  placeholder.className = "tl-card-loading";
+  placeholder.textContent = plainSummary(card.detail);
+  body.appendChild(placeholder);
+
+  const scroller = document.createElement("div");
+  scroller.className = "tl-card-scroll";
+  scroller.appendChild(body);
 
   const facts = card.facts.filter(([label]) => !(hideProjectChip && label === "Project"));
+  const fragment = document.createDocumentFragment();
+  fragment.appendChild(scroller);
+
   if (facts.length > 0) {
     const table = document.createElement("dl");
     table.className = "tl-facts";
@@ -401,5 +474,119 @@ function buildCard(card: TimelineCard, hideProjectChip: boolean): DocumentFragme
   chips.appendChild(chip(card.kind, card.kind === "release" ? "tag" : "code-branch"));
   fragment.appendChild(chips);
 
-  return fragment;
+  row.card.replaceChildren(fragment);
+
+  try {
+    // Both in flight at once: the renderer chunk and the bodies file do not
+    // depend on each other.
+    const [{ renderCommitBody }, bodies] = await Promise.all([
+      import("./commitBody.js"),
+      card.identity === undefined
+        ? Promise.resolve<Record<string, string>>({})
+        : commitBodies(),
+    ]);
+    // The card may have been collapsed or paged away while those loaded.
+    if (row.card.hidden || !row.card.contains(body)) {
+      return;
+    }
+    const markdown = (card.identity === undefined ? undefined : bodies[card.identity])
+      ?? card.detail;
+    placeholder.remove();
+    renderCommitBody(body, markdown);
+  } catch (error) {
+    // Offline, or the chunk failed to load. The summary already on screen is
+    // the honest fallback; say why rather than leaving it looking truncated.
+    console.warn("Commit body renderer failed to load", error);
+    placeholder.classList.add("tl-card-degraded");
+    const note = document.createElement("p");
+    note.className = "tl-card-degraded-note";
+    note.textContent = "Full details could not be loaded. Open the commit to read it on GitHub.";
+    body.appendChild(note);
+    return;
+  }
+
+  attachScrollControls(scroller, body);
+}
+
+/**
+ * Up/down controls for a card whose body overflows.
+ *
+ * Driven by a ResizeObserver rather than measured once: React commits
+ * asynchronously, so anything that measures right after `render()` sees an
+ * empty box and concludes there is nothing to scroll. The observer also covers
+ * the cases a one-shot measurement would miss — a reflow at a new viewport
+ * width, and KaTeX or a webfont landing late and changing the height.
+ *
+ * The controls stay hidden until there is genuinely something to scroll: a pair
+ * of dead arrows under a three-line commit message is worse than none. The body
+ * is focusable and scrolls with the keyboard on its own; these are the pointer
+ * equivalent, and the bar says how far through it you are.
+ */
+function attachScrollControls(scroller: HTMLElement, body: HTMLElement): void {
+  const controls = document.createElement("div");
+  controls.className = "tl-scrub";
+  controls.hidden = true;
+
+  const up = document.createElement("button");
+  up.type = "button";
+  up.className = "tl-scrub-btn";
+  up.setAttribute("aria-label", "Scroll details up");
+  up.innerHTML = icon("arrow-left");
+
+  const down = document.createElement("button");
+  down.type = "button";
+  down.className = "tl-scrub-btn";
+  down.setAttribute("aria-label", "Scroll details down");
+  down.innerHTML = icon("arrow-right");
+
+  const progress = document.createElement("span");
+  progress.className = "tl-scrub-progress";
+  progress.setAttribute("aria-hidden", "true");
+
+  controls.append(up, progress, down);
+  scroller.appendChild(controls);
+
+  const step = (): number => Math.max(80, body.clientHeight * 0.8);
+
+  const update = (): void => {
+    const max = body.scrollHeight - body.clientHeight;
+    const scrollable = max > 4;
+    controls.hidden = !scrollable;
+    if (!scrollable) {
+      scroller.dataset.more = "false";
+      return;
+    }
+    const ratio = body.scrollTop / max;
+    progress.style.setProperty("--tl-scrub-progress", String(Math.min(1, Math.max(0, ratio))));
+    up.disabled = body.scrollTop <= 1;
+    down.disabled = body.scrollTop >= max - 1;
+    scroller.dataset.more = String(body.scrollTop < max - 1);
+  };
+
+  up.addEventListener("click", () => {
+    body.scrollBy({ top: -step(), behavior: "smooth" });
+  });
+  down.addEventListener("click", () => {
+    body.scrollBy({ top: step(), behavior: "smooth" });
+  });
+  body.addEventListener("scroll", update, { passive: true });
+
+  if (typeof ResizeObserver === "function") {
+    const observer = new ResizeObserver(update);
+    observer.observe(body);
+    // The body grows as React fills it, so watch the content too, not just the
+    // box — a box with a fixed max-height never changes size on its own.
+    for (const child of Array.from(body.children)) {
+      observer.observe(child);
+    }
+    const mutations = new MutationObserver(() => {
+      for (const child of Array.from(body.children)) {
+        observer.observe(child);
+      }
+      update();
+    });
+    mutations.observe(body, { childList: true, subtree: true });
+  }
+
+  update();
 }

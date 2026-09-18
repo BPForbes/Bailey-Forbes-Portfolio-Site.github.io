@@ -31,6 +31,7 @@ import { collectProject } from "./lib/collect.mjs";
 import {
   hasGeneratedDrift,
   hasMeaningfulChange,
+  renderCommitBodies,
   renderJson,
   renderTypeScript,
 } from "./lib/emit.mjs";
@@ -41,6 +42,8 @@ const SCHEMA_VERSION = 1;
 const ROOT = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const JSON_PATH = resolve(ROOT, "data/project-metadata.json");
 const TS_PATH = resolve(ROOT, "src/generated/projectMetadata.ts");
+// Full commit bodies, fetched by the browser only when a card is expanded.
+const BODIES_PATH = resolve(ROOT, "data/commit-bodies.json");
 
 /**
  * @param {string[]} argv
@@ -182,9 +185,13 @@ async function main() {
   // current, comparing only the JSON reports "no change" and leaves the module
   // broken — `npm run build` then fails on every subsequent run, or the browser
   // ships data that no longer matches the snapshot.
+  // Bodies are compared too. They are excluded from the JSON snapshot, so a
+  // commit body edited on GitHub would otherwise change nothing the other two
+  // checks can see and the card would keep serving the old text forever.
   const changed =
     hasMeaningfulChange(previousJson, document) ||
-    hasGeneratedDrift(readIfPresent(TS_PATH), document);
+    hasGeneratedDrift(readIfPresent(TS_PATH), document) ||
+    readIfPresent(BODIES_PATH) !== renderCommitBodies(document);
 
   if (args.check) {
     log(changed ? "Generated metadata is out of date." : "Generated metadata is up to date.");
@@ -199,8 +206,12 @@ async function main() {
     mkdirSync(dirname(TS_PATH), { recursive: true });
     writeFileSync(JSON_PATH, renderJson(document));
     writeFileSync(TS_PATH, renderTypeScript(document));
+    // Full commit bodies live apart from the page bundle; the timeline fetches
+    // them only when a card is expanded.
+    writeFileSync(BODIES_PATH, renderCommitBodies(document));
     log(`Wrote ${JSON_PATH}`);
     log(`Wrote ${TS_PATH}`);
+    log(`Wrote ${BODIES_PATH}`);
   }
 
   if (degraded > 0) {

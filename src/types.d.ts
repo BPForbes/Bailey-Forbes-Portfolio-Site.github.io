@@ -47,6 +47,14 @@ export interface RepositoryLanguage {
 /** A timeline event produced by the sync script rather than written by hand. */
 export interface GeneratedTimelineEvent extends TimelineEvent {
   /**
+   * The author's full Markdown body, for the expanded commit card.
+   *
+   * `detail` is the lossy one-line summary the collapsed row shows. Absent on
+   * snapshots written before bodies were carried, and on events whose source
+   * had no body at all.
+   */
+  body?: string;
+  /**
    * Stable dedupe key, e.g. "pr:owner/repo#12" or "release:owner/repo@v1.2.0".
    * Lets a regenerated event be recognised as the same event across runs.
    */

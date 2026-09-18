@@ -85,12 +85,12 @@ jobs:
       - name: Detect changes
         id: diff
         run: |
-          if git diff --quiet -- data/project-metadata.json src/generated/projectMetadata.ts; then
+          if git diff --quiet -- data/project-metadata.json data/commit-bodies.json src/generated/projectMetadata.ts; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "No repository facts changed."
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            git --no-pager diff --stat -- data/project-metadata.json src/generated/projectMetadata.ts
+            git --no-pager diff --stat -- data/project-metadata.json data/commit-bodies.json src/generated/projectMetadata.ts
           fi
 
       - name: Commit refreshed metadata
@@ -100,7 +100,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           # Only the generated artefacts. Nothing else in the tree is this job's
           # to touch, and js/ is gitignored and rebuilt at deploy time anyway.
-          git add data/project-metadata.json src/generated/projectMetadata.ts
+          git add data/project-metadata.json data/commit-bodies.json src/generated/projectMetadata.ts
           git commit -m "chore(portfolio): sync project metadata"
           # Someone may have pushed while this ran; rebase rather than fail.
           git pull --rebase origin "${GITHUB_REF_NAME}"

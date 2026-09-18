@@ -90,11 +90,63 @@ export function normalizeDocument(document) {
 }
 
 /**
+ * The browser projection, with full commit bodies removed.
+ *
+ * Bodies are why this exists. They run to thousands of words each and are only
+ * ever read when someone expands a card, so inlining them into the module every
+ * page imports made the main bundle several times its own size for data almost
+ * nobody requests. They are written to their own file instead and fetched on
+ * demand — see renderCommitBodies.
+ *
+ * @param {import("./types.mjs").ProjectMetadataDocument} document
+ * @returns {import("./types.mjs").ProjectMetadataDocument}
+ */
+function withoutBodies(document) {
+  const projects = {};
+  for (const [id, project] of Object.entries(document.projects ?? {})) {
+    projects[id] = {
+      ...project,
+      generatedTimelineEvents: (project.generatedTimelineEvents ?? []).map(
+        ({ body, ...event }) => event,
+      ),
+    };
+  }
+  return { ...document, projects };
+}
+
+/**
+ * Full commit bodies, keyed by the event identity that names them.
+ *
+ * Its own artefact so the page bundle stays small: the timeline fetches it the
+ * first time a card is expanded, and a visitor who never expands one never
+ * downloads it. Sorted by key so a run that discovers nothing new writes a
+ * byte-identical file and the Action makes no commit.
+ *
+ * @param {import("./types.mjs").ProjectMetadataDocument} document
+ * @returns {string}
+ */
+export function renderCommitBodies(document) {
+  /** @type {Record<string, string>} */
+  const bodies = {};
+  for (const project of Object.values(document.projects ?? {})) {
+    for (const event of project.generatedTimelineEvents ?? []) {
+      if (typeof event.body === "string" && event.body.trim() !== "" && event.identity) {
+        bodies[event.identity] = event.body;
+      }
+    }
+  }
+  const ordered = Object.fromEntries(
+    Object.keys(bodies).sort().map((key) => [key, bodies[key]]),
+  );
+  return `${JSON.stringify({ schemaVersion: 1, bodies: ordered }, null, 2)}\n`;
+}
+
+/**
  * @param {import("./types.mjs").ProjectMetadataDocument} document
  * @returns {string}
  */
 export function renderJson(document) {
-  return `${JSON.stringify(normalizeDocument(document), null, 2)}\n`;
+  return `${JSON.stringify(normalizeDocument(withoutBodies(document)), null, 2)}\n`;
 }
 
 /**
@@ -108,7 +160,7 @@ export function renderJson(document) {
  * @returns {string}
  */
 export function renderTypeScript(document) {
-  const normalized = normalizeDocument(document);
+  const normalized = normalizeDocument(withoutBodies(document));
   const body = JSON.stringify(normalized, null, 2)
     .split("\n")
     .map((line, index) => (index === 0 ? line : `${line}`))

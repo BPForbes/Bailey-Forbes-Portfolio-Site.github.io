@@ -239,6 +239,9 @@ function renderTimeline(mount: HTMLElement): void {
       kind: event.kind,
       title: event.title,
       detail: event.detail,
+      // The key the card fetches its full body by. Curated entries have none
+      // and fall back to their own prose.
+      ...(event.identity === undefined ? {} : { identity: event.identity }),
       ...(event.href === undefined ? {} : { href: event.href }),
       facts,
     };

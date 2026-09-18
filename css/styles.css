@@ -1116,6 +1116,10 @@ code {
 
 .tl-item {
   position: relative;
+  /* Grid items default to min-width:auto, which refuses to shrink below their
+     content. A long unbreakable identifier in a commit body would otherwise
+     widen the row, the rail, and the page. */
+  min-width: 0;
 }
 
 /*
@@ -1344,6 +1348,7 @@ code {
 .rt blockquote,
 .rt pre {
   margin: 0 0 var(--space-3);
+  overflow-wrap: break-word;
   color: var(--text-muted);
   font-size: 0.88rem;
   line-height: 1.55;
@@ -1353,6 +1358,7 @@ code {
 .rt h5,
 .rt h6 {
   margin: var(--space-4) 0 var(--space-2);
+  overflow-wrap: break-word;
   font-family: var(--font-display);
   font-size: 0.95rem;
 }
@@ -1366,7 +1372,10 @@ code {
   margin-bottom: var(--space-1);
 }
 
+/* Commit bodies are full of long paths and identifiers. Without this one of
+   them sets the card's width and pushes the page sideways on a phone. */
 .rt code {
+  overflow-wrap: anywhere;
   padding: 0.1em 0.35em;
   background: var(--surface-raised);
   border-radius: var(--radius-sm, 4px);
@@ -1408,11 +1417,173 @@ code {
   font-size: 1.05em;
 }
 
-/* Math the renderer could not parse, shown as its own source. */
-.rt .rt-math-raw {
-  border: 1px dashed var(--border-strong);
+/* --- the scrollable commit body ------------------------------------------ */
+
+.tl-card-scroll {
+  position: relative;
+  min-width: 0;
+}
+
+/*
+ * Bounded so an expanded card cannot push the other four commits off the
+ * screen — the whole point of a five-entry window. Bodies run to thousands of
+ * words, so this scrolls rather than truncating: "show details" has to mean all
+ * of them.
+ */
+.tl-card-body {
+  min-width: 0;
+  max-height: 22rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: var(--space-3);
+  scrollbar-width: thin;
+}
+
+.tl-card-body:focus-visible {
+  outline: 2px solid var(--border-interactive);
+  outline-offset: 4px;
+}
+
+/* A fade at the foot, only while there is more below. */
+.tl-card-scroll[data-more="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: var(--space-3);
+  bottom: 0;
+  height: 2.5rem;
+  pointer-events: none;
+  background: linear-gradient(to top, var(--surface-sunken), transparent);
+}
+
+.tl-card-loading {
   color: var(--text-subtle);
 }
+
+.tl-card-degraded-note {
+  color: var(--status-warn, #c98a4a);
+  font-size: 0.82rem;
+}
+
+/* --- in-card navigation --------------------------------------------------- */
+
+.tl-scrub {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border);
+}
+
+.tl-scrub-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--tap-min);
+  min-height: var(--tap-min);
+  padding: var(--space-1);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.tl-scrub-btn:hover:not([disabled]),
+.tl-scrub-btn:focus-visible {
+  border-color: var(--border-interactive);
+  color: var(--action-hover);
+}
+
+.tl-scrub-btn[disabled] {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* The arrows are the horizontal glyphs turned to point up and down, so the
+   icon set does not need two more entries for one control. Both turn the same
+   way: a quarter turn clockwise takes "left" to "up" and "right" to "down". */
+.tl-scrub-btn .icon {
+  transform: rotate(90deg);
+}
+
+/* How far through the body you are. */
+.tl-scrub-progress {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--border);
+}
+
+.tl-scrub-progress::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: calc(var(--tl-scrub-progress, 0) * 100%);
+  border-radius: 999px;
+  background: var(--action);
+}
+
+/* --- markdown extras ------------------------------------------------------ */
+
+/* A wide table scrolls inside the card instead of widening the page. */
+.rt-table-scroll {
+  overflow-x: auto;
+  margin: 0 0 var(--space-3);
+}
+
+.rt table {
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.rt th,
+.rt td {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.rt th {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Images in commit bodies are screenshots on GitHub's CDN; the alt text is
+   kept and the request is not made. */
+.rt-img-omitted {
+  display: inline-block;
+  padding: 0.1em 0.5em;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm, 4px);
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.rt input[type="checkbox"] {
+  margin-right: var(--space-2);
+}
+
+.rt ul:has(> li > input[type="checkbox"]) {
+  list-style: none;
+  padding-left: 0;
+}
+
+/* KaTeX: a long display formula scrolls rather than widening the card. */
+.rt .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--space-1) 0;
+}
+
+.rt .katex {
+  font-size: 1.05em;
+}
+
 
 .timeline-empty {
   margin: 0;

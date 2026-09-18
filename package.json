@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc --watch",
+    "build": "tsc --noEmit && node tools/build.mjs",
+    "watch": "node tools/build.mjs --watch",
     "sync:metadata": "node scripts/sync-project-metadata.mjs",
     "sync:metadata:check": "node scripts/sync-project-metadata.mjs --check",
     "pretest": "npm run build",
@@ -13,7 +13,19 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260916.1",
     "@fortawesome/fontawesome-free": "^6.7.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "esbuild": "^0.28.2",
     "typescript": "5.9.2",
     "wrangler": "^4.132.0"
+  },
+  "dependencies": {
+    "katex": "^0.18.7",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-markdown": "^10.1.0",
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0"
   }
 }

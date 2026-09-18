@@ -172,6 +172,11 @@ function validateTimeline(events, where, projectId) {
     if (typeof event.detail !== "string" || event.detail.trim() === "") {
       problems.push(`${at}.detail: missing`);
     }
+    // Optional: a snapshot written before full bodies were carried has none,
+    // and the card falls back to the summary.
+    if (event.body !== undefined && typeof event.body !== "string") {
+      problems.push(`${at}.body: must be a string when present`);
+    }
     if (event.href !== undefined && !isGitHubUrl(event.href)) {
       problems.push(`${at}.href: "${String(event.href)}" is not a github.com URL`);
     }

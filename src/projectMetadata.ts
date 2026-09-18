@@ -52,6 +52,17 @@ export function languagesFor(project: ProjectId): readonly LanguageShare[] | und
 }
 
 /**
+ * What the timeline renders: a curated or generated event, plus the full
+ * Markdown body when the sync captured one.
+ *
+ * `detail` is the one-line summary the collapsed row shows either way.
+ * `identity` names the event in data/commit-bodies.json, which the expanded
+ * card fetches on demand; it is absent for curated entries, whose `detail` is
+ * already the finished prose.
+ */
+export type TimelineDisplayEvent = TimelineEvent & { identity?: string };
+
+/**
  * Curated events plus generated ones, deduplicated, newest first left to the
  * caller's own sort.
  *
@@ -67,7 +78,7 @@ export function languagesFor(project: ProjectId): readonly LanguageShare[] | und
  * Rule 2 means generated entries extend the timeline forward, which is what
  * automation is for, and leaves the written history alone.
  */
-export function timelineEvents(): readonly TimelineEvent[] {
+export function timelineEvents(): readonly TimelineDisplayEvent[] {
   const curated = PORTFOLIO.events;
 
   const curatedKeys = new Set<string>();
@@ -86,7 +97,7 @@ export function timelineEvents(): readonly TimelineEvent[] {
     }
   }
 
-  const merged: TimelineEvent[] = [...curated];
+  const merged: TimelineDisplayEvent[] = [...curated];
   const generatedKeys = new Set<string>();
 
   for (const [, metadata] of Object.entries(GENERATED_PROJECT_METADATA.projects)) {
@@ -112,6 +123,10 @@ export function timelineEvents(): readonly TimelineEvent[] {
         project: event.project,
         title: event.title,
         detail: event.detail,
+        // The key the expanded card looks the full body up by. The body itself
+        // is deliberately not here: it would be inlined into the module every
+        // page imports, for text only an expanded card ever shows.
+        ...(event.identity !== undefined ? { identity: event.identity } : {}),
         ...(event.href !== undefined ? { href: event.href } : {}),
       });
     }
