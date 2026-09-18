@@ -1476,6 +1476,13 @@ code {
   border-top: 1px solid var(--border);
 }
 
+/* The pair, kept adjacent so they read as one control. */
+.tl-scrub-buttons {
+  display: inline-flex;
+  flex: none;
+  gap: var(--space-1);
+}
+
 .tl-scrub-btn {
   display: inline-flex;
   align-items: center;

@@ -24,6 +24,7 @@
  * uploaded, exactly as js/ already was.
  */
 import { cpSync, mkdirSync, rmSync } from "node:fs";
+import { glob } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
@@ -31,6 +32,10 @@ import { build } from "esbuild";
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const outdir = resolve(root, "js");
 const katexOut = resolve(root, "css", "vendor", "katex");
+// A second, unbundled emit of every module, for the Node test suite. The
+// browser gets the bundle in js/; tests import individual modules, which a
+// bundle cannot provide — js/site.js is one minified file with no exports.
+const modulesOut = resolve(root, "modules");
 
 const watch = process.argv.includes("--watch");
 
@@ -70,11 +75,39 @@ const options = {
 mkdirSync(outdir, { recursive: true });
 vendorKatex();
 
+/**
+ * Transpile each source file on its own, preserving the tree.
+ *
+ * Not a bundle: imports stay as relative `./x.js` specifiers that Node can
+ * resolve, so `tests/*.test.mjs` can import a single module and exercise it
+ * directly. Dependencies from node_modules are left as bare specifiers, which
+ * Node resolves itself.
+ */
+async function buildModules() {
+  const entryPoints = [];
+  for await (const file of glob("src/**/*.{ts,tsx}", { cwd: root })) {
+    entryPoints.push(resolve(root, file));
+  }
+  await build({
+    entryPoints,
+    outdir: modulesOut,
+    outbase: resolve(root, "src"),
+    bundle: false,
+    format: "esm",
+    target: ["es2022"],
+    platform: "neutral",
+    sourcemap: false,
+    logLevel: "warning",
+  });
+  console.log(`Emitted ${entryPoints.length} modules to ${modulesOut.replace(root, ".")} (tests)`);
+}
+
 if (watch) {
   const context = await (await import("esbuild")).context(options);
   await context.watch();
   console.log("Watching src/ …");
 } else {
+  await buildModules();
   const result = await build(options);
   const outputs = Object.entries(result.metafile.outputs)
     .filter(([file]) => file.endsWith(".js"))
