@@ -172,13 +172,19 @@ function softKey(event: TimelineEvent): string {
  * `RepositoryMetadata.namedReleases` — but it also is not a reason to fall
  * back, since an upstream project that has explicitly published zero releases
  * meant that, and stale curated rows should not reappear underneath it.
+ *
+ * Sorted newest-first here rather than trusted from either source: a
+ * generated contract already sorts its own list, but `data.ts` is
+ * hand-maintained prose migrated in whatever order a static page happened to
+ * list it, and a curator appending the next release to the end of that array
+ * (the natural place to add one) would otherwise silently invert the order a
+ * reader sees.
  */
 export function namedReleasesFor(project: ProjectId): readonly NamedRelease[] {
-  const generated = repositoryMetadata(project)?.namedReleases;
-  if (generated !== undefined) {
-    return generated;
-  }
-  return PORTFOLIO.namedReleases[project] ?? [];
+  const releases = repositoryMetadata(project)?.namedReleases ?? PORTFOLIO.namedReleases[project] ?? [];
+  return [...releases].sort(
+    (left, right) => right.startDate.localeCompare(left.startDate) || right.version.localeCompare(left.version),
+  );
 }
 
 /** The version to display, or undefined when nothing authoritative was found. */

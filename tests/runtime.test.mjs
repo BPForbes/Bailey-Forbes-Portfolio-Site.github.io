@@ -22,6 +22,7 @@ import {
   commitCountFor,
   languagesFor,
   mergedPullRequestsFor,
+  namedReleasesFor,
   repositoryMetadata,
   timelineEvents,
   versionFor,
@@ -193,4 +194,21 @@ test("the generated snapshot only describes published portfolio projects", () =>
       `${projectId} is not a published project`,
     );
   }
+});
+
+test("named releases render newest first regardless of how data.ts lists them", () => {
+  // PORTFOLIO.namedReleases.flinstone is migrated verbatim from the old
+  // static page and grows by appending the newest release to the end — the
+  // natural place to add one, and not sorted order. namedReleasesFor must
+  // sort rather than trust either source's own ordering.
+  const releases = namedReleasesFor("flinstone");
+  assert.ok(releases.length > 1);
+  const startDates = releases.map((release) => release.startDate);
+  const sorted = [...startDates].sort().reverse();
+  assert.deepEqual(startDates, sorted);
+  assert.equal(releases[0].version, "5.0.0");
+});
+
+test("a project with no named releases at all renders none", () => {
+  assert.deepEqual(namedReleasesFor("keyquorum"), []);
 });

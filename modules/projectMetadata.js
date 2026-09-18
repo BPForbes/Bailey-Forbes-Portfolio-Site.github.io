@@ -73,11 +73,10 @@ function softKey(event) {
   return `${event.project}|${event.date}|${title}`;
 }
 function namedReleasesFor(project) {
-  const generated = repositoryMetadata(project)?.namedReleases;
-  if (generated !== void 0) {
-    return generated;
-  }
-  return PORTFOLIO.namedReleases[project] ?? [];
+  const releases = repositoryMetadata(project)?.namedReleases ?? PORTFOLIO.namedReleases[project] ?? [];
+  return [...releases].sort(
+    (left, right) => right.startDate.localeCompare(left.startDate) || right.version.localeCompare(left.version)
+  );
 }
 function versionFor(project) {
   return repositoryMetadata(project)?.latestVersion;
