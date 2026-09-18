@@ -1476,35 +1476,55 @@ code {
   border-top: 1px solid var(--border);
 }
 
-/* The pair, kept adjacent so they read as one control. */
+/*
+ * The pair, joined into one segmented control.
+ *
+ * Measured against the card background (#1f221c), the previous treatment was
+ * the problem: a --border-strong outline is 1.52:1 and simply not visible, and
+ * the disabled state at 0.35 opacity came to 2.24:1 — under the 3:1 DESIGN.md
+ * asks of a non-text control. Both are now above that: the frame is
+ * --border-interactive (3.25:1), an enabled arrow is --action (5.54:1) and a
+ * disabled one is --text-subtle (4.63:1), dimmer without disappearing.
+ */
 .tl-scrub-buttons {
   display: inline-flex;
   flex: none;
-  gap: var(--space-1);
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
 }
 
 .tl-scrub-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: var(--tap-min);
-  min-height: var(--tap-min);
-  padding: var(--space-1);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-md);
+  /* Comfortably past the 24px minimum; the old 24x24 with a 13px glyph was
+     technically compliant and still hard to hit and harder to see. */
+  min-width: 2.25rem;
+  min-height: 1.9rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
   background: none;
-  color: var(--text-muted);
+  color: var(--action);
+  font-size: 0.95rem;
   cursor: pointer;
+}
+
+/* One hairline between them, so they read as a single two-part control. */
+.tl-scrub-btn + .tl-scrub-btn {
+  border-left: 1px solid var(--border-interactive);
 }
 
 .tl-scrub-btn:hover:not([disabled]),
 .tl-scrub-btn:focus-visible {
-  border-color: var(--border-interactive);
+  background: var(--surface-raised);
   color: var(--action-hover);
 }
 
+/* Colour rather than opacity: opacity dimmed it below the contrast floor. */
 .tl-scrub-btn[disabled] {
-  opacity: 0.35;
+  color: var(--text-subtle);
   cursor: not-allowed;
 }
 
