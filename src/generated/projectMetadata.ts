@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-17T19:53:13.102Z",
+  "generatedAt": "2026-09-18T15:56:37.524Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -19,10 +19,10 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "name": "Bailey-Forbes-Flinstone",
       "defaultBranch": "main",
       "createdAt": "2025-05-28T17:51:02Z",
-      "pushedAt": "2026-09-17T16:51:50Z",
+      "pushedAt": "2026-09-18T14:59:12Z",
       "commitCount": 398,
       "mergedPullRequestCount": 157,
-      "pullRequestCount": 214,
+      "pullRequestCount": 215,
       "latestVersion": "5.0.0",
       "latestVersionSource": "version-manifest:version/locked",
       "languages": [
@@ -198,7 +198,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-09-17T19:53:09.967Z"
+      "fetchedAt": "2026-09-18T15:56:34.774Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -208,10 +208,10 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "defaultBranch": "main",
       "description": "A community platform for people to collaborate when it comes to each other’s education.",
       "createdAt": "2026-06-07T21:07:48Z",
-      "pushedAt": "2026-09-10T16:25:35Z",
+      "pushedAt": "2026-09-18T14:43:25Z",
       "commitCount": 15,
       "mergedPullRequestCount": 51,
-      "pullRequestCount": 67,
+      "pullRequestCount": 68,
       "languages": [
         {
           "name": "C#",
@@ -365,7 +365,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-09-17T19:53:12.146Z"
+      "fetchedAt": "2026-09-18T15:56:36.739Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -375,10 +375,10 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "defaultBranch": "main",
       "description": "KeyQuorum is a secure file-sharing system centered on hardware key sharing. Files are encrypted and bound to registered physical tokens, such as USB devices. Access requires the necessary hardware keys to be presented before a protected file can be unlocked, providing layered, hardware-backed access control.",
       "createdAt": "2026-08-24T17:17:46Z",
-      "pushedAt": "2026-09-02T22:14:00Z",
+      "pushedAt": "2026-09-18T14:43:39Z",
       "commitCount": 24,
       "mergedPullRequestCount": 14,
-      "pullRequestCount": 21,
+      "pullRequestCount": 22,
       "languages": [
         {
           "name": "Rust",
@@ -443,7 +443,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-09-17T19:53:13.102Z"
+      "fetchedAt": "2026-09-18T15:56:37.524Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -452,25 +452,25 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "name": "BPForbes.QPU.github.io",
       "defaultBranch": "main",
       "createdAt": "2026-06-08T12:42:57Z",
-      "pushedAt": "2026-09-17T15:12:35Z",
-      "commitCount": 48,
-      "mergedPullRequestCount": 34,
-      "pullRequestCount": 38,
+      "pushedAt": "2026-09-18T14:43:18Z",
+      "commitCount": 49,
+      "mergedPullRequestCount": 35,
+      "pullRequestCount": 42,
       "languages": [
         {
           "name": "TypeScript",
-          "bytes": 512254,
-          "pct": 89.5
+          "bytes": 520091,
+          "pct": 89.6
         },
         {
           "name": "CSS",
-          "bytes": 32415,
+          "bytes": 32802,
           "pct": 5.7
         },
         {
           "name": "JavaScript",
           "bytes": 23893,
-          "pct": 4.2
+          "pct": 4.1
         },
         {
           "name": "HTML",
@@ -553,7 +553,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-09-17T19:53:11.102Z"
+      "fetchedAt": "2026-09-18T15:56:35.771Z"
     }
   }
 };

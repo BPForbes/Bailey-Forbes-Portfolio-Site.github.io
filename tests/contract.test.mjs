@@ -211,3 +211,77 @@ test("a reachable, valid contract is returned", async () => {
   assert.equal(result.ok, true);
   assert.equal(result.value.languages[0].name, "C");
 });
+
+test("no curated releases published is distinguished from an explicitly empty list", () => {
+  const absent = normalizeContract(contract({ releases: undefined }), CONTEXT);
+  assert.equal(absent.hasNamedReleases, false);
+  assert.deepEqual(absent.namedReleases, []);
+
+  const empty = normalizeContract(contract({ releases: [] }), CONTEXT);
+  assert.equal(empty.hasNamedReleases, true);
+  assert.deepEqual(empty.namedReleases, []);
+});
+
+test("a well-formed named release is republished verbatim", () => {
+  const release = {
+    id: "4-0-0-4-0-1",
+    version: "4.0.0 / 4.0.1",
+    startDate: "2026-05-18",
+    endDate: "2026-05-19",
+    summary: "Contracts · IPC/VFS · serial-j1",
+    description: "Inheritable system contracts; then IPC/VFS/shell hardening.",
+    url: `https://github.com/${REPO}/tree/${"a".repeat(40)}/version/locked`,
+  };
+  const result = normalizeContract(contract({ releases: [release] }), CONTEXT);
+  assert.equal(result.hasNamedReleases, true);
+  assert.deepEqual(result.namedReleases, [release]);
+});
+
+test("named releases are ordered newest-first regardless of upstream order", () => {
+  const older = {
+    id: "3-3-0", version: "3.3.0", startDate: "2026-05-12", endDate: null,
+    summary: "s", description: "d", url: `https://github.com/${REPO}/tree/x/version/locked`,
+  };
+  const newer = {
+    id: "4-0-0", version: "4.0.0", startDate: "2026-05-18", endDate: null,
+    summary: "s", description: "d", url: `https://github.com/${REPO}/tree/x/version/locked`,
+  };
+  const result = normalizeContract(contract({ releases: [older, newer] }), CONTEXT);
+  assert.deepEqual(result.namedReleases.map((r) => r.id), ["4-0-0", "3-3-0"]);
+});
+
+test("a malformed named release is dropped rather than failing the whole contract", () => {
+  const good = {
+    id: "4-0-0", version: "4.0.0", startDate: "2026-05-18", endDate: null,
+    summary: "s", description: "d", url: `https://github.com/${REPO}/tree/x/version/locked`,
+  };
+  const cases = [
+    { ...good, id: undefined },
+    { ...good, startDate: "18 May 2026" },
+    { ...good, endDate: "not a date" },
+    { ...good, summary: "" },
+    { ...good, url: "https://example.com/not-github" },
+  ];
+  for (const bad of cases) {
+    const result = normalizeContract(contract({ releases: [bad, good] }), CONTEXT);
+    assert.deepEqual(
+      result.namedReleases.map((r) => r.id),
+      ["4-0-0"],
+      `expected the malformed row to be dropped: ${JSON.stringify(bad)}`,
+    );
+  }
+});
+
+test("duplicate release ids keep only the first", () => {
+  const release = {
+    id: "4-0-0", version: "4.0.0", startDate: "2026-05-18", endDate: null,
+    summary: "s", description: "d", url: `https://github.com/${REPO}/tree/x/version/locked`,
+  };
+  const result = normalizeContract(contract({ releases: [release, { ...release, summary: "second" }] }), CONTEXT);
+  assert.equal(result.namedReleases.length, 1);
+  assert.equal(result.namedReleases[0].summary, "s");
+});
+
+test("a non-array releases field throws rather than degrading silently", () => {
+  assert.throws(() => normalizeContract(contract({ releases: "nope" }), CONTEXT), ContractError);
+});

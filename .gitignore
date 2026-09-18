@@ -1,5 +1,9 @@
 node_modules/
 js/
+
+# Vendored from node_modules by tools/build.mjs and shipped in the Pages
+# artifact, like js/. Not committed.
+css/vendor/
 .wrangler/
 .dev.vars
 .env

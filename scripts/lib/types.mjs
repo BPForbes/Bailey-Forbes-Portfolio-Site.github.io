@@ -42,6 +42,17 @@
  */
 
 /**
+ * @typedef {object} NamedRelease
+ * @property {string} id             Stable slug, e.g. "4-0-0-4-0-1".
+ * @property {string} version        As the curator wrote it, e.g. "4.0.0 / 4.0.1".
+ * @property {string} startDate      YYYY-MM-DD.
+ * @property {string|null} endDate   YYYY-MM-DD, or null for a single-day release.
+ * @property {string} summary        One line, for the collapsed row.
+ * @property {string} description    Full prose, shown when the row expands.
+ * @property {string} url            "View release" target.
+ */
+
+/**
  * @typedef {object} RepositoryMetadata
  * @property {string} repository
  * @property {string} repositoryUrl
@@ -60,6 +71,7 @@
  * @property {string} [latestReleaseDate]
  * @property {RepositoryLanguage[]} languages
  * @property {GeneratedTimelineEvent[]} generatedTimelineEvents
+ * @property {NamedRelease[]} [namedReleases]  Curated, not derived; absent when a project publishes none.
  * @property {"contract"|"github"} source
  * @property {string} fetchedAt
  * @property {boolean} [stale]

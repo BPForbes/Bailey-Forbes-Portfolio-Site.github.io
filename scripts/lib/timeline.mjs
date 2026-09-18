@@ -167,6 +167,7 @@ export function eventFromPullRequest(pull, projectId, repo) {
     project: projectId,
     title: cleanTitle(title),
     detail: buildDetail(pull, title),
+    body: fullBody(typeof pull.body === "string" ? pull.body : ""),
     href:
       typeof pull.html_url === "string"
         ? pull.html_url
@@ -203,12 +204,53 @@ export function eventFromRelease(release, projectId, repo) {
     project: projectId,
     title: cleanTitle(name),
     detail: summarize(body) || `Release ${tag}.`,
+    body: fullBody(body),
     href:
       typeof release.html_url === "string"
         ? release.html_url
         : `https://github.com/${repo}/releases/tag/${encodeURIComponent(tag)}`,
     identity: `release:${repo}@${tag}`,
   };
+}
+
+/**
+ * The author's own Markdown, kept whole for the expanded commit card.
+ *
+ * `summarize` exists for the collapsed row and is deliberately lossy — first
+ * paragraph, no headings or tables, capped with an ellipsis. That is right for a
+ * one-line rail and wrong for a card that says "show details", so this keeps the
+ * body intact and removes only three things:
+ *
+ *   - HTML comments, which is where pull request templates hide instructions;
+ *   - the template's own boilerplate headings that carry no content;
+ *   - trailing bot footers, which are noise on a portfolio.
+ *
+ * Capped generously rather than not at all — a runaway body should not be able
+ * to bloat the artefact without bound — but far above any real pull request, so
+ * in practice nothing is cut and the card never shows an ellipsis. The longest
+ * body across this history is roughly 12,000 characters.
+ *
+ * @param {string} markdown
+ * @param {number} limit
+ * @returns {string}
+ */
+export function fullBody(markdown, limit = 40000) {
+  if (typeof markdown !== "string" || markdown.trim() === "") {
+    return "";
+  }
+  let text = markdown
+    .replace(/\r\n/g, "\n")
+    .replace(/<!--[\s\S]*?-->/g, "")
+    // Generated-by footers from assistants and CI, with or without a rule.
+    .replace(/\n+(?:---+\s*\n+)?(?:🤖\s*)?(?:_?Generated (?:with|by) \[[^\]]+\]\([^)]*\)_?|Co-authored-by:.*)(?:\n.*)*$/i, "")
+    .trim();
+
+  if (text.length > limit) {
+    const cut = text.slice(0, limit);
+    const boundary = cut.lastIndexOf("\n\n");
+    text = `${(boundary > limit * 0.5 ? cut.slice(0, boundary) : cut).trimEnd()}\n\n…`;
+  }
+  return text;
 }
 
 /**

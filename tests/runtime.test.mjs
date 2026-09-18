@@ -1,26 +1,32 @@
 /**
- * The browser-side merge layer, exercised through the compiled output in js/.
+ * The browser-side merge layer, exercised through the compiled output.
  *
- * These run against what tsc actually emits rather than a re-implementation, so
- * `npm test` builds first (see the `pretest` script). Nothing here touches the
- * DOM — src/projectMetadata.ts is deliberately free of it, which is what makes
- * the merge rules testable at all.
+ * These run against what the build actually emits rather than a
+ * re-implementation, so `npm test` builds first (see the `pretest` script).
+ * Nothing here touches the DOM — src/projectMetadata.ts is deliberately free of
+ * it, which is what makes the merge rules testable at all.
+ *
+ * Imported from modules/ rather than js/: js/ is now a bundle, one minified
+ * file per entry point with no exports to reach into. tools/build.mjs emits
+ * modules/ alongside it for exactly this — the same sources, transpiled
+ * one-to-one so a single module can be imported on its own.
  */
 
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { PORTFOLIO } from "../js/data.js";
-import { GENERATED_PROJECT_METADATA } from "../js/generated/projectMetadata.js";
-import { hasCuratedColor, languageColor } from "../js/languageColors.js";
+import { PORTFOLIO } from "../modules/data.js";
+import { GENERATED_PROJECT_METADATA } from "../modules/generated/projectMetadata.js";
+import { hasCuratedColor, languageColor } from "../modules/languageColors.js";
 import {
   commitCountFor,
   languagesFor,
   mergedPullRequestsFor,
+  namedReleasesFor,
   repositoryMetadata,
   timelineEvents,
   versionFor,
-} from "../js/projectMetadata.js";
+} from "../modules/projectMetadata.js";
 
 test("curated language colours are preserved exactly", () => {
   assert.equal(languageColor("TypeScript"), "#3178c6");
@@ -188,4 +194,21 @@ test("the generated snapshot only describes published portfolio projects", () =>
       `${projectId} is not a published project`,
     );
   }
+});
+
+test("named releases render newest first regardless of how data.ts lists them", () => {
+  // PORTFOLIO.namedReleases.flinstone is migrated verbatim from the old
+  // static page and grows by appending the newest release to the end — the
+  // natural place to add one, and not sorted order. namedReleasesFor must
+  // sort rather than trust either source's own ordering.
+  const releases = namedReleasesFor("flinstone");
+  assert.ok(releases.length > 1);
+  const startDates = releases.map((release) => release.startDate);
+  const sorted = [...startDates].sort().reverse();
+  assert.deepEqual(startDates, sorted);
+  assert.equal(releases[0].version, "5.0.0");
+});
+
+test("a project with no named releases at all renders none", () => {
+  assert.deepEqual(namedReleasesFor("keyquorum"), []);
 });

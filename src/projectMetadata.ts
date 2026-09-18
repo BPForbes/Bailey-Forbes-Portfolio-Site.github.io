@@ -21,6 +21,7 @@ import { GENERATED_PROJECT_METADATA } from "./generated/projectMetadata.js";
 import { languageColor } from "./languageColors.js";
 import type {
   LanguageShare,
+  NamedRelease,
   ProjectId,
   RepositoryMetadata,
   TimelineEvent,
@@ -52,6 +53,17 @@ export function languagesFor(project: ProjectId): readonly LanguageShare[] | und
 }
 
 /**
+ * What the timeline renders: a curated or generated event, plus the full
+ * Markdown body when the sync captured one.
+ *
+ * `detail` is the one-line summary the collapsed row shows either way.
+ * `identity` names the event in data/commit-bodies.json, which the expanded
+ * card fetches on demand; it is absent for curated entries, whose `detail` is
+ * already the finished prose.
+ */
+export type TimelineDisplayEvent = TimelineEvent & { identity?: string };
+
+/**
  * Curated events plus generated ones, deduplicated, newest first left to the
  * caller's own sort.
  *
@@ -67,7 +79,7 @@ export function languagesFor(project: ProjectId): readonly LanguageShare[] | und
  * Rule 2 means generated entries extend the timeline forward, which is what
  * automation is for, and leaves the written history alone.
  */
-export function timelineEvents(): readonly TimelineEvent[] {
+export function timelineEvents(): readonly TimelineDisplayEvent[] {
   const curated = PORTFOLIO.events;
 
   const curatedKeys = new Set<string>();
@@ -86,7 +98,7 @@ export function timelineEvents(): readonly TimelineEvent[] {
     }
   }
 
-  const merged: TimelineEvent[] = [...curated];
+  const merged: TimelineDisplayEvent[] = [...curated];
   const generatedKeys = new Set<string>();
 
   for (const [, metadata] of Object.entries(GENERATED_PROJECT_METADATA.projects)) {
@@ -112,6 +124,10 @@ export function timelineEvents(): readonly TimelineEvent[] {
         project: event.project,
         title: event.title,
         detail: event.detail,
+        // The key the expanded card looks the full body up by. The body itself
+        // is deliberately not here: it would be inlined into the module every
+        // page imports, for text only an expanded card ever shows.
+        ...(event.identity !== undefined ? { identity: event.identity } : {}),
         ...(event.href !== undefined ? { href: event.href } : {}),
       });
     }
@@ -145,6 +161,30 @@ function softKey(event: TimelineEvent): string {
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
   return `${event.project}|${event.date}|${title}`;
+}
+
+/**
+ * Curated, portfolio-worthy releases for a project's collapsed timeline rows.
+ *
+ * Mirrors {@link languagesFor}: a project's own contract, once it has
+ * published a non-empty `namedReleases`, outranks the hand-curated fallback
+ * in `data.ts`. An empty generated array is not "nothing" — see
+ * `RepositoryMetadata.namedReleases` — but it also is not a reason to fall
+ * back, since an upstream project that has explicitly published zero releases
+ * meant that, and stale curated rows should not reappear underneath it.
+ *
+ * Sorted newest-first here rather than trusted from either source: a
+ * generated contract already sorts its own list, but `data.ts` is
+ * hand-maintained prose migrated in whatever order a static page happened to
+ * list it, and a curator appending the next release to the end of that array
+ * (the natural place to add one) would otherwise silently invert the order a
+ * reader sees.
+ */
+export function namedReleasesFor(project: ProjectId): readonly NamedRelease[] {
+  const releases = repositoryMetadata(project)?.namedReleases ?? PORTFOLIO.namedReleases[project] ?? [];
+  return [...releases].sort(
+    (left, right) => right.startDate.localeCompare(left.startDate) || right.version.localeCompare(left.version),
+  );
 }
 
 /** The version to display, or undefined when nothing authoritative was found. */

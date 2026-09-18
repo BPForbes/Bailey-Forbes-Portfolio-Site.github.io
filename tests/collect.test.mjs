@@ -265,6 +265,84 @@ test("an unreachable contract leaves the REST-derived events in place", async ()
   assert.equal(metadata.generatedTimelineEvents.length, 1);
 });
 
+const NAMED_RELEASE = {
+  id: "4-0-0",
+  version: "4.0.0",
+  startDate: "2026-05-18",
+  endDate: null,
+  summary: "s",
+  description: "d",
+  url: `https://github.com/${REPO}/tree/${"a".repeat(40)}/version/locked`,
+};
+
+test("a contract's named releases are adopted, with no REST fallback to compare against", async () => {
+  const contractDoc = {
+    schemaVersion: 1,
+    repository: { owner: "BPForbes", name: "KeyQuorum", defaultBranch: "main" },
+    languages: [{ name: "Rust", bytes: 48_000 }],
+    releases: [NAMED_RELEASE],
+  };
+
+  const { metadata } = await collectProject({
+    projectId: "keyquorum",
+    source: { repo: REPO, contractUrl: "https://example.invalid/project-metadata.json" },
+    client: client(healthyRoutes()),
+    fetchImpl: async () =>
+      new Response(JSON.stringify(contractDoc), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+  });
+
+  assert.deepEqual(metadata.namedReleases, [NAMED_RELEASE]);
+});
+
+test("a repository with no contract publishes no named releases", async () => {
+  const { metadata } = await collectProject({
+    projectId: "keyquorum",
+    source: { repo: REPO },
+    client: client(healthyRoutes()),
+  });
+  assert.equal(metadata.namedReleases, undefined);
+});
+
+test("an unreachable contract carries forward the previous run's named releases", async () => {
+  // Named releases have no REST equivalent, unlike languages or the timeline —
+  // a transient failure here must not silently erase a list an earlier
+  // successful run already established.
+  const { metadata } = await collectProject({
+    projectId: "keyquorum",
+    source: { repo: REPO, contractUrl: "https://example.invalid/project-metadata.json" },
+    client: client(healthyRoutes()),
+    previous: { namedReleases: [NAMED_RELEASE] },
+    fetchImpl: async () => {
+      throw new TypeError("fetch failed");
+    },
+  });
+  assert.deepEqual(metadata.namedReleases, [NAMED_RELEASE]);
+});
+
+test("an explicitly empty contract release list overrides the carried-forward default", async () => {
+  const contractDoc = {
+    schemaVersion: 1,
+    repository: { owner: "BPForbes", name: "KeyQuorum", defaultBranch: "main" },
+    languages: [{ name: "Rust", bytes: 48_000 }],
+    releases: [],
+  };
+  const { metadata } = await collectProject({
+    projectId: "keyquorum",
+    source: { repo: REPO, contractUrl: "https://example.invalid/project-metadata.json" },
+    client: client(healthyRoutes()),
+    previous: { namedReleases: [NAMED_RELEASE] },
+    fetchImpl: async () =>
+      new Response(JSON.stringify(contractDoc), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+  });
+  assert.deepEqual(metadata.namedReleases, []);
+});
+
 test("responses are cached so one run never asks the same question twice", async () => {
   const log = [];
   const routes = healthyRoutes();

@@ -707,6 +707,194 @@ code {
   margin-top: var(--space-2);
 }
 
+/*
+ * Named releases (B3, R07): a collapsed-by-default timeline, not the .entry
+ * card grid above. Each row is a native <details>/<summary> pair, so
+ * expand/collapse, focus and Enter/Space handling all come from the browser
+ * rather than a script keeping that state itself.
+ */
+.release-list {
+  position: relative;
+  display: grid;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* The spine the tag markers sit on, matching .tl-graph's git-branch line. */
+.release-list::before {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: var(--space-4);
+  bottom: var(--space-4);
+  width: 2px;
+  background: var(--border-strong);
+  border-radius: 2px;
+}
+
+.release-row + .release-row {
+  border-top: 1px solid var(--border);
+}
+
+.release-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-4) 0;
+  cursor: pointer;
+  list-style: none;
+}
+
+.release-summary::-webkit-details-marker {
+  display: none;
+}
+
+.release-marker {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  margin-top: 0.15rem;
+  color: var(--action);
+  background: var(--surface-page);
+}
+
+.release-marker .icon {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+.release-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--space-3);
+  row-gap: var(--space-1);
+}
+
+.release-version-date {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-2);
+}
+
+.release-version {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.release-date {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.release-summary-text {
+  flex: 1 1 12rem;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.release-toggle {
+  flex: none;
+  align-self: center;
+  width: 8px;
+  height: 8px;
+  margin-top: 2px;
+  border-right: 2px solid var(--text-subtle);
+  border-bottom: 2px solid var(--text-subtle);
+  transform: rotate(45deg);
+}
+
+.release-disclosure[open] .release-toggle {
+  margin-top: 6px;
+  transform: rotate(225deg);
+}
+
+.release-summary:hover,
+.release-summary:focus-visible {
+  background: var(--surface-raised);
+}
+
+/*
+ * Bounded and scrollable, mirroring .tl-card-scroll/.tl-card-body: an
+ * automated GM=1 release carries its full internal DESCRIPTION forward as
+ * this text (see Flinstone's docs/versioning.md), which can run to several
+ * paragraphs — nothing like the sentence or two a curator writes by hand for
+ * the others. Scrolling, not truncating, keeps "expand" mean all of it.
+ */
+.release-body-scroll {
+  position: relative;
+  min-width: 0;
+  margin: 0 0 var(--space-3) calc(20px + var(--space-3));
+}
+
+.release-body {
+  min-width: 0;
+  max-height: 16rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-top: var(--space-1);
+  padding-right: var(--space-3);
+  scrollbar-width: thin;
+  color: var(--text-muted);
+}
+
+.release-body:focus-visible {
+  outline: 2px solid var(--border-interactive);
+  outline-offset: 4px;
+}
+
+.release-body p {
+  margin: 0 0 var(--space-3);
+}
+
+/* A fade at the foot, only while there is more below. */
+.release-body-scroll[data-more="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: var(--space-3);
+  bottom: 0;
+  height: 2.5rem;
+  pointer-events: none;
+  background: linear-gradient(to top, var(--surface-page), transparent);
+}
+
+.release-loading {
+  color: var(--text-subtle);
+}
+
+.release-degraded-note {
+  color: var(--status-warn, #c98a4a);
+  font-size: 0.82rem;
+}
+
+.release-link {
+  display: inline-block;
+  margin: 0 0 var(--space-4) calc(20px + var(--space-3));
+  color: var(--action-hover);
+  text-decoration: none;
+}
+
+.release-link .icon {
+  margin-left: 0.35em;
+}
+
 /* .spec-list is label/value data. There is nowhere to go, so it is not a card
    grid — it is a description list with a rule between rows (B3, R07). */
 .spec-list {
@@ -1072,11 +1260,9 @@ code {
 
 .tl-graph {
   position: relative;
-  --tl-progress: 0;
-  --tl-speed: 0;
 }
 
-/* The spine the deck is dealt off: still a vertical git branch. */
+/* The spine the commits sit on: still a vertical git branch. */
 .tl-graph::before {
   content: "";
   position: absolute;
@@ -1089,28 +1275,21 @@ code {
 }
 
 /*
- * The scrub glow, travelling the spine. Position follows reading position and
- * length follows scroll speed, so a fast scrub streaks and reading barely shows
- * it. Nothing depends on it; a still graph never draws it.
+ * The branch continues past the window. Drawn only when there are older
+ * entries, because a trailing ellipsis under the last commit in the history
+ * would claim a history that is not there.
  */
-.tl-glow {
+.tl-graph[data-has-older="true"]::after {
+  content: "";
   position: absolute;
-  left: 0;
-  width: 16px;
-  top: calc(var(--tl-progress) * 100%);
-  height: calc(5rem + var(--tl-speed) * 22rem);
-  transform: translateY(-50%);
-  pointer-events: none;
-  opacity: calc(0.16 + var(--tl-speed) * 0.84);
-  background: linear-gradient(
-    to top,
-    transparent 0%,
-    color-mix(in srgb, var(--action) 45%, transparent) 30%,
-    color-mix(in srgb, var(--status-ok) 85%, transparent) 62%,
-    transparent 100%
-  );
-  filter: blur(5px);
-  border-radius: 999px;
+  left: 4px;
+  bottom: -0.35rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border-strong);
+  box-shadow: 0 6px 0 var(--border-strong), 0 12px 0 var(--border-strong);
+  opacity: 0.55;
 }
 
 /* --- the branch ----------------------------------------------------------- */
@@ -1120,34 +1299,45 @@ code {
   gap: var(--space-1);
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 0 1.2rem;
 }
 
 .tl-item {
   position: relative;
+  /* Grid items default to min-width:auto, which refuses to shrink below their
+     content. A long unbreakable identifier in a commit body would otherwise
+     widen the row, the rail, and the page. */
+  min-width: 0;
 }
 
 /*
- * One row of the branch. The dot column is fixed so every dot lands on the
- * spine behind it, whatever the title does.
+ * Rows are buttons now: selecting one is the interaction, and the commit link
+ * lives in the card beside it rather than wrapping the whole row. A link cannot
+ * contain a button, and the expand control has to be reachable on its own.
  */
 .tl-node {
   display: grid;
   grid-template-columns: 16px minmax(0, 1fr);
   gap: 0 var(--space-3);
+  width: 100%;
   padding: var(--space-2) var(--space-3) var(--space-2) 0;
+  border: 0;
   border-radius: var(--radius-md);
+  background: none;
   color: inherit;
-  text-decoration: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tl-node:hover,
+.tl-node:focus-visible {
+  background: var(--surface-raised);
 }
 
 .tl-item[data-current="true"] .tl-node {
   background: var(--surface-raised);
   padding-right: var(--space-4);
-}
-
-a.tl-node:hover {
-  background: var(--surface-raised);
 }
 
 /* The commit dot, sitting on the trunk. */
@@ -1211,19 +1401,22 @@ a.tl-node:hover {
 }
 
 /*
- * Height and opacity are written per frame by the scrub, stepped at 24fps.
- * Only the current entry is open; two are only ever part-open mid-scrub, as
- * the crossfade between them.
+ * Open/closed is now the `hidden` attribute rather than a per-frame height, so
+ * these need explicit display:none — a display rule here would otherwise win
+ * over the attribute's default style.
  */
-.tl-detail {
-  display: block;
-  overflow: hidden;
-  height: 0;
+.tl-item[hidden],
+.tl-detail[hidden],
+.tl-card[hidden],
+.tl-actions[hidden],
+.tl-expand[hidden],
+.tl-open[hidden] {
+  display: none;
 }
 
-.tl-detail-inner {
+.tl-detail {
   display: block;
-  min-height: 0;
+  grid-column: 2;
 }
 
 .tl-summary {
@@ -1233,17 +1426,291 @@ a.tl-node:hover {
   font-size: 0.88rem;
 }
 
-.tl-meta {
+/* --- the selected entry's controls and card ------------------------------- */
+
+.tl-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4) 0 calc(16px + var(--space-3));
+}
+
+.tl-expand {
+  border-color: var(--border-interactive);
+  background: none;
+  color: var(--action-hover);
+  font: inherit;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+.tl-open {
+  border-color: var(--border-interactive);
+  color: var(--action-hover);
+  text-decoration: none;
+}
+
+.tl-card {
+  margin: var(--space-3) var(--space-4) var(--space-2) calc(16px + var(--space-3));
+  padding: var(--space-4);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.tl-facts {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--space-1) var(--space-4);
+  margin: var(--space-4) 0 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+.tl-facts dt {
+  color: var(--text-subtle);
+}
+
+.tl-facts dd {
+  margin: 0;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.tl-card-chips {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
   padding-top: var(--space-3);
 }
 
-.tl-open {
-  border-color: var(--border-interactive);
-  color: var(--action-hover);
+/* --- pager ---------------------------------------------------------------- */
+
+.tl-pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
 }
+
+.tl-page {
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.78rem;
+}
+
+.tl-page[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tl-range {
+  margin: 0;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+/* --- rendered commit text ------------------------------------------------- */
+
+/*
+ * Markdown from commit bodies. Scoped to .rt so these never leak into the
+ * hand-written prose elsewhere on the page, which has its own rhythm.
+ */
+.rt > :first-child {
+  margin-top: 0;
+}
+
+.rt > :last-child {
+  margin-bottom: 0;
+}
+
+.rt p,
+.rt ul,
+.rt ol,
+.rt blockquote,
+.rt pre {
+  margin: 0 0 var(--space-3);
+  overflow-wrap: break-word;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.rt h4,
+.rt h5,
+.rt h6 {
+  margin: var(--space-4) 0 var(--space-2);
+  overflow-wrap: break-word;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+}
+
+.rt ul,
+.rt ol {
+  padding-left: 1.25rem;
+}
+
+.rt li {
+  margin-bottom: var(--space-1);
+}
+
+/* Commit bodies are full of long paths and identifiers. Without this one of
+   them sets the card's width and pushes the page sideways on a phone. */
+.rt code {
+  overflow-wrap: anywhere;
+  padding: 0.1em 0.35em;
+  background: var(--surface-raised);
+  border-radius: var(--radius-sm, 4px);
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}
+
+.rt pre {
+  padding: var(--space-3);
+  overflow-x: auto;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.rt pre code {
+  padding: 0;
+  background: none;
+}
+
+.rt blockquote {
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--border-strong);
+  color: var(--text-subtle);
+}
+
+.rt hr {
+  margin: var(--space-4) 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.rt a {
+  color: var(--action-hover);
+  overflow-wrap: anywhere;
+}
+
+.rt math {
+  font-size: 1.05em;
+}
+
+/* --- the scrollable commit body ------------------------------------------ */
+
+.tl-card-scroll {
+  position: relative;
+  min-width: 0;
+}
+
+/*
+ * Bounded so an expanded card cannot push the other four commits off the
+ * screen — the whole point of a five-entry window. Bodies run to thousands of
+ * words, so this scrolls rather than truncating: "show details" has to mean all
+ * of them.
+ */
+.tl-card-body {
+  min-width: 0;
+  max-height: 22rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: var(--space-3);
+  scrollbar-width: thin;
+}
+
+.tl-card-body:focus-visible {
+  outline: 2px solid var(--border-interactive);
+  outline-offset: 4px;
+}
+
+/* A fade at the foot, only while there is more below. */
+.tl-card-scroll[data-more="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: var(--space-3);
+  bottom: 0;
+  height: 2.5rem;
+  pointer-events: none;
+  background: linear-gradient(to top, var(--surface-sunken), transparent);
+}
+
+.tl-card-loading {
+  color: var(--text-subtle);
+}
+
+.tl-card-degraded-note {
+  color: var(--status-warn, #c98a4a);
+  font-size: 0.82rem;
+}
+
+/* --- markdown extras ------------------------------------------------------ */
+
+/* A wide table scrolls inside the card instead of widening the page. */
+.rt-table-scroll {
+  overflow-x: auto;
+  margin: 0 0 var(--space-3);
+}
+
+.rt table {
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.rt th,
+.rt td {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.rt th {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Images in commit bodies are screenshots on GitHub's CDN; the alt text is
+   kept and the request is not made. */
+.rt-img-omitted {
+  display: inline-block;
+  padding: 0.1em 0.5em;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm, 4px);
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.rt input[type="checkbox"] {
+  margin-right: var(--space-2);
+}
+
+.rt ul:has(> li > input[type="checkbox"]) {
+  list-style: none;
+  padding-left: 0;
+}
+
+/* KaTeX: a long display formula scrolls rather than widening the card. */
+.rt .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--space-1) 0;
+}
+
+.rt .katex {
+  font-size: 1.05em;
+}
+
 
 .timeline-empty {
   margin: 0;

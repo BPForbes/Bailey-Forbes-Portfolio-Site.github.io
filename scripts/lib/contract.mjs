@@ -40,7 +40,10 @@ export class ContractError extends Error {
  * @param {{ projectId: string, repo: string, maxTimeline?: number }} context
  * @returns {{
  *   languages: import("./types.mjs").RepositoryLanguage[],
+ *   hasTimeline: boolean,
  *   generatedTimelineEvents: import("./types.mjs").GeneratedTimelineEvent[],
+ *   hasNamedReleases: boolean,
+ *   namedReleases: import("./types.mjs").NamedRelease[],
  *   defaultBranch?: string,
  *   description?: string,
  *   repositoryUrl?: string,
@@ -86,6 +89,12 @@ export function normalizeContract(document, context) {
     // able to honour that instead of silently keeping REST-derived ones.
     hasTimeline: Array.isArray(doc.timeline),
     generatedTimelineEvents: normalizeContractTimeline(doc.timeline, context),
+    // Same presence-vs-length distinction as the timeline above, and for the
+    // same reason: a contract that has curated zero named releases is telling
+    // the caller that, and must not be masked by carrying over a stale list
+    // from a previous run that did have some.
+    hasNamedReleases: Array.isArray(doc.releases),
+    namedReleases: normalizeContractNamedReleases(doc.releases),
     ...(typeof repository.defaultBranch === "string" && repository.defaultBranch !== ""
       ? { defaultBranch: repository.defaultBranch }
       : {}),
@@ -183,6 +192,56 @@ function normalizeContractTimeline(timeline, context) {
   }
 
   return orderEvents(dedupeEvents(events), context.maxTimeline ?? 12);
+}
+
+/**
+ * The curated `releases` array a project may publish alongside its automatic
+ * `timeline`. Unlike the timeline, nothing here is inferred — a project states
+ * explicitly which of its releases are portfolio-worthy, in
+ * `metadata/releases.json` on its own side, so this only re-validates the
+ * shape rather than re-deriving anything from it.
+ *
+ * @param {unknown} releases
+ * @returns {import("./types.mjs").NamedRelease[]}
+ */
+function normalizeContractNamedReleases(releases) {
+  if (releases === undefined) {
+    return [];
+  }
+  if (!Array.isArray(releases)) {
+    throw new ContractError("contract releases is not an array");
+  }
+
+  /** @type {import("./types.mjs").NamedRelease[]} */
+  const named = [];
+  const seenIds = new Set();
+  for (const entry of releases) {
+    if (entry === null || typeof entry !== "object") continue;
+    const id = typeof entry.id === "string" ? entry.id : "";
+    const version = typeof entry.version === "string" ? entry.version : "";
+    const startDate = typeof entry.startDate === "string" ? entry.startDate : "";
+    const summary = typeof entry.summary === "string" ? entry.summary : "";
+    const description = typeof entry.description === "string" ? entry.description : "";
+    const url = typeof entry.url === "string" ? entry.url : "";
+    // A malformed row is dropped rather than failing the whole sync: the
+    // upstream generator already validates its own document before
+    // publishing, so a row this consumer cannot make sense of is far more
+    // likely a schema drift this build predates than a row worth losing the
+    // rest of the release list over.
+    if (id === "" || seenIds.has(id)) continue;
+    if (version === "" || summary === "" || description === "") continue;
+    if (!isValidDate(startDate)) continue;
+    if (!isGitHubUrl(url)) continue;
+    const endDate = entry.endDate;
+    if (endDate !== null && !(typeof endDate === "string" && isValidDate(endDate))) continue;
+
+    seenIds.add(id);
+    named.push({ id, version, startDate, endDate: endDate ?? null, summary, description, url });
+  }
+
+  // Newest-first, matching every other list this consumer produces.
+  named.sort((left, right) => right.startDate.localeCompare(left.startDate) || right.version.localeCompare(left.version));
+  return named;
 }
 
 /**
