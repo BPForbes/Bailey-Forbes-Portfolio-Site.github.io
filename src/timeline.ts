@@ -505,77 +505,30 @@ async function fillCard(row: Row, card: TimelineCard, hideProjectChip: boolean):
     return;
   }
 
-  attachScrollControls(scroller, body);
+  attachScrollFade(scroller, body);
 }
 
 /**
- * Up/down controls for a card whose body overflows.
+ * The "more below" fade at the foot of a card whose body overflows.
+ *
+ * No buttons: the body itself scrolls — by wheel, touch, or the keyboard, since
+ * it is focusable and `overflow-y: auto` already makes it a native scroll
+ * region. This only toggles the bottom fade that hints there is more to read,
+ * and only once there genuinely is one — a fade under a three-line commit
+ * message would be a decoration with nothing behind it.
  *
  * Driven by a ResizeObserver rather than measured once: React commits
  * asynchronously, so anything that measures right after `render()` sees an
  * empty box and concludes there is nothing to scroll. The observer also covers
- * the cases a one-shot measurement would miss — a reflow at a new viewport
- * width, and KaTeX or a webfont landing late and changing the height.
- *
- * The controls stay hidden until there is genuinely something to scroll: a pair
- * of dead arrows under a three-line commit message is worse than none. The body
- * is focusable and scrolls with the keyboard on its own; these are the pointer
- * equivalent, and the bar says how far through it you are.
+ * what a one-shot measurement would miss — a reflow at a new viewport width,
+ * and KaTeX or a webfont landing late and changing the height.
  */
-function attachScrollControls(scroller: HTMLElement, body: HTMLElement): void {
-  const controls = document.createElement("div");
-  controls.className = "tl-scrub";
-  controls.hidden = true;
-
-  const up = document.createElement("button");
-  up.type = "button";
-  up.className = "tl-scrub-btn";
-  up.setAttribute("aria-label", "Scroll details up");
-  up.innerHTML = icon("arrow-left");
-
-  const down = document.createElement("button");
-  down.type = "button";
-  down.className = "tl-scrub-btn";
-  down.setAttribute("aria-label", "Scroll details down");
-  down.innerHTML = icon("arrow-right");
-
-  const progress = document.createElement("span");
-  progress.className = "tl-scrub-progress";
-  progress.setAttribute("aria-hidden", "true");
-
-  // The two buttons sit together as one control, with the progress bar filling
-  // the space beside them. Separated by the bar they read as two unrelated
-  // controls, and moving between them meant crossing the whole card.
-  const buttons = document.createElement("span");
-  buttons.className = "tl-scrub-buttons";
-  buttons.append(up, down);
-
-  controls.append(progress, buttons);
-  scroller.appendChild(controls);
-
-  const step = (): number => Math.max(80, body.clientHeight * 0.8);
-
+function attachScrollFade(scroller: HTMLElement, body: HTMLElement): void {
   const update = (): void => {
     const max = body.scrollHeight - body.clientHeight;
-    const scrollable = max > 4;
-    controls.hidden = !scrollable;
-    if (!scrollable) {
-      scroller.dataset.more = "false";
-      return;
-    }
-    const ratio = body.scrollTop / max;
-    progress.style.setProperty("--tl-scrub-progress", String(Math.min(1, Math.max(0, ratio))));
-    up.disabled = body.scrollTop <= 1;
-    down.disabled = body.scrollTop >= max - 1;
-    scroller.dataset.more = String(body.scrollTop < max - 1);
+    scroller.dataset.more = String(max > 4 && body.scrollTop < max - 1);
   };
 
-  up.addEventListener("click", () => {
-    body.scrollBy({ top: -step(), behavior: "smooth" });
-  });
-  down.addEventListener("click", () => {
-    body.scrollBy({ top: step(), behavior: "smooth" });
-  });
   body.addEventListener("scroll", update, { passive: true });
 
   if (typeof ResizeObserver === "function") {

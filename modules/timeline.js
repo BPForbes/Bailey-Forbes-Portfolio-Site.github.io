@@ -318,51 +318,13 @@ async function fillCard(row, card, hideProjectChip) {
     body.appendChild(note);
     return;
   }
-  attachScrollControls(scroller, body);
+  attachScrollFade(scroller, body);
 }
-function attachScrollControls(scroller, body) {
-  const controls = document.createElement("div");
-  controls.className = "tl-scrub";
-  controls.hidden = true;
-  const up = document.createElement("button");
-  up.type = "button";
-  up.className = "tl-scrub-btn";
-  up.setAttribute("aria-label", "Scroll details up");
-  up.innerHTML = icon("arrow-left");
-  const down = document.createElement("button");
-  down.type = "button";
-  down.className = "tl-scrub-btn";
-  down.setAttribute("aria-label", "Scroll details down");
-  down.innerHTML = icon("arrow-right");
-  const progress = document.createElement("span");
-  progress.className = "tl-scrub-progress";
-  progress.setAttribute("aria-hidden", "true");
-  const buttons = document.createElement("span");
-  buttons.className = "tl-scrub-buttons";
-  buttons.append(up, down);
-  controls.append(progress, buttons);
-  scroller.appendChild(controls);
-  const step = () => Math.max(80, body.clientHeight * 0.8);
+function attachScrollFade(scroller, body) {
   const update = () => {
     const max = body.scrollHeight - body.clientHeight;
-    const scrollable = max > 4;
-    controls.hidden = !scrollable;
-    if (!scrollable) {
-      scroller.dataset.more = "false";
-      return;
-    }
-    const ratio = body.scrollTop / max;
-    progress.style.setProperty("--tl-scrub-progress", String(Math.min(1, Math.max(0, ratio))));
-    up.disabled = body.scrollTop <= 1;
-    down.disabled = body.scrollTop >= max - 1;
-    scroller.dataset.more = String(body.scrollTop < max - 1);
+    scroller.dataset.more = String(max > 4 && body.scrollTop < max - 1);
   };
-  up.addEventListener("click", () => {
-    body.scrollBy({ top: -step(), behavior: "smooth" });
-  });
-  down.addEventListener("click", () => {
-    body.scrollBy({ top: step(), behavior: "smooth" });
-  });
   body.addEventListener("scroll", update, { passive: true });
   if (typeof ResizeObserver === "function") {
     const observer = new ResizeObserver(update);
