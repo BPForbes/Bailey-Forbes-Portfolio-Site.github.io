@@ -707,6 +707,148 @@ code {
   margin-top: var(--space-2);
 }
 
+/*
+ * Named releases (B3, R07): a collapsed-by-default timeline, not the .entry
+ * card grid above. Each row is a native <details>/<summary> pair, so
+ * expand/collapse, focus and Enter/Space handling all come from the browser
+ * rather than a script keeping that state itself.
+ */
+.release-list {
+  position: relative;
+  display: grid;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* The spine the tag markers sit on, matching .tl-graph's git-branch line. */
+.release-list::before {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: var(--space-4);
+  bottom: var(--space-4);
+  width: 2px;
+  background: var(--border-strong);
+  border-radius: 2px;
+}
+
+.release-row + .release-row {
+  border-top: 1px solid var(--border);
+}
+
+.release-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-4) 0;
+  cursor: pointer;
+  list-style: none;
+}
+
+.release-summary::-webkit-details-marker {
+  display: none;
+}
+
+.release-marker {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  margin-top: 0.15rem;
+  color: var(--action);
+  background: var(--surface-page);
+}
+
+.release-marker .icon {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+.release-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--space-3);
+  row-gap: var(--space-1);
+}
+
+.release-version-date {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-2);
+}
+
+.release-version {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.release-date {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.release-summary-text {
+  flex: 1 1 12rem;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.release-toggle {
+  flex: none;
+  align-self: center;
+  width: 8px;
+  height: 8px;
+  margin-top: 2px;
+  border-right: 2px solid var(--text-subtle);
+  border-bottom: 2px solid var(--text-subtle);
+  transform: rotate(45deg);
+}
+
+.release-disclosure[open] .release-toggle {
+  margin-top: 6px;
+  transform: rotate(225deg);
+}
+
+.release-summary:hover,
+.release-summary:focus-visible {
+  background: var(--surface-raised);
+}
+
+.release-body {
+  margin: 0 0 var(--space-4) calc(20px + var(--space-3));
+  padding-top: var(--space-1);
+  color: var(--text-muted);
+}
+
+.release-body p {
+  margin: 0 0 var(--space-3);
+}
+
+.release-link {
+  color: var(--action-hover);
+  text-decoration: none;
+}
+
+.release-link .icon {
+  margin-left: 0.35em;
+}
+
 /* .spec-list is label/value data. There is nowhere to go, so it is not a card
    grid — it is a description list with a rule between rows (B3, R07). */
 .spec-list {

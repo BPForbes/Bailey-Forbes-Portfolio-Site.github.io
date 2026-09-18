@@ -3,12 +3,14 @@ import {
   commitCountFor,
   languagesFor,
   mergedPullRequestsFor,
+  namedReleasesFor,
   timelineEvents,
   versionFor
 } from "./projectMetadata.js";
 import { icon } from "./icons.js";
 import { mountDecks } from "./deck.js";
 import { mountGuestWindows } from "./guestWindow.js";
+import { mountNamedReleases } from "./releases.js";
 import { mountTimelineWindow } from "./timeline.js";
 import { ROUTES } from "./routes.js";
 const page = document.body.getAttribute("data-page") ?? "";
@@ -186,6 +188,10 @@ function renderTimeline(mount) {
   mountTimelineWindow(mount, cards, { hideProjectChip });
 }
 document.querySelectorAll("[data-timeline]").forEach(renderTimeline);
+mountNamedReleases((mount) => {
+  const key = mount.getAttribute("data-named-releases") ?? "";
+  return isProjectId(key) ? namedReleasesFor(key) : [];
+});
 mountGuestWindows();
 mountDecks();
 function mountRepositoryFacts() {

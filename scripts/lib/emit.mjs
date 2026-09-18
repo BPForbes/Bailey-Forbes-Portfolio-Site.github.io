@@ -45,6 +45,7 @@ const PROJECT_KEYS = [
   "latestReleaseDate",
   "languages",
   "generatedTimelineEvents",
+  "namedReleases",
   "source",
   "fetchedAt",
 ];

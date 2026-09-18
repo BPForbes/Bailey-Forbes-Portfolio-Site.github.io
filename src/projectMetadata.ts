@@ -21,6 +21,7 @@ import { GENERATED_PROJECT_METADATA } from "./generated/projectMetadata.js";
 import { languageColor } from "./languageColors.js";
 import type {
   LanguageShare,
+  NamedRelease,
   ProjectId,
   RepositoryMetadata,
   TimelineEvent,
@@ -160,6 +161,24 @@ function softKey(event: TimelineEvent): string {
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
   return `${event.project}|${event.date}|${title}`;
+}
+
+/**
+ * Curated, portfolio-worthy releases for a project's collapsed timeline rows.
+ *
+ * Mirrors {@link languagesFor}: a project's own contract, once it has
+ * published a non-empty `namedReleases`, outranks the hand-curated fallback
+ * in `data.ts`. An empty generated array is not "nothing" — see
+ * `RepositoryMetadata.namedReleases` — but it also is not a reason to fall
+ * back, since an upstream project that has explicitly published zero releases
+ * meant that, and stale curated rows should not reappear underneath it.
+ */
+export function namedReleasesFor(project: ProjectId): readonly NamedRelease[] {
+  const generated = repositoryMetadata(project)?.namedReleases;
+  if (generated !== undefined) {
+    return generated;
+  }
+  return PORTFOLIO.namedReleases[project] ?? [];
 }
 
 /** The version to display, or undefined when nothing authoritative was found. */

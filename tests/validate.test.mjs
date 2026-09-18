@@ -274,3 +274,65 @@ test("generated output is deterministic and carries the do-not-edit header", () 
   assert.equal(renderJson(reordered), renderJson(doc));
   assert.deepEqual(Object.keys(normalizeDocument(doc).projects), ["keyquorum", "qpu"]);
 });
+
+const NAMED_RELEASE = {
+  id: "4-0-0",
+  version: "4.0.0",
+  startDate: "2026-05-18",
+  endDate: null,
+  summary: "s",
+  description: "d",
+  url: "https://github.com/BPForbes/KeyQuorum/tree/aaaa/version/locked",
+};
+
+test("namedReleases is optional, and its absence is not a problem", () => {
+  assert.deepEqual(validateDocument(document({ keyquorum: project() }), CONTEXT), []);
+});
+
+test("a well-formed namedReleases entry passes", () => {
+  assert.deepEqual(
+    validateDocument(document({ keyquorum: project({ namedReleases: [NAMED_RELEASE] }) }), CONTEXT),
+    [],
+  );
+});
+
+test("a namedReleases entry with a bad date is rejected", () => {
+  const problems = validateDocument(
+    document({ keyquorum: project({ namedReleases: [{ ...NAMED_RELEASE, startDate: "18 May 2026" }] }) }),
+    CONTEXT,
+  );
+  assert.ok(problems.some((p) => p.includes("namedReleases[0].startDate")));
+});
+
+test("a duplicated namedReleases id is rejected", () => {
+  const problems = validateDocument(
+    document({ keyquorum: project({ namedReleases: [NAMED_RELEASE, { ...NAMED_RELEASE }] }) }),
+    CONTEXT,
+  );
+  assert.ok(problems.some((p) => p.includes("is duplicated")));
+});
+
+test("namedReleases must be ordered newest-first", () => {
+  const older = { ...NAMED_RELEASE, id: "3-3-0", startDate: "2026-05-12" };
+  const problems = validateDocument(
+    document({ keyquorum: project({ namedReleases: [older, NAMED_RELEASE] }) }),
+    CONTEXT,
+  );
+  assert.ok(problems.some((p) => p.includes("newest-first")));
+});
+
+test("a non-github namedReleases url is rejected", () => {
+  const problems = validateDocument(
+    document({ keyquorum: project({ namedReleases: [{ ...NAMED_RELEASE, url: "https://example.com/x" }] }) }),
+    CONTEXT,
+  );
+  assert.ok(problems.some((p) => p.includes("namedReleases[0].url")));
+});
+
+test("a non-array namedReleases is rejected", () => {
+  const problems = validateDocument(
+    document({ keyquorum: project({ namedReleases: "nope" }) }),
+    CONTEXT,
+  );
+  assert.ok(problems.some((p) => p.includes("namedReleases: not an array")));
+});

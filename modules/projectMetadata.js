@@ -72,6 +72,13 @@ function softKey(event) {
   const title = event.title.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   return `${event.project}|${event.date}|${title}`;
 }
+function namedReleasesFor(project) {
+  const generated = repositoryMetadata(project)?.namedReleases;
+  if (generated !== void 0) {
+    return generated;
+  }
+  return PORTFOLIO.namedReleases[project] ?? [];
+}
 function versionFor(project) {
   return repositoryMetadata(project)?.latestVersion;
 }
@@ -85,6 +92,7 @@ export {
   commitCountFor,
   languagesFor,
   mergedPullRequestsFor,
+  namedReleasesFor,
   repositoryMetadata,
   timelineEvents,
   versionFor

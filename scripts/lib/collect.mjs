@@ -138,6 +138,14 @@ async function collect(options, maxTimeline) {
     ...version,
     languages,
     generatedTimelineEvents: events,
+    // Carried forward as a default, not fetched fresh: unlike languages and the
+    // timeline, named releases have no REST equivalent this repository could
+    // fall back to, so a contract that is merely unreachable this run (a
+    // network blip, not a real change upstream) must not silently erase a
+    // release list an earlier successful run already established. The contract
+    // overlay below replaces this the moment it has an answer of its own —
+    // including an explicitly empty one, which is a real "zero releases now".
+    ...(options.previous?.namedReleases ? { namedReleases: options.previous.namedReleases } : {}),
     source: "github",
     fetchedAt: new Date().toISOString(),
   };
@@ -187,6 +195,14 @@ async function overlayContract(metadata, options, maxTimeline) {
   // purpose — see below.
   if (contract.hasTimeline) {
     metadata.generatedTimelineEvents = contract.generatedTimelineEvents;
+  }
+  // Named releases have no REST equivalent to fall back to at all — they are
+  // curated by the upstream project, full stop — so presence here just decides
+  // whether this refresh has an opinion. A contract that has not adopted this
+  // field yet leaves whatever the previous snapshot carried untouched, rather
+  // than wiping out a release list this run had no way to confirm still holds.
+  if (contract.hasNamedReleases) {
+    metadata.namedReleases = contract.namedReleases;
   }
   if (contract.description !== undefined && metadata.description === undefined) {
     metadata.description = contract.description;

@@ -3,15 +3,17 @@ import {
   commitCountFor,
   languagesFor,
   mergedPullRequestsFor,
+  namedReleasesFor,
   timelineEvents,
   versionFor,
 } from "./projectMetadata.js";
 import { icon } from "./icons.js";
 import { mountDecks } from "./deck.js";
 import { mountGuestWindows } from "./guestWindow.js";
+import { mountNamedReleases } from "./releases.js";
 import { mountTimelineWindow, type TimelineCard } from "./timeline.js";
 import { ROUTES } from "./routes.js";
-import type { ProjectId } from "./types.js";
+import type { NamedRelease, ProjectId } from "./types.js";
 
 const page = document.body.getAttribute("data-page") ?? "";
 
@@ -251,6 +253,11 @@ function renderTimeline(mount: HTMLElement): void {
 }
 
 document.querySelectorAll<HTMLElement>("[data-timeline]").forEach(renderTimeline);
+
+mountNamedReleases((mount): readonly NamedRelease[] => {
+  const key = mount.getAttribute("data-named-releases") ?? "";
+  return isProjectId(key) ? namedReleasesFor(key) : [];
+});
 
 mountGuestWindows();
 mountDecks();

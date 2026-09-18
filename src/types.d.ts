@@ -29,6 +29,30 @@ export interface PortfolioData {
   projectOrder: readonly ProjectId[];
   languages: Partial<Record<ProjectId, readonly LanguageShare[]>>;
   events: readonly TimelineEvent[];
+  /**
+   * Curated named releases: hand-picked milestones, not every merge. This is
+   * the fallback shown before a project's own repository publishes the same
+   * shape in its contract (`RepositoryMetadata.namedReleases`), and stands in
+   * for any project — like `emr` — that never will.
+   */
+  namedReleases: Partial<Record<ProjectId, readonly NamedRelease[]>>;
+}
+
+/**
+ * A single portfolio-worthy release, curated rather than derived from commits.
+ *
+ * `startDate`/`endDate` are plain calendar days (`YYYY-MM-DD`); the renderer
+ * formats them, so raw dates travel unopinionated from either the curated
+ * fallback or a project's own generated contract.
+ */
+export interface NamedRelease {
+  id: string;
+  version: string;
+  startDate: string;
+  endDate: string | null;
+  summary: string;
+  description: string;
+  url: string;
 }
 
 /**
@@ -82,6 +106,14 @@ export interface RepositoryMetadata {
   latestReleaseDate?: string;
   languages: readonly RepositoryLanguage[];
   generatedTimelineEvents: readonly GeneratedTimelineEvent[];
+  /**
+   * Curated, not derived — present only when the project's own contract has
+   * published this field. Absent (rather than empty) means "this project has
+   * not adopted the field yet"; an empty array is a project's explicit "no
+   * named releases". Either way the curated fallback in `data.ts` stands in
+   * until this is present and non-empty.
+   */
+  namedReleases?: readonly NamedRelease[];
   /** "contract" when the project published its own metadata document. */
   source: "contract" | "github";
   fetchedAt: string;

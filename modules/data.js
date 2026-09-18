@@ -413,7 +413,101 @@ const PORTFOLIO = {
       detail: "Expands the QPU circuit protocol PDF reference that ships with the workbench.",
       href: "https://github.com/BPForbes/BPForbes.QPU.github.io/commit/87b77d4"
     }
-  ]
+  ],
+  namedReleases: {
+    flinstone: [
+      {
+        id: "2-2-4-3-2-3",
+        version: "2.2.4 \u2013 3.2.3",
+        startDate: "2026-05-11",
+        endDate: "2026-05-12",
+        summary: "Shell \xB7 FAT32 \xB7 AArch64 \xB7 disk history",
+        description: "Syscall-style shell dispatch, FAT32 host volumes, AArch64/Pi defaults, disk-backed history, OS roadmap.",
+        url: "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/main/version/locked"
+      },
+      {
+        id: "3-3-0",
+        version: "3.3.0",
+        startDate: "2026-05-12",
+        endDate: null,
+        summary: "fs_jail \xB7 audit \xB7 FL1 history",
+        description: "Contract surfaces for fs_jail and audit; FL1 history vs post-exec audit log.",
+        url: "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/main/version/locked"
+      },
+      {
+        id: "4-0-0-4-0-1",
+        version: "4.0.0 / 4.0.1",
+        startDate: "2026-05-18",
+        endDate: "2026-05-19",
+        summary: "Contracts \xB7 IPC/VFS \xB7 serial-j1",
+        description: "Inheritable system contracts; then IPC/VFS/shell hardening and serial -j1 default builds.",
+        url: "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/main/version/locked"
+      },
+      {
+        id: "4-1-0-4-1-1",
+        version: "4.1.0 / 4.1.1",
+        startDate: "2026-05-23",
+        endDate: "2026-05-24",
+        summary: "Identity \xB7 su/sudo \xB7 issue sweep",
+        description: "Identity stack; then issues #169-#222 (ARM ABI, sessions, batch argv, SHA-256 fetches, threadpool).",
+        url: "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/main/version/locked"
+      },
+      {
+        id: "4-2-0",
+        version: "4.2.0",
+        startDate: "2026-06-19",
+        endDate: null,
+        summary: "P3 networking \xB7 WSL \xB7 Linux hosting",
+        description: "P3 networking, server foundations, WSL and native Linux integration.",
+        url: "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/main/version/locked"
+      },
+      {
+        id: "4-3-0",
+        version: "4.3.0",
+        startDate: "2026-09-13",
+        endDate: null,
+        summary: "Wi-Fi \xB7 WPA2/WPA3-SAE \xB7 nl80211",
+        description: "Production Wi-Fi: 802.11ax drivers, WPA2 and WPA3-SAE supplication, FullMAC and nl80211 backends, TWT, and post-association DHCP.",
+        url: "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/main/version/locked"
+      },
+      {
+        id: "4-4-0",
+        version: "4.4.0",
+        startDate: "2026-09-14",
+        endDate: null,
+        summary: "Browser-kernel contract \xB7 CI gate",
+        description: "Schema-versioned P8 browser-kernel artifact contract, a static lab harness, and a fail-closed CI promotion gate.",
+        url: "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/main/version/locked"
+      },
+      {
+        id: "4-5-0",
+        version: "4.5.0",
+        startDate: "2026-09-14",
+        endDate: null,
+        summary: "Freestanding boot \xB7 lab identity",
+        description: "Freestanding x86-64 BIOS boot candidate with long-mode entry, lab identity, and concurrent sessions. States plainly that the guest is not the hosted ELF.",
+        url: "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/main/version/locked"
+      },
+      {
+        id: "4-5-1-4-5-3",
+        version: "4.5.1 \u2013 4.5.3",
+        startDate: "2026-09-15",
+        endDate: null,
+        summary: "Relay CI \xB7 Cloudflare lab \xB7 guest DNS",
+        description: "Relay CI stabilised and Cloudflare Worker artifacts for first-visit lab boot; the QMP cont timeout fixed; guest DNS moved to same-origin /lab-dns with a Cloudflare DoH fallback.",
+        url: "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/main/version/locked"
+      },
+      {
+        id: "4-5-4",
+        version: "4.5.4",
+        startDate: "2026-09-15",
+        endDate: null,
+        summary: "Emscripten shell \xB7 shared relay",
+        description: "Sandboxed Emscripten Flinstone Shell as the default lab, and a shared relay room on a Cloudflare Durable Object with BroadcastChannel fallback. Latest GM promote on main.",
+        url: "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/main/version/locked"
+      }
+    ]
+  }
 };
 export {
   PORTFOLIO

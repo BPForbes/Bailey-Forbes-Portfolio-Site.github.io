@@ -67,6 +67,9 @@ export function validateDocument(document, context) {
 
     problems.push(...validateLanguages(project.languages, where));
     problems.push(...validateTimeline(project.generatedTimelineEvents, where, projectId));
+    if (project.namedReleases !== undefined) {
+      problems.push(...validateNamedReleases(project.namedReleases, where));
+    }
 
     if (project.latestVersion !== undefined && typeof project.latestVersion !== "string") {
       problems.push(`${where}.latestVersion: not a string`);
@@ -133,6 +136,63 @@ function validateLanguages(languages, where) {
   if (problems.length === 0 && !sharesSumToWhole(languages)) {
     const sum = languages.reduce((total, language) => total + language.pct, 0);
     problems.push(`${where}.languages: percentages sum to ${sum.toFixed(3)}, not 100`);
+  }
+  return problems;
+}
+
+/**
+ * @param {unknown} releases
+ * @param {string} where
+ * @returns {string[]}
+ */
+function validateNamedReleases(releases, where) {
+  /** @type {string[]} */
+  const problems = [];
+  if (!Array.isArray(releases)) {
+    return [`${where}.namedReleases: not an array`];
+  }
+
+  const ids = new Set();
+  let previousStartDate;
+  for (const [index, release] of releases.entries()) {
+    const at = `${where}.namedReleases[${index}]`;
+    if (release === null || typeof release !== "object") {
+      problems.push(`${at}: not an object`);
+      continue;
+    }
+    if (typeof release.id !== "string" || release.id === "") {
+      problems.push(`${at}.id: missing`);
+    } else if (ids.has(release.id)) {
+      problems.push(`${at}.id: "${release.id}" is duplicated`);
+    } else {
+      ids.add(release.id);
+    }
+    if (typeof release.version !== "string" || release.version.trim() === "") {
+      problems.push(`${at}.version: missing`);
+    }
+    if (!isValidDate(release.startDate)) {
+      problems.push(`${at}.startDate: "${String(release.startDate)}" is not YYYY-MM-DD`);
+    }
+    if (release.endDate !== null && !isValidDate(release.endDate)) {
+      problems.push(`${at}.endDate: must be YYYY-MM-DD or null, got ${JSON.stringify(release.endDate)}`);
+    }
+    if (typeof release.summary !== "string" || release.summary.trim() === "") {
+      problems.push(`${at}.summary: missing`);
+    }
+    if (typeof release.description !== "string" || release.description.trim() === "") {
+      problems.push(`${at}.description: missing`);
+    }
+    if (!isGitHubUrl(release.url)) {
+      problems.push(`${at}.url: "${String(release.url)}" is not a github.com URL`);
+    }
+    // Newest-first, the same invariant the timeline enforces.
+    if (previousStartDate !== undefined && typeof release.startDate === "string"
+      && release.startDate > previousStartDate) {
+      problems.push(`${at}.startDate: releases must be ordered newest-first`);
+    }
+    if (typeof release.startDate === "string") {
+      previousStartDate = release.startDate;
+    }
   }
   return problems;
 }
