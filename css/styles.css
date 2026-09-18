@@ -1343,8 +1343,18 @@ a.tl-node:hover {
   margin: var(--space-4) 0 var(--space-2);
 }
 
+/*
+ * Segment widths are set inline from the synced percentages and always total
+ * 100%. flex-shrink is disabled so a repository with a dozen languages keeps
+ * those proportions instead of letting flex renegotiate them, and the min-width
+ * keeps a 0.1% language visible as a hairline rather than collapsing to
+ * nothing. Both together can overflow the track by a pixel or two on a very
+ * narrow phone, which is what the overflow:hidden on .lang-bar is already for.
+ */
 .lang-seg {
   height: 100%;
+  flex: 0 0 auto;
+  min-width: 2px;
 }
 
 .lang-legend {
@@ -1356,10 +1366,23 @@ a.tl-node:hover {
   font-size: 0.74rem;
 }
 
+/*
+ * The legend is generated, so its length and its longest word are both unknown
+ * at authoring time: "Linker Script" and "Jupyter Notebook" are real Linguist
+ * names. Each item stays on one line and the row wraps between items; max-width
+ * stops a single long name forcing a horizontal scrollbar at 320px.
+ */
 .lang-legend span {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
+  white-space: nowrap;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.lang-legend span > .lang-swatch {
+  flex: 0 0 auto;
 }
 
 .lang-swatch {
@@ -1367,44 +1390,6 @@ a.tl-node:hover {
   height: 10px;
   border-radius: 2px;
   border: 1px solid var(--border-strong);
-}
-
-/*
- * Repository statistics, under the language bar on a project page. Generated
- * from GitHub at build time, so the strip is simply absent when a build carries
- * no metadata — which is also why the EMR page has none.
- *
- * Deliberately the same mono, size and colour as .lang-legend above: both are
- * the same kind of claim about the repository, and they read as one strip.
- */
-.repo-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-4);
-  margin-top: var(--space-2);
-  color: var(--text-subtle);
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
-}
-
-.repo-stats:empty {
-  display: none;
-}
-
-.repo-stat {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--space-1);
-}
-
-.repo-stat > strong,
-.repo-stat > a {
-  color: var(--text-muted);
-  font-weight: 600;
-}
-
-.repo-stat-label {
-  color: var(--text-subtle);
 }
 
 /* ------------------------------------------------------------- live lab --- */

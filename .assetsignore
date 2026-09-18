@@ -16,5 +16,6 @@ CNAME
 
 
 tools
-docs
 contact-worker
+scripts
+tests

@@ -1,11 +1,5 @@
 node_modules/
 js/
-
-# Written by tools/generate-project-metadata.mjs during the Pages build and
-# shipped in the deployment artifact. Never committed: a commit here would make
-# every project notification push to main and re-trigger the deploy that wrote
-# it (docs/project-metadata.md).
-data/projects.generated.json
 .wrangler/
 .dev.vars
 .env

@@ -1,8 +1,9 @@
-# Reusable notifier: tells this portfolio that a project it represents changed.
+# Reusable notifier: tells this portfolio that a project it represents shipped.
 #
-# Project repositories call this instead of each carrying their own copy of the
-# dispatch logic, so the per-repository configuration stays about a dozen lines
-# and the request shape is maintained in exactly one place:
+# `sync-project-metadata.yml` already accepts a `portfolio-project-updated`
+# repository_dispatch and documents the raw curl for it. This workflow is that
+# curl, maintained once instead of copied into every project repository, so a
+# project's own configuration stays about a dozen lines:
 #
 #   jobs:
 #     notify:
@@ -10,11 +11,20 @@
 #       secrets:
 #         PORTFOLIO_DISPATCH_TOKEN: ${{ secrets.PORTFOLIO_DISPATCH_TOKEN }}
 #
-# The caller decides *when* to notify (see docs/project-metadata.md — repositories
-# with a build or deployment wait for it to succeed). This workflow only decides
-# *how*, and deliberately sends no metadata: the payload says something changed,
-# and the portfolio re-queries GitHub itself. Anything else would let a project
-# repository put numbers on bailey-forbes.com that nothing verified.
+# The caller decides *when* to notify — repositories with a build or a
+# deployment wait for it to succeed, so the portfolio never advertises a project
+# state before the thing describing it is live. This workflow only decides *how*.
+#
+# It deliberately sends no metadata. The payload says something changed and
+# names what; the sync re-derives every figure it publishes from GitHub itself.
+# Anything else would let a project repository put numbers on bailey-forbes.com
+# that nothing verified. The sync reads none of `client_payload` — the fields
+# below are there for the Actions log and for a future consumer — so nothing a
+# caller sends can steer it.
+#
+# Without this, the metadata still refreshes: the scheduled daily run in
+# sync-project-metadata.yml covers the same ground within a day. This is what
+# makes it immediate.
 
 name: Notify portfolio
 
@@ -22,7 +32,7 @@ on:
   workflow_call:
     inputs:
       project:
-        description: Registry id of the project, when it differs from the repository name.
+        description: Portfolio project id, as keyed in scripts/project-sources.mjs.
         type: string
         required: false
         default: ''
@@ -56,7 +66,7 @@ permissions: {}
 
 jobs:
   dispatch:
-    name: Dispatch project-updated
+    name: Dispatch portfolio-project-updated
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -80,6 +90,9 @@ jobs:
             exit 1
           fi
 
+          # Must match the repository_dispatch type in the portfolio's
+          # sync-project-metadata.yml. A mismatch is silent: GitHub accepts any
+          # event_type with 204 and simply starts nothing.
           payload="$(jq -nc \
             --arg repository "${SOURCE_REPOSITORY}" \
             --arg sha "${SOURCE_SHA}" \
@@ -87,7 +100,7 @@ jobs:
             --arg workflow "${SOURCE_WORKFLOW}" \
             --arg project "${PROJECT}" \
             '{
-              event_type: "project-updated",
+              event_type: "portfolio-project-updated",
               client_payload: ({
                 repository: $repository,
                 sha: $sha,
@@ -96,7 +109,7 @@ jobs:
               } + (if $project == "" then {} else { project: $project } end))
             }')"
 
-          echo "Notifying the portfolio that ${SOURCE_REPOSITORY}@${SOURCE_SHA:0:7} changed."
+          echo "Notifying the portfolio that ${SOURCE_REPOSITORY}@${SOURCE_SHA:0:7} shipped."
 
           # --fail-with-body so a 401/403/404 ends the job with GitHub's own
           # explanation instead of a silent success. The response body of this
@@ -120,4 +133,4 @@ jobs:
             exit 1
           fi
 
-          echo "Portfolio accepted the project-updated event (HTTP 204)."
+          echo "Portfolio accepted portfolio-project-updated (HTTP 204)."

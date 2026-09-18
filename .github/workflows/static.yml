@@ -1,18 +1,4 @@
-# Builds and deploys the site to GitHub Pages, with project metadata refreshed
-# from GitHub at build time.
-#
-# Three things start a deployment, and all three take the same path — so a
-# metadata refresh is never a different build from a content change:
-#
-#   * a push to main                       (the site itself changed)
-#   * repository_dispatch: project-updated (a tracked project changed and its
-#                                           own build succeeded — see
-#                                           .github/workflows/notify-portfolio.yml)
-#   * workflow_dispatch                    (manual refresh)
-#
-# Generated metadata is written into the artifact and never committed back, so
-# no deployment can trigger another one (docs/project-metadata.md).
-
+# Simple workflow for deploying static content to GitHub Pages
 name: Deploy static content to Pages
 
 on:
@@ -20,16 +6,10 @@ on:
   push:
     branches: ["main"]
 
-  # A project repository finished a successful build and told us it changed.
-  repository_dispatch:
-    types: [project-updated]
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages.
-# contents: read also covers reading the tracked public repositories through the
-# REST API, which is all the metadata generator needs.
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
@@ -37,10 +17,6 @@ permissions:
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-#
-# This is also what keeps a burst of notifications cheap: if several projects
-# publish at once, the queued runs collapse to the latest, and one refresh picks
-# up all of them.
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -60,30 +36,8 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Install dependencies
-        run: npm ci
-      - name: Test metadata generator
-        run: npm run test:metadata
-      - name: Generate project metadata
-        env:
-          # Every tracked repository is public, so the workflow's own token can
-          # read them and needs no cross-repository grant. METADATA_READ_TOKEN
-          # is only needed if a tracked repository ever becomes private.
-          GITHUB_TOKEN: ${{ secrets.METADATA_READ_TOKEN || secrets.GITHUB_TOKEN }}
-          # Echoed into the log so a run says which project asked for it. The
-          # payload never selects what is queried — tools/projects.registry.mjs does.
-          DISPATCH_REPOSITORY: ${{ github.event.client_payload.repository }}
-          DISPATCH_SHA: ${{ github.event.client_payload.sha }}
-          DISPATCH_WORKFLOW: ${{ github.event.client_payload.workflow }}
-        run: npm run generate:metadata
       - name: Compile TypeScript
-        run: npm run build
-      - name: Validate generated metadata
-        # Re-checks the file that is about to be uploaded. Between them, this
-        # and the step above mean the artifact either carries a complete,
-        # schema-valid document or the deploy fails and the previous deployment
-        # keeps serving.
-        run: npm run validate:metadata
+        run: npm ci && npm run build
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

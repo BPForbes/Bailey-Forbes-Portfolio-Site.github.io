@@ -1,6 +1,12 @@
 import { PORTFOLIO } from "./data.js";
+import {
+  commitCountFor,
+  languagesFor,
+  mergedPullRequestsFor,
+  timelineEvents,
+  versionFor,
+} from "./projectMetadata.js";
 import { icon } from "./icons.js";
-import { generatedProject, languageShares, stat, timelineEvents, version } from "./metadata.js";
 import { mountDecks } from "./deck.js";
 import { mountGuestWindows } from "./guestWindow.js";
 import { mountTimelineDeck } from "./timeline.js";
@@ -86,14 +92,28 @@ function isProjectId(value: string): value is ProjectId {
   return Object.prototype.hasOwnProperty.call(PORTFOLIO.projects, value);
 }
 
+/**
+ * One decimal, with a trailing ".0" trimmed.
+ *
+ * The sync rounds to a tenth and balances the remainder so a bar's figures add
+ * up to 100.0. Printing "Rust 100%" rather than "Rust 100.0%" keeps the legend
+ * reading the way the hand-written one did.
+ */
+function formatPct(pct: number): string {
+  return pct.toFixed(1).replace(/\.0$/, "");
+}
+
 document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
   const key = el.getAttribute("data-lang-bar");
   if (!key || !isProjectId(key)) {
     return;
   }
 
-  const langs = languageShares(key);
-  if (!langs) {
+  // Generated GitHub Linguist data when the project has a repository, the
+  // curated split when it does not. Either way the renderer below is unchanged:
+  // it has never assumed a language count, and must not start now.
+  const langs = languagesFor(key);
+  if (!langs || langs.length === 0) {
     return;
   }
 
@@ -102,7 +122,7 @@ document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
   bar.setAttribute("role", "img");
   bar.setAttribute(
     "aria-label",
-    `Language split: ${langs.map((lang) => `${lang.name} ${lang.pct} percent`).join(", ")}`,
+    `Language split: ${langs.map((lang) => `${lang.name} ${formatPct(lang.pct)} percent`).join(", ")}`,
   );
 
   const legend = document.createElement("div");
@@ -120,158 +140,12 @@ document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
     swatch.className = "lang-swatch";
     swatch.style.background = lang.color;
     swatch.setAttribute("aria-hidden", "true");
-    item.append(swatch, document.createTextNode(`${lang.name} ${lang.pct}%`));
+    item.append(swatch, document.createTextNode(`${lang.name} ${formatPct(lang.pct)}%`));
     legend.appendChild(item);
   }
 
   el.append(bar, legend);
 });
-
-/**
- * Generated repository numbers, written into the markup that already showed
- * them.
- *
- * A `data-metric="<project>:<field>"` element keeps its authored text as the
- * fallback and is only rewritten when this build actually carries generated
- * metadata for that project — so a build without `data/projects.generated.json`
- * renders the page exactly as it was written, and a number is never blanked out
- * or replaced by a placeholder.
- *
- * `data-metric-suffix` carries the unit, so the markup still reads as the chip
- * it is ("390 commits") rather than a bare count.
- */
-document.querySelectorAll<HTMLElement>("[data-metric]").forEach((el) => {
-  const [key, field] = (el.getAttribute("data-metric") ?? "").split(":");
-  if (key === undefined || field === undefined || !isProjectId(key)) {
-    return;
-  }
-
-  let value: string | undefined;
-  if (field === "version") {
-    value = version(key);
-  } else {
-    const count = stat(key, field);
-    value = count === undefined ? undefined : count.toLocaleString("en-US");
-  }
-  if (value === undefined) {
-    // An element with authored text keeps it as the fallback. An empty one was
-    // only ever a placeholder for a generated number, so it leaves rather than
-    // sitting there blank — and nothing on the page becomes a figure nobody
-    // maintains.
-    if (el.textContent?.trim() === "") {
-      el.remove();
-    }
-    return;
-  }
-
-  el.textContent = `${value}${el.getAttribute("data-metric-suffix") ?? ""}`;
-  el.removeAttribute("hidden");
-  el.setAttribute("data-metric-generated", "true");
-});
-
-/**
- * The repository statistics strip under a project's language bar.
- *
- * Rendered entirely from generated metadata, so it is absent rather than stale
- * when a build carries none — and absent for a project with no public
- * repository, which is why the EMR page does not mount one. Each figure is
- * whatever GitHub answered at build time; nothing here is maintained by hand.
- */
-document.querySelectorAll<HTMLElement>("[data-repo-stats]").forEach((el) => {
-  const key = el.getAttribute("data-repo-stats");
-  if (!key || !isProjectId(key)) {
-    return;
-  }
-
-  const project = generatedProject(key);
-  if (project === undefined) {
-    return;
-  }
-
-  const figures: Array<{ label: string; value: string; href?: string }> = [];
-  if (project.version !== undefined) {
-    figures.push({ label: "version", value: project.version });
-  }
-
-  const commits = project.stats["commits"];
-  if (commits !== undefined) {
-    figures.push({ label: "commits", value: commits.toLocaleString("en-US") });
-  }
-
-  const merged = project.stats["mergedPullRequests"];
-  if (merged !== undefined) {
-    figures.push({ label: "merged PRs", value: merged.toLocaleString("en-US") });
-  }
-
-  if (project.latestCommit.shortSha !== "") {
-    figures.push({
-      label: "latest commit",
-      value: project.latestCommit.shortSha,
-      ...(project.latestCommit.url === "" ? {} : { href: project.latestCommit.url }),
-    });
-  }
-
-  if (project.lastUpdated !== "") {
-    figures.push({ label: "updated", value: formatDay(project.lastUpdated) });
-  }
-
-  if (figures.length === 0) {
-    return;
-  }
-
-  for (const figure of figures) {
-    const item = document.createElement("span");
-    item.className = "repo-stat";
-
-    const value = document.createElement(figure.href === undefined ? "strong" : "a");
-    value.textContent = figure.value;
-    if (value instanceof HTMLAnchorElement && figure.href !== undefined) {
-      value.href = figure.href;
-      value.rel = "noopener";
-    }
-
-    const label = document.createElement("span");
-    label.className = "repo-stat-label";
-    label.textContent = figure.label;
-
-    // A real space, not just the flex gap: the gap is invisible to anything
-    // reading text content, and "398commits" is what a screen reader would
-    // otherwise announce.
-    item.append(value, document.createTextNode(" "), label);
-    el.appendChild(item);
-  }
-
-  el.setAttribute("data-repo-stats-generated", "true");
-});
-
-/**
- * `2026-09-18` as `18 Sep 2026`, matching how dates are written elsewhere on
- * the site.
- *
- * Spelled out rather than left to toLocaleDateString: en-GB abbreviates
- * September as "Sept", and the exact abbreviations a runtime produces depend on
- * its ICU data, so a date would not necessarily read the same in the browser as
- * in the prose beside it.
- */
-function formatDay(iso: string): string {
-  // Declared inside the function, not beside it: `formatDay` is hoisted and is
-  // called from the rendering above, so a module-level `const` here would still
-  // be in its temporal dead zone by then.
-  const months = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-  ] as const;
-
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
-  if (match === null) {
-    return iso;
-  }
-  const month = months[Number(match[2]) - 1];
-  if (month === undefined) {
-    return iso;
-  }
-  return `${Number(match[3])} ${month} ${match[1]}`;
-}
 
 /**
  * The project timeline: a vertical git graph down the right rail.
@@ -421,3 +295,48 @@ document.querySelectorAll<HTMLElement>("[data-timeline]").forEach(renderTimeline
 
 mountGuestWindows();
 mountDecks();
+
+/**
+ * Repository-derived figures on otherwise static pages.
+ *
+ * Each hook names the project it belongs to, so the markup carries the
+ * relationship and this code does no string matching against page copy:
+ *
+ *   <span data-project-version="flinstone">4.5.4</span>
+ *   <span data-project-commits="flinstone">390 commits</span>
+ *   <span data-project-prs="homework-central">76 PRs</span>
+ *
+ * The literal text in the HTML is the fallback, not the source of truth. It is
+ * what a visitor sees before the module runs, and what stays if a project has
+ * no generated metadata yet — so the page is never blank or wrong, just
+ * occasionally a sync behind.
+ *
+ * `data-project-label="false"` renders the bare number, for prose that supplies
+ * its own noun.
+ */
+function mountRepositoryFacts(): void {
+  const render = (
+    attribute: string,
+    value: (project: ProjectId) => number | string | undefined,
+    label: (text: string) => string,
+  ): void => {
+    document.querySelectorAll<HTMLElement>(`[${attribute}]`).forEach((el) => {
+      const key = el.getAttribute(attribute);
+      if (!key || !isProjectId(key)) {
+        return;
+      }
+      const resolved = value(key);
+      if (resolved === undefined) {
+        return;
+      }
+      const text = String(resolved);
+      el.textContent = el.getAttribute("data-project-label") === "false" ? text : label(text);
+    });
+  };
+
+  render("data-project-version", versionFor, (text) => text);
+  render("data-project-commits", commitCountFor, (text) => `${text} commits`);
+  render("data-project-prs", mergedPullRequestsFor, (text) => `${text} merged PRs`);
+}
+
+mountRepositoryFacts();
