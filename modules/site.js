@@ -3,12 +3,13 @@ import {
   commitCountFor,
   languagesFor,
   mergedPullRequestsFor,
+  metadataSyncedAt,
   namedReleasesFor,
   timelineEvents,
   versionFor
 } from "./projectMetadata.js";
+import { publishedAt } from "./buildInfo.js";
 import { icon } from "./icons.js";
-import { mountLayoutSwitch } from "./layout.js";
 import { mountDecks } from "./deck.js";
 import { mountGuestWindows } from "./guestWindow.js";
 import { mountNamedReleases } from "./releases.js";
@@ -40,24 +41,25 @@ if (header) {
 }
 const footer = document.querySelector("[data-site-footer]");
 if (footer) {
+  const published = publishedAt();
+  const synced = metadataSyncedAt();
+  const year = (published ?? synced).slice(0, 4);
   footer.innerHTML = `
       <div class="wrap footer-grid">
         <p>
-          \xA9 2026 Bailey P Forbes. Project timelines are compiled from public git history on
-          <a href="https://github.com/BPForbes">github.com/BPForbes</a>, 11 Sep 2026.
+          \xA9 ${year} Bailey P Forbes.${published === void 0 ? "" : `
+          Last published <time datetime="${published}">${formatEventDate(published.slice(0, 10))}</time>.`}
+          Project timelines are compiled from public git history on
+          <a href="https://github.com/BPForbes">github.com/BPForbes</a>,
+          <time datetime="${synced}">${formatEventDate(synced.slice(0, 10))}</time>.
         </p>
         <ul class="footer-links">
           <li><a href="mailto:baileyforbes@rocketmail.com">${icon("envelope")}Email Bailey</a></li>
           <li><a href="https://www.linkedin.com/in/bailey-preston-forbes">${icon("linkedin-in")}LinkedIn</a></li>
           <li><a href="https://github.com/BPForbes">${icon("github")}GitHub</a></li>
         </ul>
-        <div class="layout-switch" data-layout-switch></div>
       </div>
     `;
-  const layoutSwitch = footer.querySelector("[data-layout-switch]");
-  if (layoutSwitch) {
-    mountLayoutSwitch(layoutSwitch);
-  }
 }
 document.querySelectorAll(`[data-nav="${page}"]`).forEach((link) => {
   link.setAttribute("aria-current", "page");
@@ -83,7 +85,7 @@ if (toggle && links) {
       toggle.focus();
     }
   });
-  window.addEventListener("bf:layer", () => {
+  window.matchMedia("(min-width: 56rem)").addEventListener("change", () => {
     setOpen(false);
   });
 }
@@ -221,5 +223,12 @@ function mountRepositoryFacts() {
   render("data-project-version", versionFor, (text) => text);
   render("data-project-commits", commitCountFor, (text) => `${text} commits`);
   render("data-project-prs", mergedPullRequestsFor, (text) => `${text} merged PRs`);
+  const synced = metadataSyncedAt();
+  document.querySelectorAll("[data-metadata-synced]").forEach((el) => {
+    el.textContent = formatEventDate(synced.slice(0, 10));
+    if (el instanceof HTMLTimeElement) {
+      el.dateTime = synced;
+    }
+  });
 }
 mountRepositoryFacts();

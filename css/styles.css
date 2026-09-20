@@ -92,51 +92,32 @@
   --tap-comfortable: 44px;
 
   /*
-   * Layer tokens. These carry the COMPACT values; the wide layer below
-   * redefines them. Components read only these, never a raw breakpoint, so a
-   * component never needs to know which layer it is in.
+   * Layer tokens. These carry the COMPACT values; the wide layer at the foot
+   * of this file redefines them. Components read only these, never a raw
+   * breakpoint, so a component never needs to know which layer it is in.
    */
   --content-padding: 1rem;
   --section-spacing: var(--space-6);
   --nav-h: 56px;
-  --compact-measure: 34rem;
 }
 
 /*
  * ------------------------------------------------------------------ layers --
  *
- * The site has two presentation layers over ONE document: compact (touch,
- * single column) and wide (pointer, multi-column). Which one is active is
- * decided once, in the inline <head> script, and written to <html> as
- * .layout-compact / .layout-wide.
+ * The site has two presentation layers over ONE document: compact (single
+ * column, touch) and wide (multi-column, pointer). Everything up to the WIDE
+ * LAYER block at the foot of this file is compact; that block is the whole of
+ * the difference between them.
  *
- * It is a class rather than a media query because the visitor can override the
- * automatic choice ("Desktop site" / "Mobile site" in the footer), and a media
- * query cannot be overridden from the document. One class means one source of
- * truth: no rule is stated twice, so the two layers cannot drift apart.
+ * The boundary is a media query, so the layout follows the browser and needs
+ * no JavaScript: it is right on the first paint, right with scripting off, and
+ * right the instant a window is resized.
  *
- * Everything outside .layout-wide is the compact layer. Compact is therefore
- * also what a visitor without JavaScript gets, which is the right fallback: a
- * readable single column rather than a desktop grid squeezed onto a phone.
+ * The boundary is in `rem`, not pixels, so it also follows the reader's own
+ * browser settings. Someone who has set a larger default font size gets the
+ * single column held further up the width range, because their text needs the
+ * room — which is the point of the layer, not the device it happens to be on.
  */
-
-/*
- * Forced compact on a large screen. Without this the single column would run
- * the full width of a monitor, which is neither the mobile layout the visitor
- * asked for nor a readable measure. On a phone the cap is wider than the
- * screen, so this rule costs nothing there.
- */
-.layout-compact body {
-  max-width: var(--compact-measure);
-  margin-inline: auto;
-}
-
-/* Only frame the column when there is actually room around it. */
-@media (min-width: 36rem) {
-  .layout-compact body {
-    border-inline: 1px solid var(--border);
-  }
-}
 
 *,
 *::before,
@@ -149,8 +130,6 @@ html {
   /* Reserve the sticky header's band so nothing scrolled into view — an anchor
      target or the next control under Tab — lands underneath it (WCAG 2.4.11). */
   scroll-padding-top: calc(var(--nav-h) + var(--space-3));
-  /* Carries the page colour past the body box, which forced compact narrows. */
-  background: var(--surface-page);
 }
 
 body {
@@ -2231,52 +2210,6 @@ body.guest-overlay-open {
   min-height: var(--tap-min);
 }
 
-/*
- * The layer switch. It lives in the footer, where a visitor who wants the
- * other layout has always been taught to look, and it is a real <button>
- * because it changes this page rather than going anywhere.
- */
-.layout-switch {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-  width: 100%;
-  margin-top: var(--space-4);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--border);
-}
-
-.layout-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  min-height: var(--tap-comfortable);
-  padding: var(--space-2) var(--space-4);
-  border: 1px solid var(--border-interactive);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--text);
-  font-family: inherit;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: border-color var(--motion-fast) ease, color var(--motion-fast) ease;
-}
-
-.layout-toggle:hover {
-  border-color: var(--action);
-  color: var(--action-hover);
-}
-
-/* Stated, not implied: a visitor who has pinned a layout should be able to see
-   that they did, and that it is why the page does not match the window. */
-.layout-switch-note {
-  margin: 0;
-  color: var(--text-subtle);
-  font-size: 0.82rem;
-}
-
 .contact-list {
   list-style: none;
   margin: 0;
@@ -2337,144 +2270,6 @@ body.guest-overlay-open {
 
 /* -------------------------------------------------------------- narrow ---- */
 
-/*
- * ================================================================ WIDE LAYER
- *
- * Everything above is the compact layer. This block is the whole of the
- * difference between the two, which is the point: there is one place to read
- * to know what a desktop visitor gets that a phone visitor does not.
- *
- * Width is spent on putting more of the page in view at once, not on the same
- * column made larger — a laptop visitor should scroll less than a phone
- * visitor, not the same amount at a bigger size.
- */
-
-.layout-wide {
-  --content-padding: var(--space-5);
-  --section-spacing: var(--space-8);
-  --nav-h: 64px;
-}
-
-.layout-wide section {
-  padding: var(--space-4) 0 var(--section-spacing);
-}
-
-/* --- hero: copy and portrait side by side --------------------------------- */
-
-.layout-wide .hero {
-  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
-  gap: var(--space-7);
-  padding: var(--space-8) 0 var(--space-7);
-}
-
-.layout-wide .hero-portrait {
-  order: 0;
-  width: auto;
-}
-
-.layout-wide .portrait-frame img {
-  aspect-ratio: 4 / 5;
-  object-position: center 12%;
-}
-
-/* --- navigation: the full set, always visible ----------------------------- */
-
-.layout-wide .nav-toggle {
-  display: none;
-}
-
-.layout-wide .nav-links {
-  display: flex;
-  position: static;
-  flex-direction: row;
-  align-items: center;
-  gap: var(--space-1);
-  padding: 0;
-  background: transparent;
-  border-bottom: 0;
-}
-
-.layout-wide .nav-links a {
-  padding: 0 var(--space-3);
-}
-
-/* --- records: let the grid find its own column count ---------------------- */
-
-/*
- * auto-fit rather than a fixed column count: a 900px window and a 1400px
- * monitor are both "wide", and this fits two or three cards accordingly
- * without either one needing a breakpoint of its own.
- */
-.layout-wide .card-grid {
-  grid-template-columns: repeat(auto-fit, minmax(min(19rem, 100%), 1fr));
-  gap: var(--space-4);
-}
-
-.layout-wide .card {
-  padding: var(--space-5);
-}
-
-.layout-wide .about-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-8) var(--space-6);
-  margin-top: var(--space-5);
-}
-
-.layout-wide .spec-list {
-  grid-template-columns: minmax(9rem, 14rem) minmax(0, 1fr);
-  gap: 0 var(--space-5);
-}
-
-.layout-wide .spec-list dt {
-  padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--border);
-}
-
-/* The timeline earns a rail of its own once the prose no longer needs the
-   full measure. */
-.layout-wide .project-layout {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 23rem);
-  gap: var(--space-8) var(--space-7);
-}
-
-/*
- * Résumé entries two at a time. Paired whole SECTIONS were tried first and
- * lost: halving a column's width more than doubles the height of the prose in
- * it, so Experience beside Education was taller than the two stacked. Entries
- * are short enough to survive the narrower measure, and four of them in two
- * rows is most of a screen back.
- */
-.layout-wide .experience {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-4);
-  align-items: start;
-}
-
-.layout-wide .contact-pair {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: var(--space-7);
-}
-
-/* The form sets its own measure for compact; in the pair the column is it. */
-.layout-wide .contact-form {
-  max-width: none;
-  margin-block: 0;
-}
-
-.layout-wide .contact-list {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.layout-wide .guest-title-actions {
-  margin-left: auto;
-}
-
-.layout-wide .guest-stage,
-.layout-wide .guest-frame,
-.layout-wide .guest-panel {
-  min-height: 28rem;
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -2497,3 +2292,147 @@ body.guest-overlay-open {
 .contact-form button { justify-self: start; }
 .contact-form button:disabled { opacity: .6; cursor: not-allowed; }
 .contact-form [role="status"] { min-height: 1.5em; }
+
+/*
+ * ================================================================ WIDE LAYER
+ *
+ * Everything above is the compact layer. This block is the whole of the
+ * difference between the two, which is the point: there is one place to read
+ * to know what a desktop visitor gets that a phone visitor does not.
+ *
+ * 56rem, not a device width: it is where this page's own content stops
+ * working in one column, and in rem so it moves with the reader's font size.
+ *
+ * Width is spent on putting more of the page in view at once, not on the same
+ * column made larger — a laptop visitor should scroll less than a phone
+ * visitor, not the same amount at a bigger size.
+ */
+
+@media (min-width: 56rem) {
+
+  :root {
+    --content-padding: var(--space-5);
+    --section-spacing: var(--space-8);
+    --nav-h: 64px;
+  }
+
+  section {
+    padding: var(--space-4) 0 var(--section-spacing);
+  }
+
+  /* --- hero: copy and portrait side by side --------------------------------- */
+
+  .hero {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+    gap: var(--space-7);
+    padding: var(--space-8) 0 var(--space-7);
+  }
+
+  .hero-portrait {
+    order: 0;
+    width: auto;
+  }
+
+  .portrait-frame img {
+    aspect-ratio: 4 / 5;
+    object-position: center 12%;
+  }
+
+  /* --- navigation: the full set, always visible ----------------------------- */
+
+  .nav-toggle {
+    display: none;
+  }
+
+  .nav-links {
+    display: flex;
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 0;
+    background: transparent;
+    border-bottom: 0;
+  }
+
+  .nav-links a {
+    padding: 0 var(--space-3);
+  }
+
+  /* --- records: let the grid find its own column count ---------------------- */
+
+  /*
+   * auto-fit rather than a fixed column count: a 900px window and a 1400px
+   * monitor are both "wide", and this fits two or three cards accordingly
+   * without either one needing a breakpoint of its own.
+   */
+  .card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(19rem, 100%), 1fr));
+    gap: var(--space-4);
+  }
+
+  .card {
+    padding: var(--space-5);
+  }
+
+  .about-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8) var(--space-6);
+    margin-top: var(--space-5);
+  }
+
+  .spec-list {
+    grid-template-columns: minmax(9rem, 14rem) minmax(0, 1fr);
+    gap: 0 var(--space-5);
+  }
+
+  .spec-list dt {
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* The timeline earns a rail of its own once the prose no longer needs the
+     full measure. */
+  .project-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 23rem);
+    gap: var(--space-8) var(--space-7);
+  }
+
+  /*
+   * Résumé entries two at a time. Paired whole SECTIONS were tried first and
+   * lost: halving a column's width more than doubles the height of the prose in
+   * it, so Experience beside Education was taller than the two stacked. Entries
+   * are short enough to survive the narrower measure, and four of them in two
+   * rows is most of a screen back.
+   */
+  .experience {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+    align-items: start;
+  }
+
+  .contact-pair {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-7);
+  }
+
+  /* The form sets its own measure for compact; in the pair the column is it. */
+  .contact-form {
+    max-width: none;
+    margin-block: 0;
+  }
+
+  .contact-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .guest-title-actions {
+    margin-left: auto;
+  }
+
+  .guest-stage,
+  .guest-frame,
+  .guest-panel {
+    min-height: 28rem;
+  }
+}

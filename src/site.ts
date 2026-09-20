@@ -3,12 +3,13 @@ import {
   commitCountFor,
   languagesFor,
   mergedPullRequestsFor,
+  metadataSyncedAt,
   namedReleasesFor,
   timelineEvents,
   versionFor,
 } from "./projectMetadata.js";
+import { publishedAt } from "./buildInfo.js";
 import { icon } from "./icons.js";
-import { mountLayoutSwitch } from "./layout.js";
 import { mountDecks } from "./deck.js";
 import { mountGuestWindows } from "./guestWindow.js";
 import { mountNamedReleases } from "./releases.js";
@@ -44,25 +45,32 @@ if (header) {
 
 const footer = document.querySelector<HTMLElement>("[data-site-footer]");
 if (footer) {
+  /*
+   * Both dates in the footer are facts about this build, not prose:
+   * `published` is the commit the deploy shipped, `synced` is when the
+   * repository figures above were last read from GitHub. Neither is typed
+   * into the copy, so neither can go stale while the page keeps claiming it.
+   */
+  const published = publishedAt();
+  const synced = metadataSyncedAt();
+  const year = (published ?? synced).slice(0, 4);
+
   footer.innerHTML = `
       <div class="wrap footer-grid">
         <p>
-          © 2026 Bailey P Forbes. Project timelines are compiled from public git history on
-          <a href="https://github.com/BPForbes">github.com/BPForbes</a>, 11 Sep 2026.
+          © ${year} Bailey P Forbes.${published === undefined ? "" : `
+          Last published <time datetime="${published}">${formatEventDate(published.slice(0, 10))}</time>.`}
+          Project timelines are compiled from public git history on
+          <a href="https://github.com/BPForbes">github.com/BPForbes</a>,
+          <time datetime="${synced}">${formatEventDate(synced.slice(0, 10))}</time>.
         </p>
         <ul class="footer-links">
           <li><a href="mailto:baileyforbes@rocketmail.com">${icon("envelope")}Email Bailey</a></li>
           <li><a href="https://www.linkedin.com/in/bailey-preston-forbes">${icon("linkedin-in")}LinkedIn</a></li>
           <li><a href="https://github.com/BPForbes">${icon("github")}GitHub</a></li>
         </ul>
-        <div class="layout-switch" data-layout-switch></div>
       </div>
     `;
-
-  const layoutSwitch = footer.querySelector<HTMLElement>("[data-layout-switch]");
-  if (layoutSwitch) {
-    mountLayoutSwitch(layoutSwitch);
-  }
 }
 
 document.querySelectorAll<HTMLAnchorElement>(`[data-nav="${page}"]`).forEach((link) => {
@@ -98,7 +106,7 @@ if (toggle && links) {
 
   // The wide layer shows every link inline, so an open compact panel has no
   // meaning there. Left set, it would spring back open on the way down.
-  window.addEventListener("bf:layer", () => {
+  window.matchMedia("(min-width: 56rem)").addEventListener("change", () => {
     setOpen(false);
   });
 }
@@ -316,6 +324,16 @@ function mountRepositoryFacts(): void {
   render("data-project-version", versionFor, (text) => text);
   render("data-project-commits", commitCountFor, (text) => `${text} commits`);
   render("data-project-prs", mergedPullRequestsFor, (text) => `${text} merged PRs`);
+
+  // Same contract for the sync's own date: the literal in the HTML is the
+  // fallback a visitor sees before this runs, not the source of truth.
+  const synced = metadataSyncedAt();
+  document.querySelectorAll<HTMLElement>("[data-metadata-synced]").forEach((el) => {
+    el.textContent = formatEventDate(synced.slice(0, 10));
+    if (el instanceof HTMLTimeElement) {
+      el.dateTime = synced;
+    }
+  });
 }
 
 mountRepositoryFacts();

@@ -3,23 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script>
-    /* The layout layer, applied before first paint so a pinned one never
-       flashes the other. Contract lives in src/layout.ts; keep them in step. */
-    (function () {
-      var pref = null;
-      try { pref = localStorage.getItem("bf-layout"); } catch (e) { pref = null; }
-      if (pref !== "compact" && pref !== "wide") pref = "auto";
-      var wide = pref === "wide" || (pref === "auto" && matchMedia("(min-width: 56rem)").matches);
-      var root = document.documentElement;
-      root.classList.add(wide ? "layout-wide" : "layout-compact");
-      root.setAttribute("data-layout-pref", pref);
-      if (pref === "wide") {
-        var meta = document.querySelector('meta[name="viewport"]');
-        if (meta) meta.setAttribute("content", "width=1120");
-      }
-    })();
-  </script>
   <title>Bailey Forbes — Software Engineer</title>
   <meta name="description" content="Bailey Forbes builds production APIs, a portable kernel, and community platforms in C#/.NET, TypeScript, Rust, and C. Project write-ups with timelines from public git history." />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -210,7 +193,8 @@
         </dl>
         <p class="source-note">
           Figures are from my résumé and the public
-          <a href="https://github.com/BPForbes">BPForbes</a> git history, compiled 11 Sep 2026.
+          <a href="https://github.com/BPForbes">BPForbes</a> git history, compiled
+          <time data-metadata-synced datetime="2026-09-18">18 Sep 2026</time>.
           They are counts of work, not performance benchmarks.
         </p>
 

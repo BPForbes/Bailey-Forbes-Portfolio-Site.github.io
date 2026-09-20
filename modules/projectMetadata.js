@@ -4,6 +4,9 @@ import { languageColor } from "./languageColors.js";
 function repositoryMetadata(project) {
   return GENERATED_PROJECT_METADATA.projects[project];
 }
+function metadataSyncedAt() {
+  return GENERATED_PROJECT_METADATA.generatedAt;
+}
 function languagesFor(project) {
   const generated = repositoryMetadata(project)?.languages;
   if (generated !== void 0 && generated.length > 0) {
@@ -91,6 +94,7 @@ export {
   commitCountFor,
   languagesFor,
   mergedPullRequestsFor,
+  metadataSyncedAt,
   namedReleasesFor,
   repositoryMetadata,
   timelineEvents,

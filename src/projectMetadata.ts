@@ -33,6 +33,19 @@ export function repositoryMetadata(project: ProjectId): RepositoryMetadata | und
 }
 
 /**
+ * When the repository facts on this page were last read from GitHub.
+ *
+ * The page says the timelines are compiled from public git history "as of" a
+ * date; this is that date, taken from the sync itself rather than typed into
+ * the copy, so it cannot quietly go stale.
+ *
+ * @returns The sync's timestamp as an ISO 8601 string.
+ */
+export function metadataSyncedAt(): string {
+  return GENERATED_PROJECT_METADATA.generatedAt;
+}
+
+/**
  * Language shares for a project's bar and legend.
  *
  * Colours are resolved here, at render time, rather than baked into generated

@@ -3,23 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script>
-    /* The layout layer, applied before first paint so a pinned one never
-       flashes the other. Contract lives in src/layout.ts; keep them in step. */
-    (function () {
-      var pref = null;
-      try { pref = localStorage.getItem("bf-layout"); } catch (e) { pref = null; }
-      if (pref !== "compact" && pref !== "wide") pref = "auto";
-      var wide = pref === "wide" || (pref === "auto" && matchMedia("(min-width: 56rem)").matches);
-      var root = document.documentElement;
-      root.classList.add(wide ? "layout-wide" : "layout-compact");
-      root.setAttribute("data-layout-pref", pref);
-      if (pref === "wide") {
-        var meta = document.querySelector('meta[name="viewport"]');
-        if (meta) meta.setAttribute("content", "width=1120");
-      }
-    })();
-  </script>
   <title>KeyQuorum — Bailey Forbes</title>
   <meta name="description" content="KeyQuorum hardware-key quorum sharing in Rust. Feature timeline from August–September 2026 git history." />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
