@@ -8,6 +8,7 @@ import {
   versionFor
 } from "./projectMetadata.js";
 import { icon } from "./icons.js";
+import { mountLayoutSwitch } from "./layout.js";
 import { mountDecks } from "./deck.js";
 import { mountGuestWindows } from "./guestWindow.js";
 import { mountNamedReleases } from "./releases.js";
@@ -50,8 +51,13 @@ if (footer) {
           <li><a href="https://www.linkedin.com/in/bailey-preston-forbes">${icon("linkedin-in")}LinkedIn</a></li>
           <li><a href="https://github.com/BPForbes">${icon("github")}GitHub</a></li>
         </ul>
+        <div class="layout-switch" data-layout-switch></div>
       </div>
     `;
+  const layoutSwitch = footer.querySelector("[data-layout-switch]");
+  if (layoutSwitch) {
+    mountLayoutSwitch(layoutSwitch);
+  }
 }
 document.querySelectorAll(`[data-nav="${page}"]`).forEach((link) => {
   link.setAttribute("aria-current", "page");
@@ -76,6 +82,9 @@ if (toggle && links) {
       setOpen(false);
       toggle.focus();
     }
+  });
+  window.addEventListener("bf:layer", () => {
+    setOpen(false);
   });
 }
 function isProjectId(value) {

@@ -8,6 +8,7 @@ import {
   versionFor,
 } from "./projectMetadata.js";
 import { icon } from "./icons.js";
+import { mountLayoutSwitch } from "./layout.js";
 import { mountDecks } from "./deck.js";
 import { mountGuestWindows } from "./guestWindow.js";
 import { mountNamedReleases } from "./releases.js";
@@ -54,8 +55,14 @@ if (footer) {
           <li><a href="https://www.linkedin.com/in/bailey-preston-forbes">${icon("linkedin-in")}LinkedIn</a></li>
           <li><a href="https://github.com/BPForbes">${icon("github")}GitHub</a></li>
         </ul>
+        <div class="layout-switch" data-layout-switch></div>
       </div>
     `;
+
+  const layoutSwitch = footer.querySelector<HTMLElement>("[data-layout-switch]");
+  if (layoutSwitch) {
+    mountLayoutSwitch(layoutSwitch);
+  }
 }
 
 document.querySelectorAll<HTMLAnchorElement>(`[data-nav="${page}"]`).forEach((link) => {
@@ -87,6 +94,12 @@ if (toggle && links) {
       setOpen(false);
       toggle.focus();
     }
+  });
+
+  // The wide layer shows every link inline, so an open compact panel has no
+  // meaning there. Left set, it would spring back open on the way down.
+  window.addEventListener("bf:layer", () => {
+    setOpen(false);
   });
 }
 

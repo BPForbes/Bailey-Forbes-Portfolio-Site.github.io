@@ -3,6 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    /* The layout layer, applied before first paint so a pinned one never
+       flashes the other. Contract lives in src/layout.ts; keep them in step. */
+    (function () {
+      var pref = null;
+      try { pref = localStorage.getItem("bf-layout"); } catch (e) { pref = null; }
+      if (pref !== "compact" && pref !== "wide") pref = "auto";
+      var wide = pref === "wide" || (pref === "auto" && matchMedia("(min-width: 56rem)").matches);
+      var root = document.documentElement;
+      root.classList.add(wide ? "layout-wide" : "layout-compact");
+      root.setAttribute("data-layout-pref", pref);
+      if (pref === "wide") {
+        var meta = document.querySelector('meta[name="viewport"]');
+        if (meta) meta.setAttribute("content", "width=1120");
+      }
+    })();
+  </script>
   <title>Bailey Forbes — Software Engineer</title>
   <meta name="description" content="Bailey Forbes builds production APIs, a portable kernel, and community platforms in C#/.NET, TypeScript, Rust, and C. Project write-ups with timelines from public git history." />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -490,6 +507,7 @@
           <h2 id="contact-title">Contact</h2>
           <p>Email is the fastest way to reach me.</p>
         </div>
+        <div class="contact-pair">
         <form id="contact-form" class="contact-form">
           <label>Your name<input name="name" autocomplete="name" maxlength="100" required></label>
           <label>Your email<input name="email" type="email" autocomplete="email" maxlength="254" required></label>
@@ -526,13 +544,14 @@
             </a>
           </li>
         </ul>
+        </div>
         <p class="source-note">
           <svg class="icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M144 144l0 48 160 0 0-48c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192l0-48C80 64.5 144.5 0 224 0s144 64.5 144 144l0 48 16 0c35.3 0 64 28.7 64 64l0 192c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 256c0-35.3 28.7-64 64-64l16 0z"/></svg>This site is served over HTTPS on
           <a href="https://bailey-forbes.com">bailey-forbes.com</a>, with the TLS certificate
           issued and renewed automatically by the host. It is a static build deployed from
           <code>main</code>: GitHub Pages is the current origin for the custom domain, and the
           same tree publishes to Cloudflare Workers as static assets, which is also what serves
-          the Flinstone lab\u2019s shared relay.
+          the Flinstone lab’s shared relay.
         </p>
       </section>
     </div>

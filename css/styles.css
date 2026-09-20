@@ -72,10 +72,6 @@
   --space-8: 3.5rem;
   --space-9: 5rem;
 
-  /* Mobile-friendly spacing adjustments */
-  --content-padding: var(--space-5);
-  --section-spacing: var(--space-8);
-
   /* Radii, elevation, motion */
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -92,17 +88,53 @@
   /* Measure */
   --measure-page: 1120px;
   --measure-prose: 42rem;
-  --nav-h: 56px;
   --tap-min: 24px;
   --tap-comfortable: 44px;
+
+  /*
+   * Layer tokens. These carry the COMPACT values; the wide layer below
+   * redefines them. Components read only these, never a raw breakpoint, so a
+   * component never needs to know which layer it is in.
+   */
+  --content-padding: 1rem;
+  --section-spacing: var(--space-6);
+  --nav-h: 56px;
+  --compact-measure: 34rem;
 }
 
-/* Mobile-first: compact spacing for phones */
-@media (max-width: 480px) {
-  :root {
-    --content-padding: 1rem;
-    --section-spacing: 2rem;
-    --nav-h: 48px;
+/*
+ * ------------------------------------------------------------------ layers --
+ *
+ * The site has two presentation layers over ONE document: compact (touch,
+ * single column) and wide (pointer, multi-column). Which one is active is
+ * decided once, in the inline <head> script, and written to <html> as
+ * .layout-compact / .layout-wide.
+ *
+ * It is a class rather than a media query because the visitor can override the
+ * automatic choice ("Desktop site" / "Mobile site" in the footer), and a media
+ * query cannot be overridden from the document. One class means one source of
+ * truth: no rule is stated twice, so the two layers cannot drift apart.
+ *
+ * Everything outside .layout-wide is the compact layer. Compact is therefore
+ * also what a visitor without JavaScript gets, which is the right fallback: a
+ * readable single column rather than a desktop grid squeezed onto a phone.
+ */
+
+/*
+ * Forced compact on a large screen. Without this the single column would run
+ * the full width of a monitor, which is neither the mobile layout the visitor
+ * asked for nor a readable measure. On a phone the cap is wider than the
+ * screen, so this rule costs nothing there.
+ */
+.layout-compact body {
+  max-width: var(--compact-measure);
+  margin-inline: auto;
+}
+
+/* Only frame the column when there is actually room around it. */
+@media (min-width: 36rem) {
+  .layout-compact body {
+    border-inline: 1px solid var(--border);
   }
 }
 
@@ -117,6 +149,8 @@ html {
   /* Reserve the sticky header's band so nothing scrolled into view — an anchor
      target or the next control under Tab — lands underneath it (WCAG 2.4.11). */
   scroll-padding-top: calc(var(--nav-h) + var(--space-3));
+  /* Carries the page colour past the body box, which forced compact narrows. */
+  background: var(--surface-page);
 }
 
 body {
@@ -125,7 +159,7 @@ body {
   background: var(--surface-page);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: clamp(15px, 2.5vw, 16.5px);
+  font-size: 16.5px;
   line-height: 1.65;
   -webkit-text-size-adjust: 100%;
 }
@@ -250,6 +284,9 @@ dt > .icon,
   position: sticky;
   top: 0;
   z-index: 20;
+  /* The header's markup is injected by site.ts. Reserving its band here keeps
+     the first paint the same height as the hydrated one (CLS). */
+  min-height: var(--nav-h);
   background: var(--surface-page);
   border-bottom: 1px solid var(--border);
 }
@@ -310,20 +347,32 @@ dt > .icon,
   text-transform: uppercase;
 }
 
+/* Compact: a disclosure panel under the header bar, opened by .nav-toggle. */
 .nav-links {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: var(--space-2) var(--content-padding) var(--space-4);
+  background: var(--surface-page);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-links.is-open {
+  display: flex;
 }
 
 .nav-links a {
   display: inline-flex;
   align-items: center;
   min-height: var(--tap-comfortable);
-  padding: 0 var(--space-3);
+  padding: 0 var(--space-2);
   border-radius: var(--radius-sm);
   color: var(--text-muted);
   text-decoration: none;
@@ -343,7 +392,7 @@ dt > .icon,
 }
 
 .nav-toggle {
-  display: none;
+  display: inline-flex;
   align-items: center;
   min-height: var(--tap-comfortable);
   background: transparent;
@@ -373,7 +422,7 @@ main {
 }
 
 section {
-  padding: var(--space-4) 0 var(--section-spacing);
+  padding: var(--space-3) 0 var(--section-spacing);
 }
 
 h1,
@@ -391,7 +440,7 @@ h4 {
    fits a 320px viewport without horizontal overflow (R24). */
 h1 {
   margin: 0 0 var(--space-4);
-  font-size: clamp(1.75rem, 5.5vw, 4.4rem);
+  font-size: clamp(2.1rem, 6vw, 4.4rem);
 }
 
 .kicker {
@@ -416,18 +465,12 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  margin-bottom: var(--space-4);
-}
-
-@media (min-width: 641px) {
-  .section-head {
-    margin-bottom: var(--space-5);
-  }
+  margin-bottom: var(--space-5);
 }
 
 .section-head h2 {
   margin: 0;
-  font-size: clamp(1.4rem, 2.8vw, 2.4rem);
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
 }
 
 .section-head p,
@@ -476,18 +519,18 @@ code {
 /* ----------------------------------------------------------------- hero --- */
 
 .hero {
-  padding: var(--space-6) 0 var(--space-5);
+  padding: var(--space-5) 0 var(--space-4);
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
-  gap: var(--space-5);
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
   align-items: center;
 }
 
-@media (max-width: 640px) {
-  .hero {
-    padding: var(--space-4) 0 var(--space-4);
-    gap: var(--space-4);
-  }
+/* Compact leads with the face, then the name: the portrait is the one thing
+   that identifies the page before any copy has been read. */
+.hero-portrait {
+  order: -1;
+  width: min(10rem, 40vw);
 }
 
 .hero-pills {
@@ -529,9 +572,9 @@ code {
 .portrait-frame img {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1;
   object-fit: cover;
-  object-position: center 12%;
+  object-position: center 10%;
 }
 
 .portrait-frame figcaption {
@@ -597,15 +640,8 @@ code {
 /* .card is reserved for a discrete destination the visitor can open (B3). */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-3);
-}
-
-@media (max-width: 640px) {
-  .card-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-3);
-  }
 }
 
 .card {
@@ -618,12 +654,6 @@ code {
   text-decoration: none;
   color: inherit;
   transition: border-color var(--motion-fast) ease;
-}
-
-@media (min-width: 641px) {
-  .card {
-    padding: var(--space-5);
-  }
 }
 
 .card:hover {
@@ -692,10 +722,13 @@ code {
   gap: var(--space-3);
 }
 
-@media (min-width: 641px) {
-  .experience {
-    gap: var(--space-4);
-  }
+/* The form and the direct routes are two ways to do one thing, so the wide
+   layer sets them side by side rather than one after the other. */
+.contact-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: start;
 }
 
 .entry {
@@ -705,17 +738,11 @@ code {
   border-radius: var(--radius-lg);
 }
 
-@media (min-width: 641px) {
-  .entry {
-    padding: var(--space-5);
-  }
-}
-
 .entry-head {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: var(--space-2) var(--space-3);
+  gap: var(--space-2) var(--space-4);
   align-items: baseline;
 }
 
@@ -767,6 +794,9 @@ code {
 .release-list {
   position: relative;
   display: grid;
+  /* A grid item's min-width is auto, so a release title with no break
+     opportunity widens the track past the page rather than wrapping (R24). */
+  grid-template-columns: minmax(0, 1fr);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -793,6 +823,9 @@ code {
   align-items: flex-start;
   gap: var(--space-3);
   width: 100%;
+  /* Same reason as the track above: a flex item refuses to shrink below its
+     content without this, and the row is what overflows. */
+  min-width: 0;
   padding: var(--space-4) 0;
   cursor: pointer;
   list-style: none;
@@ -950,17 +983,10 @@ code {
    grid — it is a description list with a rule between rows (B3, R07). */
 .spec-list {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-2);
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
   margin: 0;
   border-top: 1px solid var(--border);
-}
-
-@media (min-width: 641px) {
-  .spec-list {
-    grid-template-columns: minmax(9rem, 14rem) minmax(0, 1fr);
-    gap: 0 var(--space-5);
-  }
 }
 
 .spec-list dt a {
@@ -973,9 +999,10 @@ code {
   text-transform: none;
 }
 
+/* Stacked, the label and its value are one record, so only the pair is ruled
+   off — a rule between them would read as two separate rows. */
 .spec-list dt {
-  padding: var(--space-2) 0;
-  border-bottom: 1px solid var(--border);
+  padding: var(--space-3) 0 0;
   font-family: var(--font-mono);
   font-size: 0.78rem;
   letter-spacing: 0.06em;
@@ -983,42 +1010,23 @@ code {
   color: var(--text-subtle);
 }
 
-@media (min-width: 641px) {
-  .spec-list dt {
-    padding: var(--space-3) 0;
-  }
-}
-
 .spec-list dd {
   margin: 0;
-  padding: var(--space-2) 0;
+  padding: var(--space-3) 0;
   border-bottom: 1px solid var(--border);
   color: var(--text-muted);
-}
-
-@media (min-width: 641px) {
-  .spec-list dd {
-    padding: var(--space-3) 0;
-  }
 }
 
 /* .stat-list is résumé figures with their source stated inline — not four
    dashboard tiles added to fill space (R07, R15). */
 .stat-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr));
-  gap: var(--space-3) var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
+  gap: var(--space-4) var(--space-6);
   margin: 0;
-  padding: var(--space-4) 0;
+  padding: var(--space-5) 0;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-}
-
-@media (min-width: 641px) {
-  .stat-list {
-    gap: var(--space-4) var(--space-6);
-    padding: var(--space-5) 0;
-  }
 }
 
 .stat-list > div {
@@ -1057,18 +1065,10 @@ code {
 
 .about-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
   gap: var(--space-5);
   margin-top: var(--space-4);
-}
-
-@media (min-width: 769px) {
-  .about-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-8) var(--space-6);
-    margin-top: var(--space-5);
-  }
 }
 
 .about-outro {
@@ -1316,9 +1316,9 @@ code {
  */
 .project-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 23rem);
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
-  gap: var(--space-8) var(--space-7);
+  gap: var(--space-5);
 }
 
 /*
@@ -1990,7 +1990,7 @@ code {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  margin-left: auto;
+  margin-left: 0;
 }
 
 .guest-btn {
@@ -2086,14 +2086,14 @@ code {
 .guest-stage {
   position: relative;
   display: grid;
-  min-height: 28rem;
+  min-height: 22rem;
   background: var(--surface-page);
 }
 
 .guest-frame,
 .guest-panel {
   grid-area: 1 / 1;
-  min-height: 28rem;
+  min-height: 22rem;
 }
 
 .guest-frame {
@@ -2231,6 +2231,52 @@ body.guest-overlay-open {
   min-height: var(--tap-min);
 }
 
+/*
+ * The layer switch. It lives in the footer, where a visitor who wants the
+ * other layout has always been taught to look, and it is a real <button>
+ * because it changes this page rather than going anywhere.
+ */
+.layout-switch {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  width: 100%;
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.layout-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap-comfortable);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--border-interactive);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color var(--motion-fast) ease, color var(--motion-fast) ease;
+}
+
+.layout-toggle:hover {
+  border-color: var(--action);
+  color: var(--action-hover);
+}
+
+/* Stated, not implied: a visitor who has pinned a layout should be able to see
+   that they did, and that it is why the page does not match the window. */
+.layout-switch-note {
+  margin: 0;
+  color: var(--text-subtle);
+  font-size: 0.82rem;
+}
+
 .contact-list {
   list-style: none;
   margin: 0;
@@ -2291,106 +2337,142 @@ body.guest-overlay-open {
 
 /* -------------------------------------------------------------- narrow ---- */
 
-/* Tablet breakpoint */
-@media (max-width: 768px) {
-  .hero {
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-    padding-top: var(--space-5);
-  }
+/*
+ * ================================================================ WIDE LAYER
+ *
+ * Everything above is the compact layer. This block is the whole of the
+ * difference between the two, which is the point: there is one place to read
+ * to know what a desktop visitor gets that a phone visitor does not.
+ *
+ * Width is spent on putting more of the page in view at once, not on the same
+ * column made larger — a laptop visitor should scroll less than a phone
+ * visitor, not the same amount at a bigger size.
+ */
 
-  .hero-portrait {
-    order: -1;
-    max-width: 12rem;
-  }
-
-  .portrait-frame img {
-    aspect-ratio: 1 / 1;
-    object-position: center 10%;
-  }
-
-  .spec-list {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  /* No room to pair anything; the columns become one run. */
-  .about-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-5);
-  }
-
-  .spec-list dt {
-    padding-bottom: 0;
-    border-bottom: 0;
-  }
-
-  .nav-toggle {
-    display: inline-flex;
-  }
-
-  .nav-links {
-    display: none;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 100%;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    padding: var(--space-2) var(--content-padding) var(--space-4);
-    background: var(--surface-page);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-links.is-open {
-    display: flex;
-  }
-
-  .nav-links a {
-    padding: 0 var(--space-2);
-  }
-
-  /* No rail on a narrow screen: the timeline goes under the prose, full width,
-     and the entries open by scroll position instead of hover. */
-  .project-layout {
-    grid-template-columns: 1fr;
-    gap: var(--space-5);
-  }
-
-  .guest-title-actions {
-    margin-left: 0;
-  }
-
-  .guest-stage,
-  .guest-frame,
-  .guest-panel {
-    min-height: 20rem;
-  }
+.layout-wide {
+  --content-padding: var(--space-5);
+  --section-spacing: var(--space-8);
+  --nav-h: 64px;
 }
 
-/* Small phone breakpoint */
-@media (max-width: 480px) {
-  .hero-pills {
-    gap: var(--space-1);
-  }
+.layout-wide section {
+  padding: var(--space-4) 0 var(--section-spacing);
+}
 
-  .hero-pills li {
-    font-size: 0.65rem;
-    padding: var(--space-1) var(--space-2);
-  }
+/* --- hero: copy and portrait side by side --------------------------------- */
 
-  .hero-portrait {
-    max-width: 10rem;
-  }
+.layout-wide .hero {
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+  gap: var(--space-7);
+  padding: var(--space-8) 0 var(--space-7);
+}
 
-  .lede {
-    font-size: 1rem;
-  }
+.layout-wide .hero-portrait {
+  order: 0;
+  width: auto;
+}
 
-  .about-grid {
-    gap: var(--space-4);
-  }
+.layout-wide .portrait-frame img {
+  aspect-ratio: 4 / 5;
+  object-position: center 12%;
+}
+
+/* --- navigation: the full set, always visible ----------------------------- */
+
+.layout-wide .nav-toggle {
+  display: none;
+}
+
+.layout-wide .nav-links {
+  display: flex;
+  position: static;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0;
+  background: transparent;
+  border-bottom: 0;
+}
+
+.layout-wide .nav-links a {
+  padding: 0 var(--space-3);
+}
+
+/* --- records: let the grid find its own column count ---------------------- */
+
+/*
+ * auto-fit rather than a fixed column count: a 900px window and a 1400px
+ * monitor are both "wide", and this fits two or three cards accordingly
+ * without either one needing a breakpoint of its own.
+ */
+.layout-wide .card-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(19rem, 100%), 1fr));
+  gap: var(--space-4);
+}
+
+.layout-wide .card {
+  padding: var(--space-5);
+}
+
+.layout-wide .about-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-8) var(--space-6);
+  margin-top: var(--space-5);
+}
+
+.layout-wide .spec-list {
+  grid-template-columns: minmax(9rem, 14rem) minmax(0, 1fr);
+  gap: 0 var(--space-5);
+}
+
+.layout-wide .spec-list dt {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+/* The timeline earns a rail of its own once the prose no longer needs the
+   full measure. */
+.layout-wide .project-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 23rem);
+  gap: var(--space-8) var(--space-7);
+}
+
+/*
+ * Résumé entries two at a time. Paired whole SECTIONS were tried first and
+ * lost: halving a column's width more than doubles the height of the prose in
+ * it, so Experience beside Education was taller than the two stacked. Entries
+ * are short enough to survive the narrower measure, and four of them in two
+ * rows is most of a screen back.
+ */
+.layout-wide .experience {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.layout-wide .contact-pair {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-7);
+}
+
+/* The form sets its own measure for compact; in the pair the column is it. */
+.layout-wide .contact-form {
+  max-width: none;
+  margin-block: 0;
+}
+
+.layout-wide .contact-list {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.layout-wide .guest-title-actions {
+  margin-left: auto;
+}
+
+.layout-wide .guest-stage,
+.layout-wide .guest-frame,
+.layout-wide .guest-panel {
+  min-height: 28rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2408,52 +2490,10 @@ body.guest-overlay-open {
 }
 
 /* Contact form: existing semantic tokens, plain single-column layout. */
-.contact-form {
-  display: grid;
-  gap: var(--space-3);
-  max-width: 40rem;
-  margin-block: var(--space-4);
-}
-
-@media (min-width: 641px) {
-  .contact-form {
-    gap: var(--space-4);
-    margin-block: var(--space-6);
-  }
-}
-
-.contact-form label {
-  display: grid;
-  gap: var(--space-2);
-}
-
-.contact-form input,
-.contact-form textarea {
-  box-sizing: border-box;
-  width: 100%;
-  padding: var(--space-3);
-  border: 1px solid var(--border-interactive);
-  border-radius: var(--radius-sm);
-  background: var(--surface-raised);
-  color: var(--text);
-  font: inherit;
-  font-size: 16px;
-}
-
-.contact-form textarea {
-  resize: vertical;
-  min-height: 10rem;
-}
-
-.contact-form button {
-  justify-self: start;
-}
-
-.contact-form button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.contact-form [role="status"] {
-  min-height: 1.5em;
-}
+.contact-form { display: grid; gap: var(--space-4); max-width: 40rem; margin-block: var(--space-6); }
+.contact-form label { display: grid; gap: var(--space-2); }
+.contact-form input, .contact-form textarea { box-sizing: border-box; width: 100%; padding: var(--space-3); border: 1px solid var(--border-interactive); border-radius: var(--radius-sm); background: var(--surface-raised); color: var(--text); font: inherit; }
+.contact-form textarea { resize: vertical; min-height: 10rem; }
+.contact-form button { justify-self: start; }
+.contact-form button:disabled { opacity: .6; cursor: not-allowed; }
+.contact-form [role="status"] { min-height: 1.5em; }
