@@ -72,6 +72,10 @@
   --space-8: 3.5rem;
   --space-9: 5rem;
 
+  /* Mobile-friendly spacing adjustments */
+  --content-padding: var(--space-5);
+  --section-spacing: var(--space-8);
+
   /* Radii, elevation, motion */
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -88,9 +92,18 @@
   /* Measure */
   --measure-page: 1120px;
   --measure-prose: 42rem;
-  --nav-h: 64px;
+  --nav-h: 56px;
   --tap-min: 24px;
   --tap-comfortable: 44px;
+}
+
+/* Mobile-first: compact spacing for phones */
+@media (max-width: 480px) {
+  :root {
+    --content-padding: 1rem;
+    --section-spacing: 2rem;
+    --nav-h: 48px;
+  }
 }
 
 *,
@@ -112,7 +125,7 @@ body {
   background: var(--surface-page);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 16.5px;
+  font-size: clamp(15px, 2.5vw, 16.5px);
   line-height: 1.65;
   -webkit-text-size-adjust: 100%;
 }
@@ -245,11 +258,11 @@ dt > .icon,
   max-width: var(--measure-page);
   margin: 0 auto;
   min-height: var(--nav-h);
-  padding: var(--space-2) var(--space-5);
+  padding: var(--space-2) var(--content-padding);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 
 .brand {
@@ -356,11 +369,11 @@ main {
 .wrap {
   max-width: var(--measure-page);
   margin: 0 auto;
-  padding: 0 var(--space-5);
+  padding: 0 var(--content-padding);
 }
 
 section {
-  padding: var(--space-4) 0 var(--space-8);
+  padding: var(--space-4) 0 var(--section-spacing);
 }
 
 h1,
@@ -378,7 +391,7 @@ h4 {
    fits a 320px viewport without horizontal overflow (R24). */
 h1 {
   margin: 0 0 var(--space-4);
-  font-size: clamp(2.1rem, 6vw, 4.4rem);
+  font-size: clamp(1.75rem, 5.5vw, 4.4rem);
 }
 
 .kicker {
@@ -403,12 +416,18 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
+@media (min-width: 641px) {
+  .section-head {
+    margin-bottom: var(--space-5);
+  }
 }
 
 .section-head h2 {
   margin: 0;
-  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  font-size: clamp(1.4rem, 2.8vw, 2.4rem);
 }
 
 .section-head p,
@@ -457,11 +476,18 @@ code {
 /* ----------------------------------------------------------------- hero --- */
 
 .hero {
-  padding: var(--space-8) 0 var(--space-7);
+  padding: var(--space-6) 0 var(--space-5);
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
-  gap: var(--space-7);
+  gap: var(--space-5);
   align-items: center;
+}
+
+@media (max-width: 640px) {
+  .hero {
+    padding: var(--space-4) 0 var(--space-4);
+    gap: var(--space-4);
+  }
 }
 
 .hero-pills {
@@ -571,20 +597,33 @@ code {
 /* .card is reserved for a discrete destination the visitor can open (B3). */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(19rem, 100%), 1fr));
-  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+  gap: var(--space-3);
+}
+
+@media (max-width: 640px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
 }
 
 .card {
   display: flex;
   flex-direction: column;
-  padding: var(--space-5);
+  padding: var(--space-4);
   background: var(--surface-raised);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   text-decoration: none;
   color: inherit;
   transition: border-color var(--motion-fast) ease;
+}
+
+@media (min-width: 641px) {
+  .card {
+    padding: var(--space-5);
+  }
 }
 
 .card:hover {
@@ -650,21 +689,33 @@ code {
 /* .entry is a repeated record with the same fields (B3). */
 .experience {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-3);
+}
+
+@media (min-width: 641px) {
+  .experience {
+    gap: var(--space-4);
+  }
 }
 
 .entry {
-  padding: var(--space-5);
+  padding: var(--space-4);
   background: var(--surface-raised);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
+}
+
+@media (min-width: 641px) {
+  .entry {
+    padding: var(--space-5);
+  }
 }
 
 .entry-head {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: var(--space-2) var(--space-4);
+  gap: var(--space-2) var(--space-3);
   align-items: baseline;
 }
 
@@ -899,10 +950,17 @@ code {
    grid — it is a description list with a rule between rows (B3, R07). */
 .spec-list {
   display: grid;
-  grid-template-columns: minmax(9rem, 14rem) minmax(0, 1fr);
-  gap: 0 var(--space-5);
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
   margin: 0;
   border-top: 1px solid var(--border);
+}
+
+@media (min-width: 641px) {
+  .spec-list {
+    grid-template-columns: minmax(9rem, 14rem) minmax(0, 1fr);
+    gap: 0 var(--space-5);
+  }
 }
 
 .spec-list dt a {
@@ -916,7 +974,7 @@ code {
 }
 
 .spec-list dt {
-  padding: var(--space-3) 0;
+  padding: var(--space-2) 0;
   border-bottom: 1px solid var(--border);
   font-family: var(--font-mono);
   font-size: 0.78rem;
@@ -925,23 +983,42 @@ code {
   color: var(--text-subtle);
 }
 
+@media (min-width: 641px) {
+  .spec-list dt {
+    padding: var(--space-3) 0;
+  }
+}
+
 .spec-list dd {
   margin: 0;
-  padding: var(--space-3) 0;
+  padding: var(--space-2) 0;
   border-bottom: 1px solid var(--border);
   color: var(--text-muted);
+}
+
+@media (min-width: 641px) {
+  .spec-list dd {
+    padding: var(--space-3) 0;
+  }
 }
 
 /* .stat-list is résumé figures with their source stated inline — not four
    dashboard tiles added to fill space (R07, R15). */
 .stat-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
-  gap: var(--space-4) var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr));
+  gap: var(--space-3) var(--space-4);
   margin: 0;
-  padding: var(--space-5) 0;
+  padding: var(--space-4) 0;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
+}
+
+@media (min-width: 641px) {
+  .stat-list {
+    gap: var(--space-4) var(--space-6);
+    padding: var(--space-5) 0;
+  }
 }
 
 .stat-list > div {
@@ -980,10 +1057,18 @@ code {
 
 .about-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   align-items: start;
-  gap: var(--space-8) var(--space-6);
-  margin-top: var(--space-5);
+  gap: var(--space-5);
+  margin-top: var(--space-4);
+}
+
+@media (min-width: 769px) {
+  .about-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8) var(--space-6);
+    margin-top: var(--space-5);
+  }
 }
 
 .about-outro {
@@ -2206,16 +2291,17 @@ body.guest-overlay-open {
 
 /* -------------------------------------------------------------- narrow ---- */
 
-@media (max-width: 900px) {
+/* Tablet breakpoint */
+@media (max-width: 768px) {
   .hero {
     grid-template-columns: 1fr;
-    gap: var(--space-5);
-    padding-top: var(--space-6);
+    gap: var(--space-4);
+    padding-top: var(--space-5);
   }
 
   .hero-portrait {
     order: -1;
-    max-width: 14rem;
+    max-width: 12rem;
   }
 
   .portrait-frame img {
@@ -2231,7 +2317,7 @@ body.guest-overlay-open {
   /* No room to pair anything; the columns become one run. */
   .about-grid {
     grid-template-columns: 1fr;
-    gap: var(--space-7);
+    gap: var(--space-5);
   }
 
   .spec-list dt {
@@ -2252,7 +2338,7 @@ body.guest-overlay-open {
     flex-direction: column;
     align-items: stretch;
     gap: 0;
-    padding: var(--space-2) var(--space-5) var(--space-4);
+    padding: var(--space-2) var(--content-padding) var(--space-4);
     background: var(--surface-page);
     border-bottom: 1px solid var(--border);
   }
@@ -2269,9 +2355,8 @@ body.guest-overlay-open {
      and the entries open by scroll position instead of hover. */
   .project-layout {
     grid-template-columns: 1fr;
-    gap: var(--space-7);
+    gap: var(--space-5);
   }
-
 
   .guest-title-actions {
     margin-left: 0;
@@ -2280,7 +2365,31 @@ body.guest-overlay-open {
   .guest-stage,
   .guest-frame,
   .guest-panel {
-    min-height: 22rem;
+    min-height: 20rem;
+  }
+}
+
+/* Small phone breakpoint */
+@media (max-width: 480px) {
+  .hero-pills {
+    gap: var(--space-1);
+  }
+
+  .hero-pills li {
+    font-size: 0.65rem;
+    padding: var(--space-1) var(--space-2);
+  }
+
+  .hero-portrait {
+    max-width: 10rem;
+  }
+
+  .lede {
+    font-size: 1rem;
+  }
+
+  .about-grid {
+    gap: var(--space-4);
   }
 }
 
@@ -2299,10 +2408,52 @@ body.guest-overlay-open {
 }
 
 /* Contact form: existing semantic tokens, plain single-column layout. */
-.contact-form { display: grid; gap: var(--space-4); max-width: 40rem; margin-block: var(--space-6); }
-.contact-form label { display: grid; gap: var(--space-2); }
-.contact-form input, .contact-form textarea { box-sizing: border-box; width: 100%; padding: var(--space-3); border: 1px solid var(--border-interactive); border-radius: var(--radius-sm); background: var(--surface-raised); color: var(--text); font: inherit; }
-.contact-form textarea { resize: vertical; min-height: 10rem; }
-.contact-form button { justify-self: start; }
-.contact-form button:disabled { opacity: .6; cursor: not-allowed; }
-.contact-form [role="status"] { min-height: 1.5em; }
+.contact-form {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 40rem;
+  margin-block: var(--space-4);
+}
+
+@media (min-width: 641px) {
+  .contact-form {
+    gap: var(--space-4);
+    margin-block: var(--space-6);
+  }
+}
+
+.contact-form label {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.contact-form input,
+.contact-form textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+}
+
+.contact-form textarea {
+  resize: vertical;
+  min-height: 10rem;
+}
+
+.contact-form button {
+  justify-self: start;
+}
+
+.contact-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.contact-form [role="status"] {
+  min-height: 1.5em;
+}
