@@ -97,9 +97,6 @@ if (toggle && links) {
 function isProjectId(value) {
   return Object.prototype.hasOwnProperty.call(PORTFOLIO.projects, value);
 }
-function formatPct(pct) {
-  return pct.toFixed(1).replace(/\.0$/, "");
-}
 document.querySelectorAll("[data-lang-bar]").forEach((el) => {
   const key = el.getAttribute("data-lang-bar");
   if (!key || !isProjectId(key)) {
@@ -109,34 +106,7 @@ document.querySelectorAll("[data-lang-bar]").forEach((el) => {
   if (!langs || langs.length === 0) {
     return;
   }
-  const row = document.createElement("div");
-  row.className = "lang-split";
-  const bar = document.createElement("div");
-  bar.className = "lang-bar";
-  bar.setAttribute("role", "img");
-  bar.setAttribute(
-    "aria-label",
-    `Language split: ${langs.map((lang) => `${lang.name} ${formatPct(lang.pct)} percent`).join(", ")}`
-  );
-  renderLanguageChart(row, langs);
-  row.appendChild(bar);
-  const legend = document.createElement("div");
-  legend.className = "lang-legend";
-  for (const lang of langs) {
-    const seg = document.createElement("span");
-    seg.className = "lang-seg";
-    seg.style.width = `${lang.pct}%`;
-    seg.style.background = lang.color;
-    bar.appendChild(seg);
-    const item = document.createElement("span");
-    const swatch = document.createElement("span");
-    swatch.className = "lang-swatch";
-    swatch.style.background = lang.color;
-    swatch.setAttribute("aria-hidden", "true");
-    item.append(swatch, document.createTextNode(`${lang.name} ${formatPct(lang.pct)}%`));
-    legend.appendChild(item);
-  }
-  el.append(row, legend);
+  renderLanguageChart(el, langs);
 });
 function formatEventDate(iso) {
   const months = [

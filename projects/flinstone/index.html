@@ -59,6 +59,18 @@
 
       <div class="project-layout">
         <div class="project-main">
+      <section class="prose" aria-labelledby="fl-why-title">
+        <h2 id="fl-why-title">Why it exists</h2>
+        <p>
+          Flinstone began as a disk-operations exercise for a school assignment — a simple drive
+          simulator meant to run against real hardware rather than an emulator. It was revisited
+          later as a way to learn computer architecture, Linux internals, and low-level systems in
+          support of infrastructure work, which is what turned that exercise into an actual
+          kernel: hardware abstraction, a scheduler, and a network stack built from first
+          principles, one subsystem at a time.
+        </p>
+      </section>
+
       <section id="live-lab">
         <div class="section-head">
           <h2><svg class="icon icon-head" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80L0 432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg>Run the kernel lab</h2>
@@ -84,6 +96,13 @@
           first and only then Cloudflare DoH.
         </p>
       </section>
+
+      <div data-lang-bar="flinstone"></div>
+
+      <details class="disclosure">
+        <summary><span class="disclosure-toggle" aria-hidden="true"></span>Read the technical write-up</summary>
+        <div class="disclosure-body">
+          <div class="disclosure-body-inner">
 
       <section class="prose" aria-labelledby="fl-run-title">
         <h2 id="fl-run-title"><svg class="icon icon-head" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path d="M9.4 86.6C-3.1 74.1-3.1 53.9 9.4 41.4s32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 9.4 86.6zM256 416l288 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-288 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/></svg>Running it</h2>
@@ -124,8 +143,6 @@ contracts: bundle rev 9, P0 foundations rev 5
           The surface list is reflowed onto two lines to fit; nothing else is edited.
         </p>
       </section>
-
-      <div data-lang-bar="flinstone"></div>
 
       <section class="prose">
         <h2><svg class="icon icon-head" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 40c-35.3 0-64 28.7-64 64l-40 0c-13.3 0-24 10.7-24 24s10.7 24 24 24l40 0 0 56-40 0c-13.3 0-24 10.7-24 24s10.7 24 24 24l40 0 0 56-40 0c-13.3 0-24 10.7-24 24s10.7 24 24 24l40 0c0 35.3 28.7 64 64 64l0 40c0 13.3 10.7 24 24 24s24-10.7 24-24l0-40 56 0 0 40c0 13.3 10.7 24 24 24s24-10.7 24-24l0-40 56 0 0 40c0 13.3 10.7 24 24 24s24-10.7 24-24l0-40c35.3 0 64-28.7 64-64l40 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-40 0 0-56 40 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-40 0 0-56 40 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-40 0c0-35.3-28.7-64-64-64l0-40c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 40-56 0 0-40c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 40-56 0 0-40zM160 128l192 0c17.7 0 32 14.3 32 32l0 192c0 17.7-14.3 32-32 32l-192 0c-17.7 0-32-14.3-32-32l0-192c0-17.7 14.3-32 32-32zm192 32l-192 0 0 192 192 0 0-192z"/></svg>What it is</h2>
@@ -171,6 +188,10 @@ contracts: bundle rev 9, P0 foundations rev 5
           it implemented itself, down to the driver.
         </p>
       </section>
+
+          </div>
+        </div>
+      </details>
 
       <section>
         <div class="section-head">

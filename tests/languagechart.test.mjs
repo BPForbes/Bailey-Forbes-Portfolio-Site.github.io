@@ -7,9 +7,9 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { donutSegments } from "../modules/languageChart.js";
+import { donutSegments, foldLanguages } from "../modules/languageChart.js";
 
-const CIRCUMFERENCE = 2 * Math.PI * 24;
+const CIRCUMFERENCE = 2 * Math.PI * 36;
 
 test("donutSegments: empty input yields no segments", () => {
   assert.deepEqual(donutSegments([]), []);
@@ -73,4 +73,63 @@ test("donutSegments: many small languages never produce a negative dash length",
     const [drawn] = seg.dasharray.split(" ").map(Number);
     assert.ok(drawn >= 0, `negative dash length: ${drawn}`);
   }
+});
+
+test("foldLanguages: leaves a short list untouched, in its original order", () => {
+  const langs = [
+    { name: "C", pct: 70, color: "#555" },
+    { name: "Assembly", pct: 30, color: "#c98a4a" },
+  ];
+  assert.deepEqual(foldLanguages(langs), langs);
+});
+
+test("foldLanguages: leaves exactly seven languages untouched — 'seven at most'", () => {
+  const langs = Array.from({ length: 7 }, (_, i) => ({
+    name: `Lang${i}`,
+    pct: 100 / 7,
+    color: "#abc",
+  }));
+  const folded = foldLanguages(langs);
+  assert.equal(folded.length, 7);
+  assert.deepEqual(folded, langs);
+});
+
+test("foldLanguages: an eighth language tips into five-named-plus-Other", () => {
+  const langs = Array.from({ length: 8 }, (_, i) => ({
+    name: `Lang${i}`,
+    pct: 12.5,
+    color: "#abc",
+  }));
+  const folded = foldLanguages(langs);
+  assert.equal(folded.length, 6, "5 named + 1 Other");
+  assert.equal(folded.at(-1).name, "Other");
+});
+
+test("foldLanguages: names the five largest shares, folds the rest by percentage not position", () => {
+  const langs = [
+    { name: "Tiny1", pct: 1, color: "#1" },
+    { name: "Big1", pct: 30, color: "#2" },
+    { name: "Tiny2", pct: 2, color: "#3" },
+    { name: "Big2", pct: 25, color: "#4" },
+    { name: "Big3", pct: 20, color: "#5" },
+    { name: "Big4", pct: 10, color: "#6" },
+    { name: "Big5", pct: 9, color: "#7" },
+    { name: "Tiny3", pct: 3, color: "#8" },
+  ];
+  const folded = foldLanguages(langs);
+  const names = folded.map((l) => l.name);
+  assert.deepEqual(names, ["Big1", "Big2", "Big3", "Big4", "Big5", "Other"]);
+  const other = folded.find((l) => l.name === "Other");
+  assert.ok(Math.abs(other.pct - 6) < 1e-9, `Other should sum the three Tiny shares to 6, got ${other.pct}`);
+});
+
+test("foldLanguages: Other is not mistaken for a real language's colour", () => {
+  const langs = Array.from({ length: 9 }, (_, i) => ({
+    name: `Lang${i}`,
+    pct: 100 / 9,
+    color: "#123456",
+  }));
+  const folded = foldLanguages(langs);
+  const other = folded.find((l) => l.name === "Other");
+  assert.notEqual(other.color, "#123456");
 });

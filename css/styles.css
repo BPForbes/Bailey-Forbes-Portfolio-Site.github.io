@@ -521,6 +521,96 @@ h1 {
   font-size: clamp(1.5rem, 2.4vw, 1.9rem);
 }
 
+/*
+ * The project page's deep technical write-up, collapsed behind one toggle.
+ * A visitor reads the short "why it exists" paragraph beside this by
+ * default; the multi-section prose that used to run at that same visual
+ * weight moves in here unchanged; nothing was rewritten to make room. A
+ * native <details>/<summary> gives the toggle free keyboard support and,
+ * for a screen reader, correct expanded/collapsed announcement without
+ * anything here having to build that — see releases.ts, which reaches for
+ * the same element for the same reason. The height transition below is new:
+ * releases.ts didn't need one because its content is one line: this content
+ * is several paragraphs, and "a transition framed around the project" was
+ * asked for directly.
+ */
+.disclosure {
+  margin-top: var(--space-6);
+  border-top: 1px solid var(--border);
+}
+
+.disclosure > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap-comfortable);
+  padding: var(--space-4) 0;
+  cursor: pointer;
+  list-style: none;
+  color: var(--action-hover);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  transition: color var(--motion-fast) ease-out;
+}
+
+.disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.disclosure > summary:hover,
+.disclosure > summary:focus-visible {
+  color: var(--text);
+}
+
+/* Same chevron as .release-toggle (releases.ts) — one open/close idiom
+   across the site rather than a second one invented for this component. */
+.disclosure-toggle {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform var(--motion-base) ease-out;
+}
+
+.disclosure[open] > summary .disclosure-toggle {
+  transform: rotate(225deg);
+}
+
+/*
+ * The "animate to auto height" grid trick: a track that is 0fr collapses to
+ * zero height without needing a max-height guess, and 1fr expands to fit
+ * whatever content is actually inside. The UA stylesheet sets
+ * display:none on a closed <details>'s non-summary children, which cannot
+ * be transitioned to or from — the :not([open]) rule below overrides that
+ * back to display:grid so the height transition has something to animate.
+ * 420ms rather than --motion-base: this reveals several paragraphs at once,
+ * a much larger change than the 200ms token was chosen for.
+ */
+.disclosure-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 420ms ease;
+}
+
+.disclosure:not([open]) > .disclosure-body {
+  display: grid;
+}
+
+.disclosure[open] > .disclosure-body {
+  grid-template-rows: 1fr;
+}
+
+.disclosure-body-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.disclosure-body-inner > :first-child {
+  margin-top: var(--space-2);
+}
+
 code {
   font-family: var(--font-mono);
   font-size: 0.92em;
@@ -1438,11 +1528,6 @@ code {
   gap: var(--space-5);
 }
 
-/*
- * Not sticky. The entries have to travel past the focus line for the next one
- * to open as you reach it; pinned, the rail never moves relative to the
- * viewport and the same entry stays open the whole way down.
- */
 /* A grid item defaults to min-width:auto, so the transcript's long lines push
    this column wider than its own track and the page scrolls sideways. */
 .project-main {
@@ -2001,62 +2086,37 @@ code {
   font-size: 0.85rem;
 }
 
-/* ------------------------------------------------------------ lang bars --- */
+/* ----------------------------------------------------------- lang chart --- */
 
 /*
- * The bar stays the precise read (segment width is the percentage); the
- * donut beside it is the "at a glance" one — sanctioned for part-to-whole
- * at a handful of segments, but deprioritized versus a bar for anything
- * needing close comparison. Both draw the same data, so they share one
- * legend below rather than each carrying its own.
+ * The language donut is the whole visualisation now — no bar. This site's
+ * own dataviz reference deprioritises a donut against a stacked bar for
+ * part-to-whole, but sanctions it for exactly this case: a quick read at a
+ * handful of segments. A repository Linguist reports a dozen languages for
+ * does not stay "a quick read" at a glance, which is why the renderer
+ * (src/languageChart.ts) folds anything past five named languages into one
+ * "Other" segment rather than drawing every one Linguist ever saw.
  */
-.lang-split {
+.lang-chart-figure {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-4);
-  margin: var(--space-4) 0 var(--space-2);
+  gap: var(--space-5);
+  margin: var(--space-5) 0;
 }
 
 .lang-chart {
   flex: none;
-  width: 3.25rem;
-  height: 3.25rem;
-}
-
-.lang-split .lang-bar {
-  flex: 1 1 auto;
-  min-width: 0;
-  margin: 0;
-}
-
-.lang-bar {
-  display: flex;
-  height: 10px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: var(--surface-sunken);
-  border: 1px solid var(--border);
-  margin: var(--space-4) 0 var(--space-2);
-}
-
-/*
- * Segment widths are set inline from the synced percentages and always total
- * 100%. flex-shrink is disabled so a repository with a dozen languages keeps
- * those proportions instead of letting flex renegotiate them, and the min-width
- * keeps a 0.1% language visible as a hairline rather than collapsing to
- * nothing. Both together can overflow the track by a pixel or two on a very
- * narrow phone, which is what the overflow:hidden on .lang-bar is already for.
- */
-.lang-seg {
-  height: 100%;
-  flex: 0 0 auto;
-  min-width: 2px;
+  width: 7rem;
+  height: 7rem;
 }
 
 .lang-legend {
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
-  gap: var(--space-2) var(--space-4);
+  gap: var(--space-2);
+  max-height: 7rem;
   color: var(--text-subtle);
   font-family: var(--font-mono);
   font-size: 0.74rem;
@@ -2065,8 +2125,10 @@ code {
 /*
  * The legend is generated, so its length and its longest word are both unknown
  * at authoring time: "Linker Script" and "Jupyter Notebook" are real Linguist
- * names. Each item stays on one line and the row wraps between items; max-width
- * stops a single long name forcing a horizontal scrollbar at 320px.
+ * names (the "Other" fold keeps the list itself short — see languageChart.ts —
+ * but not any one name in it). Each item stays on one line, wrapping into a
+ * second column once the column above hits max-height; max-width stops a
+ * single long name forcing a horizontal scrollbar at 320px.
  */
 .lang-legend span {
   display: inline-flex;
@@ -2611,6 +2673,26 @@ body.guest-overlay-open {
   .project-layout {
     grid-template-columns: minmax(0, 1fr) minmax(0, 23rem);
     gap: var(--space-8) var(--space-7);
+  }
+
+  /*
+   * Pinned once the page scrolls past it, rather than left in normal flow.
+   * The rail's own content (a five-entry timeline window) is much shorter
+   * than the prose beside it, so unpinned it simply ends partway down the
+   * page and leaves the rest of that column empty for however much prose
+   * remains — sticky uses that space instead of wasting it.
+   *
+   * This used to be deliberately not sticky, back when scrolling the page
+   * changed which timeline entry was open (an entry had to visually travel
+   * past a fixed focus line). That coupling is gone — selection is now
+   * explicit, by click, arrow keys or the pager (DESIGN.md B4) — so nothing
+   * about the timeline's behaviour depends on the rail's screen position
+   * any more, and pinning it no longer risks reintroducing that bug.
+   */
+  .project-rail {
+    position: sticky;
+    top: calc(var(--nav-h) + var(--space-5));
+    align-self: start;
   }
 
   /*
