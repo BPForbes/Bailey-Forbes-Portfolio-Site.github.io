@@ -15,7 +15,6 @@ import { mountGuestWindows } from "./guestWindow.js";
 import { renderLanguageChart } from "./languageChart.js";
 import { mountNamedReleases } from "./releases.js";
 import { mountProjectMotifs } from "./projectMotif.js";
-import { mountReleaseExplorers } from "./releaseExplorer.js";
 import { mountTimelineWindow, type TimelineCard } from "./timeline.js";
 import { ROUTES } from "./routes.js";
 import type { NamedRelease, ProjectId } from "./types.js";
@@ -253,7 +252,6 @@ mountNamedReleases((mount): readonly NamedRelease[] => {
 mountGuestWindows();
 mountDecks();
 mountProjectMotifs();
-mountReleaseExplorers();
 
 /**
  * Repository-derived figures on otherwise static pages.
