@@ -341,8 +341,8 @@ function mountDeck(deck: HTMLElement): void {
     drag: (t, direction) => {
       render(t, direction);
     },
-    release: (t, direction) => {
-      if (t >= COMMIT_AT) {
+    release: (t, direction, flicked) => {
+      if (t >= COMMIT_AT || flicked) {
         go(direction, t);
         return;
       }
@@ -371,11 +371,24 @@ interface PointerHooks {
   bringToFront: (index: number) => void;
   isBusy: () => boolean;
   drag: (t: number, direction: Exclude<Direction, 0>) => void;
-  release: (t: number, direction: Exclude<Direction, 0>) => void;
+  release: (t: number, direction: Exclude<Direction, 0>, flicked: boolean) => void;
 }
 
 /** Travel before a press counts as a drag rather than a click. */
 const DRAG_THRESHOLD_PX = 6;
+
+/*
+ * A fast, short swipe should commit the same as a slow one dragged past
+ * COMMIT_AT — real cards respond to a flick, not just a full pull. Expressed
+ * as a rate in the same `t` units the rest of this module already uses
+ * (COMMIT_AT per FLICK_WINDOW_MS), rather than a pixel speed, so it needs no
+ * knowledge of the stack's actual width and stays correct if COMMIT_AT ever
+ * changes. 220ms is comfortably faster than a considered drag-and-release —
+ * that takes most people 400ms+ — and comfortably inside "feels instant"
+ * territory for the gesture itself.
+ */
+const FLICK_WINDOW_MS = 220;
+const FLICK_RATE = COMMIT_AT / FLICK_WINDOW_MS;
 
 /**
  * One handler covers touch swipe, mouse drag and the tap-a-card-behind
@@ -389,6 +402,7 @@ function attachPointer(stack: HTMLElement, cards: HTMLElement[], hooks: PointerH
   let startX = 0;
   let startY = 0;
   let dragging = false;
+  let dragStartTime = 0;
   let pressedIndex = -1;
   let progress = 0;
   let direction: Exclude<Direction, 0> = 1;
@@ -397,8 +411,15 @@ function attachPointer(stack: HTMLElement, cards: HTMLElement[], hooks: PointerH
     stack.classList.remove("is-dragging");
     pointerId = null;
     dragging = false;
+    dragStartTime = 0;
     pressedIndex = -1;
     progress = 0;
+  }
+
+  /** Progress covered per millisecond since the drag began, in `t` units. */
+  function isFlick(): boolean {
+    const elapsed = performance.now() - dragStartTime;
+    return elapsed > 0 && progress / elapsed >= FLICK_RATE;
   }
 
   stack.addEventListener("pointerdown", (event: PointerEvent) => {
@@ -438,6 +459,7 @@ function attachPointer(stack: HTMLElement, cards: HTMLElement[], hooks: PointerH
       }
 
       dragging = true;
+      dragStartTime = performance.now();
       stack.classList.add("is-dragging");
       stack.setPointerCapture(event.pointerId);
     }
@@ -458,6 +480,7 @@ function attachPointer(stack: HTMLElement, cards: HTMLElement[], hooks: PointerH
     const tappedIndex = pressedIndex;
     const t = progress;
     const dir = direction;
+    const flicked = wasDragging && isFlick();
 
     if (wasDragging && stack.hasPointerCapture(event.pointerId)) {
       stack.releasePointerCapture(event.pointerId);
@@ -466,7 +489,7 @@ function attachPointer(stack: HTMLElement, cards: HTMLElement[], hooks: PointerH
     reset();
 
     if (wasDragging) {
-      hooks.release(t, dir);
+      hooks.release(t, dir, flicked);
       return;
     }
 
@@ -482,9 +505,10 @@ function attachPointer(stack: HTMLElement, cards: HTMLElement[], hooks: PointerH
     const wasDragging = dragging;
     const t = progress;
     const dir = direction;
+    const flicked = wasDragging && isFlick();
     reset();
     if (wasDragging) {
-      hooks.release(t, dir);
+      hooks.release(t, dir, flicked);
     }
   });
 }

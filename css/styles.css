@@ -164,6 +164,7 @@ a {
   color: var(--action-hover);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
+  transition: color var(--motion-fast) ease-out;
 }
 
 a:hover {
@@ -356,6 +357,7 @@ dt > .icon,
   color: var(--text-muted);
   text-decoration: none;
   font-size: 0.92rem;
+  transition: color var(--motion-fast) ease-out, background-color var(--motion-fast) ease-out;
 }
 
 .nav-links a:hover {
@@ -383,17 +385,25 @@ dt > .icon,
   font-family: inherit;
   font-size: 0.92rem;
   cursor: pointer;
+  transition: border-color var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
 }
 
 .nav-toggle:hover {
   border-color: var(--action);
 }
 
+.nav-toggle:active {
+  transform: scale(0.97);
+}
+
 /*
- * Hamburger / close, layered in one grid cell so the swap is instant rather
- * than a reflow — this is the near-universal open/close pair for a mobile
- * nav (Jakob's Law), and pairing it with the word "Menu" keeps the control
- * unambiguous for a visitor who has never seen this particular header.
+ * Hamburger / close, layered in one grid cell so the swap costs no reflow —
+ * this is the near-universal open/close pair for a mobile nav (Jakob's Law),
+ * and pairing it with the word "Menu" keeps the control unambiguous for a
+ * visitor who has never seen this particular header. The cross-fade between
+ * the two glyphs is animated rather than an instant swap, per the cookbook's
+ * icon-swap recipe (§5): an instant swap on a control this small is easy to
+ * miss entirely.
  */
 .nav-toggle-icon {
   display: grid;
@@ -403,6 +413,7 @@ dt > .icon,
 
 .nav-toggle-icon .icon {
   grid-area: 1 / 1;
+  transition: opacity var(--motion-fast) ease-out;
 }
 
 .nav-toggle-icon .icon:last-child {
@@ -618,7 +629,19 @@ code {
   font-size: 0.95rem;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+  /* ease-out: the state is arriving, not settling mid-visibility (motion-cookbook §2). */
+  transition:
+    background-color var(--motion-fast) ease-out,
+    border-color var(--motion-fast) ease-out,
+    color var(--motion-fast) ease-out,
+    transform var(--motion-fast) ease-out;
+}
+
+/* Immediate tactile confirmation that the press registered — the one
+   pattern from Emil's cookbook (§10) applied to every real button-shaped
+   control in this file, not decoration added per-component. */
+.btn:active {
+  transform: scale(0.97);
 }
 
 .btn-primary {
@@ -661,7 +684,10 @@ code {
   border-radius: var(--radius-lg);
   text-decoration: none;
   color: inherit;
-  transition: border-color var(--motion-fast) ease;
+  /* --motion-base, not -fast: a full card is a larger surface than a button
+     or a chip, and match-duration-to-size (motion-cookbook §2) says a bigger
+     repaint reads better a touch slower. */
+  transition: border-color var(--motion-base) ease-out;
 }
 
 .card:hover {
@@ -686,6 +712,7 @@ code {
 .card h3 a {
   color: inherit;
   text-decoration: none;
+  transition: color var(--motion-fast) ease-out;
 }
 
 .card h2 a:hover,
@@ -837,6 +864,7 @@ code {
   padding: var(--space-4) 0;
   cursor: pointer;
   list-style: none;
+  transition: background-color var(--motion-fast) ease-out;
 }
 
 .release-summary::-webkit-details-marker {
@@ -1160,11 +1188,16 @@ code {
   font-size: 1.1rem;
   line-height: 1;
   cursor: pointer;
+  transition: border-color var(--motion-fast) ease-out, color var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
 }
 
 .deck-btn:hover:not(:disabled) {
   border-color: var(--action);
   color: var(--action-hover);
+}
+
+.deck-btn:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 /* A real disabled state driven by scroll position, not decoration (R21). */
@@ -1421,6 +1454,7 @@ code {
   font: inherit;
   text-align: left;
   cursor: pointer;
+  transition: background-color var(--motion-fast) ease-out;
 }
 
 .tl-node:hover,
@@ -2013,11 +2047,16 @@ code {
   font-family: inherit;
   font-size: 0.82rem;
   cursor: pointer;
+  transition: border-color var(--motion-fast) ease-out, color var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
 }
 
 .guest-btn:hover {
   border-color: var(--action);
   color: var(--action-hover);
+}
+
+.guest-btn:active {
+  transform: scale(0.97);
 }
 
 /* Status is text first. The tone tokens only reinforce what the words say. */
@@ -2066,11 +2105,20 @@ code {
   font-family: inherit;
   font-size: 0.82rem;
   cursor: pointer;
+  transition:
+    border-color var(--motion-fast) ease-out,
+    background-color var(--motion-fast) ease-out,
+    color var(--motion-fast) ease-out,
+    transform var(--motion-fast) ease-out;
 }
 
 .guest-dock-btn:hover {
   border-color: var(--action);
   color: var(--text);
+}
+
+.guest-dock-btn:active {
+  transform: scale(0.97);
 }
 
 .guest-dock-btn[aria-pressed="true"] {
@@ -2272,6 +2320,7 @@ body.guest-overlay-open {
   text-decoration: underline;
   text-underline-offset: 0.18em;
   overflow-wrap: anywhere;
+  transition: color var(--motion-fast) ease-out;
 }
 
 .contact-list a:hover .contact-value {
