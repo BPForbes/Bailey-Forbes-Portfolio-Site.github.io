@@ -98,6 +98,16 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # `npm test`'s pretest hook (npm run build) just rebuilt modules/*.js
+          # from src/ — which includes src/generated/projectMetadata.ts, one of
+          # the three files this job commits — so the tracked modules/ output is
+          # now dirty in the working tree. That isn't this job's to commit, and
+          # left dirty it makes `git pull --rebase` below refuse outright
+          # ("cannot pull with rebase: You have unstaged changes"), which is
+          # exactly the failure that silently broke every scheduled run of this
+          # workflow since it shipped: the fetch and commit both succeeded, but
+          # every push after it failed here, so the site never actually updated.
+          git checkout -- modules/
           # Only the generated artefacts. Nothing else in the tree is this job's
           # to touch, and js/ is gitignored and rebuilt at deploy time anyway.
           git add data/project-metadata.json data/commit-bodies.json src/generated/projectMetadata.ts
