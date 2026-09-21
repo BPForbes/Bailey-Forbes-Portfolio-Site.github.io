@@ -373,6 +373,7 @@ dt > .icon,
 .nav-toggle {
   display: inline-flex;
   align-items: center;
+  gap: var(--space-2);
   min-height: var(--tap-comfortable);
   background: transparent;
   color: var(--text);
@@ -386,6 +387,34 @@ dt > .icon,
 
 .nav-toggle:hover {
   border-color: var(--action);
+}
+
+/*
+ * Hamburger / close, layered in one grid cell so the swap is instant rather
+ * than a reflow — this is the near-universal open/close pair for a mobile
+ * nav (Jakob's Law), and pairing it with the word "Menu" keeps the control
+ * unambiguous for a visitor who has never seen this particular header.
+ */
+.nav-toggle-icon {
+  display: grid;
+  width: 1em;
+  height: 1em;
+}
+
+.nav-toggle-icon .icon {
+  grid-area: 1 / 1;
+}
+
+.nav-toggle-icon .icon:last-child {
+  opacity: 0;
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-icon .icon:first-child {
+  opacity: 0;
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-icon .icon:last-child {
+  opacity: 1;
 }
 
 /* ------------------------------------------------------------- structure -- */
@@ -1975,7 +2004,7 @@ code {
 .guest-btn {
   display: inline-flex;
   align-items: center;
-  min-height: 36px;
+  min-height: var(--tap-comfortable);
   padding: var(--space-1) var(--space-3);
   border: 1px solid var(--border-interactive);
   border-radius: 999px;
@@ -2028,7 +2057,7 @@ code {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: 36px;
+  min-height: var(--tap-comfortable);
   padding: var(--space-1) var(--space-3);
   border: 1px solid var(--border-interactive);
   border-radius: 999px;
@@ -2291,7 +2320,42 @@ body.guest-overlay-open {
 .contact-form textarea { resize: vertical; min-height: 10rem; }
 .contact-form button { justify-self: start; }
 .contact-form button:disabled { opacity: .6; cursor: not-allowed; }
-.contact-form [role="status"] { min-height: 1.5em; }
+
+/*
+ * Peak-End Rule: this line is the last thing a visitor sees for the one task
+ * the page most wants them to complete, so success and failure need to look
+ * different from "still working" and from each other — not just read
+ * different. Tone is carried by the same icon+colour pattern as
+ * .guest-status, so the site says "done" the same way everywhere. The word
+ * is still what carries the meaning (R25); colour and glyph only reinforce it.
+ */
+.contact-status {
+  display: inline-flex;
+  /* The longest message here wraps to three lines on a narrow phone; aligned
+     to center that reads as pinned to the block's middle rather than the
+     message. flex-start plus a nudge keeps it level with the first line. */
+  align-items: flex-start;
+  gap: var(--space-2);
+  min-height: 1.5em;
+  color: var(--text-subtle);
+}
+
+.contact-status .icon {
+  margin-top: 0.15em;
+}
+
+.contact-status[data-tone="wait"] {
+  color: var(--status-wait);
+}
+
+.contact-status[data-tone="ok"] {
+  color: var(--status-ok);
+  font-weight: 600;
+}
+
+.contact-status[data-tone="error"] {
+  color: var(--status-error);
+}
 
 /*
  * ================================================================ WIDE LAYER

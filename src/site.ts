@@ -31,7 +31,10 @@ if (header) {
             <span>Indiana</span>
           </span>
         </a>
-        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+          <span class="nav-toggle-icon" aria-hidden="true">${icon("bars")}${icon("xmark")}</span>
+          Menu
+        </button>
         <ul class="nav-links" id="site-nav">
           <li><a data-nav="home" href="${ROUTES.home}">Home</a></li>
           <li><a data-nav="projects" href="${ROUTES.projects}">Projects</a></li>
