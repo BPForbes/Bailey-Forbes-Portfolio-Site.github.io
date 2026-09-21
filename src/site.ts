@@ -3,14 +3,18 @@ import {
   commitCountFor,
   languagesFor,
   mergedPullRequestsFor,
+  metadataSyncedAt,
   namedReleasesFor,
   timelineEvents,
   versionFor,
 } from "./projectMetadata.js";
+import { publishedAt } from "./buildInfo.js";
 import { icon } from "./icons.js";
 import { mountDecks } from "./deck.js";
 import { mountGuestWindows } from "./guestWindow.js";
+import { renderLanguageChart } from "./languageChart.js";
 import { mountNamedReleases } from "./releases.js";
+import { mountProjectMotifs } from "./projectMotif.js";
 import { mountTimelineWindow, type TimelineCard } from "./timeline.js";
 import { ROUTES } from "./routes.js";
 import type { NamedRelease, ProjectId } from "./types.js";
@@ -29,7 +33,10 @@ if (header) {
             <span>Indiana</span>
           </span>
         </a>
-        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+          <span class="nav-toggle-icon" aria-hidden="true">${icon("bars")}${icon("xmark")}</span>
+          Menu
+        </button>
         <ul class="nav-links" id="site-nav">
           <li><a data-nav="home" href="${ROUTES.home}">Home</a></li>
           <li><a data-nav="projects" href="${ROUTES.projects}">Projects</a></li>
@@ -43,11 +50,24 @@ if (header) {
 
 const footer = document.querySelector<HTMLElement>("[data-site-footer]");
 if (footer) {
+  /*
+   * Both dates in the footer are facts about this build, not prose:
+   * `published` is the commit the deploy shipped, `synced` is when the
+   * repository figures above were last read from GitHub. Neither is typed
+   * into the copy, so neither can go stale while the page keeps claiming it.
+   */
+  const published = publishedAt();
+  const synced = metadataSyncedAt();
+  const year = (published ?? synced).slice(0, 4);
+
   footer.innerHTML = `
       <div class="wrap footer-grid">
         <p>
-          © 2026 Bailey P Forbes. Project timelines are compiled from public git history on
-          <a href="https://github.com/BPForbes">github.com/BPForbes</a>, 11 Sep 2026.
+          © ${year} Bailey P Forbes.${published === undefined ? "" : `
+          Last published <time datetime="${published}">${formatEventDate(published.slice(0, 10))}</time>.`}
+          Project timelines are compiled from public git history on
+          <a href="https://github.com/BPForbes">github.com/BPForbes</a>,
+          <time datetime="${synced}">${formatEventDate(synced.slice(0, 10))}</time>.
         </p>
         <ul class="footer-links">
           <li><a href="mailto:baileyforbes@rocketmail.com">${icon("envelope")}Email Bailey</a></li>
@@ -88,21 +108,16 @@ if (toggle && links) {
       toggle.focus();
     }
   });
+
+  // The wide layer shows every link inline, so an open compact panel has no
+  // meaning there. Left set, it would spring back open on the way down.
+  window.matchMedia("(min-width: 56rem)").addEventListener("change", () => {
+    setOpen(false);
+  });
 }
 
 function isProjectId(value: string): value is ProjectId {
   return Object.prototype.hasOwnProperty.call(PORTFOLIO.projects, value);
-}
-
-/**
- * One decimal, with a trailing ".0" trimmed.
- *
- * The sync rounds to a tenth and balances the remainder so a bar's figures add
- * up to 100.0. Printing "Rust 100%" rather than "Rust 100.0%" keeps the legend
- * reading the way the hand-written one did.
- */
-function formatPct(pct: number): string {
-  return pct.toFixed(1).replace(/\.0$/, "");
 }
 
 document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
@@ -112,41 +127,16 @@ document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
   }
 
   // Generated GitHub Linguist data when the project has a repository, the
-  // curated split when it does not. Either way the renderer below is unchanged:
-  // it has never assumed a language count, and must not start now.
+  // curated split when it does not. Either way the renderer is unchanged: it
+  // has never assumed a language count, and must not start now — a dozen
+  // Linguist-reported languages fold to "Other" inside renderLanguageChart
+  // rather than this call site needing to know that happens.
   const langs = languagesFor(key);
   if (!langs || langs.length === 0) {
     return;
   }
 
-  const bar = document.createElement("div");
-  bar.className = "lang-bar";
-  bar.setAttribute("role", "img");
-  bar.setAttribute(
-    "aria-label",
-    `Language split: ${langs.map((lang) => `${lang.name} ${formatPct(lang.pct)} percent`).join(", ")}`,
-  );
-
-  const legend = document.createElement("div");
-  legend.className = "lang-legend";
-
-  for (const lang of langs) {
-    const seg = document.createElement("span");
-    seg.className = "lang-seg";
-    seg.style.width = `${lang.pct}%`;
-    seg.style.background = lang.color;
-    bar.appendChild(seg);
-
-    const item = document.createElement("span");
-    const swatch = document.createElement("span");
-    swatch.className = "lang-swatch";
-    swatch.style.background = lang.color;
-    swatch.setAttribute("aria-hidden", "true");
-    item.append(swatch, document.createTextNode(`${lang.name} ${formatPct(lang.pct)}%`));
-    legend.appendChild(item);
-  }
-
-  el.append(bar, legend);
+  renderLanguageChart(el, langs);
 });
 
 /**
@@ -261,6 +251,7 @@ mountNamedReleases((mount): readonly NamedRelease[] => {
 
 mountGuestWindows();
 mountDecks();
+mountProjectMotifs();
 
 /**
  * Repository-derived figures on otherwise static pages.
@@ -303,6 +294,16 @@ function mountRepositoryFacts(): void {
   render("data-project-version", versionFor, (text) => text);
   render("data-project-commits", commitCountFor, (text) => `${text} commits`);
   render("data-project-prs", mergedPullRequestsFor, (text) => `${text} merged PRs`);
+
+  // Same contract for the sync's own date: the literal in the HTML is the
+  // fallback a visitor sees before this runs, not the source of truth.
+  const synced = metadataSyncedAt();
+  document.querySelectorAll<HTMLElement>("[data-metadata-synced]").forEach((el) => {
+    el.textContent = formatEventDate(synced.slice(0, 10));
+    if (el instanceof HTMLTimeElement) {
+      el.dateTime = synced;
+    }
+  });
 }
 
 mountRepositoryFacts();

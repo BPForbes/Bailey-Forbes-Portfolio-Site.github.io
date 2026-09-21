@@ -3,14 +3,18 @@ import {
   commitCountFor,
   languagesFor,
   mergedPullRequestsFor,
+  metadataSyncedAt,
   namedReleasesFor,
   timelineEvents,
   versionFor
 } from "./projectMetadata.js";
+import { publishedAt } from "./buildInfo.js";
 import { icon } from "./icons.js";
 import { mountDecks } from "./deck.js";
 import { mountGuestWindows } from "./guestWindow.js";
+import { renderLanguageChart } from "./languageChart.js";
 import { mountNamedReleases } from "./releases.js";
+import { mountProjectMotifs } from "./projectMotif.js";
 import { mountTimelineWindow } from "./timeline.js";
 import { ROUTES } from "./routes.js";
 const page = document.body.getAttribute("data-page") ?? "";
@@ -26,7 +30,10 @@ if (header) {
             <span>Indiana</span>
           </span>
         </a>
-        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+          <span class="nav-toggle-icon" aria-hidden="true">${icon("bars")}${icon("xmark")}</span>
+          Menu
+        </button>
         <ul class="nav-links" id="site-nav">
           <li><a data-nav="home" href="${ROUTES.home}">Home</a></li>
           <li><a data-nav="projects" href="${ROUTES.projects}">Projects</a></li>
@@ -39,11 +46,17 @@ if (header) {
 }
 const footer = document.querySelector("[data-site-footer]");
 if (footer) {
+  const published = publishedAt();
+  const synced = metadataSyncedAt();
+  const year = (published ?? synced).slice(0, 4);
   footer.innerHTML = `
       <div class="wrap footer-grid">
         <p>
-          \xA9 2026 Bailey P Forbes. Project timelines are compiled from public git history on
-          <a href="https://github.com/BPForbes">github.com/BPForbes</a>, 11 Sep 2026.
+          \xA9 ${year} Bailey P Forbes.${published === void 0 ? "" : `
+          Last published <time datetime="${published}">${formatEventDate(published.slice(0, 10))}</time>.`}
+          Project timelines are compiled from public git history on
+          <a href="https://github.com/BPForbes">github.com/BPForbes</a>,
+          <time datetime="${synced}">${formatEventDate(synced.slice(0, 10))}</time>.
         </p>
         <ul class="footer-links">
           <li><a href="mailto:baileyforbes@rocketmail.com">${icon("envelope")}Email Bailey</a></li>
@@ -77,12 +90,12 @@ if (toggle && links) {
       toggle.focus();
     }
   });
+  window.matchMedia("(min-width: 56rem)").addEventListener("change", () => {
+    setOpen(false);
+  });
 }
 function isProjectId(value) {
   return Object.prototype.hasOwnProperty.call(PORTFOLIO.projects, value);
-}
-function formatPct(pct) {
-  return pct.toFixed(1).replace(/\.0$/, "");
 }
 document.querySelectorAll("[data-lang-bar]").forEach((el) => {
   const key = el.getAttribute("data-lang-bar");
@@ -93,30 +106,7 @@ document.querySelectorAll("[data-lang-bar]").forEach((el) => {
   if (!langs || langs.length === 0) {
     return;
   }
-  const bar = document.createElement("div");
-  bar.className = "lang-bar";
-  bar.setAttribute("role", "img");
-  bar.setAttribute(
-    "aria-label",
-    `Language split: ${langs.map((lang) => `${lang.name} ${formatPct(lang.pct)} percent`).join(", ")}`
-  );
-  const legend = document.createElement("div");
-  legend.className = "lang-legend";
-  for (const lang of langs) {
-    const seg = document.createElement("span");
-    seg.className = "lang-seg";
-    seg.style.width = `${lang.pct}%`;
-    seg.style.background = lang.color;
-    bar.appendChild(seg);
-    const item = document.createElement("span");
-    const swatch = document.createElement("span");
-    swatch.className = "lang-swatch";
-    swatch.style.background = lang.color;
-    swatch.setAttribute("aria-hidden", "true");
-    item.append(swatch, document.createTextNode(`${lang.name} ${formatPct(lang.pct)}%`));
-    legend.appendChild(item);
-  }
-  el.append(bar, legend);
+  renderLanguageChart(el, langs);
 });
 function formatEventDate(iso) {
   const months = [
@@ -194,6 +184,7 @@ mountNamedReleases((mount) => {
 });
 mountGuestWindows();
 mountDecks();
+mountProjectMotifs();
 function mountRepositoryFacts() {
   const render = (attribute, value, label) => {
     document.querySelectorAll(`[${attribute}]`).forEach((el) => {
@@ -212,5 +203,12 @@ function mountRepositoryFacts() {
   render("data-project-version", versionFor, (text) => text);
   render("data-project-commits", commitCountFor, (text) => `${text} commits`);
   render("data-project-prs", mergedPullRequestsFor, (text) => `${text} merged PRs`);
+  const synced = metadataSyncedAt();
+  document.querySelectorAll("[data-metadata-synced]").forEach((el) => {
+    el.textContent = formatEventDate(synced.slice(0, 10));
+    if (el instanceof HTMLTimeElement) {
+      el.dateTime = synced;
+    }
+  });
 }
 mountRepositoryFacts();

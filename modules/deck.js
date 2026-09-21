@@ -218,8 +218,8 @@ function mountDeck(deck) {
     drag: (t, direction) => {
       render(t, direction);
     },
-    release: (t, direction) => {
-      if (t >= COMMIT_AT) {
+    release: (t, direction, flicked) => {
+      if (t >= COMMIT_AT || flicked) {
         go(direction, t);
         return;
       }
@@ -239,11 +239,14 @@ function mountDeck(deck) {
   settle();
 }
 const DRAG_THRESHOLD_PX = 6;
+const FLICK_WINDOW_MS = 220;
+const FLICK_RATE = COMMIT_AT / FLICK_WINDOW_MS;
 function attachPointer(stack, cards, hooks) {
   let pointerId = null;
   let startX = 0;
   let startY = 0;
   let dragging = false;
+  let dragStartTime = 0;
   let pressedIndex = -1;
   let progress = 0;
   let direction = 1;
@@ -251,8 +254,13 @@ function attachPointer(stack, cards, hooks) {
     stack.classList.remove("is-dragging");
     pointerId = null;
     dragging = false;
+    dragStartTime = 0;
     pressedIndex = -1;
     progress = 0;
+  }
+  function isFlick() {
+    const elapsed = performance.now() - dragStartTime;
+    return elapsed > 0 && progress / elapsed >= FLICK_RATE;
   }
   stack.addEventListener("pointerdown", (event) => {
     if (event.button !== 0 || hooks.isBusy()) {
@@ -268,6 +276,7 @@ function attachPointer(stack, cards, hooks) {
     startY = event.clientY;
     dragging = false;
     progress = 0;
+    dragStartTime = performance.now();
   });
   stack.addEventListener("pointermove", (event) => {
     if (pointerId !== event.pointerId) {
@@ -301,12 +310,13 @@ function attachPointer(stack, cards, hooks) {
     const tappedIndex = pressedIndex;
     const t = progress;
     const dir = direction;
+    const flicked = wasDragging && isFlick();
     if (wasDragging && stack.hasPointerCapture(event.pointerId)) {
       stack.releasePointerCapture(event.pointerId);
     }
     reset();
     if (wasDragging) {
-      hooks.release(t, dir);
+      hooks.release(t, dir, flicked);
       return;
     }
     if (tappedIndex >= 0 && hooks.depthOf(tappedIndex) !== 0) {
@@ -318,9 +328,10 @@ function attachPointer(stack, cards, hooks) {
     const wasDragging = dragging;
     const t = progress;
     const dir = direction;
+    const flicked = wasDragging && isFlick();
     reset();
     if (wasDragging) {
-      hooks.release(t, dir);
+      hooks.release(t, dir, flicked);
     }
   });
 }

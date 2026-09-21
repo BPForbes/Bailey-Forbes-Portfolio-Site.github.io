@@ -88,10 +88,36 @@
   /* Measure */
   --measure-page: 1120px;
   --measure-prose: 42rem;
-  --nav-h: 64px;
   --tap-min: 24px;
   --tap-comfortable: 44px;
+
+  /*
+   * Layer tokens. These carry the COMPACT values; the wide layer at the foot
+   * of this file redefines them. Components read only these, never a raw
+   * breakpoint, so a component never needs to know which layer it is in.
+   */
+  --content-padding: 1rem;
+  --section-spacing: var(--space-6);
+  --nav-h: 56px;
 }
+
+/*
+ * ------------------------------------------------------------------ layers --
+ *
+ * The site has two presentation layers over ONE document: compact (single
+ * column, touch) and wide (multi-column, pointer). Everything up to the WIDE
+ * LAYER block at the foot of this file is compact; that block is the whole of
+ * the difference between them.
+ *
+ * The boundary is a media query, so the layout follows the browser and needs
+ * no JavaScript: it is right on the first paint, right with scripting off, and
+ * right the instant a window is resized.
+ *
+ * The boundary is in `rem`, not pixels, so it also follows the reader's own
+ * browser settings. Someone who has set a larger default font size gets the
+ * single column held further up the width range, because their text needs the
+ * room — which is the point of the layer, not the device it happens to be on.
+ */
 
 *,
 *::before,
@@ -138,6 +164,7 @@ a {
   color: var(--action-hover);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
+  transition: color var(--motion-fast) ease-out;
 }
 
 a:hover {
@@ -237,6 +264,9 @@ dt > .icon,
   position: sticky;
   top: 0;
   z-index: 20;
+  /* The header's markup is injected by site.ts. Reserving its band here keeps
+     the first paint the same height as the hydrated one (CLS). */
+  min-height: var(--nav-h);
   background: var(--surface-page);
   border-bottom: 1px solid var(--border);
 }
@@ -245,11 +275,11 @@ dt > .icon,
   max-width: var(--measure-page);
   margin: 0 auto;
   min-height: var(--nav-h);
-  padding: var(--space-2) var(--space-5);
+  padding: var(--space-2) var(--content-padding);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 
 .brand {
@@ -297,24 +327,37 @@ dt > .icon,
   text-transform: uppercase;
 }
 
+/* Compact: a disclosure panel under the header bar, opened by .nav-toggle. */
 .nav-links {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: var(--space-2) var(--content-padding) var(--space-4);
+  background: var(--surface-page);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-links.is-open {
+  display: flex;
 }
 
 .nav-links a {
   display: inline-flex;
   align-items: center;
   min-height: var(--tap-comfortable);
-  padding: 0 var(--space-3);
+  padding: 0 var(--space-2);
   border-radius: var(--radius-sm);
   color: var(--text-muted);
   text-decoration: none;
   font-size: 0.92rem;
+  transition: color var(--motion-fast) ease-out, background-color var(--motion-fast) ease-out;
 }
 
 .nav-links a:hover {
@@ -330,8 +373,9 @@ dt > .icon,
 }
 
 .nav-toggle {
-  display: none;
+  display: inline-flex;
   align-items: center;
+  gap: var(--space-2);
   min-height: var(--tap-comfortable);
   background: transparent;
   color: var(--text);
@@ -341,10 +385,47 @@ dt > .icon,
   font-family: inherit;
   font-size: 0.92rem;
   cursor: pointer;
+  transition: border-color var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
 }
 
 .nav-toggle:hover {
   border-color: var(--action);
+}
+
+.nav-toggle:active {
+  transform: scale(0.97);
+}
+
+/*
+ * Hamburger / close, layered in one grid cell so the swap costs no reflow —
+ * this is the near-universal open/close pair for a mobile nav (Jakob's Law),
+ * and pairing it with the word "Menu" keeps the control unambiguous for a
+ * visitor who has never seen this particular header. The cross-fade between
+ * the two glyphs is animated rather than an instant swap, per the cookbook's
+ * icon-swap recipe (§5): an instant swap on a control this small is easy to
+ * miss entirely.
+ */
+.nav-toggle-icon {
+  display: grid;
+  width: 1em;
+  height: 1em;
+}
+
+.nav-toggle-icon .icon {
+  grid-area: 1 / 1;
+  transition: opacity var(--motion-fast) ease-out;
+}
+
+.nav-toggle-icon .icon:last-child {
+  opacity: 0;
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-icon .icon:first-child {
+  opacity: 0;
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-icon .icon:last-child {
+  opacity: 1;
 }
 
 /* ------------------------------------------------------------- structure -- */
@@ -356,11 +437,11 @@ main {
 .wrap {
   max-width: var(--measure-page);
   margin: 0 auto;
-  padding: 0 var(--space-5);
+  padding: 0 var(--content-padding);
 }
 
 section {
-  padding: var(--space-4) 0 var(--space-8);
+  padding: var(--space-3) 0 var(--section-spacing);
 }
 
 h1,
@@ -440,6 +521,96 @@ h1 {
   font-size: clamp(1.5rem, 2.4vw, 1.9rem);
 }
 
+/*
+ * The project page's deep technical write-up, collapsed behind one toggle.
+ * A visitor reads the short "why it exists" paragraph beside this by
+ * default; the multi-section prose that used to run at that same visual
+ * weight moves in here unchanged; nothing was rewritten to make room. A
+ * native <details>/<summary> gives the toggle free keyboard support and,
+ * for a screen reader, correct expanded/collapsed announcement without
+ * anything here having to build that — see releases.ts, which reaches for
+ * the same element for the same reason. The height transition below is new:
+ * releases.ts didn't need one because its content is one line: this content
+ * is several paragraphs, and "a transition framed around the project" was
+ * asked for directly.
+ */
+.disclosure {
+  margin-top: var(--space-6);
+  border-top: 1px solid var(--border);
+}
+
+.disclosure > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap-comfortable);
+  padding: var(--space-4) 0;
+  cursor: pointer;
+  list-style: none;
+  color: var(--action-hover);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  transition: color var(--motion-fast) ease-out;
+}
+
+.disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.disclosure > summary:hover,
+.disclosure > summary:focus-visible {
+  color: var(--text);
+}
+
+/* Same chevron as .release-toggle (releases.ts) — one open/close idiom
+   across the site rather than a second one invented for this component. */
+.disclosure-toggle {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform var(--motion-base) ease-out;
+}
+
+.disclosure[open] > summary .disclosure-toggle {
+  transform: rotate(225deg);
+}
+
+/*
+ * The "animate to auto height" grid trick: a track that is 0fr collapses to
+ * zero height without needing a max-height guess, and 1fr expands to fit
+ * whatever content is actually inside. The UA stylesheet sets
+ * display:none on a closed <details>'s non-summary children, which cannot
+ * be transitioned to or from — the :not([open]) rule below overrides that
+ * back to display:grid so the height transition has something to animate.
+ * 420ms rather than --motion-base: this reveals several paragraphs at once,
+ * a much larger change than the 200ms token was chosen for.
+ */
+.disclosure-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 420ms ease;
+}
+
+.disclosure:not([open]) > .disclosure-body {
+  display: grid;
+}
+
+.disclosure[open] > .disclosure-body {
+  grid-template-rows: 1fr;
+}
+
+.disclosure-body-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.disclosure-body-inner > :first-child {
+  margin-top: var(--space-2);
+}
+
 code {
   font-family: var(--font-mono);
   font-size: 0.92em;
@@ -457,11 +628,18 @@ code {
 /* ----------------------------------------------------------------- hero --- */
 
 .hero {
-  padding: var(--space-8) 0 var(--space-7);
+  padding: var(--space-5) 0 var(--space-4);
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
-  gap: var(--space-7);
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
   align-items: center;
+}
+
+/* Compact leads with the face, then the name: the portrait is the one thing
+   that identifies the page before any copy has been read. */
+.hero-portrait {
+  order: -1;
+  width: min(10rem, 40vw);
 }
 
 .hero-pills {
@@ -503,9 +681,9 @@ code {
 .portrait-frame img {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1;
   object-fit: cover;
-  object-position: center 12%;
+  object-position: center 10%;
 }
 
 .portrait-frame figcaption {
@@ -519,11 +697,61 @@ code {
 }
 
 .page-hero {
+  position: relative;
+  overflow: hidden;
   padding: var(--space-8) 0 var(--space-5);
+}
+
+/* Everything but the motif sits above it; the motif itself is z-index: 0. */
+.page-hero > :not([data-project-motif]) {
+  position: relative;
+  z-index: 1;
 }
 
 .page-hero h1 {
   font-size: clamp(2rem, 5vw, 3.4rem);
+}
+
+/*
+ * The per-project hero background. One shared mechanism (a repeating SVG
+ * tile with a single animated line) across every project — see
+ * src/projectMotif.ts for why, and for what each project's tile draws.
+ * Never louder than 12% so it stays a texture, not an illustration
+ * competing with the hero's own text.
+ */
+[data-project-motif] {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.project-motif {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: var(--accent);
+  opacity: 0.12;
+}
+
+.project-motif-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.project-motif-flow {
+  stroke-width: 1.5;
+  stroke-dasharray: var(--motif-flow-length) var(--motif-flow-length);
+  animation: project-motif-flow 7s linear infinite;
+}
+
+@keyframes project-motif-flow {
+  to {
+    stroke-dashoffset: calc(var(--motif-flow-length) * -2);
+  }
 }
 
 /* --------------------------------------------------------------- buttons -- */
@@ -541,7 +769,19 @@ code {
   font-size: 0.95rem;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+  /* ease-out: the state is arriving, not settling mid-visibility (motion-cookbook §2). */
+  transition:
+    background-color var(--motion-fast) ease-out,
+    border-color var(--motion-fast) ease-out,
+    color var(--motion-fast) ease-out,
+    transform var(--motion-fast) ease-out;
+}
+
+/* Immediate tactile confirmation that the press registered — the one
+   pattern from Emil's cookbook (§10) applied to every real button-shaped
+   control in this file, not decoration added per-component. */
+.btn:active {
+  transform: scale(0.97);
 }
 
 .btn-primary {
@@ -571,20 +811,23 @@ code {
 /* .card is reserved for a discrete destination the visitor can open (B3). */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(19rem, 100%), 1fr));
-  gap: var(--space-4);
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
 }
 
 .card {
   display: flex;
   flex-direction: column;
-  padding: var(--space-5);
+  padding: var(--space-4);
   background: var(--surface-raised);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   text-decoration: none;
   color: inherit;
-  transition: border-color var(--motion-fast) ease;
+  /* --motion-base, not -fast: a full card is a larger surface than a button
+     or a chip, and match-duration-to-size (motion-cookbook §2) says a bigger
+     repaint reads better a touch slower. */
+  transition: border-color var(--motion-base) ease-out;
 }
 
 .card:hover {
@@ -609,6 +852,7 @@ code {
 .card h3 a {
   color: inherit;
   text-decoration: none;
+  transition: color var(--motion-fast) ease-out;
 }
 
 .card h2 a:hover,
@@ -650,11 +894,20 @@ code {
 /* .entry is a repeated record with the same fields (B3). */
 .experience {
   display: grid;
+  gap: var(--space-3);
+}
+
+/* The form and the direct routes are two ways to do one thing, so the wide
+   layer sets them side by side rather than one after the other. */
+.contact-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
+  align-items: start;
 }
 
 .entry {
-  padding: var(--space-5);
+  padding: var(--space-4);
   background: var(--surface-raised);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -681,6 +934,15 @@ code {
 /* .org is the whole paragraph when it is a link, so WCAG 2.5.8's inline
    exception does not cover it — give it a real target box. */
 .entry .org a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+}
+
+/* Same shape of problem as .entry .org a above: a paragraph that is only a
+   link (a project page's "read the source paper" line) is a standalone
+   target, not text a link sits inside of — give it a real target box too. */
+.standalone-link a {
   display: inline-flex;
   align-items: center;
   min-height: var(--tap-min);
@@ -716,6 +978,9 @@ code {
 .release-list {
   position: relative;
   display: grid;
+  /* A grid item's min-width is auto, so a release title with no break
+     opportunity widens the track past the page rather than wrapping (R24). */
+  grid-template-columns: minmax(0, 1fr);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -742,9 +1007,13 @@ code {
   align-items: flex-start;
   gap: var(--space-3);
   width: 100%;
+  /* Same reason as the track above: a flex item refuses to shrink below its
+     content without this, and the row is what overflows. */
+  min-width: 0;
   padding: var(--space-4) 0;
   cursor: pointer;
   list-style: none;
+  transition: background-color var(--motion-fast) ease-out;
 }
 
 .release-summary::-webkit-details-marker {
@@ -899,8 +1168,8 @@ code {
    grid — it is a description list with a rule between rows (B3, R07). */
 .spec-list {
   display: grid;
-  grid-template-columns: minmax(9rem, 14rem) minmax(0, 1fr);
-  gap: 0 var(--space-5);
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
   margin: 0;
   border-top: 1px solid var(--border);
 }
@@ -915,9 +1184,10 @@ code {
   text-transform: none;
 }
 
+/* Stacked, the label and its value are one record, so only the pair is ruled
+   off — a rule between them would read as two separate rows. */
 .spec-list dt {
-  padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--border);
+  padding: var(--space-3) 0 0;
   font-family: var(--font-mono);
   font-size: 0.78rem;
   letter-spacing: 0.06em;
@@ -963,6 +1233,32 @@ code {
   font-size: 0.9rem;
 }
 
+/*
+ * The project-page "strength" statement: one label plus one evidence
+ * sentence, sitting right after the impact strip. Reuses .note's
+ * accent-rule idiom (an established callout shape on this site) at higher
+ * prominence — this is confidence, not a caveat, so it keeps full-strength
+ * text colour and a display-font label rather than .note's muted small print.
+ */
+.strength {
+  margin: var(--space-5) 0;
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--action);
+}
+
+.strength-label {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--text);
+}
+
+.strength-evidence {
+  margin: 0;
+  max-width: var(--measure-prose);
+  color: var(--text-muted);
+}
+
 .source-note {
   margin: var(--space-3) 0 0;
   color: var(--text-subtle);
@@ -980,10 +1276,10 @@ code {
 
 .about-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
-  gap: var(--space-8) var(--space-6);
-  margin-top: var(--space-5);
+  gap: var(--space-5);
+  margin-top: var(--space-4);
 }
 
 .about-outro {
@@ -1067,11 +1363,16 @@ code {
   font-size: 1.1rem;
   line-height: 1;
   cursor: pointer;
+  transition: border-color var(--motion-fast) ease-out, color var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
 }
 
 .deck-btn:hover:not(:disabled) {
   border-color: var(--action);
   color: var(--action-hover);
+}
+
+.deck-btn:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 /* A real disabled state driven by scroll position, not decoration (R21). */
@@ -1231,16 +1532,11 @@ code {
  */
 .project-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 23rem);
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
-  gap: var(--space-8) var(--space-7);
+  gap: var(--space-5);
 }
 
-/*
- * Not sticky. The entries have to travel past the focus line for the next one
- * to open as you reach it; pinned, the rail never moves relative to the
- * viewport and the same entry stays open the whole way down.
- */
 /* A grid item defaults to min-width:auto, so the transcript's long lines push
    this column wider than its own track and the page scrolls sideways. */
 .project-main {
@@ -1328,6 +1624,7 @@ code {
   font: inherit;
   text-align: left;
   cursor: pointer;
+  transition: background-color var(--motion-fast) ease-out;
 }
 
 .tl-node:hover,
@@ -1798,36 +2095,37 @@ code {
   font-size: 0.85rem;
 }
 
-/* ------------------------------------------------------------ lang bars --- */
-
-.lang-bar {
-  display: flex;
-  height: 10px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: var(--surface-sunken);
-  border: 1px solid var(--border);
-  margin: var(--space-4) 0 var(--space-2);
-}
+/* ----------------------------------------------------------- lang chart --- */
 
 /*
- * Segment widths are set inline from the synced percentages and always total
- * 100%. flex-shrink is disabled so a repository with a dozen languages keeps
- * those proportions instead of letting flex renegotiate them, and the min-width
- * keeps a 0.1% language visible as a hairline rather than collapsing to
- * nothing. Both together can overflow the track by a pixel or two on a very
- * narrow phone, which is what the overflow:hidden on .lang-bar is already for.
+ * The language donut is the whole visualisation now — no bar. This site's
+ * own dataviz reference deprioritises a donut against a stacked bar for
+ * part-to-whole, but sanctions it for exactly this case: a quick read at a
+ * handful of segments. A repository Linguist reports a dozen languages for
+ * does not stay "a quick read" at a glance, which is why the renderer
+ * (src/languageChart.ts) folds anything past five named languages into one
+ * "Other" segment rather than drawing every one Linguist ever saw.
  */
-.lang-seg {
-  height: 100%;
-  flex: 0 0 auto;
-  min-width: 2px;
+.lang-chart-figure {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+  margin: var(--space-5) 0;
+}
+
+.lang-chart {
+  flex: none;
+  width: 7rem;
+  height: 7rem;
 }
 
 .lang-legend {
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
-  gap: var(--space-2) var(--space-4);
+  gap: var(--space-2);
+  max-height: 7rem;
   color: var(--text-subtle);
   font-family: var(--font-mono);
   font-size: 0.74rem;
@@ -1836,8 +2134,10 @@ code {
 /*
  * The legend is generated, so its length and its longest word are both unknown
  * at authoring time: "Linker Script" and "Jupyter Notebook" are real Linguist
- * names. Each item stays on one line and the row wraps between items; max-width
- * stops a single long name forcing a horizontal scrollbar at 320px.
+ * names (the "Other" fold keeps the list itself short — see languageChart.ts —
+ * but not any one name in it). Each item stays on one line, wrapping into a
+ * second column once the column above hits max-height; max-width stops a
+ * single long name forcing a horizontal scrollbar at 320px.
  */
 .lang-legend span {
   display: inline-flex;
@@ -1905,13 +2205,13 @@ code {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  margin-left: auto;
+  margin-left: 0;
 }
 
 .guest-btn {
   display: inline-flex;
   align-items: center;
-  min-height: 36px;
+  min-height: var(--tap-comfortable);
   padding: var(--space-1) var(--space-3);
   border: 1px solid var(--border-interactive);
   border-radius: 999px;
@@ -1920,11 +2220,16 @@ code {
   font-family: inherit;
   font-size: 0.82rem;
   cursor: pointer;
+  transition: border-color var(--motion-fast) ease-out, color var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
 }
 
 .guest-btn:hover {
   border-color: var(--action);
   color: var(--action-hover);
+}
+
+.guest-btn:active {
+  transform: scale(0.97);
 }
 
 /* Status is text first. The tone tokens only reinforce what the words say. */
@@ -1964,7 +2269,7 @@ code {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: 36px;
+  min-height: var(--tap-comfortable);
   padding: var(--space-1) var(--space-3);
   border: 1px solid var(--border-interactive);
   border-radius: 999px;
@@ -1973,11 +2278,20 @@ code {
   font-family: inherit;
   font-size: 0.82rem;
   cursor: pointer;
+  transition:
+    border-color var(--motion-fast) ease-out,
+    background-color var(--motion-fast) ease-out,
+    color var(--motion-fast) ease-out,
+    transform var(--motion-fast) ease-out;
 }
 
 .guest-dock-btn:hover {
   border-color: var(--action);
   color: var(--text);
+}
+
+.guest-dock-btn:active {
+  transform: scale(0.97);
 }
 
 .guest-dock-btn[aria-pressed="true"] {
@@ -2001,14 +2315,14 @@ code {
 .guest-stage {
   position: relative;
   display: grid;
-  min-height: 28rem;
+  min-height: 22rem;
   background: var(--surface-page);
 }
 
 .guest-frame,
 .guest-panel {
   grid-area: 1 / 1;
-  min-height: 28rem;
+  min-height: 22rem;
 }
 
 .guest-frame {
@@ -2179,6 +2493,7 @@ body.guest-overlay-open {
   text-decoration: underline;
   text-underline-offset: 0.18em;
   overflow-wrap: anywhere;
+  transition: color var(--motion-fast) ease-out;
 }
 
 .contact-list a:hover .contact-value {
@@ -2206,84 +2521,6 @@ body.guest-overlay-open {
 
 /* -------------------------------------------------------------- narrow ---- */
 
-@media (max-width: 900px) {
-  .hero {
-    grid-template-columns: 1fr;
-    gap: var(--space-5);
-    padding-top: var(--space-6);
-  }
-
-  .hero-portrait {
-    order: -1;
-    max-width: 14rem;
-  }
-
-  .portrait-frame img {
-    aspect-ratio: 1 / 1;
-    object-position: center 10%;
-  }
-
-  .spec-list {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  /* No room to pair anything; the columns become one run. */
-  .about-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-7);
-  }
-
-  .spec-list dt {
-    padding-bottom: 0;
-    border-bottom: 0;
-  }
-
-  .nav-toggle {
-    display: inline-flex;
-  }
-
-  .nav-links {
-    display: none;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 100%;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    padding: var(--space-2) var(--space-5) var(--space-4);
-    background: var(--surface-page);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-links.is-open {
-    display: flex;
-  }
-
-  .nav-links a {
-    padding: 0 var(--space-2);
-  }
-
-  /* No rail on a narrow screen: the timeline goes under the prose, full width,
-     and the entries open by scroll position instead of hover. */
-  .project-layout {
-    grid-template-columns: 1fr;
-    gap: var(--space-7);
-  }
-
-
-  .guest-title-actions {
-    margin-left: 0;
-  }
-
-  .guest-stage,
-  .guest-frame,
-  .guest-panel {
-    min-height: 22rem;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -2305,4 +2542,203 @@ body.guest-overlay-open {
 .contact-form textarea { resize: vertical; min-height: 10rem; }
 .contact-form button { justify-self: start; }
 .contact-form button:disabled { opacity: .6; cursor: not-allowed; }
-.contact-form [role="status"] { min-height: 1.5em; }
+
+/*
+ * Peak-End Rule: this line is the last thing a visitor sees for the one task
+ * the page most wants them to complete, so success and failure need to look
+ * different from "still working" and from each other — not just read
+ * different. Tone is carried by the same icon+colour pattern as
+ * .guest-status, so the site says "done" the same way everywhere. The word
+ * is still what carries the meaning (R25); colour and glyph only reinforce it.
+ */
+.contact-status {
+  display: inline-flex;
+  /* The longest message here wraps to three lines on a narrow phone; aligned
+     to center that reads as pinned to the block's middle rather than the
+     message. flex-start plus a nudge keeps it level with the first line. */
+  align-items: flex-start;
+  gap: var(--space-2);
+  min-height: 1.5em;
+  color: var(--text-subtle);
+}
+
+.contact-status .icon {
+  margin-top: 0.15em;
+}
+
+.contact-status[data-tone="wait"] {
+  color: var(--status-wait);
+}
+
+.contact-status[data-tone="ok"] {
+  color: var(--status-ok);
+  font-weight: 600;
+}
+
+.contact-status[data-tone="error"] {
+  color: var(--status-error);
+}
+
+/*
+ * ================================================================ WIDE LAYER
+ *
+ * Everything above is the compact layer. This block is the whole of the
+ * difference between the two, which is the point: there is one place to read
+ * to know what a desktop visitor gets that a phone visitor does not.
+ *
+ * 56rem, not a device width: it is where this page's own content stops
+ * working in one column, and in rem so it moves with the reader's font size.
+ *
+ * Width is spent on putting more of the page in view at once, not on the same
+ * column made larger — a laptop visitor should scroll less than a phone
+ * visitor, not the same amount at a bigger size.
+ */
+
+@media (min-width: 56rem) {
+
+  :root {
+    --content-padding: var(--space-5);
+    --section-spacing: var(--space-8);
+    --nav-h: 64px;
+  }
+
+  section {
+    padding: var(--space-4) 0 var(--section-spacing);
+  }
+
+  /* --- hero: copy and portrait side by side --------------------------------- */
+
+  .hero {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+    gap: var(--space-7);
+    padding: var(--space-8) 0 var(--space-7);
+  }
+
+  .hero-portrait {
+    order: 0;
+    width: auto;
+  }
+
+  .portrait-frame img {
+    aspect-ratio: 4 / 5;
+    object-position: center 12%;
+  }
+
+  /* --- navigation: the full set, always visible ----------------------------- */
+
+  .nav-toggle {
+    display: none;
+  }
+
+  .nav-links {
+    display: flex;
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 0;
+    background: transparent;
+    border-bottom: 0;
+  }
+
+  .nav-links a {
+    padding: 0 var(--space-3);
+  }
+
+  /* --- records: let the grid find its own column count ---------------------- */
+
+  /*
+   * auto-fit rather than a fixed column count: a 900px window and a 1400px
+   * monitor are both "wide", and this fits two or three cards accordingly
+   * without either one needing a breakpoint of its own.
+   */
+  .card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(19rem, 100%), 1fr));
+    gap: var(--space-4);
+  }
+
+  .card {
+    padding: var(--space-5);
+  }
+
+  .about-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8) var(--space-6);
+    margin-top: var(--space-5);
+  }
+
+  .spec-list {
+    grid-template-columns: minmax(9rem, 14rem) minmax(0, 1fr);
+    gap: 0 var(--space-5);
+  }
+
+  .spec-list dt {
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* The timeline earns a rail of its own once the prose no longer needs the
+     full measure. */
+  .project-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 23rem);
+    gap: var(--space-8) var(--space-7);
+  }
+
+  /*
+   * Pinned once the page scrolls past it, rather than left in normal flow.
+   * The rail's own content (a five-entry timeline window) is much shorter
+   * than the prose beside it, so unpinned it simply ends partway down the
+   * page and leaves the rest of that column empty for however much prose
+   * remains — sticky uses that space instead of wasting it.
+   *
+   * This used to be deliberately not sticky, back when scrolling the page
+   * changed which timeline entry was open (an entry had to visually travel
+   * past a fixed focus line). That coupling is gone — selection is now
+   * explicit, by click, arrow keys or the pager (DESIGN.md B4) — so nothing
+   * about the timeline's behaviour depends on the rail's screen position
+   * any more, and pinning it no longer risks reintroducing that bug.
+   */
+  .project-rail {
+    position: sticky;
+    top: calc(var(--nav-h) + var(--space-5));
+    align-self: start;
+  }
+
+  /*
+   * Résumé entries two at a time. Paired whole SECTIONS were tried first and
+   * lost: halving a column's width more than doubles the height of the prose in
+   * it, so Experience beside Education was taller than the two stacked. Entries
+   * are short enough to survive the narrower measure, and four of them in two
+   * rows is most of a screen back.
+   */
+  .experience {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+    align-items: start;
+  }
+
+  .contact-pair {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-7);
+  }
+
+  /* The form sets its own measure for compact; in the pair the column is it. */
+  .contact-form {
+    max-width: none;
+    margin-block: 0;
+  }
+
+  .contact-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .guest-title-actions {
+    margin-left: auto;
+  }
+
+  .guest-stage,
+  .guest-frame,
+  .guest-panel {
+    min-height: 28rem;
+  }
+}

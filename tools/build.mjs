@@ -23,6 +23,7 @@
  * Both outputs are gitignored and rebuilt by CI before the Pages artifact is
  * uploaded, exactly as js/ already was.
  */
+import { execFileSync } from "node:child_process";
 import { cpSync, mkdirSync, rmSync } from "node:fs";
 import { glob } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
@@ -38,6 +39,30 @@ const katexOut = resolve(root, "css", "vendor", "katex");
 const modulesOut = resolve(root, "modules");
 
 const watch = process.argv.includes("--watch");
+
+/**
+ * When the site this build produces went live, for the footer to print.
+ *
+ * Deploys are pushes to `main` (.github/workflows/static.yml), so the commit
+ * being built is the one being published and its commit date is the publish
+ * date. That is preferred over the clock because it is a fact about the
+ * content: a re-run of the workflow republishes the same tree and should keep
+ * saying so rather than advancing to today.
+ *
+ * Falls back to now when there is no git to ask — a tarball, or a sandbox
+ * without the history. Only the bundle is stamped; see src/buildInfo.ts.
+ */
+function publishedAt() {
+  try {
+    return execFileSync("git", ["log", "-1", "--format=%cI"], {
+      cwd: root,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+  } catch {
+    return new Date().toISOString();
+  }
+}
 
 /** KaTeX's CSS resolves its faces at `fonts/` next to itself, so keep that shape. */
 function vendorKatex() {
@@ -66,7 +91,10 @@ const options = {
   sourcemap: true,
   // react-markdown and its unified/remark dependencies branch on this; without
   // it the bundle keeps the development warnings and their cost.
-  define: { "process.env.NODE_ENV": '"production"' },
+  define: {
+    "process.env.NODE_ENV": '"production"',
+    __SITE_PUBLISHED_AT__: JSON.stringify(publishedAt()),
+  },
   legalComments: "none",
   logLevel: "info",
   metafile: true,

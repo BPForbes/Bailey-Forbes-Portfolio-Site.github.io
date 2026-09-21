@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-18T15:56:37.524Z",
+  "generatedAt": "2026-09-21T21:34:57.969Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -19,32 +19,32 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "name": "Bailey-Forbes-Flinstone",
       "defaultBranch": "main",
       "createdAt": "2025-05-28T17:51:02Z",
-      "pushedAt": "2026-09-18T14:59:12Z",
-      "commitCount": 398,
-      "mergedPullRequestCount": 157,
-      "pullRequestCount": 215,
-      "latestVersion": "5.0.0",
+      "pushedAt": "2026-09-20T03:46:42Z",
+      "commitCount": 400,
+      "mergedPullRequestCount": 164,
+      "pullRequestCount": 222,
+      "latestVersion": "5.1.0",
       "latestVersionSource": "version-manifest:version/locked",
       "languages": [
         {
           "name": "C",
           "bytes": 2792382,
-          "pct": 77.4
+          "pct": 76.8
         },
         {
           "name": "Shell",
-          "bytes": 187879,
-          "pct": 5.2
+          "bytes": 207796,
+          "pct": 5.7
         },
         {
           "name": "Python",
-          "bytes": 160312,
-          "pct": 4.5
+          "bytes": 172320,
+          "pct": 4.7
         },
         {
           "name": "Assembly",
           "bytes": 142369,
-          "pct": 4
+          "pct": 3.9
         },
         {
           "name": "JavaScript",
@@ -93,7 +93,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "kind": "feature",
           "project": "flinstone",
           "title": "Publish project-metadata.json with the validated browser lab (v5.0.0)",
-          "detail": "Flintstone becomes the machine-readable source of truth for its own public project metadata. Every validated push to `main` now publishes **`dist/browser-lab/project-metadata.json`** as part of the *same atomic GitHub Pages deployment* the browser lab already uses, so **bailey-forbes.com** can consume it instead of mai…",
+          "detail": "Merged pull request #360: feat(metadata): publish project-metadata.json with the validated browser lab (v5.0.0).",
           "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/360",
           "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#360"
         },
@@ -102,7 +102,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "kind": "feature",
           "project": "flinstone",
           "title": "Emscripten Flinstone Shell sandbox and relay identity fixes",
-          "detail": "The default browser lab now runs the freestanding identity shell as a sandboxed Emscripten **Flinstone Shell**. Operators type at `shell>` in that terminal. Switch user, register, sessions, and `server` chat use the same serial protocol and JS relay as before.",
+          "detail": "Merged pull request #359: feat(lab): Emscripten Flinstone Shell sandbox and relay identity fixes.",
           "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/359",
           "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#359"
         },
@@ -111,7 +111,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "kind": "feature",
           "project": "flinstone",
           "title": "Add x86_64 freestanding BIOS boot candidate, schema-v2 metadata, browser-lab harness, and promotion gate updates",
-          "detail": "- Introduce a true freestanding x86_64 BIOS boot boundary and a schema-v2 artifact manifest so CI, a QEMU probe, and a browser emulator can independently validate promotion while keeping a fail-closed contract.",
+          "detail": "Merged pull request #355: Add x86_64 freestanding BIOS boot candidate, schema-v2 metadata, browser-lab harness, and promotion gate updates.",
           "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/355",
           "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#355"
         },
@@ -120,7 +120,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "kind": "feature",
           "project": "flinstone",
           "title": "Add kernel artifact contract and fix network defects",
-          "detail": "- audit the real Flintstone boot/build path and document the x86-64/v86 blockers - add `make browser-kernel`, schema-versioned build metadata, a bounded QEMU probe, and a minimal static metadata-consumption harness - define the browser artifact boundary in the P8 C contract bundle and expose its revision/schema through…",
+          "detail": "Merged pull request #354: feat(browser): add kernel artifact contract and fix network defects.",
           "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/354",
           "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#354"
         },
@@ -134,71 +134,127 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#339"
         },
         {
-          "date": "2026-09-13",
+          "date": "2026-05-24",
           "kind": "feature",
           "project": "flinstone",
-          "title": "Close #328 — P3-10 / P4-01 production Wi-Fi ✅",
-          "detail": "Maintainer-confirmed physical evidence closes GitHub issue **#328**. This update flips **P3-10** and **P4-01 / #328** from **~✅** to **✅**, records the closure, and sunsets the issue-specific GitHub Actions job and validator.",
-          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/338",
-          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#338"
+          "title": "Merge(develop→main): promote develop to main — 4.1.1 GM=1 BUILD 3",
+          "detail": "Merged pull request #229: merge(develop→main): promote develop to main — 4.1.1 GM=1 BUILD 3.",
+          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/229",
+          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#229"
         },
         {
-          "date": "2026-09-11",
+          "date": "2026-05-01",
           "kind": "feature",
           "project": "flinstone",
-          "title": "Management-frame OTA Phase 2 (#328 Tasks 2.1–2.5)",
-          "detail": "Completes **#328 deferred production-tail items** on top of Phase 2 mgmt OTA (Tasks 2.1–2.5) and physical-vs-lab separation.",
-          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/334",
-          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#334"
-        },
-        {
-          "date": "2026-08-23",
-          "kind": "feature",
-          "project": "flinstone",
-          "title": "RFC 7664 Dragonfly SAE standard for WPA3 OTA connect",
-          "detail": "> [!TIP] > **🎬 Watch the walkthrough: [Implement RFC 7664 Dragonfly SAE for WPA3 OTA connect](https://mainframe.app/v/bb2dade00dbff2c424710e7d81de20b7)** > > <sup>Generated by [Mainframe](https://mainframe.app). Mainframe automatically generates videos when new pull requests are opened.",
-          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/335",
-          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#335"
-        },
-        {
-          "date": "2026-06-22",
-          "kind": "feature",
-          "project": "flinstone",
-          "title": "Fl0 macvlan LAN identity, remove portproxy, fix exit blocking",
-          "detail": "- Add kernel/core/net/net_macvlan.c + net_macvlan.h: creates fl0 macvlan child interface with its own unique MAC, obtains a real DHCP lease from the router via a standalone AF_PACKET/SOCK_DGRAM raw-socket DHCP client (DISCOVER → OFFER → REQUEST → ACK), and assigns the IP with `ip addr add`.",
-          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/322",
-          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#322"
-        },
-        {
-          "date": "2026-06-19",
-          "kind": "feature",
-          "project": "flinstone",
-          "title": "UAC press-any-key gate and deferred hosting line",
-          "detail": "Improves the WSL `server host` / teardown UX around Windows UAC elevation for portproxy and firewall rules, and keeps interactive Ctrl+C behavior on a fresh prompt line.",
-          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/315",
-          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#315"
-        },
-        {
-          "date": "2026-06-17",
-          "kind": "feature",
-          "project": "flinstone",
-          "title": "Home Wi-Fi in lab scan + join by SSID without prior scan match",
-          "detail": "- **Wi-Fi scan (lab backend):** reads `FL_NET_WIFI_HOME_SSID` env var and includes the user's home network in scan results. Optional `FL_NET_WIFI_HOME_AUTH` (`open`/`wpa2`/`wpa3`, default `wpa2`) and `FL_NET_WIFI_HOME_BAND` (`2`/`5`/`6`, default `2`) configure auth mode and band.",
-          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/313",
-          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#313"
-        },
-        {
-          "date": "2026-06-13",
-          "kind": "feature",
-          "project": "flinstone",
-          "title": "First-principles multi-device server and real Wi-Fi scan",
-          "detail": "- Adds Linux host Wi-Fi backends: **wpa_cli** (with auto socket-path probing) and **NetworkManager nmcli** fallback when wpa_supplicant control is unavailable. - Auto-detects the wireless interface (`nmcli`, `/proc/net/wireless`, or `wlan0`) instead of assuming `wlan0`.",
-          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/311",
-          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#311"
+          "title": "Add CI workflow for C/C++ projects",
+          "detail": "Merged pull request #33: Add CI workflow for C/C++ projects.",
+          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/33",
+          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#33"
         }
       ],
-      "source": "github",
-      "fetchedAt": "2026-09-18T15:56:34.774Z"
+      "namedReleases": [
+        {
+          "id": "5-0-0",
+          "version": "5.0.0",
+          "startDate": "2026-09-17",
+          "endDate": null,
+          "summary": "Project-metadata contract · Pages",
+          "description": "Flintstone publishes project-metadata.json alongside its validated browser lab on every promoted deploy: GitHub-derived languages, a merged-pull-request timeline, and release milestones, gated by the same fail-closed promotion checks as the lab itself. Latest GA on main.",
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+        },
+        {
+          "id": "4-5-4",
+          "version": "4.5.4",
+          "startDate": "2026-09-15",
+          "endDate": null,
+          "summary": "Emscripten shell · shared relay",
+          "description": "Sandboxed Emscripten Flinstone Shell as the default lab, and a shared relay room on a Cloudflare Durable Object with BroadcastChannel fallback. Latest GM promote on main.",
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+        },
+        {
+          "id": "4-5-1-4-5-3",
+          "version": "4.5.1 – 4.5.3",
+          "startDate": "2026-09-15",
+          "endDate": null,
+          "summary": "Relay CI · Cloudflare lab · guest DNS",
+          "description": "Relay CI stabilised and Cloudflare Worker artifacts for first-visit lab boot; the QMP cont timeout fixed; guest DNS moved to same-origin /lab-dns with a Cloudflare DoH fallback.",
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+        },
+        {
+          "id": "4-5-0",
+          "version": "4.5.0",
+          "startDate": "2026-09-14",
+          "endDate": null,
+          "summary": "Freestanding boot · lab identity",
+          "description": "Freestanding x86-64 BIOS boot candidate with long-mode entry, lab identity, and concurrent sessions. States plainly that the guest is not the hosted ELF.",
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+        },
+        {
+          "id": "4-4-0",
+          "version": "4.4.0",
+          "startDate": "2026-09-14",
+          "endDate": null,
+          "summary": "Browser-kernel contract · CI gate",
+          "description": "Schema-versioned P8 browser-kernel artifact contract, a static lab harness, and a fail-closed CI promotion gate.",
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+        },
+        {
+          "id": "4-3-0",
+          "version": "4.3.0",
+          "startDate": "2026-09-13",
+          "endDate": null,
+          "summary": "Wi-Fi · WPA2/WPA3-SAE · nl80211",
+          "description": "Production Wi-Fi: 802.11ax drivers, WPA2 and WPA3-SAE supplication, FullMAC and nl80211 backends, TWT, and post-association DHCP.",
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+        },
+        {
+          "id": "4-2-0",
+          "version": "4.2.0",
+          "startDate": "2026-06-19",
+          "endDate": null,
+          "summary": "P3 networking · WSL · Linux hosting",
+          "description": "P3 networking, server foundations, WSL and native Linux integration.",
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+        },
+        {
+          "id": "4-1-0-4-1-1",
+          "version": "4.1.0 / 4.1.1",
+          "startDate": "2026-05-23",
+          "endDate": "2026-05-24",
+          "summary": "Identity · su/sudo · issue sweep",
+          "description": "Identity stack; then issues #169-#222 (ARM ABI, sessions, batch argv, SHA-256 fetches, threadpool).",
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+        },
+        {
+          "id": "4-0-0-4-0-1",
+          "version": "4.0.0 / 4.0.1",
+          "startDate": "2026-05-18",
+          "endDate": "2026-05-19",
+          "summary": "Contracts · IPC/VFS · serial-j1",
+          "description": "Inheritable system contracts; then IPC/VFS/shell hardening and serial -j1 default builds.",
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+        },
+        {
+          "id": "3-3-0",
+          "version": "3.3.0",
+          "startDate": "2026-05-12",
+          "endDate": null,
+          "summary": "fs_jail · audit · FL1 history",
+          "description": "Contract surfaces for fs_jail and audit; FL1 history vs post-exec audit log.",
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+        },
+        {
+          "id": "2-2-4-3-2-3",
+          "version": "2.2.4 – 3.2.3",
+          "startDate": "2026-05-11",
+          "endDate": "2026-05-12",
+          "summary": "Shell · FAT32 · AArch64 · disk history",
+          "description": "Syscall-style shell dispatch, FAT32 host volumes, AArch64/Pi defaults, disk-backed history, OS roadmap.",
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+        }
+      ],
+      "source": "contract",
+      "fetchedAt": "2026-09-21T21:34:55.678Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -208,49 +264,54 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "defaultBranch": "main",
       "description": "A community platform for people to collaborate when it comes to each other’s education.",
       "createdAt": "2026-06-07T21:07:48Z",
-      "pushedAt": "2026-09-18T14:43:25Z",
-      "commitCount": 15,
-      "mergedPullRequestCount": 51,
-      "pullRequestCount": 68,
+      "pushedAt": "2026-09-19T20:56:22Z",
+      "commitCount": 18,
+      "mergedPullRequestCount": 56,
+      "pullRequestCount": 71,
       "languages": [
         {
           "name": "C#",
-          "bytes": 784998,
-          "pct": 58.8
+          "bytes": 1998210,
+          "pct": 67.3
         },
         {
           "name": "TypeScript",
-          "bytes": 346044,
-          "pct": 26
+          "bytes": 602509,
+          "pct": 20.3
         },
         {
           "name": "CSS",
-          "bytes": 101342,
-          "pct": 7.6
-        },
-        {
-          "name": "PowerShell",
-          "bytes": 50822,
-          "pct": 3.8
+          "bytes": 123961,
+          "pct": 4.2
         },
         {
           "name": "Shell",
-          "bytes": 46221,
-          "pct": 3.5
+          "bytes": 92015,
+          "pct": 3.1
+        },
+        {
+          "name": "PowerShell",
+          "bytes": 84717,
+          "pct": 2.9
+        },
+        {
+          "name": "Rust",
+          "bytes": 53821,
+          "pct": 1.8
         },
         {
           "name": "Dockerfile",
-          "bytes": 1755,
+          "bytes": 6058,
+          "pct": 0.2
+        },
+        {
+          "name": "JavaScript",
+          "bytes": 2039,
           "pct": 0.1
         },
         {
           "name": "HTML",
-          "bytes": 841,
-          "pct": 0.1
-        },
-        {
-          "name": "JavaScript",
-          "bytes": 709,
+          "bytes": 845,
           "pct": 0.1
         }
       ],
@@ -365,7 +426,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-09-18T15:56:36.739Z"
+      "fetchedAt": "2026-09-21T21:34:57.252Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -375,14 +436,14 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "defaultBranch": "main",
       "description": "KeyQuorum is a secure file-sharing system centered on hardware key sharing. Files are encrypted and bound to registered physical tokens, such as USB devices. Access requires the necessary hardware keys to be presented before a protected file can be unlocked, providing layered, hardware-backed access control.",
       "createdAt": "2026-08-24T17:17:46Z",
-      "pushedAt": "2026-09-18T14:43:39Z",
-      "commitCount": 24,
-      "mergedPullRequestCount": 14,
-      "pullRequestCount": 22,
+      "pushedAt": "2026-09-19T19:41:20Z",
+      "commitCount": 29,
+      "mergedPullRequestCount": 19,
+      "pullRequestCount": 28,
       "languages": [
         {
           "name": "Rust",
-          "bytes": 569345,
+          "bytes": 827545,
           "pct": 100
         }
       ],
@@ -443,7 +504,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-09-18T15:56:37.524Z"
+      "fetchedAt": "2026-09-21T21:34:57.969Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -452,10 +513,10 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "name": "BPForbes.QPU.github.io",
       "defaultBranch": "main",
       "createdAt": "2026-06-08T12:42:57Z",
-      "pushedAt": "2026-09-18T14:43:18Z",
-      "commitCount": 49,
-      "mergedPullRequestCount": 35,
-      "pullRequestCount": 42,
+      "pushedAt": "2026-09-19T13:28:35Z",
+      "commitCount": 51,
+      "mergedPullRequestCount": 37,
+      "pullRequestCount": 43,
       "languages": [
         {
           "name": "TypeScript",
@@ -478,82 +539,9 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "pct": 0.6
         }
       ],
-      "generatedTimelineEvents": [
-        {
-          "date": "2026-09-12",
-          "kind": "feature",
-          "project": "qpu",
-          "title": "Add compact embed mode for portfolio guest windows",
-          "detail": "This is the **guest** side of the bailey-forbes.com lab window.",
-          "href": "https://github.com/BPForbes/BPForbes.QPU.github.io/pull/33",
-          "identity": "pr:BPForbes/BPForbes.QPU.github.io#33"
-        },
-        {
-          "date": "2026-06-12",
-          "kind": "feature",
-          "project": "qpu",
-          "title": "Colocate module tests and add barrel index files",
-          "detail": "Follow-up to [PR #28](https://github.com/BPForbes/BPForbes.github.io/pull/28), which merged the directory reorganization before this commit was pushed.",
-          "href": "https://github.com/BPForbes/BPForbes.QPU.github.io/pull/29",
-          "identity": "pr:BPForbes/BPForbes.QPU.github.io#29"
-        },
-        {
-          "date": "2026-06-11",
-          "kind": "feature",
-          "project": "qpu",
-          "title": "Add .qpuio truth table metadata and child process correction propagation",
-          "detail": "Adds `.qpuio` truth-table metadata sidecars, child-process correction propagation, protected bundled metadata, agent governance, and catalog persistence on test/correct workflows.",
-          "href": "https://github.com/BPForbes/BPForbes.QPU.github.io/pull/16",
-          "identity": "pr:BPForbes/BPForbes.QPU.github.io#16"
-        },
-        {
-          "date": "2026-06-09",
-          "kind": "feature",
-          "project": "qpu",
-          "title": "Add address clarification for wire bindings (1:0, $A0:1)",
-          "detail": "Extends the chat clarification flow to **wire addresses** used in gate bindings.",
-          "href": "https://github.com/BPForbes/BPForbes.QPU.github.io/pull/15",
-          "identity": "pr:BPForbes/BPForbes.QPU.github.io#15"
-        },
-        {
-          "date": "2026-06-08",
-          "kind": "feature",
-          "project": "qpu",
-          "title": "Add QPU progress visualization, start-state controls, and plain .qpucir export",
-          "detail": "- Replace the embedded PDF that sometimes fails to render with a dedicated HTML iframe wrapper so the docs reliably display in-browser. - Provide an interactive particle visualization and execution timeline so users can watch per-qubit progress and gate interactions during simulation.",
-          "href": "https://github.com/BPForbes/BPForbes.QPU.github.io/pull/4",
-          "identity": "pr:BPForbes/BPForbes.QPU.github.io#4"
-        },
-        {
-          "date": "2026-06-08",
-          "kind": "feature",
-          "project": "qpu",
-          "title": "Add hamburger navigation, docs, PDF embed, .qpucir file tools, and site reset",
-          "detail": "- Reduce visual clutter and provide quick access to the builder, docs, PDF QPU documentation, particle view, and file tools via a compact hamburger menu. - Provide a simple doc/wiki inside the app explaining circuit construction, QPU AST compile semantics, and links to quantum-theory references for users.",
-          "href": "https://github.com/BPForbes/BPForbes.QPU.github.io/pull/3",
-          "identity": "pr:BPForbes/BPForbes.QPU.github.io#3"
-        },
-        {
-          "date": "2026-06-08",
-          "kind": "feature",
-          "project": "qpu",
-          "title": "Add interactive circuit workbench",
-          "detail": "- Provide explicit front-end controls so users can add/measure qubits and gates without relying solely on drag/drop or compiled protocols. - Expose a simple workbench for targeting, selecting controls, and tuning PHASE angle for faster interactive exploration of circuits.",
-          "href": "https://github.com/BPForbes/BPForbes.QPU.github.io/pull/2",
-          "identity": "pr:BPForbes/BPForbes.QPU.github.io#2"
-        },
-        {
-          "date": "2026-06-08",
-          "kind": "feature",
-          "project": "qpu",
-          "title": "Add React QPU Circuit Simulator MVP, QPU AST compiler, and GitHub Pages deployment",
-          "detail": "- Provide a mobile-first, static React/TypeScript MVP for a browser-based quantum circuit playground with an in-browser state-vector simulator and a QPU AST compiler. - Offer starter examples and a simple UI to compose, run, step, reset, and measure circuits in the browser.",
-          "href": "https://github.com/BPForbes/BPForbes.QPU.github.io/pull/1",
-          "identity": "pr:BPForbes/BPForbes.QPU.github.io#1"
-        }
-      ],
-      "source": "github",
-      "fetchedAt": "2026-09-18T15:56:35.771Z"
+      "generatedTimelineEvents": [],
+      "source": "contract",
+      "fetchedAt": "2026-09-21T21:34:56.423Z"
     }
   }
 };

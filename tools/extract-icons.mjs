@@ -13,6 +13,7 @@ const WANTED = {
   expand: 'solid', 'compress': 'solid', 'rotate-right': 'solid', house: 'solid',
   'microchip': 'solid', 'atom': 'solid', 'hospital': 'solid',
   'people-group': 'solid', 'triangle-exclamation': 'solid',
+  bars: 'solid', xmark: 'solid',
   'linkedin-in': 'brands', github: 'brands', tiktok: 'brands', 'reddit-alien': 'brands',
 };
 

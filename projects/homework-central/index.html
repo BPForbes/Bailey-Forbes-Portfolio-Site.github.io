@@ -16,6 +16,7 @@
   <main id="main">
     <div class="wrap">
       <header class="page-hero">
+        <div data-project-motif="network"></div>
         <p class="kicker">Lead · Jun 2026 – present</p>
         <h1>Homework Central</h1>
         <p class="lede">
@@ -29,10 +30,48 @@
         </div>
       </header>
 
-      <div data-lang-bar="homework-central"></div>
+      <dl class="stat-list">
+        <div>
+          <dt>16,000</dt>
+          <dd>Discord members the platform replaces</dd>
+        </div>
+        <div>
+          <dt data-project-prs="homework-central" data-project-label="false">56</dt>
+          <dd>Merged pull requests</dd>
+        </div>
+        <div>
+          <dt>35,600+</dt>
+          <dd>Trainable weights in the moderation network</dd>
+        </div>
+        <div>
+          <dt data-project-commits="homework-central" data-project-label="false">18</dt>
+          <dd>Commits on main since the July rebase</dd>
+        </div>
+      </dl>
+
+      <div class="strength">
+        <p class="strength-label">Production application architecture</p>
+        <p class="strength-evidence">
+          A C#/.NET, React, and PostgreSQL platform replacing a 16,000-member Discord —
+          bitmask authorization, an ML-assisted moderation pipeline, and dozens of merged
+          pull requests since June 2026.
+        </p>
+      </div>
 
       <div class="project-layout">
         <div class="project-main">
+      <section class="prose" aria-labelledby="hc-why-title">
+        <h2 id="hc-why-title">Why it exists</h2>
+        <p>
+          Homework Central grew out of a 16,000-member study community that had outgrown manual
+          moderation. With no staff reliably online, rule violations went untracked, tutoring
+          requests and staff applications sat unresolved, and students often couldn't get the
+          academic help they needed. The platform exists to automate what manual moderation
+          couldn't keep up with — moderation queues, tutoring matches, and staff applications —
+          so the community keeps running between the hours a volunteer staff can cover.
+        </p>
+      </section>
+
       <section class="prose" aria-labelledby="hc-run-title">
         <h2 id="hc-run-title"><svg class="icon icon-head" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80L0 432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg>Running it</h2>
         <p>
@@ -81,6 +120,13 @@
           </figcaption>
         </figure>
       </section>
+
+      <div data-lang-bar="homework-central"></div>
+
+      <details class="disclosure">
+        <summary><span class="disclosure-toggle" aria-hidden="true"></span>Read the technical write-up</summary>
+        <div class="disclosure-body">
+          <div class="disclosure-body-inner">
 
       <section class="prose">
         <h2><svg class="icon icon-head" viewBox="0 0 640 512" aria-hidden="true" focusable="false"><path d="M72 88a56 56 0 1 1 112 0A56 56 0 1 1 72 88zM64 245.7C54 256.9 48 271.8 48 288s6 31.1 16 42.3l0-84.7zm144.4-49.3C178.7 222.7 160 261.2 160 304c0 34.3 12 65.8 32 90.5l0 21.5c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-26.8C26.2 371.2 0 332.7 0 288c0-61.9 50.1-112 112-112l32 0c24 0 46.2 7.5 64.4 20.3zM448 416l0-21.5c20-24.7 32-56.2 32-90.5c0-42.8-18.7-81.3-48.4-107.7C449.8 183.5 472 176 496 176l32 0c61.9 0 112 50.1 112 112c0 44.7-26.2 83.2-64 101.2l0 26.8c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32zm8-328a56 56 0 1 1 112 0A56 56 0 1 1 456 88zM576 245.7l0 84.7c10-11.3 16-26.1 16-42.3s-6-31.1-16-42.3zM320 32a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM240 304c0 16.2 6 31 16 42.3l0-84.7c-10 11.3-16 26.1-16 42.3zm144-42.3l0 84.7c10-11.3 16-26.1 16-42.3s-6-31.1-16-42.3zM448 304c0 44.7-26.2 83.2-64 101.2l0 42.8c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-42.8c-37.8-18-64-56.5-64-101.2c0-61.9 50.1-112 112-112l32 0c61.9 0 112 50.1 112 112z"/></svg>What it is</h2>
@@ -157,9 +203,17 @@
           </figcaption>
         </figure>
       </section>
+
+          </div>
+        </div>
+      </details>
+
+      <p class="source-note">
+        <a href="https://github.com/BPForbes/Homework-Central"><svg class="icon" viewBox="0 0 496 512" aria-hidden="true" focusable="false"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>Homework-Central on GitHub</a> — the full commit and pull request history.
+      </p>
         </div>
 
-        <aside class="project-rail" aria-labelledby="tl-homework-central-title">
+        <aside class="project-rail" id="timeline" aria-labelledby="tl-homework-central-title">
           <div class="section-head">
             <h2 id="tl-homework-central-title"><svg class="icon icon-head" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M80 104a24 24 0 1 0 0-48 24 24 0 1 0 0 48zm80-24c0 32.8-19.7 61-48 73.3l0 87.8c18.8-10.9 40.7-17.1 64-17.1l96 0c35.3 0 64-28.7 64-64l0-6.7C307.7 141 288 112.8 288 80c0-44.2 35.8-80 80-80s80 35.8 80 80c0 32.8-19.7 61-48 73.3l0 6.7c0 70.7-57.3 128-128 128l-96 0c-35.3 0-64 28.7-64 64l0 6.7c28.3 12.3 48 40.5 48 73.3c0 44.2-35.8 80-80 80s-80-35.8-80-80c0-32.8 19.7-61 48-73.3l0-6.7 0-198.7C19.7 141 0 112.8 0 80C0 35.8 35.8 0 80 0s80 35.8 80 80zm232 0a24 24 0 1 0 -48 0 24 24 0 1 0 48 0zM80 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/></svg>Release and feature timeline</h2>
             <p>Compiled from public git history. An entry opens as you reach it; follow it to the commit.</p>
