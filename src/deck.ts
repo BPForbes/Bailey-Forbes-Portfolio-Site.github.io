@@ -416,7 +416,11 @@ function attachPointer(stack: HTMLElement, cards: HTMLElement[], hooks: PointerH
     progress = 0;
   }
 
-  /** Progress covered per millisecond since the drag began, in `t` units. */
+  /**
+   * Progress covered per millisecond since pointerdown, in `t` units. The
+   * clock and the distance share that origin: timing only the travel after
+   * the drag threshold would ignore a slow approach and call it a flick.
+   */
   function isFlick(): boolean {
     const elapsed = performance.now() - dragStartTime;
     return elapsed > 0 && progress / elapsed >= FLICK_RATE;
@@ -438,6 +442,7 @@ function attachPointer(stack: HTMLElement, cards: HTMLElement[], hooks: PointerH
     startY = event.clientY;
     dragging = false;
     progress = 0;
+    dragStartTime = performance.now();
   });
 
   stack.addEventListener("pointermove", (event: PointerEvent) => {
@@ -459,7 +464,6 @@ function attachPointer(stack: HTMLElement, cards: HTMLElement[], hooks: PointerH
       }
 
       dragging = true;
-      dragStartTime = performance.now();
       stack.classList.add("is-dragging");
       stack.setPointerCapture(event.pointerId);
     }
