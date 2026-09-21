@@ -276,6 +276,7 @@ function attachPointer(stack, cards, hooks) {
     startY = event.clientY;
     dragging = false;
     progress = 0;
+    dragStartTime = performance.now();
   });
   stack.addEventListener("pointermove", (event) => {
     if (pointerId !== event.pointerId) {
@@ -292,7 +293,6 @@ function attachPointer(stack, cards, hooks) {
         return;
       }
       dragging = true;
-      dragStartTime = performance.now();
       stack.classList.add("is-dragging");
       stack.setPointerCapture(event.pointerId);
     }
