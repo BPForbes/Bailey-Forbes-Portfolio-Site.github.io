@@ -15,6 +15,7 @@ import { mountGuestWindows } from "./guestWindow.js";
 import { renderLanguageChart } from "./languageChart.js";
 import { mountNamedReleases } from "./releases.js";
 import { mountProjectMotifs } from "./projectMotif.js";
+import { mountReleaseExplorers } from "./releaseExplorer.js";
 import { mountTimelineWindow } from "./timeline.js";
 import { ROUTES } from "./routes.js";
 const page = document.body.getAttribute("data-page") ?? "";
@@ -185,6 +186,7 @@ mountNamedReleases((mount) => {
 mountGuestWindows();
 mountDecks();
 mountProjectMotifs();
+mountReleaseExplorers();
 function mountRepositoryFacts() {
   const render = (attribute, value, label) => {
     document.querySelectorAll(`[${attribute}]`).forEach((el) => {

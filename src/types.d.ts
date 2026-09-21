@@ -1,5 +1,22 @@
 export type EventKind = "feature" | "release";
 
+/**
+ * What a timeline event's release explorer scene is themed after — a
+ * categorical judgment about already-published text, not a new claim (see
+ * `src/releaseThemes.ts`). `core` is the fallback for anything unmatched.
+ */
+export type ReleaseTheme =
+  | "networking"
+  | "storage"
+  | "security"
+  | "compute"
+  | "infrastructure"
+  | "community"
+  | "quantum"
+  | "crypto"
+  | "medical"
+  | "core";
+
 export type ProjectId =
   | "emr"
   | "homework-central"
@@ -20,6 +37,12 @@ export interface TimelineEvent {
   title: string;
   detail: string;
   href?: string;
+  /**
+   * Hand-tagged on curated events (`src/data.ts`); absent on generated ones,
+   * which get a best-effort guess from `themeForEvent()` at render time
+   * instead — see `src/releaseThemes.ts` for why those two paths differ.
+   */
+  theme?: ReleaseTheme;
 }
 
 export interface PortfolioData {

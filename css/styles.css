@@ -2423,6 +2423,180 @@ body.guest-overlay-open {
   overflow: hidden;
 }
 
+/*
+ * The release explorer: an optional, opt-in alternate view of a project's
+ * timeline (src/releaseExplorer.ts) — releases on the left, the selected
+ * one's own words below that, and a themed 3D scene on the right. Modelled
+ * on `.guest-window.is-overlay` just above (fixed, inset:0, its own
+ * z-index) rather than the native Fullscreen API: this is simpler, has no
+ * user-gesture/permission quirks across browsers, and the visual result —
+ * a full-viewport view with its own escape hatch — is what was actually
+ * asked for, not the browser's real fullscreen mode specifically.
+ */
+.release-explorer {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-page);
+}
+
+.release-explorer-close {
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-4);
+  z-index: 1;
+  width: var(--tap-comfortable);
+  height: var(--tap-comfortable);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.release-explorer-close:hover {
+  color: var(--action-hover);
+  border-color: var(--action);
+}
+
+.release-explorer-close .icon {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.release-explorer-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: calc(var(--tap-comfortable) + var(--space-5)) var(--content-padding) var(--space-5);
+  overflow: hidden;
+}
+
+.release-explorer-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  gap: var(--space-4);
+}
+
+.release-explorer-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-height: 40vh;
+  overflow-y: auto;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.release-explorer-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-height: var(--tap-min);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-muted);
+  text-align: left;
+  cursor: pointer;
+}
+
+.release-explorer-item:hover {
+  color: var(--text);
+}
+
+.release-explorer-item.is-selected {
+  border-color: var(--border-interactive);
+  background: var(--surface-raised);
+  color: var(--text);
+}
+
+.release-explorer-item-date {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  color: var(--text-subtle);
+}
+
+.release-explorer-item.is-selected .release-explorer-item-date {
+  color: var(--action);
+}
+
+.release-explorer-item-title {
+  font-size: 0.92rem;
+}
+
+.release-explorer-detail {
+  color: var(--text-muted);
+}
+
+.release-explorer-detail .release-explorer-date {
+  margin: 0 0 var(--space-2);
+  color: var(--action);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.release-explorer-detail .release-explorer-title {
+  margin: 0 0 var(--space-2);
+  font-size: 1.2rem;
+}
+
+.release-explorer-detail .release-explorer-text {
+  margin: 0;
+}
+
+/* aria-hidden and purely decorative — see the module header comment in
+   src/releaseExplorer.ts for why the canvas never carries information the
+   list beside it doesn't already state in real text. */
+.release-explorer-stage {
+  flex: 1 1 auto;
+  min-height: 12rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  overflow: hidden;
+}
+
+.release-explorer-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+body.release-explorer-open {
+  overflow: hidden;
+}
+
+@media (min-width: 56rem) {
+  .release-explorer-body {
+    flex-direction: row;
+  }
+
+  .release-explorer-panel {
+    flex: 0 0 22rem;
+  }
+
+  .release-explorer-list {
+    flex: 1 1 auto;
+    max-height: none;
+  }
+
+  .release-explorer-stage {
+    flex: 1 1 auto;
+  }
+}
+
 /* ---------------------------------------------------------------- footer -- */
 
 .site-footer {
