@@ -69,6 +69,17 @@
           kernel: hardware abstraction, a scheduler, and a network stack built from first
           principles, one subsystem at a time.
         </p>
+        <p>
+          A few terms this page uses, for anyone who hasn't worked at this level before: a
+          <strong>kernel</strong> is the core program an operating system is built around — it
+          decides what runs, when, and what each program is allowed to touch. A
+          <strong>driver</strong> is the small piece of software that lets the kernel talk to one
+          specific piece of hardware — a disk, a keyboard, a network card — so the rest of the
+          system never has to know that hardware's specifics. A <strong>scheduler</strong> decides
+          which program gets the processor next. A <strong>contract</strong>, below, just means a
+          written, versioned description of what one piece of the kernel promises to do, so a
+          later version can change what's inside without breaking whatever already depends on it.
+        </p>
       </section>
 
       <section id="live-lab">
@@ -169,8 +180,12 @@ contracts: bundle rev 9, P0 foundations rev 5
         </p>
         <p>
           <strong>Contracts before more surface.</strong> 3.3.0 (12 May) splits audit from
-          command history and documents fs_jail. 4.0.0 (18 May) is the major bump: inheritable
-          P0–P9 bundles (foundations through hardening). 4.1.0 wires identity — SQLite users,
+          command history and documents fs_jail — the boundary that confines a session, like the
+          one running in the browser lab above, to the directory tree it was given, the same way
+          a shipping container keeps its contents from reaching anything outside the box. 4.0.0
+          (18 May) is the major bump: inheritable P0–P9 bundles (foundations through hardening) —
+          the versioned contracts described above, one per subsystem, numbered so a later one can
+          build on an earlier one without redefining it. 4.1.0 wires identity — SQLite users,
           PBKDF2, login/su/sudo, elevation. 4.1.1 is a 50-issue hardening sweep. 4.2.0 (19 Jun) is the networking
           milestone, and the September 4.3–4.5 train takes it to production Wi-Fi, a
           browser-kernel contract, and a freestanding boot path.
