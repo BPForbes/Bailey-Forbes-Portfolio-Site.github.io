@@ -12,7 +12,9 @@ import { publishedAt } from "./buildInfo.js";
 import { icon } from "./icons.js";
 import { mountDecks } from "./deck.js";
 import { mountGuestWindows } from "./guestWindow.js";
+import { renderLanguageChart } from "./languageChart.js";
 import { mountNamedReleases } from "./releases.js";
+import { mountProjectMotifs } from "./projectMotif.js";
 import { mountTimelineWindow } from "./timeline.js";
 import { ROUTES } from "./routes.js";
 const page = document.body.getAttribute("data-page") ?? "";
@@ -107,6 +109,8 @@ document.querySelectorAll("[data-lang-bar]").forEach((el) => {
   if (!langs || langs.length === 0) {
     return;
   }
+  const row = document.createElement("div");
+  row.className = "lang-split";
   const bar = document.createElement("div");
   bar.className = "lang-bar";
   bar.setAttribute("role", "img");
@@ -114,6 +118,8 @@ document.querySelectorAll("[data-lang-bar]").forEach((el) => {
     "aria-label",
     `Language split: ${langs.map((lang) => `${lang.name} ${formatPct(lang.pct)} percent`).join(", ")}`
   );
+  renderLanguageChart(row, langs);
+  row.appendChild(bar);
   const legend = document.createElement("div");
   legend.className = "lang-legend";
   for (const lang of langs) {
@@ -130,7 +136,7 @@ document.querySelectorAll("[data-lang-bar]").forEach((el) => {
     item.append(swatch, document.createTextNode(`${lang.name} ${formatPct(lang.pct)}%`));
     legend.appendChild(item);
   }
-  el.append(bar, legend);
+  el.append(row, legend);
 });
 function formatEventDate(iso) {
   const months = [
@@ -208,6 +214,7 @@ mountNamedReleases((mount) => {
 });
 mountGuestWindows();
 mountDecks();
+mountProjectMotifs();
 function mountRepositoryFacts() {
   const render = (attribute, value, label) => {
     document.querySelectorAll(`[${attribute}]`).forEach((el) => {

@@ -12,7 +12,9 @@ import { publishedAt } from "./buildInfo.js";
 import { icon } from "./icons.js";
 import { mountDecks } from "./deck.js";
 import { mountGuestWindows } from "./guestWindow.js";
+import { renderLanguageChart } from "./languageChart.js";
 import { mountNamedReleases } from "./releases.js";
+import { mountProjectMotifs } from "./projectMotif.js";
 import { mountTimelineWindow, type TimelineCard } from "./timeline.js";
 import { ROUTES } from "./routes.js";
 import type { NamedRelease, ProjectId } from "./types.js";
@@ -143,6 +145,9 @@ document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
     return;
   }
 
+  const row = document.createElement("div");
+  row.className = "lang-split";
+
   const bar = document.createElement("div");
   bar.className = "lang-bar";
   bar.setAttribute("role", "img");
@@ -150,6 +155,12 @@ document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
     "aria-label",
     `Language split: ${langs.map((lang) => `${lang.name} ${formatPct(lang.pct)} percent`).join(", ")}`,
   );
+
+  // A second, more glanceable read of the same figures the bar's aria-label
+  // already announces — see languageChart.ts for why it stays aria-hidden
+  // and why a donut is the companion here, not the replacement.
+  renderLanguageChart(row, langs);
+  row.appendChild(bar);
 
   const legend = document.createElement("div");
   legend.className = "lang-legend";
@@ -170,7 +181,7 @@ document.querySelectorAll<HTMLElement>("[data-lang-bar]").forEach((el) => {
     legend.appendChild(item);
   }
 
-  el.append(bar, legend);
+  el.append(row, legend);
 });
 
 /**
@@ -285,6 +296,7 @@ mountNamedReleases((mount): readonly NamedRelease[] => {
 
 mountGuestWindows();
 mountDecks();
+mountProjectMotifs();
 
 /**
  * Repository-derived figures on otherwise static pages.

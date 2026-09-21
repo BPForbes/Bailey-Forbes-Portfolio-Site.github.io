@@ -607,11 +607,61 @@ code {
 }
 
 .page-hero {
+  position: relative;
+  overflow: hidden;
   padding: var(--space-8) 0 var(--space-5);
+}
+
+/* Everything but the motif sits above it; the motif itself is z-index: 0. */
+.page-hero > :not([data-project-motif]) {
+  position: relative;
+  z-index: 1;
 }
 
 .page-hero h1 {
   font-size: clamp(2rem, 5vw, 3.4rem);
+}
+
+/*
+ * The per-project hero background. One shared mechanism (a repeating SVG
+ * tile with a single animated line) across every project — see
+ * src/projectMotif.ts for why, and for what each project's tile draws.
+ * Never louder than 12% so it stays a texture, not an illustration
+ * competing with the hero's own text.
+ */
+[data-project-motif] {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.project-motif {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: var(--accent);
+  opacity: 0.12;
+}
+
+.project-motif-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.project-motif-flow {
+  stroke-width: 1.5;
+  stroke-dasharray: var(--motif-flow-length) var(--motif-flow-length);
+  animation: project-motif-flow 7s linear infinite;
+}
+
+@keyframes project-motif-flow {
+  to {
+    stroke-dashoffset: calc(var(--motif-flow-length) * -2);
+  }
 }
 
 /* --------------------------------------------------------------- buttons -- */
@@ -1082,6 +1132,32 @@ code {
   margin: 0;
   color: var(--text-muted);
   font-size: 0.9rem;
+}
+
+/*
+ * The project-page "strength" statement: one label plus one evidence
+ * sentence, sitting right after the impact strip. Reuses .note's
+ * accent-rule idiom (an established callout shape on this site) at higher
+ * prominence — this is confidence, not a caveat, so it keeps full-strength
+ * text colour and a display-font label rather than .note's muted small print.
+ */
+.strength {
+  margin: var(--space-5) 0;
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--action);
+}
+
+.strength-label {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--text);
+}
+
+.strength-evidence {
+  margin: 0;
+  max-width: var(--measure-prose);
+  color: var(--text-muted);
 }
 
 .source-note {
@@ -1926,6 +2002,32 @@ code {
 }
 
 /* ------------------------------------------------------------ lang bars --- */
+
+/*
+ * The bar stays the precise read (segment width is the percentage); the
+ * donut beside it is the "at a glance" one — sanctioned for part-to-whole
+ * at a handful of segments, but deprioritized versus a bar for anything
+ * needing close comparison. Both draw the same data, so they share one
+ * legend below rather than each carrying its own.
+ */
+.lang-split {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin: var(--space-4) 0 var(--space-2);
+}
+
+.lang-chart {
+  flex: none;
+  width: 3.25rem;
+  height: 3.25rem;
+}
+
+.lang-split .lang-bar {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+}
 
 .lang-bar {
   display: flex;
