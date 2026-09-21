@@ -939,6 +939,15 @@ code {
   min-height: var(--tap-min);
 }
 
+/* Same shape of problem as .entry .org a above: a paragraph that is only a
+   link (a project page's "read the source paper" line) is a standalone
+   target, not text a link sits inside of — give it a real target box too. */
+.standalone-link a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+}
+
 .entry .when {
   margin: 0;
   color: var(--text-subtle);
