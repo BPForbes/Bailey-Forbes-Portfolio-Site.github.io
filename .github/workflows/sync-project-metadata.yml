@@ -30,9 +30,7 @@ on:
     types: [portfolio-project-updated]
 
 permissions:
-  contents: write
-  # Needed only to hand the Pages deployment off explicitly — see the final step.
-  actions: write
+  contents: read
 
 # One sync at a time. A scheduled run and a dispatch landing together would
 # otherwise race to commit the same file.
@@ -46,6 +44,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          # main requires changes through a pull request. The ruleset's bypass
+          # list allows deploy keys, so the metadata commit is pushed with this
+          # write deploy key instead of GITHUB_TOKEN (which the rule refuses).
+          # Setup: docs/project-metadata.md, "Pushing past the pull-request rule".
+          ssh-key: ${{ secrets.SYNC_DEPLOY_KEY }}
 
       - name: Setup Node
         uses: actions/setup-node@v7
@@ -114,17 +118,8 @@ jobs:
           git commit -m "chore(portfolio): sync project metadata"
           # Someone may have pushed while this ran; rebase rather than fail.
           git pull --rebase origin "${GITHUB_REF_NAME}"
+          # Pushed with the deploy key from Checkout. Unlike a GITHUB_TOKEN
+          # push, this one raises a push event, so static.yml deploys the site
+          # and typecheck.yml runs on its own. This workflow has no push
+          # trigger, so it cannot re-trigger itself.
           git push origin "HEAD:${GITHUB_REF_NAME}"
-
-      # A push made with GITHUB_TOKEN deliberately does not trigger other
-      # workflows — that is GitHub's loop protection, and it is why this job can
-      # commit to main without re-triggering itself. The side effect is that the
-      # Pages deployment in static.yml would never see the metadata commit, so
-      # it is started explicitly here. workflow_dispatch is one of the two events
-      # GITHUB_TOKEN is still allowed to raise, so this needs no PAT, and
-      # static.yml has no metadata trigger of its own, so the chain ends here.
-      - name: Deploy the refreshed site
-        if: steps.diff.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh workflow run static.yml --ref "${GITHUB_REF_NAME}"

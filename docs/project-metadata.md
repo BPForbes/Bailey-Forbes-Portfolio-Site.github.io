@@ -204,11 +204,31 @@ mailto; and images are not requested, their alt text shown instead.
 ## Loops
 
 A notification cannot cause another notification. The dispatch starts
-`sync-project-metadata.yml` in this repository; that job commits with
-`GITHUB_TOKEN`, and a `GITHUB_TOKEN` push deliberately raises no workflow events
-— GitHub's own loop protection — which is why it has to start `static.yml`
-explicitly. Nothing in that chain reaches back into a project repository, so
-there is no path from a sync to another notification.
+`sync-project-metadata.yml` in this repository; that job pushes its commit with
+the `SYNC_DEPLOY_KEY` deploy key, and that push starts `static.yml` and
+`typecheck.yml`. `sync-project-metadata.yml` has no push trigger, and nothing in
+that chain reaches back into a project repository, so there is no path from a
+sync to another sync or another notification.
+
+## Pushing past the pull-request rule
+
+The ruleset on `main` requires every change to arrive through a pull request,
+and it refuses a direct push from `GITHUB_TOKEN`. The sync job pushes with a
+deploy key instead, and the ruleset lets deploy keys bypass that rule. One-time
+setup:
+
+1. Generate a key pair locally: `ssh-keygen -t ed25519 -f portfolio-sync -N ""`.
+2. Settings → Deploy keys → Add deploy key: paste `portfolio-sync.pub` and tick
+   **Allow write access**.
+3. Settings → Secrets and variables → Actions: add the private key
+   (`portfolio-sync`) as `SYNC_DEPLOY_KEY`. Delete both local files afterwards.
+4. Settings → Rules → Rulesets → the `main` ruleset → **Bypass list** →
+   **Add bypass** → **Deploy keys**, set to **Always allow**, and save.
+
+Without the secret, checkout falls back to the read-only `GITHUB_TOKEN`, so the
+sync still runs and tests the data but the push is refused and nothing is
+committed. The key can write to this repository only; revoke it by deleting the
+deploy key.
 
 Concurrency does less than it might look like, so it is worth being precise
 about what it does and does not guarantee when several projects ship at once.
