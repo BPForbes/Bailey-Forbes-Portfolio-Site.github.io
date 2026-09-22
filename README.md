@@ -194,14 +194,15 @@ commits `chore(portfolio): sync project metadata` **only if the generated files
 actually changed** — the run-to-run timestamps are ignored when deciding that, so
 a quiet day produces no commit and no deployment.
 
-It authenticates with the workflow's own `GITHUB_TOKEN`; the repositories are
-public, so no PAT is needed. A `PORTFOLIO_GITHUB_TOKEN` secret is honoured if one
-is ever set, for a project repository that turns private.
+It reads with the workflow's own `GITHUB_TOKEN`; the repositories are public, so
+no PAT is needed. A `PORTFOLIO_GITHUB_TOKEN` secret is honoured if one is ever
+set, for a project repository that turns private.
 
-Because a push made with `GITHUB_TOKEN` does not trigger other workflows — which
-is what stops this job re-triggering itself — the final step hands the Pages
-deployment off explicitly with `gh workflow run static.yml`. `static.yml` has no
-metadata trigger of its own, so the chain ends there.
+`main` only accepts changes through a pull request, so the commit is pushed with
+a write deploy key (`SYNC_DEPLOY_KEY`) that the ruleset's bypass list allows.
+That push raises a normal push event, so `static.yml` deploys the site and
+`typecheck.yml` runs; this workflow has no push trigger, so the chain ends there.
+Setup is in [`docs/project-metadata.md`](docs/project-metadata.md#pushing-past-the-pull-request-rule).
 
 ### Notifying the portfolio immediately
 
