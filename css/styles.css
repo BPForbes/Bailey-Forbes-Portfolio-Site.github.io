@@ -1297,21 +1297,6 @@ code {
   margin-top: var(--space-2);
 }
 
-.link-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-5);
-  list-style: none;
-  margin: var(--space-4) 0 0;
-  padding: 0;
-}
-
-.link-row a {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--tap-comfortable);
-}
-
 /* ------------------------------------------------------------------ deck -- */
 
 /*
