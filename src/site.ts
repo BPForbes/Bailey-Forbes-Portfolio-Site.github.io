@@ -73,6 +73,7 @@ if (footer) {
           <li><a href="mailto:baileyforbes@rocketmail.com">${icon("envelope")}Email Bailey</a></li>
           <li><a href="https://www.linkedin.com/in/bailey-preston-forbes">${icon("linkedin-in")}LinkedIn</a></li>
           <li><a href="https://github.com/BPForbes">${icon("github")}GitHub</a></li>
+          <li><a href="/bailey-forbes-resume.pdf" download="Bailey-Forbes-Resume.pdf">${icon("file-lines")}Résumé</a></li>
         </ul>
       </div>
     `;

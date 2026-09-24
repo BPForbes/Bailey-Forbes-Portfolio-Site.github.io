@@ -1265,6 +1265,10 @@ code {
   font-size: 0.85rem;
 }
 
+.about-col .btn {
+  margin-top: var(--space-4);
+}
+
 /* ---------------------------------------------------------------- about --- */
 
 /* Sub-headings inside a section that is already introduced by .section-head.
