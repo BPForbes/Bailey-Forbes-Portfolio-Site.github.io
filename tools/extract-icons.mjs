@@ -14,7 +14,7 @@ const WANTED = {
   'microchip': 'solid', 'atom': 'solid', 'hospital': 'solid',
   'people-group': 'solid', 'triangle-exclamation': 'solid',
   bars: 'solid', xmark: 'solid',
-  'linkedin-in': 'brands', github: 'brands', tiktok: 'brands', 'reddit-alien': 'brands',
+  'linkedin-in': 'brands', github: 'brands',
 };
 
 const out = {};
