@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-24T10:02:54.925Z",
+  "generatedAt": "2026-09-24T19:10:58.178Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -254,7 +254,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-09-24T10:02:53.103Z"
+      "fetchedAt": "2026-09-24T19:10:56.041Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -426,7 +426,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-09-24T10:02:54.405Z"
+      "fetchedAt": "2026-09-24T19:10:57.568Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -504,7 +504,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-09-24T10:02:54.925Z"
+      "fetchedAt": "2026-09-24T19:10:58.178Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -513,35 +513,35 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "name": "BPForbes.QPU.github.io",
       "defaultBranch": "main",
       "createdAt": "2026-06-08T12:42:57Z",
-      "pushedAt": "2026-09-24T03:24:04Z",
-      "commitCount": 53,
-      "mergedPullRequestCount": 39,
-      "pullRequestCount": 45,
+      "pushedAt": "2026-09-24T19:09:30Z",
+      "commitCount": 54,
+      "mergedPullRequestCount": 42,
+      "pullRequestCount": 48,
       "languages": [
         {
           "name": "TypeScript",
-          "bytes": 656176,
-          "pct": 90.6
+          "bytes": 893759,
+          "pct": 92.1
         },
         {
           "name": "CSS",
-          "bytes": 40742,
-          "pct": 5.6
+          "bytes": 49610,
+          "pct": 5.1
         },
         {
           "name": "JavaScript",
           "bytes": 23893,
-          "pct": 3.3
+          "pct": 2.4
         },
         {
           "name": "HTML",
           "bytes": 3562,
-          "pct": 0.5
+          "pct": 0.4
         }
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-09-24T10:02:53.715Z"
+      "fetchedAt": "2026-09-24T19:10:56.826Z"
     }
   }
 };
