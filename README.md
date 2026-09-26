@@ -273,7 +273,7 @@ GitHub Pages serves each folder’s `index.html` without showing the filename. O
 | `/projects/` | Project index |
 | `/projects/qpu/` | QPU (live lab) |
 | `/projects/flinstone/` | Flinstone Kernel (live lab) |
-| `/projects/keyquorum/` | KeyQuorum (command line only — the page says so) |
+| `/projects/keyquorum/` | KeyQuorum (live WebAssembly security lab) |
 | `/projects/homework-central/` | Homework Central |
 | `/projects/emr/` | Electronic medical record |
 | `/timeline/` | Redirects to `/projects/` |
