@@ -6,8 +6,11 @@ export const QPU_GUEST_SRC =
 export const FLINTSTONE_GUEST_SRC =
   "https://bpforbes.github.io/Bailey-Forbes-Flinstone/";
 
+export const KEYQUORUM_GUEST_SRC = "https://bpforbes.github.io/KeyQuorum/";
+
 export const QPU_EMBED_SOURCE = "qpu-guest";
 export const FLINTSTONE_EMBED_SOURCE = "flinstone-guest";
+export const KEYQUORUM_EMBED_SOURCE = "keyquorum-guest";
 
 export type GuestId = "qpu" | "flinstone" | "keyquorum";
 
@@ -33,14 +36,22 @@ export interface FlinstoneGuest extends LiveGuestBase {
   id: "flinstone";
 }
 
-export interface KeyQuorumGuest extends GuestBase {
+export interface KeyQuorumGuest extends LiveGuestBase {
   id: "keyquorum";
+}
+
+/**
+ * A dock entry with no web build: the window shows an honest "not attached"
+ * panel and links the repository. No guest uses it today; it stays so a
+ * future CLI-only project does not need a new window mode.
+ */
+export interface OfflineGuest extends GuestBase {
+  id: GuestId;
   kind: "offline";
   note: string;
 }
 
-export type LiveGuest = QpuGuest | FlinstoneGuest;
-export type OfflineGuest = KeyQuorumGuest;
+export type LiveGuest = QpuGuest | FlinstoneGuest | KeyQuorumGuest;
 export type GuestApp = LiveGuest | OfflineGuest;
 
 export const GUESTS: { readonly [K in GuestId]: Extract<GuestApp, { id: K }> } = {
@@ -68,11 +79,14 @@ export const GUESTS: { readonly [K in GuestId]: Extract<GuestApp, { id: K }> } =
   },
   keyquorum: {
     id: "keyquorum",
-    kind: "offline",
+    kind: "live",
     name: "KeyQuorum",
-    subtitle: "Hardware-key CLI",
+    subtitle: "Hardware-key security lab",
     repo: "https://github.com/BPForbes/KeyQuorum",
-    note: "Not attached. The CLI stays in the KeyQuorum repo — this window only hosts a URL, and none is wired yet.",
+    src: KEYQUORUM_GUEST_SRC,
+    origin: GITHUB_PAGES_ORIGIN,
+    embedSource: KEYQUORUM_EMBED_SOURCE,
+    iframeAllow: "fullscreen; clipboard-write",
   },
 };
 
@@ -99,7 +113,9 @@ export function isGuestReadyMessage(guest: LiveGuest, data: unknown): boolean {
     return false;
   }
 
-  if (guest.id === "flinstone") {
+  // Flinstone and KeyQuorum publish a versioned handshake naming the
+  // commit they were built from; anything less is not their ready signal.
+  if (guest.id === "flinstone" || guest.id === "keyquorum") {
     return (
       "schemaVersion" in data &&
       data.schemaVersion === 1 &&
@@ -110,4 +126,23 @@ export function isGuestReadyMessage(guest: LiveGuest, data: unknown): boolean {
   }
 
   return true;
+}
+
+/**
+ * Whether a window message is `guest`'s ready handshake from the frame this
+ * window attached: the right origin, sent by that iframe's own window (not
+ * another frame or tab on the same origin), and a well-formed ready message.
+ */
+export function acceptsGuestReady(
+  guest: LiveGuest,
+  event: { origin: string; source: unknown; data: unknown },
+  frameWindow: unknown,
+): boolean {
+  return (
+    event.origin === guest.origin &&
+    frameWindow !== null &&
+    frameWindow !== undefined &&
+    event.source === frameWindow &&
+    isGuestReadyMessage(guest, event.data)
+  );
 }

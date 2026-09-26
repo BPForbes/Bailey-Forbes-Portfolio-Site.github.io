@@ -73,14 +73,23 @@
 
       <section id="live-lab">
         <div class="section-head">
-          <h2><svg class="icon icon-head" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path d="M9.4 86.6C-3.1 74.1-3.1 53.9 9.4 41.4s32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 9.4 86.6zM256 416l288 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-288 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/></svg>Running it</h2>
+          <h2><svg class="icon icon-head" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80L0 432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg>Run the security lab</h2>
           <p>
-            KeyQuorum is a command-line tool. There is no web build, so nothing on this page
-            executes it — the panel below states that rather than pretending otherwise, and
-            points at the repository instead.
+            KeyQuorum Lab is published from
+            <a href="https://github.com/BPForbes/KeyQuorum">the KeyQuorum repository</a>
+            to GitHub Pages and attaches below. It runs KeyQuorum&rsquo;s own Rust code,
+            compiled to WebAssembly, over synthetic people and mock USB drives: switch users,
+            insert and eject drives, unlock quorum-protected files, and send files between
+            people, and each action lists the checks KeyQuorum made.
           </p>
         </div>
         <div data-guest-window data-guest="keyquorum" data-guest-solo id="live-lab-window"></div>
+        <p class="note">
+          <svg class="icon icon-note" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480L40 480c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24l0 112c0 13.3 10.7 24 24 24s24-10.7 24-24l0-112c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg><strong>Mock hardware.</strong> The USB drives in the lab are simulated in your
+          browser and their passphrases are published demo values, so the lab shows how
+          KeyQuorum behaves; it does not offer the physical protection real hardware keys do.
+          Everything in it is synthetic, and nothing leaves the page.
+        </p>
       </section>
 
       <section class="prose" aria-labelledby="kq-run-title">

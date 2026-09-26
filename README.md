@@ -107,7 +107,7 @@ export const PROJECT_SOURCES = {
   flinstone: { repo: "BPForbes/Bailey-Forbes-Flinstone", … },
   qpu: { repo: "BPForbes/BPForbes.QPU.github.io", … },
   "homework-central": { repo: "BPForbes/Homework-Central" },
-  keyquorum: { repo: "BPForbes/KeyQuorum" },
+  keyquorum: { repo: "BPForbes/KeyQuorum", contractUrl: "https://bpforbes.github.io/KeyQuorum/project-metadata.json" },
 };
 ```
 
@@ -273,7 +273,7 @@ GitHub Pages serves each folder’s `index.html` without showing the filename. O
 | `/projects/` | Project index |
 | `/projects/qpu/` | QPU (live lab) |
 | `/projects/flinstone/` | Flinstone Kernel (live lab) |
-| `/projects/keyquorum/` | KeyQuorum (command line only — the page says so) |
+| `/projects/keyquorum/` | KeyQuorum, with its browser lab as a live guest |
 | `/projects/homework-central/` | Homework Central |
 | `/projects/emr/` | Electronic medical record |
 | `/timeline/` | Redirects to `/projects/` |
@@ -284,7 +284,7 @@ GitHub Pages serves each folder’s `index.html` without showing the filename. O
 | Path | Purpose |
 |------|---------|
 | `home/index.html` | Home, experience, education |
-| `projects/` | Project write-ups; Flinstone and QPU load live guests from GitHub Pages; KeyQuorum has no web build and its page states that rather than showing an empty window |
+| `projects/` | Project write-ups; QPU, Flinstone, and KeyQuorum load live guests from GitHub Pages |
 | `projects/*/index.html` | Project write-up and that project’s timeline |
 | `src/` | TypeScript source (`apps.ts`, `data.ts`, `deck.ts`, `guestWindow.ts`, `icons.ts`, `languageColors.ts`, `projectMetadata.ts`, `routes.ts`, `site.ts`, `types.d.ts`) |
 | `src/generated/` | Written by the sync; do not edit by hand |

@@ -1,8 +1,8 @@
 import {
+  acceptsGuestReady,
   GUEST_ORDER,
   GUESTS,
   isGuestId,
-  isGuestReadyMessage,
   isLiveGuest,
 } from "./apps.js";
 import type { GuestApp, GuestId, LiveGuest } from "./apps.js";
@@ -412,15 +412,7 @@ function createGuestWindow(mount: HTMLElement): void {
       return;
     }
 
-    if (event.origin !== guest.origin) {
-      return;
-    }
-
-    if (event.source !== iframe.contentWindow) {
-      return;
-    }
-
-    if (!isGuestReadyMessage(guest, event.data)) {
+    if (!acceptsGuestReady(guest, event, iframe.contentWindow)) {
       return;
     }
 

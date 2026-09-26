@@ -1,8 +1,8 @@
 import {
+  acceptsGuestReady,
   GUEST_ORDER,
   GUESTS,
   isGuestId,
-  isGuestReadyMessage,
   isLiveGuest
 } from "./apps.js";
 import { icon } from "./icons.js";
@@ -330,13 +330,7 @@ function createGuestWindow(mount) {
     if (!isLiveGuest(guest) || iframe.hidden) {
       return;
     }
-    if (event.origin !== guest.origin) {
-      return;
-    }
-    if (event.source !== iframe.contentWindow) {
-      return;
-    }
-    if (!isGuestReadyMessage(guest, event.data)) {
+    if (!acceptsGuestReady(guest, event, iframe.contentWindow)) {
       return;
     }
     guestReady = true;

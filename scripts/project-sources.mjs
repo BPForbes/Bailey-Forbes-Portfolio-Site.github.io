@@ -55,6 +55,8 @@ export const PROJECT_SOURCES = Object.freeze({
   },
   keyquorum: {
     repo: "BPForbes/KeyQuorum",
+    // Published next to KeyQuorum Lab by its deploy-lab.yml workflow.
+    contractUrl: "https://bpforbes.github.io/KeyQuorum/project-metadata.json",
   },
 });
 

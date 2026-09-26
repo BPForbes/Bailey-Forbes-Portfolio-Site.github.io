@@ -101,7 +101,7 @@ Notify after the workflow that makes the new state *real*, not on push:
 | `BPForbes.QPU.github.io` | **Deploy static React QPU app** | Publishes the workbench to Pages. The portfolio embeds it, so notifying on push would advertise a state whose site is not live. |
 | `Bailey-Forbes-Flinstone` | **Browser kernel artifact**, plus a gate job | See below. |
 | `Homework-Central` | **CI** (push only) | No site of its own, but a commit that does not build should not move the numbers. |
-| `KeyQuorum` | **Test** (push only) | `cargo test --all-targets --all-features` compiles everything Compile does, so it is the stronger gate. |
+| `KeyQuorum` | **Deploy KeyQuorum Lab**, plus a gate job | Publishes KeyQuorum Lab to Pages after native tests, the WASM build, and browser tests. Like Flintstone, its notifier confirms the job named *Publish KeyQuorum Lab to GitHub Pages* succeeded. |
 
 ### Flintstone needs more than a green run
 
