@@ -17,6 +17,8 @@ Read it before changing layout, tokens, or component behaviour.
 The QPU and Homework Central screenshots and the Flinstone and KeyQuorum
 transcripts on the project pages come from building and running those
 repositories locally; each caption names the commit and the capture date.
+QPU's two are the bundled teleportation example on the circuit canvas and a
+noisy run of the GHZ example in the Physics inspector.
 Homework Central's first two are a live run of its ASP.NET Core API,
 PostgreSQL database and React frontend together, signed in as the
 repository's own seeded development personas: one shows general chat, a
@@ -169,8 +171,8 @@ Two rules keep generated entries from trampling written ones:
    so a month-granular entry protects its whole month.
 
 So generation extends the timeline forward and leaves the written history alone.
-Today that means the 50 curated entries are untouched and one generated entry
-sits on top of them.
+Today that means the 61 curated entries are untouched, and a generated entry
+only appears once it is newer than a project's latest curated one.
 
 ### Running the sync
 
@@ -284,7 +286,7 @@ GitHub Pages serves each folder’s `index.html` without showing the filename. O
 | Path | Purpose |
 |------|---------|
 | `home/index.html` | Home, experience, education |
-| `projects/` | Project write-ups; Flinstone and QPU load live guests from GitHub Pages; KeyQuorum has no web build and its page states that rather than showing an empty window |
+| `projects/` | Project write-ups; Flinstone, QPU, and KeyQuorum load live guests from GitHub Pages (KeyQuorum’s is the WebAssembly security lab) |
 | `projects/*/index.html` | Project write-up and that project’s timeline |
 | `src/` | TypeScript source (`apps.ts`, `data.ts`, `deck.ts`, `guestWindow.ts`, `icons.ts`, `languageColors.ts`, `projectMetadata.ts`, `routes.ts`, `site.ts`, `types.d.ts`) |
 | `src/generated/` | Written by the sync; do not edit by hand |
