@@ -1,8 +1,10 @@
 const GITHUB_PAGES_ORIGIN = "https://bpforbes.github.io";
 const QPU_GUEST_SRC = "https://bpforbes.github.io/BPForbes.QPU.github.io/?embed=1";
 const FLINTSTONE_GUEST_SRC = "https://bpforbes.github.io/Bailey-Forbes-Flinstone/";
+const KEYQUORUM_GUEST_SRC = "https://bpforbes.github.io/KeyQuorum/";
 const QPU_EMBED_SOURCE = "qpu-guest";
 const FLINTSTONE_EMBED_SOURCE = "flinstone-guest";
+const KEYQUORUM_EMBED_SOURCE = "keyquorum-guest";
 const GUESTS = {
   qpu: {
     id: "qpu",
@@ -28,11 +30,14 @@ const GUESTS = {
   },
   keyquorum: {
     id: "keyquorum",
-    kind: "offline",
+    kind: "live",
     name: "KeyQuorum",
-    subtitle: "Hardware-key CLI",
+    subtitle: "Security lab",
     repo: "https://github.com/BPForbes/KeyQuorum",
-    note: "Not attached. The CLI stays in the KeyQuorum repo \u2014 this window only hosts a URL, and none is wired yet."
+    src: KEYQUORUM_GUEST_SRC,
+    origin: GITHUB_PAGES_ORIGIN,
+    embedSource: KEYQUORUM_EMBED_SOURCE,
+    iframeAllow: "fullscreen; clipboard-write"
   }
 };
 const GUEST_ORDER = ["qpu", "flinstone", "keyquorum"];
@@ -52,7 +57,7 @@ function isGuestReadyMessage(guest, data) {
   if (data.source !== guest.embedSource || data.type !== "ready") {
     return false;
   }
-  if (guest.id === "flinstone") {
+  if (guest.id === "flinstone" || guest.id === "keyquorum") {
     return "schemaVersion" in data && data.schemaVersion === 1 && "commit" in data && typeof data.commit === "string" && data.commit.length > 0;
   }
   return true;
@@ -63,6 +68,8 @@ export {
   GITHUB_PAGES_ORIGIN,
   GUESTS,
   GUEST_ORDER,
+  KEYQUORUM_EMBED_SOURCE,
+  KEYQUORUM_GUEST_SRC,
   QPU_EMBED_SOURCE,
   QPU_GUEST_SRC,
   isGuestId,

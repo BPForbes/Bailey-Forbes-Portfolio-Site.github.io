@@ -6,8 +6,12 @@ export const QPU_GUEST_SRC =
 export const FLINTSTONE_GUEST_SRC =
   "https://bpforbes.github.io/Bailey-Forbes-Flinstone/";
 
+export const KEYQUORUM_GUEST_SRC =
+  "https://bpforbes.github.io/KeyQuorum/";
+
 export const QPU_EMBED_SOURCE = "qpu-guest";
 export const FLINTSTONE_EMBED_SOURCE = "flinstone-guest";
+export const KEYQUORUM_EMBED_SOURCE = "keyquorum-guest";
 
 export type GuestId = "qpu" | "flinstone" | "keyquorum";
 
@@ -33,14 +37,17 @@ export interface FlinstoneGuest extends LiveGuestBase {
   id: "flinstone";
 }
 
-export interface KeyQuorumGuest extends GuestBase {
+export interface KeyQuorumGuest extends LiveGuestBase {
   id: "keyquorum";
+}
+
+export type LiveGuest = QpuGuest | FlinstoneGuest | KeyQuorumGuest;
+export interface OfflineGuest extends GuestBase {
+  id: GuestId;
   kind: "offline";
   note: string;
 }
 
-export type LiveGuest = QpuGuest | FlinstoneGuest;
-export type OfflineGuest = KeyQuorumGuest;
 export type GuestApp = LiveGuest | OfflineGuest;
 
 export const GUESTS: { readonly [K in GuestId]: Extract<GuestApp, { id: K }> } = {
@@ -68,11 +75,14 @@ export const GUESTS: { readonly [K in GuestId]: Extract<GuestApp, { id: K }> } =
   },
   keyquorum: {
     id: "keyquorum",
-    kind: "offline",
+    kind: "live",
     name: "KeyQuorum",
-    subtitle: "Hardware-key CLI",
+    subtitle: "Security lab",
     repo: "https://github.com/BPForbes/KeyQuorum",
-    note: "Not attached. The CLI stays in the KeyQuorum repo — this window only hosts a URL, and none is wired yet.",
+    src: KEYQUORUM_GUEST_SRC,
+    origin: GITHUB_PAGES_ORIGIN,
+    embedSource: KEYQUORUM_EMBED_SOURCE,
+    iframeAllow: "fullscreen; clipboard-write",
   },
 };
 
@@ -99,7 +109,7 @@ export function isGuestReadyMessage(guest: LiveGuest, data: unknown): boolean {
     return false;
   }
 
-  if (guest.id === "flinstone") {
+  if (guest.id === "flinstone" || guest.id === "keyquorum") {
     return (
       "schemaVersion" in data &&
       data.schemaVersion === 1 &&
