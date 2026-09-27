@@ -1,5 +1,5 @@
 const PORTFOLIO = {
-  compiled: "2026-09-16",
+  compiled: "2026-09-26",
   source: "Public git history, merged pull requests, and version/entries release notes on github.com/BPForbes",
   projects: {
     emr: "Electronic medical record",
@@ -412,6 +412,94 @@ const PORTFOLIO = {
       title: "Circuit protocol reference",
       detail: "Expands the QPU circuit protocol PDF reference that ships with the workbench.",
       href: "https://github.com/BPForbes/BPForbes.QPU.github.io/commit/87b77d4"
+    },
+    {
+      date: "2026-09-17",
+      kind: "release",
+      project: "flinstone",
+      title: "5.0.0 project-metadata contract",
+      detail: "Flinstone becomes the source of truth for its own public metadata: every validated push to main publishes `project-metadata.json` inside the same Pages deployment as the lab, pinned to the exact commit the kernel was built from, and refused if the build manifest came from a different one.",
+      href: "https://github.com/BPForbes/Bailey-Forbes-Flinstone/commit/d698eae"
+    },
+    {
+      date: "2026-09-17",
+      kind: "feature",
+      project: "qpu",
+      title: "DECLARECHILD binding and published metadata",
+      detail: "`DECLARECHILD` binds child processes before nested `RUNCHILD` expansion, and the workbench deploy publishes its own `project-metadata.json` for this site to read.",
+      href: "https://github.com/BPForbes/BPForbes.QPU.github.io/commit/1925135"
+    },
+    {
+      date: "2026-09-18",
+      kind: "feature",
+      project: "flinstone",
+      title: "5.1.0 portfolio notification and curated releases",
+      detail: "The kernel tells this site when a validated lab has actually been published \u2014 gated on the Pages job itself, not just a green run \u2014 and gains a hand-curated `releases[]` list so portfolio-worthy versions are chosen deliberately rather than scraped from the version train.",
+      href: "https://github.com/BPForbes/Bailey-Forbes-Flinstone/commit/e55f8c6"
+    },
+    {
+      date: "2026-09-18",
+      kind: "feature",
+      project: "qpu",
+      title: "Measurement meters and classical wires",
+      detail: "Measurements draw as meters feeding a classical register on double lines, and CZ/CY render as boxed controlled gates, so a circuit reads like a textbook diagram.",
+      href: "https://github.com/BPForbes/BPForbes.QPU.github.io/commit/142a529"
+    },
+    {
+      date: "2026-09-19",
+      kind: "release",
+      project: "homework-central",
+      title: "Ticket-rooms integration lands on main",
+      detail: "The two-month integration branch merges: tickets, media and votes, the moderation neural net on Math.NET with TorchSharp-accelerated training, MinIO S3 attachments, API compression, a Rust LRU cache with a C# fallback, CodeQL gating, and an API that answers `/healthz` while migrations still run.",
+      href: "https://github.com/BPForbes/Homework-Central/commit/4f27eed"
+    },
+    {
+      date: "2026-09-19",
+      kind: "feature",
+      project: "keyquorum",
+      title: "Authenticated org updates",
+      detail: "Hardware-key reissue and key-tree restructure travel as signed, sealed update envelopes. A store applies one only when it is addressed to a label it holds, signed by the subject or an ancestor whose key it already has, and strictly in order, with a UNIQUE key as the last replay guard.",
+      href: "https://github.com/BPForbes/KeyQuorum/commit/a2a2147"
+    },
+    {
+      date: "2026-09-22",
+      kind: "feature",
+      project: "keyquorum",
+      title: "USB slots and key COPY/MOVE",
+      detail: "Device containers hold several passphrase-wrapped identities as slots, and quorum counts distinct physical devices rather than slots. Non-root restructures need a parent countersignature, and keys copy or move transactionally between devices \u2014 a moved identity leaves a ghost that keeps its history but can never sign or unlock.",
+      href: "https://github.com/BPForbes/KeyQuorum/commit/cae17b8"
+    },
+    {
+      date: "2026-09-23",
+      kind: "feature",
+      project: "qpu",
+      title: "Teaching layer and measure gauge",
+      detail: "A beginner layer with in-app gate help, a learning path and advanced example circuits, then the documented protocol operations executed for real and a measurement gauge on the canvas.",
+      href: "https://github.com/BPForbes/BPForbes.QPU.github.io/commit/52b81f4"
+    },
+    {
+      date: "2026-09-24",
+      kind: "feature",
+      project: "qpu",
+      title: "Branching, recursion, and rotation gates",
+      detail: "Measurement-controlled IF/ELSE and bounded recursion with frame inspection, RX/RY/RZ and CPHASE, consistent inverse support for every reversible gate, purity and entanglement indicators, and teleportation as a runnable example.",
+      href: "https://github.com/BPForbes/BPForbes.QPU.github.io/commit/23e64ef"
+    },
+    {
+      date: "2026-09-25",
+      kind: "release",
+      project: "qpu",
+      title: "PhysicsEngine",
+      detail: "One authoritative physics boundary for every state change: state-vector and density-matrix kernels, X/Y/Z measurement, Kraus noise channels with T1/T2 decoherence, Hamiltonian evolution, calibrated drive pulses and three-level leakage \u2014 validated on every call in development and covered by its own 134-test suite.",
+      href: "https://github.com/BPForbes/BPForbes.QPU.github.io/commit/0b0d607"
+    },
+    {
+      date: "2026-09-26",
+      kind: "release",
+      project: "keyquorum",
+      title: "KeyQuorum Lab in the browser",
+      detail: "The crate's own quorum, custody, approval, visibility and sealed-delivery code compiles to WebAssembly and runs over seeded people and mock USB drives, with live file expiry and a real ghost identity \u2014 embedded on this site as a live lab.",
+      href: "https://github.com/BPForbes/KeyQuorum/commit/944b454"
     }
   ],
   namedReleases: {
@@ -512,7 +600,16 @@ const PORTFOLIO = {
         startDate: "2026-09-17",
         endDate: null,
         summary: "Project-metadata contract \xB7 Pages",
-        description: "Flintstone publishes project-metadata.json alongside its validated browser lab on every promoted deploy: GitHub-derived languages, a merged-pull-request timeline, and release milestones, gated by the same fail-closed promotion checks as the lab itself. Latest GA on main.",
+        description: "Flintstone publishes project-metadata.json alongside its validated browser lab on every promoted deploy: GitHub-derived languages, a merged-pull-request timeline, and release milestones, gated by the same fail-closed promotion checks as the lab itself.",
+        url: "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/main/version/locked"
+      },
+      {
+        id: "5-1-0",
+        version: "5.1.0",
+        startDate: "2026-09-18",
+        endDate: null,
+        summary: "Portfolio notification \xB7 curated releases",
+        description: "Notifies bailey-forbes.com only after the validated lab is actually published, and adds a hand-curated releases list to project-metadata.json. Latest GA on main.",
         url: "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/main/version/locked"
       }
     ]
