@@ -31,29 +31,29 @@
 
       <dl class="stat-list">
         <div>
-          <dt>40</dt>
-          <dd>Commits in the first four days</dd>
+          <dt>134</dt>
+          <dd>Physics-engine tests, of 561 across the repository</dd>
         </div>
         <div>
-          <dt data-project-commits="qpu" data-project-label="false">51</dt>
-          <dd>Commits on the public repo</dd>
+          <dt>6</dt>
+          <dd>Kraus noise channels, plus T1/T2 decoherence and transmon leakage</dd>
         </div>
         <div>
-          <dt>9</dt>
-          <dd>Qubits in the bundled two-bit full-adder sample</dd>
+          <dt>17</dt>
+          <dd>Qubits in the bundled four-bit full adder, built from nested child processes</dd>
         </div>
         <div>
-          <dt>3</dt>
-          <dd>Real artifacts: a language, a compiler, and a browser workbench</dd>
+          <dt>4</dt>
+          <dd>Layers: a language, a compiler, a physics engine, and a browser workbench</dd>
         </div>
       </dl>
 
       <div class="strength">
         <p class="strength-label">Language and compiler design</p>
         <p class="strength-evidence">
-          A custom quantum instruction language with its own TypeScript compiler, simulator, and
-          browser workbench — forty commits in four days, running a nine-qubit, twenty-gate
-          circuit live.
+          A custom quantum instruction language with its own TypeScript compiler, a physics
+          engine that owns every state change — state vectors, density matrices, noise, and
+          pulse-level timing — and a browser workbench that runs it all live.
         </p>
       </div>
 
@@ -91,23 +91,44 @@
       <section class="prose" aria-labelledby="qpu-shot-title">
         <h2 id="qpu-shot-title"><svg class="icon icon-head" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80L0 432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg>Running it</h2>
         <p>
-          The workbench compiles a QPU protocol into a circuit and simulates it in the browser.
-          Below is the bundled <code>TwoBitFullAdder</code> process after
-          <strong>Compile protocol</strong> and <strong>Run all</strong>: nine qubits, twenty
-          gates, CCX and CX across the carry chain, and the measurement step outlined in red.
+          The workbench compiles a QPU protocol into a circuit and hands every state change to its
+          physics engine. Below is the bundled <strong>Quantum teleportation</strong> circuit after
+          <strong>Run all</strong>: mid-circuit measurements drawn as meters, classical results on
+          double lines, and the two <code>IF</code>-conditioned corrections marked as taken.
         </p>
         <figure class="shot">
           <img
-            src="/images/qpu-circuit.webp"
-            alt="The QPU circuit canvas showing a compiled two-bit full adder: nine qubit wires labelled q0 to q8, controlled-NOT and Toffoli gates linking them, and measurement boxes on the lower wires."
-            width="1400"
-            height="803"
+            src="/images/qpu-teleportation.webp"
+            alt="The QPU circuit canvas running quantum teleportation: three qubit wires q0 to q2 and a classical register c, an H and CNOT preparing the entangled pair, measurement meters on q0 and q1 feeding the classical register on double lines, and X and Z corrections on q2 marked IF q1=1 taken and IF q0=1 taken."
+            width="2232"
+            height="842"
             loading="lazy"
           />
           <figcaption>
-            Captured 16 Sep 2026 from the workbench running locally at commit
-            <code>87b77d4</code>. Not a mockup: the circuit is the compiler's output for the
-            repository's own <code>TwoBitFullAdder</code> sample.
+            Captured 26 Sep 2026 from the workbench running locally at commit
+            <code>0b0d607</code>. Not a mockup: the canvas is the simulator's own run of the
+            repository's bundled teleportation example — a run in which both measurements
+            read 1, so both corrections fire.
+          </figcaption>
+        </figure>
+        <p>
+          The Physics inspector reruns the same circuit as an open system. Here the GHZ example
+          runs with 2% depolarizing noise after every gate; stepping back to the third gate shows
+          the noisy density matrix at 0.93 fidelity with the ideal run, and each qubit at purity
+          0.5 — maximally entangled with the other two.
+        </p>
+        <figure class="shot">
+          <img
+            src="/images/qpu-noisy-ghz.webp"
+            alt="The QPU Physics inspector after a noisy run of the GHZ circuit: depolarizing gate noise at strength 0.02, register purity 0.942 and fidelity 0.9703 with the ideal run, a fidelity strip across the circuit, and after gate 3 of 6 (CNOT q1 q2) a fidelity of 0.9323 with every qubit at P(1) 0.500 and purity 0.500."
+            width="2232"
+            height="1672"
+            loading="lazy"
+          />
+          <figcaption>
+            Captured 26 Sep 2026 from the workbench running locally at commit
+            <code>0b0d607</code>, cropped to the inspector's noise section. The values are the
+            engine's output for the repository's bundled GHZ example.
           </figcaption>
         </figure>
       </section>
@@ -123,9 +144,10 @@
         <h2><svg class="icon icon-head" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M256 398.8c-11.8 5.1-23.4 9.7-34.9 13.5c16.7 33.8 31 35.7 34.9 35.7s18.1-1.9 34.9-35.7c-11.4-3.9-23.1-8.4-34.9-13.5zM446 256c33 45.2 44.3 90.9 23.6 128c-20.2 36.3-62.5 49.3-115.2 43.2c-22 52.1-55.6 84.8-98.4 84.8s-76.4-32.7-98.4-84.8c-52.7 6.1-95-6.8-115.2-43.2C21.7 346.9 33 301.2 66 256c-33-45.2-44.3-90.9-23.6-128c20.2-36.3 62.5-49.3 115.2-43.2C179.6 32.7 213.2 0 256 0s76.4 32.7 98.4 84.8c52.7-6.1 95 6.8 115.2 43.2c20.7 37.1 9.4 82.8-23.6 128zm-65.8 67.4c-1.7 14.2-3.9 28-6.7 41.2c31.8 1.4 38.6-8.7 40.2-11.7c2.3-4.2 7-17.9-11.9-48.1c-6.8 6.3-14 12.5-21.6 18.6zm-6.7-175.9c2.8 13.1 5 26.9 6.7 41.2c7.6 6.1 14.8 12.3 21.6 18.6c18.9-30.2 14.2-44 11.9-48.1c-1.6-2.9-8.4-13-40.2-11.7zM290.9 99.7C274.1 65.9 259.9 64 256 64s-18.1 1.9-34.9 35.7c11.4 3.9 23.1 8.4 34.9 13.5c11.8-5.1 23.4-9.7 34.9-13.5zm-159 88.9c1.7-14.3 3.9-28 6.7-41.2c-31.8-1.4-38.6 8.7-40.2 11.7c-2.3 4.2-7 17.9 11.9 48.1c6.8-6.3 14-12.5 21.6-18.6zM110.2 304.8C91.4 335 96 348.7 98.3 352.9c1.6 2.9 8.4 13 40.2 11.7c-2.8-13.1-5-26.9-6.7-41.2c-7.6-6.1-14.8-12.3-21.6-18.6zM336 256a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zm-80-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>What it is</h2>
         <p>
           <a href="https://github.com/BPForbes/BPForbes.QPU.github.io">BPForbes.QPU.github.io</a>
-          (8–12 Jun 2026, originally BPForbes.github.io) is a TypeScript compiler for the QPU
-          process language plus an interactive circuit canvas, file tools, truth-table I/O, and
-          a correction lab.
+          (June 2026, with a second wave from September 2026; originally BPForbes.github.io) is a
+          TypeScript compiler for the QPU process language, a physics engine that owns every
+          state change, and an interactive circuit canvas with file tools, truth-table I/O, and a
+          correction lab.
         </p>
       </section>
 
@@ -138,6 +160,16 @@
           two-bit adder register/output-binding fixes; RESET hidden from UI; <code>pi</code>
           rotations; Circuit Correction Lab (first WebLLM, then local Ollama); <code>.qpuio</code>
           truth-table metadata; partial tables; per-file gate modules and a custom-gate engine.
+        </p>
+        <p>
+          <strong>Teaching lab and physics, September 2026.</strong> A compact embed mode for this
+          site; textbook circuits, Play Sequence, and mobile-safe playground routes; measurement
+          meters, classical double lines, and boxed CZ/CY; <code>DECLARECHILD</code> binding; a
+          beginner teaching layer with in-app gate help; purity, cycle, and gate concepts; and
+          finally <code>PhysicsEngine</code> as the single authoritative boundary — state vector
+          and density-matrix kernels, X/Y/Z measurement, Kraus noise and T1/T2 decoherence,
+          Hamiltonian evolution, calibrated drive pulses, and three-level leakage, all validated
+          and covered by their own test suite.
         </p>
       </section>
 

@@ -89,11 +89,21 @@ test("a project without a repository keeps its curated split", () => {
   assert.equal(mergedPullRequestsFor("emr"), undefined);
 });
 
-test("a single-language repository renders one full-width segment", () => {
-  const languages = languagesFor("keyquorum");
-  assert.equal(languages.length, 1);
-  assert.equal(languages[0].name, "Rust");
-  assert.equal(languages[0].pct, 100);
+// The sync workflow runs this suite against freshly fetched data, so it must
+// not pin any real repository's language count: KeyQuorum was Rust-only until
+// its WebAssembly lab landed. The single-language 100% case itself is covered
+// by languages.test.mjs; here we check the render path mirrors the snapshot.
+test("each repository renders exactly its generated segments, a lone language at full width", () => {
+  for (const [project, metadata] of Object.entries(GENERATED_PROJECT_METADATA.projects)) {
+    if (metadata.languages.length === 0) continue;
+    const languages = languagesFor(project);
+    assert.deepEqual(
+      languages.map(({ name, pct }) => ({ name, pct })),
+      metadata.languages.map(({ name, pct }) => ({ name, pct })),
+      `${project} must render its generated split unchanged`,
+    );
+    if (languages.length === 1) assert.equal(languages[0].pct, 100);
+  }
 });
 
 test("repository facts are exposed for the page hooks", () => {
