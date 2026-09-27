@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-27T13:00:20.271Z",
+  "generatedAt": "2026-09-27T21:12:46.195Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -254,7 +254,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-09-27T13:00:18.532Z"
+      "fetchedAt": "2026-09-27T21:12:44.349Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -426,7 +426,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-09-27T13:00:19.761Z"
+      "fetchedAt": "2026-09-27T21:12:45.719Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -436,30 +436,30 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "defaultBranch": "main",
       "description": "KeyQuorum is a secure file-sharing system centered on hardware key sharing. Files are encrypted and bound to registered physical tokens, such as USB devices. Access requires the necessary hardware keys to be presented before a protected file can be unlocked, providing layered, hardware-backed access control.",
       "createdAt": "2026-08-24T17:17:46Z",
-      "pushedAt": "2026-09-27T12:24:53Z",
-      "commitCount": 33,
-      "mergedPullRequestCount": 23,
-      "pullRequestCount": 33,
+      "pushedAt": "2026-09-27T20:59:50Z",
+      "commitCount": 34,
+      "mergedPullRequestCount": 24,
+      "pullRequestCount": 34,
       "languages": [
         {
           "name": "Rust",
           "bytes": 1508655,
-          "pct": 90.7
+          "pct": 88.7
         },
         {
           "name": "TypeScript",
-          "bytes": 109362,
-          "pct": 6.6
+          "bytes": 146443,
+          "pct": 8.6
         },
         {
           "name": "JavaScript",
           "bytes": 23925,
-          "pct": 1.5
+          "pct": 1.4
         },
         {
           "name": "CSS",
-          "bytes": 18557,
-          "pct": 1.1
+          "bytes": 20270,
+          "pct": 1.2
         },
         {
           "name": "HTML",
@@ -468,6 +468,15 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "generatedTimelineEvents": [
+        {
+          "date": "2026-09-27",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Add a LaTeX manual for KeyQuorum",
+          "detail": "Documents the customer-facing keyquorum/keyquorum-device CLI end to end: hardware keys, devices and custody modes, quorum trees and locked files, password/vault protection, signatures/export/share, private sign bridges, authenticated updates (reissue/restructure), device transfer, direct file delivery, and the mailbox…",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/37",
+          "identity": "pr:BPForbes/KeyQuorum#37"
+        },
         {
           "date": "2026-09-01",
           "kind": "feature",
@@ -524,7 +533,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-09-27T13:00:20.271Z"
+      "fetchedAt": "2026-09-27T21:12:46.195Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -561,7 +570,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-09-27T13:00:19.148Z"
+      "fetchedAt": "2026-09-27T21:12:44.901Z"
     }
   }
 };
