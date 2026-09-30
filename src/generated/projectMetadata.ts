@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-29T11:23:00.567Z",
+  "generatedAt": "2026-09-30T11:11:08.517Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -254,7 +254,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-09-29T11:22:58.305Z"
+      "fetchedAt": "2026-09-30T11:11:05.932Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -426,7 +426,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-09-29T11:22:59.893Z"
+      "fetchedAt": "2026-09-30T11:11:07.883Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -436,10 +436,10 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "defaultBranch": "main",
       "description": "KeyQuorum is a secure file-sharing system centered on hardware key sharing. Files are encrypted and bound to registered physical tokens, such as USB devices. Access requires the necessary hardware keys to be presented before a protected file can be unlocked, providing layered, hardware-backed access control.",
       "createdAt": "2026-08-24T17:17:46Z",
-      "pushedAt": "2026-09-29T04:39:21Z",
+      "pushedAt": "2026-09-30T02:44:01Z",
       "commitCount": 36,
-      "mergedPullRequestCount": 49,
-      "pullRequestCount": 60,
+      "mergedPullRequestCount": 54,
+      "pullRequestCount": 65,
       "languages": [
         {
           "name": "Rust",
@@ -468,6 +468,15 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "generatedTimelineEvents": [
+        {
+          "date": "2026-09-30",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Add export support for tracked-file (.kqtf) bundles",
+          "detail": "- Provide a portable, sealed `KQXB` export path for complete tracked-file containers (`.kqtf`) so a verified tracked-file can be handed to a recipient without access to the local DB.",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/69",
+          "identity": "pr:BPForbes/KeyQuorum#69"
+        },
         {
           "date": "2026-09-27",
           "kind": "feature",
@@ -533,7 +542,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-09-29T11:23:00.567Z"
+      "fetchedAt": "2026-09-30T11:11:08.517Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -570,7 +579,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-09-29T11:22:59.082Z"
+      "fetchedAt": "2026-09-30T11:11:06.890Z"
     }
   }
 };
