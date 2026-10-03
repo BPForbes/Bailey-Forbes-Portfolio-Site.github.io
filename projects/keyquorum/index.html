@@ -126,6 +126,69 @@ Key for &#x27;Acme.Security&#x27; (node 4, hardware key 3; blank to skip):
           abbreviated here; in the session the reconstructed value matched the one
           <code>split</code> printed, character for character.
         </p>
+
+        <p>
+          Since pull request #71 the everyday tasks are one short verb each. <code>setup</code>
+          creates the device container, provisions a slot, registers and binds its keys, and
+          remembers the identity, so <code>doctor</code> and <code>send</code> can leave
+          <code>--as</code> and <code>--slot</code> out. <code>inbox</code> and
+          <code>inbox open</code> are the receiving side; they need a relay, so this run
+          stops at the sealed letter.
+        </p>
+        <div class="transcript">
+          <p class="transcript-bar">keyquorum 0.1.0 · throwaway demo database · short verbs</p>
+          <pre><code><b>$ keyquorum setup --device ./usb-bob --label Acme.Bob</b>
+Initialized ./usb-bob device fe8be5d905ea7e4dc9988575f0ca7269
+Passphrase for Acme.Bob: 
+Repeat passphrase for Acme.Bob: 
+Provisioned slot Acme.Bob
+Registered encryption key for Acme.Bob
+Registered signing key for Acme.Bob
+Bound Acme.Bob to device fe8be5d905ea7e4dc9988575f0ca7269
+default_container = ./usb-bob
+default_label = Acme.Bob
+default_slot_label = Acme.Bob
+caching = on
+note: no relay yet; add one with `keyquorum use --url URL` and `keyquorum loadkey`
+
+<b>$ keyquorum setup --device ./usb-alice --label Acme.Alice</b>
+Initialized ./usb-alice device 7a3d025e678c2d1a0bdbc3bdcdceffde
+Passphrase for Acme.Alice: 
+Repeat passphrase for Acme.Alice: 
+Provisioned slot Acme.Alice
+Registered encryption key for Acme.Alice
+Registered signing key for Acme.Alice
+Bound Acme.Alice to device 7a3d025e678c2d1a0bdbc3bdcdceffde
+default_container = ./usb-alice
+default_label = Acme.Alice
+default_slot_label = Acme.Alice
+caching = on
+note: no relay yet; add one with `keyquorum use --url URL` and `keyquorum loadkey`
+
+<b>$ keyquorum doctor --to Acme.Bob</b>
+ok    acting as Acme.Alice (slot Acme.Alice in ./usb-alice)
+ok    slot Acme.Alice is in the container (checked recently)
+ok    encryption key is registered in this store
+ok    signing key is registered in this store
+ok    the slot is bound to its device
+info  no relay is set; sends go to ./outbox (add one with `keyquorum use --url URL`)
+ok    Acme.Bob has a registered encryption key
+info  caching is on
+Everything checks out.
+
+<b>$ keyquorum send report.txt --to Acme.Bob</b>
+note: no relay is set up, so the letter is written to ./outbox; see `keyquorum use --url` and `keyquorum loadkey`
+Passphrase for Acme.Alice: 
+Sealed report.txt to Acme.Bob (delivery a50dbfdd74a257fc8e84593616837b8c)
+Wrote outbox/a50dbfdd74a257fc8e84593616837b8c.kqpb
+</code></pre>
+        </div>
+        <p class="evidence-note">
+          Real output, captured 3 Oct 2026 from <code>cargo build --release</code> at commit
+          <code>72c9bd7</code> (#71), against a throwaway database and two throwaway device
+          folders. Device ids and the delivery id differ on every run. The passphrase prompts
+          were answered by a script and are not echoed.
+        </p>
       </section>
 
       <div data-lang-bar="keyquorum"></div>

@@ -500,6 +500,14 @@ const PORTFOLIO = {
       title: "KeyQuorum Lab in the browser",
       detail: "The crate's own quorum, custody, approval, visibility and sealed-delivery code compiles to WebAssembly and runs over seeded people and mock USB drives, with live file expiry and a real ghost identity \u2014 embedded on this site as a live lab.",
       href: "https://github.com/BPForbes/KeyQuorum/commit/944b454"
+    },
+    {
+      date: "2026-10-03",
+      kind: "feature",
+      project: "keyquorum",
+      title: "Shorter command verbs (#71)",
+      detail: "One-shot CLI workflows: setup, use, doctor, send and inbox replace multi-step flag chains. Defaults resolve from the flag, a recent parameter, then the stored identity; the older deliver, file receive and relay pull spellings still work and print a note naming their replacement.",
+      href: "https://github.com/BPForbes/KeyQuorum/commit/72c9bd7"
     }
   ],
   namedReleases: {
