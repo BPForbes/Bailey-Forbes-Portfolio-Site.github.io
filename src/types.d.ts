@@ -20,6 +20,8 @@ export interface TimelineEvent {
   title: string;
   detail: string;
   href?: string;
+  /** Key into data/commit-bodies.json, for an entry that carries a pull request body. */
+  identity?: string;
 }
 
 export interface PortfolioData {
