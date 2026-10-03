@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-02T11:07:17.943Z",
+  "generatedAt": "2026-10-03T04:47:41.452Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -254,7 +254,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-10-02T11:07:15.960Z"
+      "fetchedAt": "2026-10-03T04:47:39.239Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -426,7 +426,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-02T11:07:17.358Z"
+      "fetchedAt": "2026-10-03T04:47:40.788Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -436,30 +436,30 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "defaultBranch": "main",
       "description": "KeyQuorum is a secure file-sharing system centered on hardware key sharing. Files are encrypted and bound to registered physical tokens, such as USB devices. Access requires the necessary hardware keys to be presented before a protected file can be unlocked, providing layered, hardware-backed access control.",
       "createdAt": "2026-08-24T17:17:46Z",
-      "pushedAt": "2026-10-02T00:54:46Z",
-      "commitCount": 38,
-      "mergedPullRequestCount": 56,
-      "pullRequestCount": 66,
+      "pushedAt": "2026-10-03T04:26:30Z",
+      "commitCount": 39,
+      "mergedPullRequestCount": 59,
+      "pullRequestCount": 69,
       "languages": [
         {
           "name": "Rust",
-          "bytes": 2378785,
-          "pct": 88
+          "bytes": 2566659,
+          "pct": 88.6
         },
         {
           "name": "TypeScript",
-          "bytes": 272952,
-          "pct": 10.1
+          "bytes": 281023,
+          "pct": 9.7
         },
         {
           "name": "JavaScript",
           "bytes": 23925,
-          "pct": 0.9
+          "pct": 0.8
         },
         {
           "name": "CSS",
           "bytes": 23081,
-          "pct": 0.9
+          "pct": 0.8
         },
         {
           "name": "HTML",
@@ -468,6 +468,15 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "generatedTimelineEvents": [
+        {
+          "date": "2026-10-02",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Feature-gate legacy CLI tests, migrate legacy inbox files, and narrow CI feature set",
+          "detail": "- Limit CI to the explicit runtime/profile features the project uses and avoid building unrelated feature sets by removing `--all-features` from CI jobs. - Preserve compatibility for older test code and legacy CLI verbs by introducing an opt-in feature for legacy tests.",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/73",
+          "identity": "pr:BPForbes/KeyQuorum#73"
+        },
         {
           "date": "2026-09-30",
           "kind": "feature",
@@ -542,7 +551,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-02T11:07:17.943Z"
+      "fetchedAt": "2026-10-03T04:47:41.452Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -579,7 +588,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-10-02T11:07:16.672Z"
+      "fetchedAt": "2026-10-03T04:47:40.014Z"
     }
   }
 };
