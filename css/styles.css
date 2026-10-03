@@ -1707,6 +1707,7 @@ code {
 
 .tl-summary {
   display: block;
+  white-space: pre-line;
   padding-top: var(--space-2);
   color: var(--text-muted);
   font-size: 0.88rem;
@@ -1932,6 +1933,7 @@ code {
 
 .tl-card-loading {
   color: var(--text-subtle);
+  white-space: pre-line;
 }
 
 .tl-card-degraded-note {

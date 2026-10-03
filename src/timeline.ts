@@ -90,8 +90,12 @@ function plainSummary(markdown: string): string {
     .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
     .replace(/(\*\*|~~)(.*?)\1/g, "$2")
     .replace(/(^|[\s([{])\*(\S[^*]*?)\*/g, "$1$2")
-    .replace(/\s+/g, " ")
-    .trim();
+    // Paragraph breaks survive as one blank line; every other run of
+    // whitespace still collapses to a single space.
+    .split(/\n[^\S\n]*\n\s*/)
+    .map((paragraph) => paragraph.replace(/\s+/g, " ").trim())
+    .filter((paragraph) => paragraph !== "")
+    .join("\n\n");
 }
 
 interface Row {
