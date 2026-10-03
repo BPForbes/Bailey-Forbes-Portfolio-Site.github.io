@@ -511,6 +511,14 @@ const PORTFOLIO = {
       identity: "pr:BPForbes/KeyQuorum#37"
     },
     {
+      date: "2026-09-27",
+      kind: "feature",
+      project: "keyquorum",
+      title: "Guided tutorials in the Lab",
+      detail: "Guided tutorials are step-by-step walkthroughs of how to use the Lab GUI. Each module covers one part of the lab, a visitor picks the one they want, and each step waits for the real action to happen in the lab before moving on, rather than advancing on a click. The first modules landed with the LaTeX manual (#37), were expanded into complete workflows the next day (#38), and now teach the shorter verbs from #71.",
+      href: "https://github.com/BPForbes/KeyQuorum/commit/b226705"
+    },
+    {
       date: "2026-09-30",
       kind: "feature",
       project: "keyquorum",
