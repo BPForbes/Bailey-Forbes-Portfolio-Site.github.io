@@ -506,7 +506,7 @@ const PORTFOLIO = {
       kind: "feature",
       project: "keyquorum",
       title: "Shorter command verbs (#71)",
-      detail: "One-shot CLI workflows: setup, use, doctor, send and inbox replace multi-step flag chains. Defaults resolve from the flag, a recent parameter, then the stored identity; the older deliver, file receive and relay pull spellings still work and print a note naming their replacement.",
+      detail: "One-shot CLI workflows: setup, use, doctor, send and inbox replace multi-step flag chains. Defaults resolve from the flag, a recent parameter, then the stored identity, and the older deliver, file receive and relay pull spellings still work and print a note naming their replacement. The work also covers the follow-ups merged with it: relay selection and per-relay inbox storage (#72), then migration of old inbox files, an opt-in legacy-tests feature and a narrower CI feature set (#73). The Lab GUI and its tutorials now use the new verbs, and the documentation covers both the new and the legacy spellings.",
       href: "https://github.com/BPForbes/KeyQuorum/commit/72c9bd7"
     }
   ],
