@@ -74,7 +74,7 @@ export function languagesFor(project: ProjectId): readonly LanguageShare[] | und
  * card fetches on demand; it is absent for curated entries, whose `detail` is
  * already the finished prose.
  */
-export type TimelineDisplayEvent = TimelineEvent & { identity?: string };
+export type TimelineDisplayEvent = TimelineEvent;
 
 /**
  * Curated events plus generated ones, deduplicated, newest first left to the

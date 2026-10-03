@@ -15,7 +15,7 @@ function commitBodies() {
   return bodiesRequest;
 }
 function plainSummary(markdown) {
-  return markdown.replace(/`([^`]*)`/g, "$1").replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/(\*\*|~~)(.*?)\1/g, "$2").replace(/(^|[\s([{])\*(\S[^*]*?)\*/g, "$1$2").replace(/\s+/g, " ").trim();
+  return markdown.replace(/`([^`]*)`/g, "$1").replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/(\*\*|~~)(.*?)\1/g, "$2").replace(/(^|[\s([{])\*(\S[^*]*?)\*/g, "$1$2").split(/\n[^\S\n]*\n\s*/).map((paragraph) => paragraph.replace(/\s+/g, " ").trim()).filter((paragraph) => paragraph !== "").join("\n\n");
 }
 function chip(label, iconName) {
   const el = document.createElement("span");
