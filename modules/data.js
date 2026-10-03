@@ -502,7 +502,7 @@ const PORTFOLIO = {
       href: "https://github.com/BPForbes/KeyQuorum/commit/944b454"
     },
     {
-      date: "2026-10-03",
+      date: "2026-10-02",
       kind: "feature",
       project: "keyquorum",
       title: "Shorter command verbs (#71)",
