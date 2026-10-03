@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-03T10:25:45.344Z",
+  "generatedAt": "2026-10-03T15:39:55.143Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -254,7 +254,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-10-03T10:25:43.259Z"
+      "fetchedAt": "2026-10-03T15:39:53.346Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -426,7 +426,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-03T10:25:44.650Z"
+      "fetchedAt": "2026-10-03T15:39:54.558Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -436,14 +436,14 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "defaultBranch": "main",
       "description": "KeyQuorum is a secure file-sharing system centered on hardware key sharing. Files are encrypted and bound to registered physical tokens, such as USB devices. Access requires the necessary hardware keys to be presented before a protected file can be unlocked, providing layered, hardware-backed access control.",
       "createdAt": "2026-08-24T17:17:46Z",
-      "pushedAt": "2026-10-03T04:26:30Z",
-      "commitCount": 39,
-      "mergedPullRequestCount": 59,
-      "pullRequestCount": 69,
+      "pushedAt": "2026-10-03T15:35:51Z",
+      "commitCount": 41,
+      "mergedPullRequestCount": 61,
+      "pullRequestCount": 78,
       "languages": [
         {
           "name": "Rust",
-          "bytes": 2566659,
+          "bytes": 2567360,
           "pct": 88.6
         },
         {
@@ -468,6 +468,15 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "generatedTimelineEvents": [
+        {
+          "date": "2026-10-03",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Add security scanning CI, an SBOM job, a security policy and strict SOC 2 review rules",
+          "detail": "Adds the quick SOC 2-readiness items: automated dependency, secret and static scanning, an SBOM, a security policy, and strict review rules for CodeRabbit, Codex and Claude. No Rust or Lab behavior changes.",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/74",
+          "identity": "pr:BPForbes/KeyQuorum#74"
+        },
         {
           "date": "2026-10-02",
           "kind": "feature",
@@ -551,7 +560,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-03T10:25:45.344Z"
+      "fetchedAt": "2026-10-03T15:39:55.143Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -588,7 +597,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-10-03T10:25:43.925Z"
+      "fetchedAt": "2026-10-03T15:39:53.937Z"
     }
   }
 };
