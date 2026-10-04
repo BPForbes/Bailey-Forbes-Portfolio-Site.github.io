@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-04T11:07:30.507Z",
+  "generatedAt": "2026-10-04T19:10:34.977Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -254,7 +254,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-10-04T11:07:28.411Z"
+      "fetchedAt": "2026-10-04T19:10:32.955Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -426,7 +426,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-04T11:07:29.887Z"
+      "fetchedAt": "2026-10-04T19:10:34.387Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -436,20 +436,20 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "defaultBranch": "main",
       "description": "KeyQuorum is a secure file-sharing system centered on hardware key sharing. Files are encrypted and bound to registered physical tokens, such as USB devices. Access requires the necessary hardware keys to be presented before a protected file can be unlocked, providing layered, hardware-backed access control.",
       "createdAt": "2026-08-24T17:17:46Z",
-      "pushedAt": "2026-10-04T02:33:24Z",
-      "commitCount": 48,
-      "mergedPullRequestCount": 68,
+      "pushedAt": "2026-10-04T18:46:45Z",
+      "commitCount": 49,
+      "mergedPullRequestCount": 69,
       "pullRequestCount": 79,
       "languages": [
         {
           "name": "Rust",
-          "bytes": 2568821,
-          "pct": 88.6
+          "bytes": 2826258,
+          "pct": 89.5
         },
         {
           "name": "TypeScript",
           "bytes": 281023,
-          "pct": 9.7
+          "pct": 8.9
         },
         {
           "name": "JavaScript",
@@ -459,7 +459,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         {
           "name": "CSS",
           "bytes": 23081,
-          "pct": 0.8
+          "pct": 0.7
         },
         {
           "name": "HTML",
@@ -468,6 +468,15 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "generatedTimelineEvents": [
+        {
+          "date": "2026-10-04",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "SOC 2 audit: relay hardening, signed audit trail, zeroized secrets, outbox and inbox ring buffers",
+          "detail": "A repository audit against the SOC 2 Trust Services Criteria, built on the review rules and security tooling from #74. Every control, its evidence and the audit log are in the new `docs/soc2-controls.md`. `main` (through `d0b10af`, all Dependabot upgrades) is merged in, and the conflicts are resolved.",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/84",
+          "identity": "pr:BPForbes/KeyQuorum#84"
+        },
         {
           "date": "2026-10-03",
           "kind": "feature",
@@ -560,7 +569,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-04T11:07:30.506Z"
+      "fetchedAt": "2026-10-04T19:10:34.977Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -597,7 +606,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-10-04T11:07:29.188Z"
+      "fetchedAt": "2026-10-04T19:10:33.706Z"
     }
   }
 };
