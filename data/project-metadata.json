@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-07T15:56:08.846Z",
+  "generatedAt": "2026-10-08T01:24:37.151Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -244,7 +244,7 @@
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-10-07T15:56:06.492Z"
+      "fetchedAt": "2026-10-08T01:24:35.272Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -416,7 +416,7 @@
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-07T15:56:08.026Z"
+      "fetchedAt": "2026-10-08T01:24:36.520Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -426,35 +426,35 @@
       "defaultBranch": "main",
       "description": "KeyQuorum is a secure file-sharing system centered on hardware key sharing. Files are encrypted and bound to registered physical tokens, such as USB devices. Access requires the necessary hardware keys to be presented before a protected file can be unlocked, providing layered, hardware-backed access control.",
       "createdAt": "2026-08-24T17:17:46Z",
-      "pushedAt": "2026-10-07T15:42:55Z",
-      "commitCount": 57,
-      "mergedPullRequestCount": 77,
-      "pullRequestCount": 94,
+      "pushedAt": "2026-10-08T01:02:57Z",
+      "commitCount": 77,
+      "mergedPullRequestCount": 78,
+      "pullRequestCount": 95,
       "languages": [
         {
           "name": "Rust",
-          "bytes": 3294770,
-          "pct": 82.5
+          "bytes": 3543248,
+          "pct": 81.6
         },
         {
           "name": "JavaScript",
-          "bytes": 368586,
-          "pct": 9.2
+          "bytes": 458779,
+          "pct": 10.6
         },
         {
           "name": "TypeScript",
           "bytes": 281023,
-          "pct": 7
+          "pct": 6.5
         },
         {
           "name": "CSS",
           "bytes": 30821,
-          "pct": 0.8
+          "pct": 0.7
         },
         {
           "name": "HCL",
-          "bytes": 12431,
-          "pct": 0.3
+          "bytes": 15427,
+          "pct": 0.4
         },
         {
           "name": "Shell",
@@ -468,6 +468,15 @@
         }
       ],
       "generatedTimelineEvents": [
+        {
+          "date": "2026-10-08",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Add sealed backups, blob storage, packages, and enrollment support",
+          "detail": "This PR implements four major features for KeyQuorum: sealed database backups to R2, large letter storage in R2 buckets, provider packages (`.kqpkg`) for client setup, and enrollment requests (`.kqreq`) for key distribution.",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/105",
+          "identity": "pr:BPForbes/KeyQuorum#105"
+        },
         {
           "date": "2026-10-04",
           "kind": "feature",
@@ -569,7 +578,7 @@
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-07T15:56:08.846Z"
+      "fetchedAt": "2026-10-08T01:24:37.151Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -606,7 +615,7 @@
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-10-07T15:56:07.251Z"
+      "fetchedAt": "2026-10-08T01:24:35.848Z"
     }
   }
 }
