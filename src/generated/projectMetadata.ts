@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-09T17:21:51.349Z",
+  "generatedAt": "2026-10-09T20:07:12.992Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -254,7 +254,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-10-09T17:21:48.544Z"
+      "fetchedAt": "2026-10-09T20:07:10.510Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -426,7 +426,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-09T17:21:50.357Z"
+      "fetchedAt": "2026-10-09T20:07:12.094Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -436,20 +436,20 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "defaultBranch": "main",
       "description": "KeyQuorum is a secure file-sharing system centered on hardware key sharing. Files are encrypted and bound to registered physical tokens, such as USB devices. Access requires the necessary hardware keys to be presented before a protected file can be unlocked, providing layered, hardware-backed access control.",
       "createdAt": "2026-08-24T17:17:46Z",
-      "pushedAt": "2026-10-09T17:08:59Z",
-      "commitCount": 80,
-      "mergedPullRequestCount": 81,
+      "pushedAt": "2026-10-09T19:54:34Z",
+      "commitCount": 81,
+      "mergedPullRequestCount": 82,
       "pullRequestCount": 103,
       "languages": [
         {
           "name": "Rust",
           "bytes": 3746649,
-          "pct": 81.6
+          "pct": 81.5
         },
         {
           "name": "JavaScript",
-          "bytes": 508076,
-          "pct": 11.1
+          "bytes": 516491,
+          "pct": 11.2
         },
         {
           "name": "TypeScript",
@@ -478,6 +478,15 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "generatedTimelineEvents": [
+        {
+          "date": "2026-10-09",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Add an isolated Access-protected console preview candidate",
+          "detail": "The public relay bot preview does not serve the admin console. This adds a separate Access-protected console preview that composes the existing relay and admin handlers around one preview-local Durable Object. Its root opens `/relay/admin/`;",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/117",
+          "identity": "pr:BPForbes/KeyQuorum#117"
+        },
         {
           "date": "2026-10-08",
           "kind": "feature",
@@ -576,19 +585,10 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "detail": "* **New Features** * Added secure password-based encryption for files and stored credentials. * Added local storage for protected files, credentials, hardware keys, sharing links, and audit events. * Added password-protected file locking and unlocking with tamper detection.",
           "href": "https://github.com/BPForbes/KeyQuorum/pull/2",
           "identity": "pr:BPForbes/KeyQuorum#2"
-        },
-        {
-          "date": "2026-08-24",
-          "kind": "feature",
-          "project": "keyquorum",
-          "title": "Expand .gitignore and add project/agent instruction files",
-          "detail": "Broaden .gitignore to cover env files, IDEs, OS files, logs, Python tooling, future Tauri/frontend output, and security-sensitive local artifacts (keys, secrets, test data).",
-          "href": "https://github.com/BPForbes/KeyQuorum/pull/1",
-          "identity": "pr:BPForbes/KeyQuorum#1"
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-09T17:21:51.349Z"
+      "fetchedAt": "2026-10-09T20:07:12.992Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -625,7 +625,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-10-09T17:21:49.382Z"
+      "fetchedAt": "2026-10-09T20:07:11.327Z"
     }
   }
 };
