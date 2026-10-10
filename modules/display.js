@@ -80,10 +80,10 @@ function savePrefs(prefs) {
   }
 }
 function prefersReducedMotion() {
-  const chosen = document.documentElement?.getAttribute("data-motion") ?? null;
+  const chosen = typeof document !== "undefined" ? document.documentElement?.getAttribute("data-motion") ?? null : null;
   if (chosen === "reduced") return true;
   if (chosen === "full") return false;
-  return typeof window.matchMedia === "function" ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false;
+  return typeof window !== "undefined" && typeof window.matchMedia === "function" ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false;
 }
 function optionId(key, value) {
   return `display-${key}-${value}`;
@@ -127,6 +127,9 @@ function mountDisplayControl(mount) {
   if (!form || !reset) {
     return;
   }
+  const announce = () => {
+    document.dispatchEvent(new Event("display-change"));
+  };
   toggle.addEventListener("click", () => {
     sheet.open(toggle, form.querySelector('input[name="theme"]:checked'));
   });
@@ -139,6 +142,7 @@ function mountDisplayControl(mount) {
     prefs = { theme: pick("theme"), contrast: pick("contrast"), motion: pick("motion"), text: pick("text") };
     applyPrefs(prefs);
     savePrefs(prefs);
+    announce();
   });
   reset.addEventListener("click", () => {
     prefs = { ...DEFAULTS };
@@ -148,6 +152,7 @@ function mountDisplayControl(mount) {
     }
     applyPrefs(prefs);
     savePrefs(prefs);
+    announce();
   });
 }
 export {

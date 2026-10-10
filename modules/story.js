@@ -44,10 +44,16 @@ function observeReplay(targets, handlers, enterOptions) {
     enter.observe(el);
     leave.observe(el);
   }
+  return () => {
+    enter.disconnect();
+    leave.disconnect();
+    shown.clear();
+    for (const el of targets) handlers.settle(el);
+  };
 }
 function mountReveals() {
   const targets = Array.from(document.querySelectorAll(REVEAL_SELECTOR));
-  if (targets.length === 0) return;
+  if (targets.length === 0) return null;
   for (const el of targets) {
     el.classList.add("reveal");
     el.addEventListener("transitionend", (event) => {
@@ -56,7 +62,7 @@ function mountReveals() {
       }
     });
   }
-  observeReplay(
+  const dispose = observeReplay(
     targets,
     {
       // Elements that cross together are staggered 60ms apart (the skill's
@@ -69,11 +75,17 @@ function mountReveals() {
       leave(el) {
         el.classList.remove("is-seen");
         el.style.removeProperty("--reveal-delay");
+      },
+      // Reduced motion chosen after load: no class, nothing hidden.
+      settle(el) {
+        el.classList.remove("reveal", "is-seen");
+        el.style.removeProperty("--reveal-delay");
       }
     },
     { rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
   );
   document.documentElement.classList.add("reveal-ready");
+  return dispose;
 }
 function mountCounters() {
   const figures = Array.from(document.querySelectorAll(".stat-list dt"));
@@ -96,7 +108,7 @@ function mountCounters() {
     dt.replaceChildren(real, shown);
     return [{ dt, shown, prefix, suffix, target, decimals, grouped, fraction }];
   });
-  if (prepared.length === 0) return;
+  if (prepared.length === 0) return null;
   const format = (value, item) => {
     const fixed = value.toFixed(item.decimals);
     const [whole = "0", frac] = fixed.split(".");
@@ -131,27 +143,29 @@ function mountCounters() {
     frames.set(item.dt, requestAnimationFrame(frame));
   };
   const byElement = new Map(prepared.map((item) => [item.dt, item]));
-  observeReplay(
+  const finish = (el) => {
+    const item = byElement.get(el);
+    if (!item) return;
+    stop(item);
+    settle(item);
+  };
+  return observeReplay(
     prepared.map((item) => item.dt),
     {
       enter(el) {
         const item = byElement.get(el);
         if (item) run(item);
       },
-      leave(el) {
-        const item = byElement.get(el);
-        if (!item) return;
-        stop(item);
-        settle(item);
-      }
+      leave: finish,
+      settle: finish
     },
     { threshold: 0.5 }
   );
 }
 function mountStoryLine() {
   const beats = Array.from(document.querySelectorAll(".story-beat"));
-  if (beats.length === 0) return;
-  observeReplay(
+  if (beats.length === 0) return null;
+  return observeReplay(
     beats,
     {
       enter(el) {
@@ -161,12 +175,17 @@ function mountStoryLine() {
       leave(el) {
         el.classList.remove("is-seen");
         el.style.removeProperty("--beat-delay");
+      },
+      // Final state of the strip is fully drawn.
+      settle(el) {
+        el.classList.add("is-seen");
+        el.style.removeProperty("--beat-delay");
       }
     },
     { threshold: 0.35 }
   );
 }
-function mountTrunk(reduced) {
+function mountTrunk() {
   const main = document.querySelector("main");
   const sections = Array.from(
     document.querySelectorAll(".wrap > section:not(.hero):not(.bento-section)[id][aria-labelledby]")
@@ -213,7 +232,7 @@ function mountTrunk(reduced) {
     const tops = sections.map((section) => section.getBoundingClientRect().top + window.scrollY);
     const first = tops[0] ?? 0;
     const last = tops[tops.length - 1] ?? first;
-    const progress = reduced ? 1 : Math.max(0, Math.min(1, (probe - first) / Math.max(1, last - first)));
+    const progress = prefersReducedMotion() ? 1 : Math.max(0, Math.min(1, (probe - first) / Math.max(1, last - first)));
     fill.style.setProperty("--trunk-progress", String(progress));
     let current = -1;
     tops.forEach((top, i) => {
@@ -291,16 +310,25 @@ function mountCopyEmail() {
 function mountStory() {
   mountLocalTime();
   mountCopyEmail();
-  const reduced = prefersReducedMotion();
-  if (!reduced && "IntersectionObserver" in window) {
-    mountReveals();
-    mountCounters();
-    mountStoryLine();
+  const disposers = [];
+  if (!prefersReducedMotion() && "IntersectionObserver" in window) {
+    for (const mount of [mountReveals, mountCounters, mountStoryLine]) {
+      const dispose = mount();
+      if (dispose) disposers.push(dispose);
+    }
   } else {
     document.querySelectorAll(".story-beat").forEach((el) => el.classList.add("is-seen"));
   }
   if (document.body.getAttribute("data-page") === "home") {
-    mountTrunk(reduced);
+    mountTrunk();
+  }
+  const onMotionChange = () => {
+    if (!prefersReducedMotion()) return;
+    for (const dispose of disposers.splice(0)) dispose();
+  };
+  document.addEventListener("display-change", onMotionChange);
+  if (typeof window.matchMedia === "function") {
+    window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", onMotionChange);
   }
 }
 export {

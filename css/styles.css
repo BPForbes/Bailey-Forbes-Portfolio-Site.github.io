@@ -3477,16 +3477,17 @@ html.js:not(.reveal-ready)[data-motion="full"] :is(.bento > .tile, .page-hero > 
 
 .story-beat {
   position: relative;
-  opacity: 0;
-  transform: translateY(8px);
   transition:
     opacity 360ms ease-out var(--beat-delay, 0ms),
     transform 360ms ease-out var(--beat-delay, 0ms);
 }
 
-.story-beat.is-seen {
-  opacity: 1;
-  transform: none;
+/* The unreached state exists only where script will reach the beat (`html.js`
+   is set by the head script); without script every beat is shown, filled and
+   joined, so the story is whole. */
+html.js .story-beat:not(.is-seen) {
+  opacity: 0;
+  transform: translateY(8px);
 }
 
 /* The node: an open commit, filled once reached. */
@@ -3499,22 +3500,20 @@ html.js:not(.reveal-ready)[data-motion="full"] :is(.bento > .tile, .page-hero > 
   height: 12px;
   border-radius: 50%;
   border: 2px solid var(--action);
-  background: var(--surface-page);
+  background: var(--action);
   transition: background-color var(--motion-base) ease-out var(--beat-delay, 0ms);
 }
 
-.story-beat.is-seen::after {
-  background: var(--action);
+html.js .story-beat:not(.is-seen)::after {
+  background: var(--surface-page);
 }
 
 /* "Now" is the HEAD: a ring, not a filled commit — it is still being written. */
-.story-beat-now::after {
+.story-beat-now::after,
+html.js .story-beat-now.is-seen::after {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--surface-page), 0 0 0 4px var(--accent);
-}
-
-.story-beat-now.is-seen::after {
   background: var(--surface-page);
+  box-shadow: 0 0 0 3px var(--surface-page), 0 0 0 4px var(--accent);
 }
 
 /* The line from this beat to the next, drawn top-down when the next arrives. */
@@ -3526,13 +3525,16 @@ html.js:not(.reveal-ready)[data-motion="full"] :is(.bento > .tile, .page-hero > 
   bottom: calc(-1 * var(--space-5) - 0.35rem);
   width: 2px;
   background: var(--action);
-  transform: scaleY(0);
   transform-origin: top center;
   transition: transform 420ms ease-out var(--beat-delay, 0ms);
 }
 
-.story-beat.is-seen + .story-beat.is-seen::before,
-.story-beat.is-seen:has(+ .story-beat.is-seen)::before {
+html.js .story-beat::before {
+  transform: scaleY(0);
+}
+
+html.js .story-beat.is-seen + .story-beat.is-seen::before,
+html.js .story-beat.is-seen:has(+ .story-beat.is-seen)::before {
   transform: scaleY(1);
 }
 
@@ -4625,12 +4627,15 @@ body::before {
     bottom: auto;
     width: auto;
     height: 2px;
-    transform: scaleX(0);
     transform-origin: left center;
   }
 
-  .story-beat.is-seen + .story-beat.is-seen::before,
-  .story-beat.is-seen:has(+ .story-beat.is-seen)::before {
+  html.js .story-beat::before {
+    transform: scaleX(0);
+  }
+
+  html.js .story-beat.is-seen + .story-beat.is-seen::before,
+  html.js .story-beat.is-seen:has(+ .story-beat.is-seen)::before {
     transform: scaleX(1);
   }
 

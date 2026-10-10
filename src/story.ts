@@ -15,7 +15,9 @@
  *   2. **Reduced motion means the final state, immediately.** Both sources
  *      (OS preference and the Display control) are read through
  *      prefersReducedMotion(); when it is set, no observer is attached, no
- *      counter runs, and the trunk is drawn complete.
+ *      counter runs, and the trunk is drawn complete. If it is set after the
+ *      page has loaded, every effect is disposed on the spot (see
+ *      mountStory()), so the choice does not wait for a reload.
  *   3. **Motion explains change, and replays it.** A section fades up each
  *      time it enters the screen, scrolling down or back up; the story's line
  *      redraws as its beats are reached again; figures count up again. An
@@ -53,12 +55,20 @@ const REVEAL_SELECTOR = [
  * where nobody is looking, so scrolling back never shows a half-reset element.
  * `enter` receives the element's position among those that crossed in the same
  * callback, for staggering.
+ *
+ * The returned function disposes of the effect: it disconnects both observers
+ * and calls `settle` on every target, which must leave the element in its final
+ * state with nothing of the effect remaining.
  */
 function observeReplay(
   targets: readonly HTMLElement[],
-  handlers: { enter(el: HTMLElement, step: number): void; leave(el: HTMLElement): void },
+  handlers: {
+    enter(el: HTMLElement, step: number): void;
+    leave(el: HTMLElement): void;
+    settle(el: HTMLElement): void;
+  },
   enterOptions: IntersectionObserverInit,
-): void {
+): () => void {
   const shown = new Set<HTMLElement>();
 
   const enter = new IntersectionObserver((entries) => {
@@ -88,12 +98,19 @@ function observeReplay(
     enter.observe(el);
     leave.observe(el);
   }
+
+  return () => {
+    enter.disconnect();
+    leave.disconnect();
+    shown.clear();
+    for (const el of targets) handlers.settle(el);
+  };
 }
 
 /** Fade-up on every entry, with a small stagger between elements that arrive together. */
-function mountReveals(): void {
+function mountReveals(): (() => void) | null {
   const targets = Array.from(document.querySelectorAll<HTMLElement>(REVEAL_SELECTOR));
-  if (targets.length === 0) return;
+  if (targets.length === 0) return null;
 
   for (const el of targets) {
     el.classList.add("reveal");
@@ -106,7 +123,7 @@ function mountReveals(): void {
     });
   }
 
-  observeReplay(
+  const dispose = observeReplay(
     targets,
     {
       // Elements that cross together are staggered 60ms apart (the skill's
@@ -120,6 +137,11 @@ function mountReveals(): void {
         el.classList.remove("is-seen");
         el.style.removeProperty("--reveal-delay");
       },
+      // Reduced motion chosen after load: no class, nothing hidden.
+      settle(el) {
+        el.classList.remove("reveal", "is-seen");
+        el.style.removeProperty("--reveal-delay");
+      },
     },
     { rootMargin: "0px 0px -8% 0px", threshold: 0.08 },
   );
@@ -127,6 +149,7 @@ function mountReveals(): void {
   // From here the stylesheet's own hidden state takes over from the
   // pre-hide that covered the first paint (see "the story" in styles.css).
   document.documentElement.classList.add("reveal-ready");
+  return dispose;
 }
 
 /**
@@ -138,7 +161,7 @@ function mountReveals(): void {
  * authored text back, so the figure is never left showing a number it did not
  * reach.
  */
-function mountCounters(): void {
+function mountCounters(): (() => void) | null {
   const figures = Array.from(document.querySelectorAll<HTMLElement>(".stat-list dt"));
   const pattern = /^([^\d]*)(\d[\d,]*)(\.\d+)?(.*)$/s;
 
@@ -162,7 +185,7 @@ function mountCounters(): void {
 
     return [{ dt, shown, prefix, suffix, target, decimals, grouped, fraction }];
   });
-  if (prepared.length === 0) return;
+  if (prepared.length === 0) return null;
 
   const format = (value: number, item: (typeof prepared)[number]): string => {
     const fixed = value.toFixed(item.decimals);
@@ -204,19 +227,21 @@ function mountCounters(): void {
   };
 
   const byElement = new Map(prepared.map((item) => [item.dt, item]));
-  observeReplay(
+  const finish = (el: HTMLElement): void => {
+    const item = byElement.get(el);
+    if (!item) return;
+    stop(item);
+    settle(item);
+  };
+  return observeReplay(
     prepared.map((item) => item.dt),
     {
       enter(el) {
         const item = byElement.get(el);
         if (item) run(item);
       },
-      leave(el) {
-        const item = byElement.get(el);
-        if (!item) return;
-        stop(item);
-        settle(item);
-      },
+      leave: finish,
+      settle: finish,
     },
     { threshold: 0.5 },
   );
@@ -227,10 +252,10 @@ function mountCounters(): void {
  * reached, scrolling down or back up. The beats are plain list items; the line
  * is CSS, keyed off `.is-seen` on each item, so this only toggles the class.
  */
-function mountStoryLine(): void {
+function mountStoryLine(): (() => void) | null {
   const beats = Array.from(document.querySelectorAll<HTMLElement>(".story-beat"));
-  if (beats.length === 0) return;
-  observeReplay(
+  if (beats.length === 0) return null;
+  return observeReplay(
     beats,
     {
       enter(el) {
@@ -239,6 +264,11 @@ function mountStoryLine(): void {
       },
       leave(el) {
         el.classList.remove("is-seen");
+        el.style.removeProperty("--beat-delay");
+      },
+      // Final state of the strip is fully drawn.
+      settle(el) {
+        el.classList.add("is-seen");
         el.style.removeProperty("--beat-delay");
       },
     },
@@ -254,7 +284,7 @@ function mountStoryLine(): void {
  * where there is a margin to put it in; the media query below is the point
  * at which the ruled ground's margin is wide enough to hold a 2.5rem column.
  */
-function mountTrunk(reduced: boolean): void {
+function mountTrunk(): void {
   const main = document.querySelector<HTMLElement>("main");
   const sections = Array.from(
     document.querySelectorAll<HTMLElement>(".wrap > section:not(.hero):not(.bento-section)[id][aria-labelledby]"),
@@ -308,7 +338,7 @@ function mountTrunk(reduced: boolean): void {
     const tops = sections.map((section) => section.getBoundingClientRect().top + window.scrollY);
     const first = tops[0] ?? 0;
     const last = tops[tops.length - 1] ?? first;
-    const progress = reduced ? 1 : Math.max(0, Math.min(1, (probe - first) / Math.max(1, last - first)));
+    const progress = prefersReducedMotion() ? 1 : Math.max(0, Math.min(1, (probe - first) / Math.max(1, last - first)));
     fill.style.setProperty("--trunk-progress", String(progress));
     let current = -1;
     tops.forEach((top, i) => {
@@ -400,19 +430,37 @@ function mountCopyEmail(): void {
   });
 }
 
+/**
+ * Mount every effect, and keep the page honest if the motion choice changes
+ * while it is open. The Display control announces a change with a
+ * `display-change` event on the document; the OS setting is watched directly.
+ * Going to reduced motion disposes of each effect at once (observers
+ * disconnected, counters settled, reveal classes removed, the story strip
+ * drawn complete). Going back to full motion is picked up on the next load.
+ */
 export function mountStory(): void {
   mountLocalTime();
   mountCopyEmail();
-  const reduced = prefersReducedMotion();
-  if (!reduced && "IntersectionObserver" in window) {
-    mountReveals();
-    mountCounters();
-    mountStoryLine();
+  const disposers: Array<() => void> = [];
+  if (!prefersReducedMotion() && "IntersectionObserver" in window) {
+    for (const mount of [mountReveals, mountCounters, mountStoryLine]) {
+      const dispose = mount();
+      if (dispose) disposers.push(dispose);
+    }
   } else {
     // Final state, immediately: the story line fully drawn, nothing hidden.
     document.querySelectorAll<HTMLElement>(".story-beat").forEach((el) => el.classList.add("is-seen"));
   }
   if (document.body.getAttribute("data-page") === "home") {
-    mountTrunk(reduced);
+    mountTrunk();
+  }
+
+  const onMotionChange = (): void => {
+    if (!prefersReducedMotion()) return;
+    for (const dispose of disposers.splice(0)) dispose();
+  };
+  document.addEventListener("display-change", onMotionChange);
+  if (typeof window.matchMedia === "function") {
+    window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", onMotionChange);
   }
 }

@@ -140,10 +140,11 @@ function savePrefs(prefs: DisplayPrefs): void {
 export function prefersReducedMotion(): boolean {
   // deck.ts is exercised in Node with a partial document (tests/deck.test.mjs),
   // so neither the root element nor matchMedia can be assumed to exist.
-  const chosen = document.documentElement?.getAttribute("data-motion") ?? null;
+  const chosen =
+    typeof document !== "undefined" ? (document.documentElement?.getAttribute("data-motion") ?? null) : null;
   if (chosen === "reduced") return true;
   if (chosen === "full") return false;
-  return typeof window.matchMedia === "function"
+  return typeof window !== "undefined" && typeof window.matchMedia === "function"
     ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
     : false;
 }
@@ -201,6 +202,12 @@ export function mountDisplayControl(mount: HTMLElement): void {
     return;
   }
 
+  // Scripts that animate (src/story.ts) cannot see an attribute change, so a
+  // choice made after load is announced to them.
+  const announce = (): void => {
+    document.dispatchEvent(new Event("display-change"));
+  };
+
   toggle.addEventListener("click", () => {
     // Land on the current theme choice, so a keyboard visitor is inside the
     // first group rather than on the close button.
@@ -216,6 +223,7 @@ export function mountDisplayControl(mount: HTMLElement): void {
     prefs = { theme: pick("theme"), contrast: pick("contrast"), motion: pick("motion"), text: pick("text") };
     applyPrefs(prefs);
     savePrefs(prefs);
+    announce();
   });
 
   reset.addEventListener("click", () => {
@@ -226,5 +234,6 @@ export function mountDisplayControl(mount: HTMLElement): void {
     }
     applyPrefs(prefs);
     savePrefs(prefs);
+    announce();
   });
 }

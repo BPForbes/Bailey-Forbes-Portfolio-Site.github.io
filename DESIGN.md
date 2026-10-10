@@ -530,7 +530,7 @@ anchor the label instead of vanishing into it.
   reach him — taken in at once. That is why the overview is a grid of tiles
   while everything below it stays ruled rows: a list is for repeated records
   of one kind. Tiles have the site's only rounder corners (`--radius-tile`,
-  12px), varied spans (one, six and twelve columns across the three layers),
+  18px), varied spans (one, six and twelve columns across the three layers),
   and lift 2px on hover only when they hold a destination.
 - **`.ledger`** (`<ol>` of `.ledger-row`) — the project list: one discrete
   destination per row, numbered in the margin, ruled off from the next. It
