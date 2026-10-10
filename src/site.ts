@@ -11,6 +11,7 @@ import {
 import { publishedAt } from "./buildInfo.js";
 import { icon } from "./icons.js";
 import { mountDecks } from "./deck.js";
+import { mountDisplayControl } from "./display.js";
 import { mountGuestWindows } from "./guestWindow.js";
 import { renderLanguageChart } from "./languageChart.js";
 import { mountNamedReleases } from "./releases.js";
@@ -33,19 +34,26 @@ if (header) {
             <span>Indiana</span>
           </span>
         </a>
-        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
-          <span class="nav-toggle-icon" aria-hidden="true">${icon("bars")}${icon("xmark")}</span>
-          Menu
-        </button>
-        <ul class="nav-links" id="site-nav">
-          <li><a data-nav="home" href="${ROUTES.home}">Home</a></li>
-          <li><a data-nav="projects" href="${ROUTES.projects}">Projects</a></li>
-          <li><a data-nav="experience" href="${ROUTES.experience}">Experience</a></li>
-          <li><a data-nav="about" href="${ROUTES.about}">About</a></li>
-          <li><a data-nav="contact" href="${ROUTES.contact}">Contact</a></li>
-        </ul>
+        <div class="nav-tools">
+          <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+            <span class="nav-toggle-icon" aria-hidden="true">${icon("bars")}${icon("xmark")}</span>
+            Menu
+          </button>
+          <ul class="nav-links" id="site-nav">
+            <li><a data-nav="home" href="${ROUTES.home}">Home</a></li>
+            <li><a data-nav="projects" href="${ROUTES.projects}">Projects</a></li>
+            <li><a data-nav="experience" href="${ROUTES.experience}">Experience</a></li>
+            <li><a data-nav="about" href="${ROUTES.about}">About</a></li>
+            <li><a data-nav="contact" href="${ROUTES.contact}">Contact</a></li>
+          </ul>
+          <div class="display" data-display></div>
+        </div>
       </div>
     `;
+  const displayMount = header.querySelector<HTMLElement>("[data-display]");
+  if (displayMount) {
+    mountDisplayControl(displayMount);
+  }
 }
 
 const footer = document.querySelector<HTMLElement>("[data-site-footer]");
@@ -61,6 +69,9 @@ if (footer) {
   const year = (published ?? synced).slice(0, 4);
 
   footer.innerHTML = `
+      <div class="wrap">
+        <p class="footer-colophon">Colophon</p>
+      </div>
       <div class="wrap footer-grid">
         <p>
           © ${year} Bailey P Forbes.${published === undefined ? "" : `

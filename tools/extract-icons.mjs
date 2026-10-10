@@ -13,7 +13,7 @@ const WANTED = {
   expand: 'solid', 'compress': 'solid', 'rotate-right': 'solid', house: 'solid',
   'microchip': 'solid', 'atom': 'solid', 'hospital': 'solid',
   'people-group': 'solid', 'triangle-exclamation': 'solid',
-  bars: 'solid', xmark: 'solid',
+  bars: 'solid', xmark: 'solid', sliders: 'solid',
   'linkedin-in': 'brands', github: 'brands',
 };
 

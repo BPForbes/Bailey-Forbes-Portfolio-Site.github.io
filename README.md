@@ -12,6 +12,31 @@ roles in `css/styles.css`, which container each kind of content gets, the
 exceptions that were granted and why, and exactly what was and was not verified.
 Read it before changing layout, tokens, or component behaviour.
 
+## Display setting
+
+The header's **Display** control lets a visitor choose a theme (dark, paper,
+or system), a contrast cut (standard or high), motion (full or reduced) and a
+text size. The choice is saved in `localStorage` under `bf-display`, written
+onto `<html>` as `data-theme` / `data-contrast` / `data-motion` / `data-text`,
+and re-applied before first paint by the inline script in every page's
+`<head>`. With nothing chosen the page follows the OS preferences, with or
+without JavaScript. `src/display.ts` draws the control; the token layer at
+the top of `css/styles.css` does the rendering; DESIGN.md B1 and B4 record
+the four renderings and why the control exists.
+
+To verify a change to any of it: `python3 tools/contrast.py` checks every
+token pair in all four renderings, and `tools/audit-a11y.mjs` (Playwright,
+against a local server on port 4173) measures the rendered pages.
+
+## UI/UX skill
+
+`.claude/skills/ui-ux-pro-max/` is the
+[UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)
+skill for Claude Code, installed into this repository so UI work in a Claude
+session can query its style, palette, typography and accessibility guidance
+(`python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<query>" --domain ux`).
+It is guidance only; DESIGN.md remains the rule set this site is built to.
+
 ## Project evidence
 
 The QPU and Homework Central screenshots and the Flinstone and KeyQuorum

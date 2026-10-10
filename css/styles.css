@@ -8,7 +8,36 @@
  *      (B3). Prose does not get a box.
  */
 
+/*
+ * ---------------------------------------------------------------- tokens --
+ *
+ * One token layer, four renderings. The site has two themes (the dark
+ * workshop ground that is its default, and a paper rendering for light
+ * mode) and each has a standard and a high-contrast cut. All four are
+ * selected here, by attributes the Display control writes onto <html>
+ * (src/display.ts) or, with scripting off and nothing chosen, by the
+ * visitor's own OS preferences:
+ *
+ *   data-theme     dark | light       (absent = follow prefers-color-scheme)
+ *   data-contrast  standard | high    (absent = follow prefers-contrast)
+ *   data-motion    full | reduced     (absent = follow prefers-reduced-motion)
+ *   data-text      default | large
+ *
+ * Components still use the SEMANTIC role tokens only (B1). The raw palette
+ * exists to give those roles a value in each rendering; do not reference it
+ * from a component.
+ *
+ * Every text/surface pair below holds >=4.5:1 and every control boundary and
+ * focus ring >=3:1 in all four renderings — the figures are in DESIGN.md B1
+ * and the check is tools/contrast.py. The dark values are written first as
+ * the fallback, then re-declared with light-dark() so one declaration can
+ * carry both themes and the switch is just `color-scheme`. light-dark()
+ * takes the LIGHT value first.
+ */
+
 :root {
+  color-scheme: dark;
+
   /* Raw palette — referenced only by the role tokens directly below it. */
   --p-near-black: #10120f;
   --p-bark: #181a16;
@@ -28,6 +57,23 @@
   --p-paper-ink: #2a2418;
   --p-paper-ink-soft: #6b5e48;
   --p-ink: #0b0c0a;
+
+  /* The paper rendering's raw palette. */
+  --p-paper-page: #f4eee2;
+  --p-paper-raised: #fbf7ee;
+  --p-paper-sunken: #ebe3d2;
+  --p-paper-card: #fffaf0;
+  --p-paper-text: #1f1b14;
+  --p-paper-muted: #4a4336;
+  --p-paper-subtle: #605847;
+  --p-paper-line: #d8cfbb;
+  --p-paper-line-strong: #b9ad94;
+  --p-paper-stone: #7d7460;
+  --p-copper-deep: #8a4612;
+  --p-copper-deeper: #6b350c;
+  --p-patina-deep: #3f6b33;
+  --p-patina-deeper: #2f6a2a;
+  --p-rust-deep: #a8281f;
 
   /* Surfaces */
   --surface-page: var(--p-near-black);
@@ -61,6 +107,12 @@
   --status-wait: var(--p-copper-soft);
   --status-error: var(--p-rust);
 
+  /* Hairline rules and the ruled ground. The ground is a faint grid drawn
+     only in the page margins (see .site-ground), so no text ever sits on it. */
+  --rule: 1px;
+  --rule-strong: 1px;
+  --ground-line: rgba(235, 230, 216, 0.05);
+
   /* Spacing scale (4px ramp). Layout rhythm uses these, not one-off values. */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -72,10 +124,11 @@
   --space-8: 3.5rem;
   --space-9: 5rem;
 
-  /* Radii, elevation, motion */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  /* Radii, elevation, motion. The radii are small on purpose: this is a
+     drafted document, not a pile of rounded tiles. */
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
   --elevation-1: 0 18px 50px rgba(0, 0, 0, 0.35);
   --motion-fast: 120ms;
   --motion-base: 200ms;
@@ -99,6 +152,130 @@
   --content-padding: 1rem;
   --section-spacing: var(--space-6);
   --nav-h: 56px;
+}
+
+/* --- theme: dark | light ---------------------------------------------------- */
+
+/* Which rendering `color-scheme` resolves to. An explicit choice wins; with
+   none made the browser's own preference decides, scripting or not. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+  }
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+@supports (color: light-dark(#fff, #000)) {
+  :root {
+    --surface-page: light-dark(var(--p-paper-page), var(--p-near-black));
+    --surface-raised: light-dark(var(--p-paper-raised), var(--p-bark));
+    --surface-sunken: light-dark(var(--p-paper-sunken), var(--p-moss-dark));
+    --surface-invert: light-dark(var(--p-paper-card), var(--p-paper));
+
+    --text: light-dark(var(--p-paper-text), var(--p-bone));
+    --text-muted: light-dark(var(--p-paper-muted), var(--p-linen));
+    --text-subtle: light-dark(var(--p-paper-subtle), var(--p-ash));
+    --text-on-action: light-dark(#ffffff, var(--p-ink));
+    --text-on-invert: light-dark(var(--p-paper-ink), var(--p-paper-ink));
+    --text-on-invert-muted: light-dark(#5c5040, var(--p-paper-ink-soft));
+
+    --border: light-dark(var(--p-paper-line), var(--p-line));
+    --border-strong: light-dark(var(--p-paper-line-strong), var(--p-line-strong));
+    --border-interactive: light-dark(var(--p-paper-stone), var(--p-stone));
+
+    --action: light-dark(var(--p-copper-deep), var(--p-copper));
+    --action-hover: light-dark(var(--p-copper-deeper), var(--p-copper-soft));
+    --accent: light-dark(var(--p-patina-deep), var(--p-patina));
+    --focus: light-dark(var(--p-copper-deep), var(--p-copper-soft));
+
+    --status-ok: light-dark(var(--p-patina-deeper), var(--p-patina-soft));
+    --status-wait: light-dark(var(--p-copper-deep), var(--p-copper-soft));
+    --status-error: light-dark(var(--p-rust-deep), var(--p-rust));
+
+    --ground-line: light-dark(rgba(42, 36, 24, 0.07), rgba(235, 230, 216, 0.05));
+    --elevation-1: light-dark(0 18px 50px rgba(42, 36, 24, 0.14), 0 18px 50px rgba(0, 0, 0, 0.35));
+  }
+}
+
+/* --- contrast: standard | high ---------------------------------------------- */
+
+/*
+ * The high-contrast cut: 7:1 or better for every text role, thicker rules,
+ * a white (or black) focus ring, no translucent texture anywhere. The block
+ * is written twice because a media query cannot share a rule with an
+ * attribute selector: once for the explicit choice, once for an OS
+ * preference with no choice made. Keep the two identical.
+ */
+:root[data-contrast="high"] {
+  --surface-page: light-dark(#ffffff, #000000);
+  --surface-raised: light-dark(#ffffff, #0d0e0c);
+  --surface-sunken: light-dark(#f1f1f1, #161815);
+  --surface-invert: light-dark(#ffffff, #ffffff);
+  --text: light-dark(#000000, #ffffff);
+  --text-muted: light-dark(#111111, #f1ede4);
+  --text-subtle: light-dark(#2a2a2a, #d9d4c7);
+  --text-on-action: light-dark(#ffffff, #000000);
+  --text-on-invert: #000000;
+  --text-on-invert-muted: #2b2b2b;
+  --border: light-dark(#8a8a8a, #6f746a);
+  --border-strong: light-dark(#5a5a5a, #9ea396);
+  --border-interactive: light-dark(#2a2a2a, #c9cdc3);
+  --action: light-dark(#6b3400, #f3bd74);
+  --action-hover: light-dark(#4a2300, #ffd59a);
+  --accent: light-dark(#1f4d17, #b8e0a4);
+  --focus: light-dark(#000000, #ffffff);
+  --status-ok: light-dark(#1f4d17, #b8e0a4);
+  --status-wait: light-dark(#6b3400, #f3bd74);
+  --status-error: light-dark(#9c1c12, #ff9d93);
+  --ground-line: transparent;
+  --elevation-1: none;
+  --rule: 2px;
+  --rule-strong: 2px;
+}
+
+@media (prefers-contrast: more) {
+  :root:not([data-contrast="standard"]) {
+    --surface-page: light-dark(#ffffff, #000000);
+    --surface-raised: light-dark(#ffffff, #0d0e0c);
+    --surface-sunken: light-dark(#f1f1f1, #161815);
+    --surface-invert: light-dark(#ffffff, #ffffff);
+    --text: light-dark(#000000, #ffffff);
+    --text-muted: light-dark(#111111, #f1ede4);
+    --text-subtle: light-dark(#2a2a2a, #d9d4c7);
+    --text-on-action: light-dark(#ffffff, #000000);
+    --text-on-invert: #000000;
+    --text-on-invert-muted: #2b2b2b;
+    --border: light-dark(#8a8a8a, #6f746a);
+    --border-strong: light-dark(#5a5a5a, #9ea396);
+    --border-interactive: light-dark(#2a2a2a, #c9cdc3);
+    --action: light-dark(#6b3400, #f3bd74);
+    --action-hover: light-dark(#4a2300, #ffd59a);
+    --accent: light-dark(#1f4d17, #b8e0a4);
+    --focus: light-dark(#000000, #ffffff);
+    --status-ok: light-dark(#1f4d17, #b8e0a4);
+    --status-wait: light-dark(#6b3400, #f3bd74);
+    --status-error: light-dark(#9c1c12, #ff9d93);
+    --ground-line: transparent;
+    --elevation-1: none;
+    --rule: 2px;
+    --rule-strong: 2px;
+  }
+}
+
+/* --- text: default | large -------------------------------------------------- */
+
+/* Everything below is in rem, so this one declaration scales the whole
+   page — the same mechanism as the browser's own font-size setting, which
+   it adds to rather than replaces. */
+:root[data-text="large"] {
+  font-size: 118%;
 }
 
 /*
@@ -138,9 +315,40 @@ body {
   background: var(--surface-page);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 16.5px;
+  font-size: 1.03rem;
   line-height: 1.65;
   -webkit-text-size-adjust: 100%;
+  /* Tap feedback without the 300ms wait; pinch-zoom is untouched. */
+  touch-action: manipulation;
+}
+
+/*
+ * The ruled ground: a faint 4rem grid, the one texture on the site, and it
+ * is confined to the page margins (the space outside --measure-page) so no
+ * text is ever measured against it. It is what makes a wide window read as a
+ * drafting sheet with the content set on it, rather than a dark void with a
+ * column in the middle. Zero-width on a phone, where there is no margin, and
+ * transparent in the high-contrast cut.
+ */
+.site-ground {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--ground-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--ground-line) 1px, transparent 1px);
+  background-size: 4rem 4rem;
+  background-position: 50% 0;
+  /* Cut the grid out from behind the content column. */
+  -webkit-mask:
+    linear-gradient(#000, #000) 50% 0 / min(100%, calc(var(--measure-page) + var(--content-padding) * 2)) 100% no-repeat,
+    linear-gradient(#000, #000);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000, #000) 50% 0 / min(100%, calc(var(--measure-page) + var(--content-padding) * 2)) 100% no-repeat,
+    linear-gradient(#000, #000);
+  mask-composite: exclude;
 }
 
 /* height:auto is load-bearing: without it the width/height attributes (kept for
@@ -162,7 +370,7 @@ figcaption {
 
 a {
   color: var(--action-hover);
-  text-decoration-thickness: 1px;
+  text-decoration-thickness: var(--rule);
   text-underline-offset: 0.18em;
   transition: color var(--motion-fast) ease-out;
 }
@@ -268,7 +476,7 @@ dt > .icon,
      the first paint the same height as the hydrated one (CLS). */
   min-height: var(--nav-h);
   background: var(--surface-page);
-  border-bottom: 1px solid var(--border);
+  border-bottom: var(--rule) solid var(--border-strong);
 }
 
 .nav-wrap {
@@ -300,8 +508,9 @@ dt > .icon,
   height: 36px;
   display: grid;
   place-items: center;
-  border: 1px solid var(--action);
+  border: var(--rule) solid var(--action);
   border-radius: var(--radius-sm);
+  color: var(--action-hover);
   font-family: var(--font-display);
   font-size: 0.95rem;
   font-weight: 600;
@@ -325,6 +534,15 @@ dt > .icon,
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+/* The toggle, the links and the Display control, as one cluster. The link
+   panel positions itself against the header, not this box, so the box is
+   deliberately not a containing block in the compact layer. */
+.nav-tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 /* Compact: a disclosure panel under the header bar, opened by .nav-toggle. */
@@ -356,7 +574,10 @@ dt > .icon,
   border-radius: var(--radius-sm);
   color: var(--text-muted);
   text-decoration: none;
-  font-size: 0.92rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   transition: color var(--motion-fast) ease-out, background-color var(--motion-fast) ease-out;
 }
 
@@ -369,7 +590,7 @@ dt > .icon,
    alone), so it survives a monochrome or high-contrast rendering. */
 .nav-links a[aria-current="page"] {
   color: var(--text);
-  box-shadow: inset 0 -2px 0 0 var(--action);
+  box-shadow: inset 0 calc(var(--rule-strong) * -2) 0 0 var(--action);
 }
 
 .nav-toggle {
@@ -379,11 +600,13 @@ dt > .icon,
   min-height: var(--tap-comfortable);
   background: transparent;
   color: var(--text);
-  border: 1px solid var(--border-interactive);
+  border: var(--rule) solid var(--border-interactive);
   border-radius: var(--radius-sm);
   padding: 0 var(--space-3);
-  font-family: inherit;
-  font-size: 0.92rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: border-color var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
 }
@@ -453,22 +676,46 @@ h4 {
   letter-spacing: -0.02em;
   line-height: 1.15;
   overflow-wrap: break-word;
+  font-variation-settings: "SOFT" 20, "WONK" 0;
 }
 
-/* Floors are set so the longest real heading — "Electronic medical record" —
-   fits a 320px viewport without horizontal overflow (R24). */
+/*
+ * Floors are set so the longest real heading — "Electronic medical record" —
+ * fits a 320px viewport without horizontal overflow (R24).
+ *
+ * The page title is the one place Fraunces' "wonky" alternates are turned on:
+ * the slanted terminals and the old-style letterforms are what make the name
+ * read as a set piece of lettering rather than a default serif. Everywhere
+ * else the axis stays off, so the quirk is a signature, not a texture.
+ */
 h1 {
   margin: 0 0 var(--space-4);
-  font-size: clamp(2.1rem, 6vw, 4.4rem);
+  font-size: clamp(2.3rem, 7vw, 5rem);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  font-variation-settings: "SOFT" 40, "WONK" 1;
 }
 
 .kicker {
-  margin: 0 0 var(--space-3);
-  color: var(--action);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-4);
+  color: var(--action-hover);
   font-family: var(--font-mono);
   font-size: 0.78rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+}
+
+/* A short leader rule before the kicker, like the dash before a running head. */
+.kicker::before {
+  content: "";
+  flex: none;
+  width: 2rem;
+  height: var(--rule-strong);
+  background: var(--action);
 }
 
 .lede {
@@ -478,18 +725,50 @@ h1 {
   font-size: 1.12rem;
 }
 
-/* The blurb belongs to its heading, so it sits under it rather than being
-   pushed to the far edge of a 1120px row (R08: related items sit closer). */
+/*
+ * Section heads are numbered like the sections of a spec: a rule across the
+ * top, a two-digit folio in mono, then the title. The blurb belongs to its
+ * heading, so it sits under it rather than being pushed to the far edge of a
+ * 1120px row (R08: related items sit closer).
+ *
+ * Only the home page's top-level sections are counted (`.wrap > section`);
+ * the project pages' sections are nested inside a prose column and a
+ * disclosure and would number in an order that means nothing. The numeral is
+ * generated content with an empty alternative text, so assistive technology
+ * reads the heading, not "zero one Featured work".
+ */
+main {
+  counter-reset: section;
+}
+
+.wrap > section:not(.hero) {
+  counter-increment: section;
+}
+
 .section-head {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
   margin-bottom: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: var(--rule-strong) solid var(--border-strong);
 }
 
 .section-head h2 {
   margin: 0;
   font-size: clamp(1.7rem, 3vw, 2.4rem);
+}
+
+.wrap > section > .section-head h2::before {
+  content: counter(section, decimal-leading-zero) / "";
+  display: inline-block;
+  margin-right: var(--space-4);
+  color: var(--action-hover);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  vertical-align: 0.45em;
 }
 
 .section-head p,
@@ -620,6 +899,7 @@ code {
   margin: var(--space-5) 0 0;
   padding: var(--space-3) var(--space-4);
   border-left: 3px solid var(--action);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   background: var(--surface-sunken);
   color: var(--text-muted);
   font-size: 0.9rem;
@@ -642,23 +922,47 @@ code {
   width: min(10rem, 40vw);
 }
 
-.hero-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  list-style: none;
+/*
+ * The spec sheet: the facts a datasheet would print in its header block —
+ * where, what, current release, status — as label/value rows ruled off from
+ * each other, in mono because they are records. It replaces a row of pill
+ * badges, which said the same things in the shape every portfolio uses.
+ */
+.spec-sheet {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   margin: var(--space-5) 0 0;
-  padding: 0;
+  max-width: 34rem;
+  border-top: var(--rule) solid var(--border-strong);
 }
 
-.hero-pills li {
-  padding: var(--space-1) var(--space-3);
-  border: 1px solid var(--border-strong);
-  border-radius: 999px;
-  color: var(--text-muted);
+.spec-sheet > div {
+  display: grid;
+  grid-template-columns: minmax(7rem, 9rem) minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: baseline;
+  padding: var(--space-2) 0;
+  border-bottom: var(--rule) solid var(--border);
+}
+
+.spec-sheet dt {
+  color: var(--text-subtle);
   font-family: var(--font-mono);
   font-size: 0.72rem;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.spec-sheet dd {
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+.spec-sheet dd .icon {
+  margin-right: 0.45em;
+  color: var(--action);
 }
 
 .hero-actions {
@@ -671,11 +975,14 @@ code {
 /* One portrait on the page, sized so it supports the name rather than
    replacing the evidence of work (R05, R14). */
 .portrait-frame {
+  position: relative;
   margin: 0;
   overflow: hidden;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  border: var(--rule) solid var(--border-strong);
   background: var(--surface-raised);
+  /* A second, offset rule behind the plate: the one drafting flourish. */
+  box-shadow: var(--space-2) var(--space-2) 0 0 var(--border);
 }
 
 .portrait-frame img {
@@ -688,7 +995,7 @@ code {
 
 .portrait-frame figcaption {
   padding: var(--space-2) var(--space-3);
-  border-top: 1px solid var(--border);
+  border-top: var(--rule) solid var(--border-strong);
   color: var(--text-subtle);
   font-family: var(--font-mono);
   font-size: 0.7rem;
@@ -763,10 +1070,12 @@ code {
   gap: var(--space-2);
   min-height: var(--tap-comfortable);
   padding: var(--space-2) var(--space-4);
-  border-radius: 999px;
-  border: 1px solid transparent;
-  font-family: inherit;
-  font-size: 0.95rem;
+  border-radius: var(--radius-sm);
+  border: var(--rule) solid transparent;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
   /* ease-out: the state is arriving, not settling mid-visibility (motion-cookbook §2). */
@@ -786,12 +1095,14 @@ code {
 
 .btn-primary {
   background: var(--action);
+  border-color: var(--action);
   color: var(--text-on-action);
   font-weight: 600;
 }
 
 .btn-primary:hover {
   background: var(--action-hover);
+  border-color: var(--action-hover);
   color: var(--text-on-action);
 }
 
@@ -820,8 +1131,8 @@ code {
   flex-direction: column;
   padding: var(--space-4);
   background: var(--surface-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border: var(--rule) solid var(--border-strong);
+  border-radius: var(--radius-md);
   text-decoration: none;
   color: inherit;
   /* --motion-base, not -fast: a full card is a larger surface than a button
@@ -877,11 +1188,12 @@ code {
   align-items: center;
   min-height: var(--tap-min);
   padding: var(--space-1) var(--space-2);
-  border: 1px solid var(--border-strong);
-  border-radius: 999px;
+  border: var(--rule) solid var(--border-strong);
+  border-radius: var(--radius-sm);
   color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: 0.72rem;
+  letter-spacing: 0.02em;
 }
 
 .card-actions {
@@ -889,6 +1201,111 @@ code {
   flex-wrap: wrap;
   gap: var(--space-3);
   margin-top: var(--space-4);
+}
+
+/*
+ * The ledger (B3): the project list as numbered, ruled rows rather than a
+ * grid of tiles. Each row is one discrete destination — a project — so it
+ * carries what the old .card carried (period, role, title, blurb, tags,
+ * actions), laid out the way an index or a parts list lays it out: a folio
+ * numeral in the margin, the record beside it, a rule beneath. The numeral
+ * is generated with empty alternative text; the <ol> already gives the
+ * reader the count and the position.
+ */
+.ledger {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: ledger;
+  border-top: var(--rule-strong) solid var(--border-strong);
+}
+
+.ledger-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-5) 0 var(--space-5) 2.75rem;
+  border-bottom: var(--rule) solid var(--border-strong);
+  counter-increment: ledger;
+  transition: background-color var(--motion-base) ease-out;
+}
+
+.ledger-row::before {
+  content: counter(ledger, decimal-leading-zero) / "";
+  position: absolute;
+  left: 0;
+  top: calc(var(--space-5) + 0.35em);
+  color: var(--action-hover);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  transition: color var(--motion-fast) ease-out;
+}
+
+/* A whole-row link, on the index page. The <a> fills the <li>; the row's own
+   padding is moved onto it so the whole ruled band is the target. */
+.ledger-row:has(> .ledger-link) {
+  padding: 0;
+}
+
+.ledger-link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-5) 0 var(--space-5) 2.75rem;
+  color: inherit;
+  text-decoration: none;
+  transition: background-color var(--motion-base) ease-out;
+}
+
+.ledger-row:hover,
+.ledger-link:hover {
+  background: var(--surface-raised);
+}
+
+.ledger-row:hover::before {
+  color: var(--action);
+}
+
+.ledger-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
+
+.ledger-row h2,
+.ledger-row h3 {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+}
+
+.ledger-row h2 .icon,
+.ledger-row h3 .icon {
+  margin-right: 0.4em;
+  color: var(--action);
+}
+
+.ledger-link:hover h2 {
+  color: var(--action-hover);
+}
+
+.ledger-row p {
+  margin: 0;
+  max-width: var(--measure-prose);
+  color: var(--text-muted);
+}
+
+.ledger-row .chips {
+  margin-top: var(--space-1);
+}
+
+.ledger-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
 }
 
 /* .entry is a repeated record with the same fields (B3). */
@@ -907,10 +1324,8 @@ code {
 }
 
 .entry {
-  padding: var(--space-4);
-  background: var(--surface-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  padding: var(--space-4) 0 var(--space-2);
+  border-top: var(--rule) solid var(--border-strong);
 }
 
 .entry-head {
@@ -1171,7 +1586,7 @@ code {
   grid-template-columns: minmax(0, 1fr);
   gap: 0;
   margin: 0;
-  border-top: 1px solid var(--border);
+  border-top: var(--rule) solid var(--border-strong);
 }
 
 .spec-list dt a {
@@ -1218,13 +1633,18 @@ code {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  padding-left: var(--space-4);
+  border-left: var(--rule) solid var(--border-strong);
 }
 
 .stat-list dt {
   font-family: var(--font-display);
-  font-size: 1.7rem;
-  line-height: 1.1;
+  font-size: 2.2rem;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
   color: var(--action-hover);
+  font-variation-settings: "SOFT" 40, "WONK" 0;
 }
 
 .stat-list dd {
@@ -2157,8 +2577,8 @@ code {
   flex-direction: column;
   overflow: hidden;
   background: var(--surface-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border: var(--rule) solid var(--border-strong);
+  border-radius: var(--radius-md);
   box-shadow: var(--elevation-1);
 }
 
@@ -2419,9 +2839,18 @@ body.guest-overlay-open {
 .site-footer {
   margin-top: var(--space-6);
   padding: var(--space-6) 0 var(--space-7);
-  border-top: 1px solid var(--border);
+  border-top: var(--rule-strong) solid var(--border-strong);
   color: var(--text-subtle);
   font-size: 0.9rem;
+}
+
+.footer-colophon {
+  margin: 0 0 var(--space-3);
+  color: var(--action-hover);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .footer-grid {
@@ -2449,6 +2878,9 @@ body.guest-overlay-open {
   display: inline-flex;
   align-items: center;
   min-height: var(--tap-min);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
 }
 
 .contact-list {
@@ -2512,18 +2944,253 @@ body.guest-overlay-open {
 
 /* -------------------------------------------------------------- narrow ---- */
 
+/*
+ * Reduced motion, from either source: the OS preference (unless the visitor
+ * has explicitly chosen full motion in the Display control) or the control
+ * itself. Both blocks must stay identical; a media query cannot share a rule
+ * with an attribute selector. Scripts ask src/display.ts, which reads both.
+ */
 @media (prefers-reduced-motion: reduce) {
-  html {
+  :root:not([data-motion="full"]) {
     scroll-behavior: auto;
   }
 
-  *,
-  *::before,
-  *::after {
+  :root:not([data-motion="full"]) *,
+  :root:not([data-motion="full"]) *::before,
+  :root:not([data-motion="full"]) *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+:root[data-motion="reduced"] {
+  scroll-behavior: auto;
+}
+
+:root[data-motion="reduced"] *,
+:root[data-motion="reduced"] *::before,
+:root[data-motion="reduced"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/*
+ * High contrast, beyond the token swap: links always underlined, the
+ * project-page motif texture gone (it was a 12% tint, which is exactly the
+ * kind of thing the cut exists to remove), and nothing translucent.
+ */
+:root[data-contrast="high"] a,
+:root[data-contrast="high"] .contact-value {
+  text-decoration: underline;
+}
+
+:root[data-contrast="high"] [data-project-motif],
+:root[data-contrast="high"] .site-ground {
+  display: none;
+}
+
+:root[data-contrast="high"] .chip > .icon {
+  opacity: 1;
+}
+
+@media (prefers-contrast: more) {
+  :root:not([data-contrast="standard"]) a,
+  :root:not([data-contrast="standard"]) .contact-value {
+    text-decoration: underline;
+  }
+
+  :root:not([data-contrast="standard"]) [data-project-motif],
+  :root:not([data-contrast="standard"]) .site-ground {
+    display: none;
+  }
+
+  :root:not([data-contrast="standard"]) .chip > .icon {
+    opacity: 1;
+  }
+}
+
+/* -------------------------------------------------------- display control -- */
+
+/*
+ * The Display control: a button in the header that opens a small panel of
+ * radio groups — theme, contrast, motion, text size. Native radios inside
+ * <fieldset>/<legend>, so the group semantics, arrow-key movement and the
+ * checked state all come from the browser; the stylesheet only draws each
+ * group as a segmented row. The panel is a non-modal dialog: Escape and a
+ * click outside close it and focus returns to the button (src/display.ts).
+ */
+.display {
+  position: static;
+  display: flex;
+  align-items: center;
+}
+
+/* On a phone the word is dropped and the button is the glyph alone; the
+   accessible name is on the button, not the glyph (B2, R17). */
+.display-toggle-label {
+  display: none;
+}
+
+.display-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-comfortable);
+  padding: 0 var(--space-3);
+  background: transparent;
+  color: var(--text);
+  border: var(--rule) solid var(--border-interactive);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
+}
+
+.display-toggle:hover {
+  border-color: var(--action);
+}
+
+.display-toggle:active {
+  transform: scale(0.97);
+}
+
+.display-toggle[aria-expanded="true"] {
+  border-color: var(--action);
+  color: var(--action-hover);
+}
+
+.display-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + var(--space-2));
+  z-index: 25;
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--content-padding) var(--space-5);
+  background: var(--surface-raised);
+  border: var(--rule) solid var(--border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--elevation-1);
+}
+
+.display-panel[hidden] {
+  display: none;
+}
+
+.display-panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.display-panel h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.display-panel p {
+  margin: 0;
+  color: var(--text-subtle);
+  font-size: 0.85rem;
+}
+
+.display-panel form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.display-group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.display-group legend {
+  padding: 0;
+  margin-bottom: var(--space-2);
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.display-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Each option is a label wrapping its radio. The radio is visually hidden
+   but stays in the tree and focusable; the label draws the state. */
+.display-option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-comfortable);
+  padding: 0 var(--space-3);
+  border: var(--rule) solid var(--border-interactive);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition:
+    border-color var(--motion-fast) ease-out,
+    background-color var(--motion-fast) ease-out,
+    color var(--motion-fast) ease-out;
+}
+
+.display-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.display-option:hover {
+  border-color: var(--action);
+  color: var(--text);
+}
+
+/* Checked is drawn as a filled option AND a leading mark, so the state is
+   not carried by colour alone (R25). */
+.display-option:has(input:checked) {
+  background: var(--action);
+  border-color: var(--action);
+  color: var(--text-on-action);
+  font-weight: 600;
+}
+
+.display-option:has(input:checked)::before {
+  content: "";
+  display: inline-block;
+  width: 0.45em;
+  height: 0.75em;
+  margin-right: var(--space-2);
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-0.1em) rotate(45deg);
+}
+
+.display-option:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.display-reset {
+  justify-self: start;
 }
 
 /* Contact form: existing semantic tokens, plain single-column layout. */
@@ -2636,6 +3303,62 @@ body.guest-overlay-open {
     padding: 0 var(--space-3);
   }
 
+  .nav-tools {
+    gap: var(--space-4);
+  }
+
+  /* --- display control: a popover under its own button --------------------- */
+
+  .display {
+    position: relative;
+  }
+
+  .display-toggle-label {
+    display: inline;
+  }
+
+  .display-panel {
+    left: auto;
+    right: 0;
+    width: 24rem;
+    padding: var(--space-4) var(--space-5) var(--space-5);
+  }
+
+  /* --- ledger: folio, record, and the side column ---------------------------- */
+
+  .ledger-row,
+  .ledger-link {
+    grid-template-columns: minmax(0, 1fr) minmax(12rem, 16rem);
+    column-gap: var(--space-7);
+    padding-left: 4rem;
+  }
+
+  .ledger-row > .ledger-head {
+    grid-column: 1;
+  }
+
+  .ledger-row > h2,
+  .ledger-row > h3,
+  .ledger-row > p,
+  .ledger-row > .chips,
+  .ledger-link > .ledger-head,
+  .ledger-link > h2,
+  .ledger-link > p,
+  .ledger-link > .chips {
+    grid-column: 1;
+  }
+
+  .ledger-actions,
+  .ledger-side {
+    grid-column: 2;
+    grid-row: 1 / span 5;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    margin-top: 0.35rem;
+  }
+
   /* --- records: let the grid find its own column count ---------------------- */
 
   /*
@@ -2732,4 +3455,13 @@ body.guest-overlay-open {
   .guest-panel {
     min-height: 28rem;
   }
+}
+
+/* Two spacing hooks that used to be inline styles on the home page. */
+.experience-after-stats {
+  margin-top: var(--space-6);
+}
+
+.sub-head-spaced {
+  margin-top: var(--space-6);
 }

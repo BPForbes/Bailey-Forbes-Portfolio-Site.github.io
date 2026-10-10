@@ -406,48 +406,70 @@ disagree, the stylesheet is wrong.
 ## B1. Token roles (R12)
 
 Semantic role tokens are defined in `:root` and are the only names components
-may use. The raw palette (`--copper`, `--patina`, `--stone`, …) exists solely to
-give the role tokens a value; do not reference a raw palette name from a
-component rule.
+may use. The raw palette (`--p-copper`, `--p-patina`, `--p-stone`, …) exists
+solely to give the role tokens a value; do not reference a raw palette name
+from a component rule.
 
-| Role token | Value | Used for |
-|---|---|---|
-| `--surface-page` | `#10120f` | Page ground |
-| `--surface-raised` | `#181a16` | Cards, entries, guest window |
-| `--surface-sunken` | `#1f221c` | Titlebars, notes, inset strips |
-| `--surface-invert` | `#f3ead8` | Card stock, `.note-card` only |
-| `--text` | `#ebe6d8` | Headings and body |
-| `--text-muted` | `#c4bdae` | Supporting prose |
-| `--text-subtle` | `#8f897b` | Metadata, captions, legends |
-| `--text-on-action` | `#0b0c0a` | Label on a filled action |
-| `--text-on-invert` | `#2a2418` | Ink on card stock |
-| `--text-on-invert-muted` | `#6b5e48` | The mono label on card stock |
-| `--border` | `#2c2f28` | Separation between static surfaces |
-| `--border-strong` | `#3d4036` | Emphasised static separation |
-| `--border-interactive` | `#6d7264` | Any border that *is* the control's visible boundary (≥3:1, WCAG 1.4.11) |
-| `--action` / `--action-hover` | `#c98a4a` / `#e0b27a` | The single call-to-action colour |
-| `--accent` | `#7ea36a` | Provenance labels (`.eyebrow`) — "this came from the git record" |
-| `--focus` | `#e0b27a` | Focus ring, on every focusable element |
-| `--status-ok` / `--status-wait` / `--status-error` | `#9dc389` / `#e0b27a` / `#e0685c` | Live-lab status, always paired with text |
+Since the 2026-10-10 redesign the one token layer has **four renderings**: two
+themes (dark, the default workshop ground; and paper, a light rendering) each
+with a standard and a high-contrast cut. The rendering is chosen by attributes
+the Display control writes onto `<html>` (`data-theme`, `data-contrast`,
+`data-motion`, `data-text`; see B4) or, with none set, by the visitor's own
+`prefers-color-scheme` / `prefers-contrast` / `prefers-reduced-motion`. Both
+themes live in one declaration per token via `light-dark()` (light value
+first), switched by `color-scheme`; the dark values are also declared plainly
+first as the fallback for a browser without it.
 
-Measured contrast (sRGB, computed from the values above on 2026-09-15):
-`--text` 15.1:1 on page, `--text-muted` 9.4:1 on raised, `--text-subtle` 4.6:1
-on sunken, `--text-on-invert` 12.9:1 and `--text-on-invert-muted` 5.3:1 on card
-stock, `--status-error` 4.8:1 on sunken, `--border-interactive` 3.3–3.8:1
-across the three surfaces, `--text-on-action` on `--action` 6.7:1. Every one of
-those was then re-checked against the *rendered* pages, not just the token
-table — see B5.
+| Role token | Dark | Paper | Dark · high contrast | Paper · high contrast | Used for |
+|---|---|---|---|---|---|
+| `--surface-page` | `#10120f` | `#f4eee2` | `#000000` | `#ffffff` | Page ground |
+| `--surface-raised` | `#181a16` | `#fbf7ee` | `#0d0e0c` | `#ffffff` | Hover bands, guest window, panel |
+| `--surface-sunken` | `#1f221c` | `#ebe3d2` | `#161815` | `#f1f1f1` | Titlebars, notes, inset strips |
+| `--surface-invert` | `#f3ead8` | `#fffaf0` | `#ffffff` | `#ffffff` | Card stock, `.note-card` only |
+| `--text` | `#ebe6d8` | `#1f1b14` | `#ffffff` | `#000000` | Headings and body |
+| `--text-muted` | `#c4bdae` | `#4a4336` | `#f1ede4` | `#111111` | Supporting prose |
+| `--text-subtle` | `#8f897b` | `#605847` | `#d9d4c7` | `#2a2a2a` | Metadata, captions, legends |
+| `--text-on-action` | `#0b0c0a` | `#ffffff` | `#000000` | `#ffffff` | Label on a filled action |
+| `--text-on-invert` | `#2a2418` | `#2a2418` | `#000000` | `#000000` | Ink on card stock |
+| `--text-on-invert-muted` | `#6b5e48` | `#5c5040` | `#2b2b2b` | `#2b2b2b` | The mono label on card stock |
+| `--border` | `#2c2f28` | `#d8cfbb` | `#6f746a` | `#8a8a8a` | Separation between static surfaces |
+| `--border-strong` | `#3d4036` | `#b9ad94` | `#9ea396` | `#5a5a5a` | Rules: section heads, ledger rows, entries |
+| `--border-interactive` | `#6d7264` | `#7d7460` | `#c9cdc3` | `#2a2a2a` | Any border that *is* the control's visible boundary (≥3:1, WCAG 1.4.11) |
+| `--action` / `--action-hover` | `#c98a4a` / `#e0b27a` | `#8a4612` / `#6b350c` | `#f3bd74` / `#ffd59a` | `#6b3400` / `#4a2300` | The single call-to-action colour; links and folio numerals use `--action-hover` |
+| `--accent` | `#7ea36a` | `#3f6b33` | `#b8e0a4` | `#1f4d17` | Provenance labels (`.eyebrow`) — "this came from the git record" |
+| `--focus` | `#e0b27a` | `#8a4612` | `#ffffff` | `#000000` | Focus ring, on every focusable element |
+| `--status-ok` / `--status-wait` / `--status-error` | `#9dc389` / `#e0b27a` / `#e0685c` | `#2f6a2a` / `#8a4612` / `#a8281f` | `#b8e0a4` / `#f3bd74` / `#ff9d93` | `#1f4d17` / `#6b3400` / `#9c1c12` | Live-lab and form status, always paired with text |
+| `--rule` / `--rule-strong` | `1px` / `1px` | same | `2px` / `2px` | `2px` / `2px` | Hairline thickness; every rule and control border reads it |
+| `--ground-line` | 5% bone | 7% ink | transparent | transparent | The ruled grid in the page margins (`.site-ground`) |
+
+Measured contrast (sRGB, `tools/contrast.py`, 2026-10-10): in every rendering
+every text role holds ≥4.5:1 on all three surfaces, `--text-on-action` ≥4.5:1
+on `--action` and `--action-hover`, and `--border-interactive`, `--focus` and
+`--action` ≥3:1 on all three surfaces. The weakest pairs are `--accent` on
+`--surface-sunken` in paper (4.9:1) and `--text-subtle` on `--surface-sunken`
+in dark (4.6:1). The high-contrast cuts hold ≥7:1 for every text role. Every
+one of those was then re-checked against the *rendered* pages, not just the
+token table — see B5.
 
 Scales: spacing `--space-1` 0.25rem through `--space-9` 5rem (a 4px-based
-ramp); radii `--radius-sm/md/lg`; `--elevation-1`; `--motion-fast` 120ms and
-`--motion-base` 200ms, both zeroed under `prefers-reduced-motion`.
+ramp); radii `--radius-sm/md/lg` (3/4/6px — small on purpose, this is a drafted
+document, not rounded tiles); `--elevation-1`; `--motion-fast` 120ms and
+`--motion-base` 200ms, both zeroed under `prefers-reduced-motion` or the
+Display control's "Reduced". `:root[data-text="large"]` sets the root font
+size to 118%; everything is in rem, so that one declaration scales the page.
 
 ## B2. Typography (R13)
 
-- **Fraunces** — headings only, two weights (560, 640).
+- **Fraunces** — headings only, loaded as a variable font with its `opsz`,
+  `wght`, `SOFT` and `WONK` axes. The page title (`h1`) and the résumé figures
+  turn `SOFT` up; the `h1` alone turns `WONK` on — the slanted terminals and
+  old-style forms are the one place the face is allowed its quirk, so the
+  name reads as lettering and everything else stays a plain serif.
 - **Sora** — reading text and controls, two weights (400, 600).
 - **IBM Plex Mono** — one weight (400), reserved for dates, version strings,
-  status text, labels and `<code>`. Never for prose.
+  status text, labels and `<code>`, and since the redesign for the running
+  head (nav links), button labels, chips and the spec sheet — everything that
+  is a label or a record rather than a sentence. Never for prose.
 
 Heading sizes use `clamp()` with a floor that fits "Electronic medical record"
 and "Bailey Forbes" inside a 320 CSS px viewport without horizontal overflow.
@@ -477,10 +499,22 @@ anchor the label instead of vanishing into it.
 
 ## B3. Container rules (R07)
 
-- **`.card`** — only for a discrete destination: one project the visitor can
-  open. Nothing else gets a card.
+- **`.ledger`** (`<ol>` of `.ledger-row`) — the project list: one discrete
+  destination per row, numbered in the margin, ruled off from the next. It
+  replaced a grid of `.card` tiles on the home and projects pages because
+  five boxes in a grid is the shape every portfolio has; a numbered index is
+  the shape a parts list has. On the index page the whole row is one link
+  (`.ledger-link`); on the home page each row carries its own actions.
+- **`.card`** — still only for a discrete destination the visitor can open,
+  kept for any future use that is genuinely a tile. Nothing else gets a card.
+- **`.spec-sheet`** (`<dl>`) — the home hero's at-a-glance facts (based,
+  stack, now, latest release, status) as ruled label/value rows in mono. It
+  replaced a row of pill badges: the same facts, in the shape of a datasheet
+  header rather than a tag cloud.
 - **`.entry`** — a repeated record with the same fields (role/org/dates, or
-  release/date/summary).
+  release/date/summary). Ruled, not boxed, since the redesign: a rule above
+  each record is enough to separate repeated records, and a box around each
+  was the generic-résumé look.
 - **`.note-card` in a `.deck`** — one item in a browsable collection that is
   read, not opened (a dish, a game). It is a card because the items are
   discrete and parallel, and a cycling stack because the collection is short,
@@ -503,6 +537,9 @@ anchor the label instead of vanishing into it.
 
 | Exception | Reason | How to evaluate |
 |---|---|---|
+| The site has a **Display control** (header, `src/display.ts`) offering theme, contrast, motion and text size | Asked for directly ("still ADA compliant — perhaps a setting?"). The default rendering already meets AA; the control exists so a visitor can go past it: a 7:1 high-contrast cut, reduced motion without changing an OS setting, a larger root size, and a paper theme for anyone who reads dark pages badly. Each choice is written as a `data-*` attribute on `<html>` and the stylesheet does the rest; "System" means the attribute is absent and the OS media query decides, so the no-JS page, the first paint and the settled page agree. The choice is kept in `localStorage` (`bf-display`) and re-applied by a four-line inline script in every page's `<head>` before first paint, so nothing flashes. Native radios in fieldsets, so grouping, arrow keys and announcement cost nothing. | The panel must open from the button on Enter, land focus on the current theme radio, change the rendering on an arrow key, persist across a reload, close on Escape with focus returned to the button, and close on a click outside. Checked that way, keyboard only, by `tools/audit-a11y.mjs`. If the inline boot script and `applyPrefs()` ever disagree, the page will flash on load — they must stay identical. |
+| A faint **ruled grid** (`.site-ground`) sits behind the page | R14 asks every effect to earn its place. This is the one texture on the site and it is what makes a wide window read as a drafting sheet with the content set on it rather than a dark void with a column in the middle. It is masked out from behind the content column entirely, so no text is ever painted over it; it is zero-width on a phone, where there is no margin; and it is transparent in the high-contrast cut. | `tools/audit-a11y.mjs` measures every text node against its real painted background; the grid must never appear in that measurement. If a future layout puts text in the margins, the grid has to go. |
+| **Section heads and ledger rows are numbered** with generated content | The folio numerals are what make the page read as a numbered document, but they are decoration: the `<ol>` already gives assistive technology the count and position, and a heading does not need "zero one" read before it. They use the `content: … / ""` alternative-text syntax so the number is painted and not announced. | Only the home page's top-level sections are counted (`.wrap > section`); the project pages' nested sections must never acquire numbers, because they would count in an order that means nothing. Check with a screen reader or the accessibility tree that no numeral is announced. |
 | The two CLI projects show a styled text transcript, not a screenshot | R15 asks for real evidence of the product running, and for a terminal that evidence *is* text. Kept as text it stays selectable, searchable, legible at any zoom and reflows on a phone; a PNG of a shell does none of that and is heavier. The transcripts are literal output from a real local run, with the command lines marked so they can be picked out. | Every line must be reproducible by running the stated command at the stated commit. Any edit for layout must be disclosed in the caption — the Flinstone one reflows a six-item list onto two lines and says so; the KeyQuorum one abbreviates a secret and says so. Nothing else may be changed. |
 | The timeline shows five entries at a time, with three levels of detail | The history stays scannable as dates and titles while exactly one commit is readable, which is what keeps a nineteen-entry rail from being a wall. Selection is explicit — click, arrow keys, or the pager — rather than derived from scroll position, and the expanded card is a third level asked for on purpose. The card is bounded and scrolls rather than truncating, because "show details" has to mean all of them; a card free to grow would push the other four commits off the screen and undo the window. | Exactly one entry may show a summary, and at most one may show a card. The visible "n of m" and the range readout are what tell you the rest of the history exists, so neither is optional chrome. Verify by reaching the last entry with the keyboard alone. |
 | The expanded card scrolls natively, with no on-screen up/down control | An earlier pass added a pair of buttons for this. They turned out to be redundant: the body is already `overflow-y: auto` and focusable, so wheel, touch, and the keyboard all reach it without anything drawn on top. A bottom fade is the only added chrome, and only once the body actually overflows — it hints that there is more to read without claiming a control that does nothing new. | The body must be reachable and scrollable by keyboard alone (Tab to it, then arrow keys or Page Down). The fade must track real scroll position — present while `scrollTop` is short of the bottom, gone once it is not — never a static decoration. |
@@ -596,6 +633,18 @@ Chromium (Playwright), not read off the source:
 - **Navigation**: the narrow-screen menu opens, closes on Escape, and closes
   when a destination is chosen.
 - **No console or page errors** on any page.
+- **Redesign pass (2026-10-10)**, `tools/audit-a11y.mjs` against all eight pages
+  in all four renderings at 320 / 768 / 1280 px: every rendered text node
+  measured against its real painted background meets 4.5:1 (3:1 where the
+  rendered size qualifies as large); no standalone target under 24 × 24 CSS px
+  (inline links excepted per B4); no horizontal overflow; every focusable
+  element reached by Tab shows an outline of at least 2 px; the Display
+  control's open / arrow-key / persist / Escape / focus-return sequence
+  passes keyboard-only; the saved preference is applied before first paint
+  (the `data-*` attributes are present on `<html>` when the page is read).
+  Token-level contrast for all four renderings is `tools/contrast.py`, which
+  exits non-zero on any failing pair. Screenshots of the dark, paper and
+  dark-high-contrast renderings were reviewed at 1280 and 390 px.
 
 Not verified, and not claimed anywhere on the site:
 
@@ -646,6 +695,9 @@ Not verified, and not claimed anywhere on the site:
   (12 seeded approved examples, 0 pending feedback) from a fresh install of
   that branch.
 
+- Whether the `content: … / ""` alternative-text syntax hides the folio
+  numerals in every screen reader. It is specified and shipped in Chromium,
+  WebKit and Firefox, but see the next item.
 - Real assistive-technology output. There is no screen reader in the build
   environment, so the semantics were checked structurally (roles, accessible
   names, heading order), which is not the same as hearing them (R26).
