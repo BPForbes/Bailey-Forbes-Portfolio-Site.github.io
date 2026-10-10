@@ -39,8 +39,13 @@
         </p>
       </header>
 
-      <ol class="ledger" aria-label="Projects">
-        <li class="ledger-row"><a class="ledger-link" href="/projects/homework-central/">
+      <section class="topic-filter" data-topic-filter aria-labelledby="topic-filter-title" hidden>
+        <h2 id="topic-filter-title" class="filter-title">Filter by topic</h2>
+        <p class="filter-hint">Pick one or more. Projects tagged with none of them are hidden.</p>
+      </section>
+
+      <ol class="ledger" aria-label="Projects" data-filter-group data-filter-noun="project" data-filter-empty="No projects use the selected topics.">
+        <li class="ledger-row" data-filter-item><a class="ledger-link" href="/projects/homework-central/">
           <div class="ledger-head">
             <p class="eyebrow">Jun – Sep 2026</p>
             <span class="chip"><svg class="icon" viewBox="0 0 496 512" aria-hidden="true" focusable="false"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>Source on GitHub</span>
@@ -52,14 +57,19 @@
             Created 7 Jun 2026; the migration completed in September 2026.
           </p>
           <div class="chips">
-            <span class="chip">C#</span>
-            <span class="chip">TypeScript</span>
-            <span class="chip">PostgreSQL</span>
+            <span class="chip" data-topic="csharp">C#</span>
+            <span class="chip" data-topic="typescript">TypeScript</span>
+            <span class="chip" data-topic="rust">Rust</span>
+            <span class="chip" data-topic="react">React</span>
+            <span class="chip" data-topic="postgresql">PostgreSQL</span>
+            <span class="chip" data-topic="docker">Docker</span>
+            <span class="chip" data-topic="machine-learning">Machine learning</span>
+            <span class="chip" data-topic="sysadmin">System administration</span>
           </div>
           <div class="ledger-motif" data-project-motif="network" aria-hidden="true"></div>
         </a></li>
 
-        <li class="ledger-row"><a class="ledger-link" href="/projects/flinstone/">
+        <li class="ledger-row" data-filter-item><a class="ledger-link" href="/projects/flinstone/">
           <div class="ledger-head">
             <p class="eyebrow">2023 – present</p>
             <span class="chip"><svg class="icon" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80L0 432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg>Runs in browser</span>
@@ -70,14 +80,18 @@
             contracts, and a <span data-project-version="flinstone">5.1.0</span> release train that keeps the older interfaces alive.
           </p>
           <div class="chips">
-            <span class="chip">C</span>
-            <span class="chip">Assembly</span>
+            <span class="chip" data-topic="c">C</span>
+            <span class="chip" data-topic="assembly">Assembly</span>
+            <span class="chip" data-topic="webassembly">WebAssembly</span>
+            <span class="chip" data-topic="cloudflare">Cloudflare</span>
+            <span class="chip" data-topic="systems">Systems programming</span>
+            <span class="chip" data-topic="networking">Networking</span>
             <span class="chip">C++</span>
           </div>
           <div class="ledger-motif" data-project-motif="circuit" aria-hidden="true"></div>
         </a></li>
 
-        <li class="ledger-row"><a class="ledger-link" href="/projects/keyquorum/">
+        <li class="ledger-row" data-filter-item><a class="ledger-link" href="/projects/keyquorum/">
           <div class="ledger-head">
             <p class="eyebrow">Aug 2026 – present</p>
             <span class="chip"><svg class="icon" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80L0 432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg>Runs in browser</span>
@@ -88,14 +102,19 @@
             cross-store bridges, and a sealed mailbox relay inside two weeks.
           </p>
           <div class="chips">
-            <span class="chip">Rust</span>
-            <span class="chip">SQLite</span>
+            <span class="chip" data-topic="rust">Rust</span>
+            <span class="chip" data-topic="typescript">TypeScript</span>
+            <span class="chip" data-topic="sqlite">SQLite</span>
+            <span class="chip" data-topic="webassembly">WebAssembly</span>
+            <span class="chip" data-topic="cloudflare">Cloudflare</span>
+            <span class="chip" data-topic="security">Security</span>
+            <span class="chip" data-topic="sysadmin">System administration</span>
             <span class="chip">Axum</span>
           </div>
           <div class="ledger-motif" data-project-motif="tree" aria-hidden="true"></div>
         </a></li>
 
-        <li class="ledger-row"><a class="ledger-link" href="/projects/qpu/">
+        <li class="ledger-row" data-filter-item><a class="ledger-link" href="/projects/qpu/">
           <div class="ledger-head">
             <p class="eyebrow">Jun 2026 – present</p>
             <span class="chip"><svg class="icon" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80L0 432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg>Runs in browser</span>
@@ -106,13 +125,16 @@
             BPForbes.QPU.github.io — truth tables, child processes, and a circuit correction lab.
           </p>
           <div class="chips">
-            <span class="chip">TypeScript</span>
+            <span class="chip" data-topic="typescript">TypeScript</span>
+            <span class="chip" data-topic="react">React</span>
+            <span class="chip" data-topic="compilers">Compilers</span>
+            <span class="chip" data-topic="quantum">Quantum computing</span>
             <span class="chip">Vite</span>
           </div>
           <div class="ledger-motif" data-project-motif="gate" aria-hidden="true"></div>
         </a></li>
 
-        <li class="ledger-row"><a class="ledger-link" href="/projects/emr/">
+        <li class="ledger-row" data-filter-item><a class="ledger-link" href="/projects/emr/">
           <div class="ledger-head">
             <p class="eyebrow">Aug 2021 – May 2022</p>
             <span class="chip"><svg class="icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M144 144l0 48 160 0 0-48c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192l0-48C80 64.5 144.5 0 224 0s144 64.5 144 144l0 48 16 0c35.3 0 64 28.7 64 64l0 192c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 256c0-35.3 28.7-64 64-64l16 0z"/></svg>Not public</span>
@@ -123,9 +145,11 @@
             stack, staff services, wiring the two sides, HIPAA hardening, and a May handoff.
           </p>
           <div class="chips">
-            <span class="chip">Kotlin</span>
-            <span class="chip">Java</span>
-            <span class="chip">Firebase</span>
+            <span class="chip" data-topic="kotlin">Kotlin</span>
+            <span class="chip" data-topic="java">Java</span>
+            <span class="chip" data-topic="firebase">Firebase</span>
+            <span class="chip" data-topic="security">Security</span>
+            <span class="chip">HIPAA testing</span>
           </div>
           <div class="ledger-motif" data-project-motif="pulse" aria-hidden="true"></div>
         </a></li>

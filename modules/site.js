@@ -13,6 +13,7 @@ import { icon } from "./icons.js";
 import { mountDecks } from "./deck.js";
 import { mountDisplayControl } from "./display.js";
 import { mountStory } from "./story.js";
+import { mountTopicFilters } from "./topics.js";
 import { mountGuestWindows } from "./guestWindow.js";
 import { renderLanguageChart } from "./languageChart.js";
 import { mountNamedReleases } from "./releases.js";
@@ -226,3 +227,4 @@ function mountRepositoryFacts() {
 }
 mountRepositoryFacts();
 mountStory();
+mountTopicFilters();

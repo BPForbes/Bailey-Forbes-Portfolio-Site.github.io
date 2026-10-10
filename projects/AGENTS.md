@@ -10,6 +10,7 @@ The five project folders (`emr`, `flinstone`, `homework-central`, `keyquorum`, `
 - Screenshots and transcripts are evidence (DESIGN.md R15). A caption names the commit and the date that produced it. Never replace a real capture with a mock-up.
 - Copy about a project must match that project's own docs. For KeyQuorum read [`docs/agents/keyquorum.md`](../docs/agents/keyquorum.md) first; for the others see [`docs/agents/multi-repo.md`](../docs/agents/multi-repo.md).
 - The EMR page says its client tree is private and its language split is an estimate. Keep both statements.
+- Topic tags are `<span class="chip" data-topic="<id>">Label</span>` inside an element marked `data-filter-item`. The id must exist in `src/topics.ts` and the text must equal its label; `tests/topics.test.mjs` fails otherwise. Tag only what the project's repository or the résumé shows; the evidence for each current tag is in `DESIGN.md` B4. Keep the home tile and the projects-index row of a project tagged alike.
 
 ## Related instruction files
 

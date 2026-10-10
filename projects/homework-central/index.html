@@ -34,8 +34,8 @@
         <p class="kicker">Lead · Jun – Sep 2026</p>
         <h1>Homework Central</h1>
         <p class="lede">
-          A community platform for people to collaborate on each other’s education, and the
-          replacement for a 16,000-member Discord. I own the architecture: API, frontend,
+          A community platform for people to collaborate on each other’s education, built to
+          replace a 16,000-member Discord. I owned the architecture: API, frontend,
           permissions, moderation, and the one-command local stack.
         </p>
         <div class="hero-actions">
@@ -47,7 +47,7 @@
       <dl class="stat-list">
         <div>
           <dt>16,000</dt>
-          <dd>Discord members the platform replaces</dd>
+          <dd>Discord members the platform replaced</dd>
         </div>
         <div>
           <dt data-project-prs="homework-central" data-project-label="false">56</dt>
@@ -147,13 +147,13 @@
         <p>
           The public README describes a React + Vite frontend, an ASP.NET Core API on .NET 10,
           and PostgreSQL, started by <code>scripts/run-dev</code> with Docker for Postgres and
-          FCaptcha. That is the skeleton. The git record is a Discord-shaped product being grown
+          FCaptcha. That is the skeleton. The git record shows a Discord-shaped product grown
           in public: login, roles, rooms, mentions, tickets, media, a tutor path, and a neural
           monitor that trains on moderation concepts.
         </p>
         <p>
-          I spent four years tutoring in the same community. The migration is not a greenfield
-          social app; it is a permissioned workplace for homework help, with staff tools that
+          I spent four years tutoring in the same community. The migration was not a greenfield
+          social app; it was a permissioned workplace for homework help, with staff tools that
           Discord never gave us.
         </p>
       </section>
@@ -165,7 +165,7 @@
           a conventional RBAC login (#3). Roles and room rights are packed into masks so a
           check is a bitwise test, not a join-heavy policy walk. Later PRs (#25–#26) had to
           fix custom role masks, category merge, and infrastructure permissions. That is evidence
-          the model is in live use, not a sketch.
+          the model was in live use, not a sketch.
         </p>
         <p>
           <strong>Tenant isolation for developers.</strong> #7 added <code>/devlogin</code>;
@@ -186,13 +186,13 @@
         </p>
       </section>
       <section class="prose">
-        <h2><svg class="icon icon-head" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M80 104a24 24 0 1 0 0-48 24 24 0 1 0 0 48zm80-24c0 32.8-19.7 61-48 73.3l0 87.8c18.8-10.9 40.7-17.1 64-17.1l96 0c35.3 0 64-28.7 64-64l0-6.7C307.7 141 288 112.8 288 80c0-44.2 35.8-80 80-80s80 35.8 80 80c0 32.8-19.7 61-48 73.3l0 6.7c0 70.7-57.3 128-128 128l-96 0c-35.3 0-64 28.7-64 64l0 6.7c28.3 12.3 48 40.5 48 73.3c0 44.2-35.8 80-80 80s-80-35.8-80-80c0-32.8 19.7-61 48-73.3l0-6.7 0-198.7C19.7 141 0 112.8 0 80C0 35.8 35.8 0 80 0s80 35.8 80 80zm232 0a24 24 0 1 0 -48 0 24 24 0 1 0 48 0zM80 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/></svg>Still moving</h2>
+        <h2><svg class="icon icon-head" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M80 104a24 24 0 1 0 0-48 24 24 0 1 0 0 48zm80-24c0 32.8-19.7 61-48 73.3l0 87.8c18.8-10.9 40.7-17.1 64-17.1l96 0c35.3 0 64-28.7 64-64l0-6.7C307.7 141 288 112.8 288 80c0-44.2 35.8-80 80-80s80 35.8 80 80c0 32.8-19.7 61-48 73.3l0 6.7c0 70.7-57.3 128-128 128l-96 0c-35.3 0-64 28.7-64 64l0 6.7c28.3 12.3 48 40.5 48 73.3c0 44.2-35.8 80-80 80s-80-35.8-80-80c0-32.8 19.7-61 48-73.3l0-6.7 0-198.7C19.7 141 0 112.8 0 80C0 35.8 35.8 0 80 0s80 35.8 80 80zm232 0a24 24 0 1 0 -48 0 24 24 0 1 0 48 0zM80 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/></svg>Where it stood</h2>
         <p>
-          Main’s first 15 commits stop at the 15 Jul UI rebase, but the PR train continues:
+          Main’s first 15 commits stopped at the 15 Jul UI rebase, but the PR train continued:
           neural-net work through August, DevOps documentation and training-pause in early
-          September, and open branches for memory optimization (Rust LRU with C# fallback) and
-          a safer Postgres reset that must not wipe Ollama, uploads, or MinIO. The product is
-          mid-migration, not archived. Below is that neural-net branch actually running: a
+          September, and branches for memory optimization (Rust LRU with C# fallback) and
+          a safer Postgres reset that must not wipe Ollama, uploads, or MinIO. The migration
+          completed in September 2026. Below is that neural-net branch actually running: a
           two-stage cascade (a small context router feeding a much larger evidence-and-category
           model) that scores chat messages for moderation and tutoring, visualized as the
           architecture really is, node for node and edge for edge.

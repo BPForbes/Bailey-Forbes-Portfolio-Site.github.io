@@ -31,7 +31,7 @@
   <main id="main">
     <div class="wrap">
       <section id="overview" class="bento-section" aria-labelledby="hero-title">
-        <div class="bento">
+        <div class="bento" data-filter-group data-filter-noun="project" data-filter-empty="No projects use the selected topics.">
 
           <article class="tile tile-intro">
             <p class="kicker">Software engineer · C# / TypeScript / Rust / C</p>
@@ -58,15 +58,15 @@
             <ol class="story-line">
         <li class="story-beat">
           <p class="story-when"><time datetime="2021-08">Aug 2021</time></p>
-          <p class="story-what">Starts tutoring computer science, mathematics and cybersecurity at Indiana University’s Homework Central. Four years, 50+ students.</p>
+          <p class="story-what">Started tutoring computer science, mathematics and cybersecurity at Indiana University’s Homework Central. Four years, 50+ students.</p>
         </li>
         <li class="story-beat">
           <p class="story-when"><time datetime="2021-08">2021 – 2022</time></p>
-          <p class="story-what">Joins a five-person team building an <a href="/projects/emr/">electronic medical record</a> for 26 hospital locations: HIPAA-focused testing, then a May handoff.</p>
+          <p class="story-what">Joined a five-person team building an <a href="/projects/emr/">electronic medical record</a> for 26 hospital locations: HIPAA-focused testing, then a May handoff.</p>
         </li>
         <li class="story-beat">
           <p class="story-when"><time datetime="2023">2023</time></p>
-          <p class="story-what">A school disk-operations exercise is revisited and becomes <a href="/projects/flinstone/">Flinstone</a>: a kernel from first principles, one versioned subsystem at a time.</p>
+          <p class="story-what">A school disk-operations exercise was revisited and became <a href="/projects/flinstone/">Flinstone</a>: a kernel from first principles, one versioned subsystem at a time.</p>
         </li>
         <li class="story-beat">
           <p class="story-when"><time datetime="2025-09">Sep 2025</time></p>
@@ -74,7 +74,7 @@
         </li>
         <li class="story-beat">
           <p class="story-when"><time datetime="2026-06">Jun 2026</time></p>
-          <p class="story-what">The community he tutored moves off Discord onto <a href="/projects/homework-central/">Homework Central</a>, a platform he leads. <a href="/projects/qpu/">QPU</a> and <a href="/projects/keyquorum/">KeyQuorum</a> follow over the summer.</p>
+          <p class="story-what">The community he tutored moved off Discord onto <a href="/projects/homework-central/">Homework Central</a>, a platform he led. <a href="/projects/qpu/">QPU</a> and <a href="/projects/keyquorum/">KeyQuorum</a> followed over the summer.</p>
         </li>
         <li class="story-beat story-beat-now">
           <p class="story-when">Now</p>
@@ -89,20 +89,29 @@
               <div><dt>Based</dt><dd><svg class="icon" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/></svg>Sellersburg, Indiana</dd></div>
               <div><dt>Local time</dt><dd><time data-local-time datetime="" aria-live="off">Eastern time</time></dd></div>
               <div><dt>Stack</dt><dd>C# / .NET · TypeScript · Rust · C</dd></div>
-              <div><dt>Now</dt><dd>Homework Central lead</dd></div>
+              <div><dt>Now</dt><dd>Independent Developer</dd></div>
               <div><dt>Latest release</dt><dd>Flinstone <span data-project-version="flinstone">5.1.0</span></dd></div>
               <div><dt>Status</dt><dd>Open to software and security roles</dd></div>
             </dl>
           </article>
 
-          <article class="tile tile-lab" aria-labelledby="tile-flinstone">
+          <section class="tile tile-filter" data-topic-filter aria-labelledby="topic-filter-title" hidden>
+            <h2 id="topic-filter-title" class="filter-title">Filter by topic</h2>
+            <p class="filter-hint">Pick one or more. Projects and roles tagged with none of them are hidden.</p>
+          </section>
+
+          <article data-filter-item class="tile tile-lab" aria-labelledby="tile-flinstone">
             <div class="tile-motif" data-project-motif="circuit" aria-hidden="true"></div>
             <p class="tile-label">Lab 01 · runs in the browser</p>
             <h2 id="tile-flinstone"><svg class="icon" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 40c-35.3 0-64 28.7-64 64l-40 0c-13.3 0-24 10.7-24 24s10.7 24 24 24l40 0 0 56-40 0c-13.3 0-24 10.7-24 24s10.7 24 24 24l40 0 0 56-40 0c-13.3 0-24 10.7-24 24s10.7 24 24 24l40 0c0 35.3 28.7 64 64 64l0 40c0 13.3 10.7 24 24 24s24-10.7 24-24l0-40 56 0 0 40c0 13.3 10.7 24 24 24s24-10.7 24-24l0-40 56 0 0 40c0 13.3 10.7 24 24 24s24-10.7 24-24l0-40c35.3 0 64-28.7 64-64l40 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-40 0 0-56 40 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-40 0 0-56 40 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-40 0c0-35.3-28.7-64-64-64l0-40c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 40-56 0 0-40c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 40-56 0 0-40zM160 128l192 0c17.7 0 32 14.3 32 32l0 192c0 17.7-14.3 32-32 32l-192 0c-17.7 0-32-14.3-32-32l0-192c0-17.7 14.3-32 32-32zm192 32l-192 0 0 192 192 0 0-192z"/></svg>Flinstone Kernel</h2>
             <p>Portable C and Assembly kernel with versioned contracts, FAT32, identity, and a first-principles TCP/IP and Wi-Fi stack.</p>
             <div class="chips">
-              <span class="chip">C</span>
-              <span class="chip">Assembly</span>
+              <span class="chip" data-topic="c">C</span>
+              <span class="chip" data-topic="assembly">Assembly</span>
+              <span class="chip" data-topic="webassembly">WebAssembly</span>
+              <span class="chip" data-topic="cloudflare">Cloudflare</span>
+              <span class="chip" data-topic="systems">Systems programming</span>
+              <span class="chip" data-topic="networking">Networking</span>
               <span class="chip" data-project-version="flinstone">5.1.0</span>
               <span class="chip" data-project-commits="flinstone">400 commits</span>
             </div>
@@ -112,13 +121,16 @@
             </div>
           </article>
 
-          <article class="tile tile-lab" aria-labelledby="tile-qpu">
+          <article data-filter-item class="tile tile-lab" aria-labelledby="tile-qpu">
             <div class="tile-motif" data-project-motif="gate" aria-hidden="true"></div>
             <p class="tile-label">Lab 02 · runs in the browser</p>
             <h2 id="tile-qpu"><svg class="icon" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M256 398.8c-11.8 5.1-23.4 9.7-34.9 13.5c16.7 33.8 31 35.7 34.9 35.7s18.1-1.9 34.9-35.7c-11.4-3.9-23.1-8.4-34.9-13.5zM446 256c33 45.2 44.3 90.9 23.6 128c-20.2 36.3-62.5 49.3-115.2 43.2c-22 52.1-55.6 84.8-98.4 84.8s-76.4-32.7-98.4-84.8c-52.7 6.1-95-6.8-115.2-43.2C21.7 346.9 33 301.2 66 256c-33-45.2-44.3-90.9-23.6-128c20.2-36.3 62.5-49.3 115.2-43.2C179.6 32.7 213.2 0 256 0s76.4 32.7 98.4 84.8c52.7-6.1 95 6.8 115.2 43.2c20.7 37.1 9.4 82.8-23.6 128zm-65.8 67.4c-1.7 14.2-3.9 28-6.7 41.2c31.8 1.4 38.6-8.7 40.2-11.7c2.3-4.2 7-17.9-11.9-48.1c-6.8 6.3-14 12.5-21.6 18.6zm-6.7-175.9c2.8 13.1 5 26.9 6.7 41.2c7.6 6.1 14.8 12.3 21.6 18.6c18.9-30.2 14.2-44 11.9-48.1c-1.6-2.9-8.4-13-40.2-11.7zM290.9 99.7C274.1 65.9 259.9 64 256 64s-18.1 1.9-34.9 35.7c11.4 3.9 23.1 8.4 34.9 13.5c11.8-5.1 23.4-9.7 34.9-13.5zm-159 88.9c1.7-14.3 3.9-28 6.7-41.2c-31.8-1.4-38.6 8.7-40.2 11.7c-2.3 4.2-7 17.9 11.9 48.1c6.8-6.3 14-12.5 21.6-18.6zM110.2 304.8C91.4 335 96 348.7 98.3 352.9c1.6 2.9 8.4 13 40.2 11.7c-2.8-13.1-5-26.9-6.7-41.2c-7.6-6.1-14.8-12.3-21.6-18.6zM336 256a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zm-80-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>QPU</h2>
             <p>A quantum instruction language and compiler on a physics engine with density matrices, noise, and pulse timing, in a browser workbench.</p>
             <div class="chips">
-              <span class="chip">TypeScript</span>
+              <span class="chip" data-topic="typescript">TypeScript</span>
+              <span class="chip" data-topic="react">React</span>
+              <span class="chip" data-topic="compilers">Compilers</span>
+              <span class="chip" data-topic="quantum">Quantum computing</span>
               <span class="chip">Vite</span>
             </div>
             <div class="tile-actions">
@@ -127,14 +139,19 @@
             </div>
           </article>
 
-          <article class="tile tile-lab" aria-labelledby="tile-keyquorum">
+          <article data-filter-item class="tile tile-lab" aria-labelledby="tile-keyquorum">
             <div class="tile-motif" data-project-motif="tree" aria-hidden="true"></div>
             <p class="tile-label">Lab 03 · runs in the browser</p>
             <h2 id="tile-keyquorum"><svg class="icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M144 144l0 48 160 0 0-48c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192l0-48C80 64.5 144.5 0 224 0s144 64.5 144 144l0 48 16 0c35.3 0 64 28.7 64 64l0 192c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 256c0-35.3 28.7-64 64-64l16 0z"/></svg>KeyQuorum</h2>
             <p>Hardware-key file sharing: recursive M-of-N trees, PIN windows, sealed mailbox envelopes, and a CLI that refuses to take secrets as argv.</p>
             <div class="chips">
-              <span class="chip">Rust</span>
-              <span class="chip">SQLite</span>
+              <span class="chip" data-topic="rust">Rust</span>
+              <span class="chip" data-topic="typescript">TypeScript</span>
+              <span class="chip" data-topic="sqlite">SQLite</span>
+              <span class="chip" data-topic="webassembly">WebAssembly</span>
+              <span class="chip" data-topic="cloudflare">Cloudflare</span>
+              <span class="chip" data-topic="security">Security</span>
+              <span class="chip" data-topic="sysadmin">System administration</span>
               <span class="chip">Axum</span>
             </div>
             <div class="tile-actions">
@@ -143,15 +160,20 @@
             </div>
           </article>
 
-          <article class="tile tile-project tile-hc" aria-labelledby="tile-hc">
+          <article data-filter-item class="tile tile-project tile-hc" aria-labelledby="tile-hc">
             <div class="tile-motif" data-project-motif="network" aria-hidden="true"></div>
             <p class="tile-label">Lead · Jun – Sep 2026</p>
             <h2 id="tile-hc"><svg class="icon" viewBox="0 0 640 512" aria-hidden="true" focusable="false"><path d="M72 88a56 56 0 1 1 112 0A56 56 0 1 1 72 88zM64 245.7C54 256.9 48 271.8 48 288s6 31.1 16 42.3l0-84.7zm144.4-49.3C178.7 222.7 160 261.2 160 304c0 34.3 12 65.8 32 90.5l0 21.5c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-26.8C26.2 371.2 0 332.7 0 288c0-61.9 50.1-112 112-112l32 0c24 0 46.2 7.5 64.4 20.3zM448 416l0-21.5c20-24.7 32-56.2 32-90.5c0-42.8-18.7-81.3-48.4-107.7C449.8 183.5 472 176 496 176l32 0c61.9 0 112 50.1 112 112c0 44.7-26.2 83.2-64 101.2l0 26.8c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32zm8-328a56 56 0 1 1 112 0A56 56 0 1 1 456 88zM576 245.7l0 84.7c10-11.3 16-26.1 16-42.3s-6-31.1-16-42.3zM320 32a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM240 304c0 16.2 6 31 16 42.3l0-84.7c-10 11.3-16 26.1-16 42.3zm144-42.3l0 84.7c10-11.3 16-26.1 16-42.3s-6-31.1-16-42.3zM448 304c0 44.7-26.2 83.2-64 101.2l0 42.8c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-42.8c-37.8-18-64-56.5-64-101.2c0-61.9 50.1-112 112-112l32 0c61.9 0 112 50.1 112 112z"/></svg>Homework Central</h2>
             <p>C#/.NET 10, React, PostgreSQL, and Docker that replaced Discord for a 16,000-member education community: bitmask auth, rooms, tickets, and an on-box moderation net.</p>
             <div class="chips">
-              <span class="chip">C#</span>
-              <span class="chip">TypeScript</span>
-              <span class="chip">PostgreSQL</span>
+              <span class="chip" data-topic="csharp">C#</span>
+              <span class="chip" data-topic="typescript">TypeScript</span>
+              <span class="chip" data-topic="rust">Rust</span>
+              <span class="chip" data-topic="react">React</span>
+              <span class="chip" data-topic="postgresql">PostgreSQL</span>
+              <span class="chip" data-topic="docker">Docker</span>
+              <span class="chip" data-topic="machine-learning">Machine learning</span>
+              <span class="chip" data-topic="sysadmin">System administration</span>
               <span class="chip" data-project-prs="homework-central">56 PRs</span>
             </div>
             <div class="tile-actions">
@@ -159,11 +181,18 @@
             </div>
           </article>
 
-          <article class="tile tile-project tile-emr" aria-labelledby="tile-emr">
+          <article data-filter-item class="tile tile-project tile-emr" aria-labelledby="tile-emr">
             <div class="tile-motif" data-project-motif="pulse" aria-hidden="true"></div>
             <p class="tile-label">Team of five · 2021 – 2022</p>
             <h2 id="tile-emr"><svg class="icon" viewBox="0 0 640 512" aria-hidden="true" focusable="false"><path d="M192 48c0-26.5 21.5-48 48-48L400 0c26.5 0 48 21.5 48 48l0 464-80 0 0-80c0-26.5-21.5-48-48-48s-48 21.5-48 48l0 80-80 0 0-464zM48 96l112 0 0 416L48 512c-26.5 0-48-21.5-48-48L0 320l80 0c8.8 0 16-7.2 16-16s-7.2-16-16-16L0 288l0-64 80 0c8.8 0 16-7.2 16-16s-7.2-16-16-16L0 192l0-48c0-26.5 21.5-48 48-48zm544 0c26.5 0 48 21.5 48 48l0 48-80 0c-8.8 0-16 7.2-16 16s7.2 16 16 16l80 0 0 64-80 0c-8.8 0-16 7.2-16 16s7.2 16 16 16l80 0 0 144c0 26.5-21.5 48-48 48l-112 0 0-416 112 0zM312 64c-8.8 0-16 7.2-16 16l0 24-24 0c-8.8 0-16 7.2-16 16l0 16c0 8.8 7.2 16 16 16l24 0 0 24c0 8.8 7.2 16 16 16l16 0c8.8 0 16-7.2 16-16l0-24 24 0c8.8 0 16-7.2 16-16l0-16c0-8.8-7.2-16-16-16l-24 0 0-24c0-8.8-7.2-16-16-16l-16 0z"/></svg>Electronic medical record</h2>
             <p>Hospital EMR for 26 locations: planning, a PoC, front end, staff side, a HIPAA pass, and a May handoff.</p>
+            <div class="chips">
+              <span class="chip" data-topic="kotlin">Kotlin</span>
+              <span class="chip" data-topic="java">Java</span>
+              <span class="chip" data-topic="firebase">Firebase</span>
+              <span class="chip" data-topic="security">Security</span>
+              <span class="chip">HIPAA testing</span>
+            </div>
             <div class="tile-actions">
               <a class="btn btn-ghost" href="/projects/emr/"><svg class="icon" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-288-128 0c-17.7 0-32-14.3-32-32L224 0 64 0zM256 0l0 128 128 0L256 0zM112 256l160 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-160 0c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64l160 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-160 0c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64l160 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-160 0c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>Read the write-up<span class="visually-hidden"> about the electronic medical record</span></a>
             </div>
@@ -236,8 +265,8 @@
           They are counts of work, not performance benchmarks.
         </p>
 
-        <div class="experience experience-after-stats">
-          <article class="entry">
+        <div class="experience experience-after-stats" data-filter-group data-filter-noun="role" data-filter-empty="No roles use the selected topics.">
+          <article data-filter-item class="entry">
             <div class="entry-head">
               <div>
                 <h3><svg class="icon" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M184 48l144 0c4.4 0 8 3.6 8 8l0 40L176 96l0-40c0-4.4 3.6-8 8-8zm-56 8l0 40L64 96C28.7 96 0 124.7 0 160l0 96 192 0 128 0 192 0 0-96c0-35.3-28.7-64-64-64l-64 0 0-40c0-30.9-25.1-56-56-56L184 0c-30.9 0-56 25.1-56 56zM512 288l-192 0 0 32c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-32L0 288 0 416c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-128z"/></svg>Developer and project lead</h3>
@@ -248,8 +277,14 @@
             <ul>
               <li>Led instruction, system oversight, and feedback collection during a 75-member volunteer trial to evaluate usability and operational outcomes.</li>
             </ul>
+            <div class="chips entry-chips">
+              <span class="chip" data-topic="csharp">C#</span>
+              <span class="chip" data-topic="typescript">TypeScript</span>
+              <span class="chip" data-topic="react">React</span>
+              <span class="chip" data-topic="postgresql">PostgreSQL</span>
+            </div>
           </article>
-          <article class="entry">
+          <article data-filter-item class="entry">
             <div class="entry-head">
               <div>
                 <h3><svg class="icon" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M184 48l144 0c4.4 0 8 3.6 8 8l0 40L176 96l0-40c0-4.4 3.6-8 8-8zm-56 8l0 40L64 96C28.7 96 0 124.7 0 160l0 96 192 0 128 0 192 0 0-96c0-35.3-28.7-64-64-64l-64 0 0-40c0-30.9-25.1-56-56-56L184 0c-30.9 0-56 25.1-56 56zM512 288l-192 0 0 32c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-32L0 288 0 416c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-128z"/></svg>Software engineer intern</h3>
@@ -263,8 +298,13 @@
               <li>Resolved about 10% of weekly production-support requests across systems holding 584 million records, working Salesforce cases and Azure DevOps.</li>
               <li>Validated isolated CI/CD deployments and approved fixes before production hotfix merges for 10+ institutions.</li>
             </ul>
+            <div class="chips entry-chips">
+              <span class="chip" data-topic="csharp">C#</span>
+              <span class="chip" data-topic="typescript">TypeScript</span>
+              <span class="chip" data-topic="ci-cd">CI/CD</span>
+            </div>
           </article>
-          <article class="entry">
+          <article data-filter-item class="entry">
             <div class="entry-head">
               <div>
                 <h3><svg class="icon" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M184 48l144 0c4.4 0 8 3.6 8 8l0 40L176 96l0-40c0-4.4 3.6-8 8-8zm-56 8l0 40L64 96C28.7 96 0 124.7 0 160l0 96 192 0 128 0 192 0 0-96c0-35.3-28.7-64-64-64l-64 0 0-40c0-30.9-25.1-56-56-56L184 0c-30.9 0-56 25.1-56 56zM512 288l-192 0 0 32c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-32L0 288 0 416c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-128z"/></svg>Software engineer, client-sponsored project</h3>
@@ -277,8 +317,14 @@
               <li>Cross-validated records across local backups, Firebase, and endpoints; HIPAA-focused review and Selenium/Postman testing.</li>
               <li>Contributed to a measured 60% improvement in record-processing efficiency, then handed the sponsor administrative ownership.</li>
             </ul>
+            <div class="chips entry-chips">
+              <span class="chip" data-topic="kotlin">Kotlin</span>
+              <span class="chip" data-topic="java">Java</span>
+              <span class="chip" data-topic="firebase">Firebase</span>
+              <span class="chip" data-topic="security">Security</span>
+            </div>
           </article>
-          <article class="entry">
+          <article data-filter-item class="entry">
             <div class="entry-head">
               <div>
                 <h3><svg class="icon" viewBox="0 0 640 512" aria-hidden="true" focusable="false"><path d="M72 88a56 56 0 1 1 112 0A56 56 0 1 1 72 88zM64 245.7C54 256.9 48 271.8 48 288s6 31.1 16 42.3l0-84.7zm144.4-49.3C178.7 222.7 160 261.2 160 304c0 34.3 12 65.8 32 90.5l0 21.5c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-26.8C26.2 371.2 0 332.7 0 288c0-61.9 50.1-112 112-112l32 0c24 0 46.2 7.5 64.4 20.3zM448 416l0-21.5c20-24.7 32-56.2 32-90.5c0-42.8-18.7-81.3-48.4-107.7C449.8 183.5 472 176 496 176l32 0c61.9 0 112 50.1 112 112c0 44.7-26.2 83.2-64 101.2l0 26.8c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32zm8-328a56 56 0 1 1 112 0A56 56 0 1 1 456 88zM576 245.7l0 84.7c10-11.3 16-26.1 16-42.3s-6-31.1-16-42.3zM320 32a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM240 304c0 16.2 6 31 16 42.3l0-84.7c-10 11.3-16 26.1-16 42.3zm144-42.3l0 84.7c10-11.3 16-26.1 16-42.3s-6-31.1-16-42.3zM448 304c0 44.7-26.2 83.2-64 101.2l0 42.8c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-42.8c-37.8-18-64-56.5-64-101.2c0-61.9 50.1-112 112-112l32 0c61.9 0 112 50.1 112 112z"/></svg>STEM tutor</h3>
@@ -287,8 +333,11 @@
               <p class="when">Aug 2021 – May 2025</p>
             </div>
             <ul>
-              <li>Tutored computer science, mathematics, and cybersecurity for 50+ high-school and university students — the community the migrated platform now hosts.</li>
+              <li>Tutored computer science, mathematics, and cybersecurity for 50+ high-school and university students — the community the migrated platform was built for.</li>
             </ul>
+            <div class="chips entry-chips">
+              <span class="chip" data-topic="security">Security</span>
+            </div>
           </article>
         </div>
       </section>

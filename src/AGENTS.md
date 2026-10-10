@@ -7,6 +7,7 @@ Everything here is compiled by `tsc` (strict, `noUncheckedIndexedAccess`, `exact
 - Entry points are `site.ts` (every page) and `contact.ts` (the contact form). A new behaviour goes in its own module and is called from `site.ts`, and it must run after `mountRepositoryFacts()`, so the counters count to the synced figures and not to the HTML fallbacks.
 - `projectMetadata.ts` merges curated data with generated data. Generated data wins for repository facts; curated copy wins for prose.
 - `display.ts` owns the Display preferences. Its boot script in every page's `<head>` must match `applyPrefs()`, or the page flashes. Scripts that animate ask `prefersReducedMotion()`, never the media query alone.
+- `topics.ts` holds the topic list and the filter. Its exports other than `mountTopicFilters()` are pure, so the tests import them. A new topic needs evidence (see `DESIGN.md` B4) and a chip that uses it; the tests fail on a topic nobody uses.
 - `story.ts` is motion. Every effect must end in its final state when reduced motion is on, and must not hide content without script.
 - Tests in `tests/` run against `modules/` in Node, with no DOM. A module they import must load without one. `prefersReducedMotion()` in `display.ts` is the model: it checks for a missing `document` and `matchMedia`.
 - Do not add a runtime dependency without a reason the bundle cannot avoid. The commit-body chunk is already large and must stay lazy-loaded.

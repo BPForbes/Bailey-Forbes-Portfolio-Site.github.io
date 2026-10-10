@@ -13,6 +13,7 @@ import { icon } from "./icons.js";
 import { mountDecks } from "./deck.js";
 import { mountDisplayControl } from "./display.js";
 import { mountStory } from "./story.js";
+import { mountTopicFilters } from "./topics.js";
 import { mountGuestWindows } from "./guestWindow.js";
 import { renderLanguageChart } from "./languageChart.js";
 import { mountNamedReleases } from "./releases.js";
@@ -324,3 +325,7 @@ mountRepositoryFacts();
 // Last, after the repository figures are in place, so the counters count to
 // the synced numbers rather than the HTML fallbacks.
 mountStory();
+
+// After the story module has marked the reveal targets, so an item the filter
+// hides on load is simply not revealed until it is shown again.
+mountTopicFilters();

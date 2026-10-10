@@ -90,7 +90,7 @@ anything under `src/`.
 |---|---|
 | `home/index.html` | The home page: bento overview, story, the record, contact |
 | `projects/` | Project index, one folder per project (`emr`, `flinstone`, `homework-central`, `keyquorum`, `qpu`), plus the old `*.html` redirects |
-| `src/` | TypeScript sources. `site.ts` and `contact.ts` are the entry points. `display.ts` is the Display control. `story.ts` is the home page's motion. `apps.ts` holds the lab URLs |
+| `src/` | TypeScript sources. `site.ts` and `contact.ts` are the entry points. `display.ts` is the Display control. `story.ts` is the home page's motion. `topics.ts` is the topic list and filter. `apps.ts` holds the lab URLs |
 | `css/styles.css` | The single stylesheet. Token layer at the top, then compact styles, then the wide layer at the foot |
 | `data/`, `src/generated/` | Generated project facts (do not edit) |
 | `scripts/` | The metadata sync and the project-to-repository mapping (`project-sources.mjs`) |

@@ -3646,8 +3646,8 @@ body.guest-overlay-open {
 }
 
 /* A tile with a destination lifts on hover: 2px, no scale, text stays crisp. */
-.tile:has(.btn):hover,
-.tile:has(.btn):focus-within {
+.tile:not(.tile-filter):has(.btn):hover,
+.tile:not(.tile-filter):has(.btn):focus-within {
   border-color: var(--action);
   transform: translateY(-2px);
 }
@@ -3918,6 +3918,202 @@ body.guest-overlay-open {
   color: var(--status-ok);
 }
 
+/* ---------------------------------------------------------- topic filter -- */
+
+/*
+ * Filter by topic (src/topics.ts). The control is revealed by script, so with
+ * scripting off it does not exist and everything is shown. Each topic is a
+ * toggle button with aria-pressed, grouped as Languages / Platforms / Practice,
+ * with the number of items that carry it. Pressed is drawn as a filled button
+ * AND a leading check, so the state is not carried by colour alone (R25), the
+ * same idiom as the Display control's options.
+ */
+.topic-filter {
+  margin: 0 0 var(--space-5);
+  padding: var(--space-4) 0;
+  border-top: var(--rule) solid var(--border-strong);
+  border-bottom: var(--rule) solid var(--border-strong);
+}
+
+.filter-title {
+  margin: 0;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tile .filter-title {
+  font-size: 0.72rem;
+}
+
+.filter-hint {
+  margin: var(--space-1) 0 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.topic-disclosure {
+  margin-top: var(--space-2);
+}
+
+.topic-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap-comfortable);
+  cursor: pointer;
+  list-style: none;
+  color: var(--action-hover);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.topic-summary::-webkit-details-marker {
+  display: none;
+}
+
+.topic-disclosure[open] > .topic-summary .disclosure-toggle {
+  transform: rotate(225deg);
+}
+
+.topic-selected {
+  color: var(--text-muted);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.topic-filter-body {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.topic-group {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.topic-group-label {
+  margin: 0;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.topic-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.topic-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-comfortable);
+  padding: 0 var(--space-3);
+  background: transparent;
+  border: var(--rule) solid var(--border-interactive);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition:
+    border-color var(--motion-fast) ease-out,
+    background-color var(--motion-fast) ease-out,
+    color var(--motion-fast) ease-out,
+    transform var(--motion-fast) ease-out;
+}
+
+.topic-btn:hover {
+  border-color: var(--action);
+  color: var(--text);
+}
+
+.topic-btn:active {
+  transform: scale(0.97);
+}
+
+.topic-count {
+  min-width: 1.4em;
+  padding: 0 0.35em;
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--text-subtle);
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+.topic-btn[aria-pressed="true"] {
+  background: var(--action);
+  border-color: var(--action);
+  color: var(--text-on-action);
+  font-weight: 600;
+}
+
+.topic-btn[aria-pressed="true"]::before {
+  content: "";
+  display: inline-block;
+  width: 0.4em;
+  height: 0.7em;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-0.1em) rotate(45deg);
+}
+
+.topic-btn[aria-pressed="true"] .topic-count {
+  background: transparent;
+  color: var(--text-on-action);
+}
+
+.topic-filter-footer {
+  margin-top: var(--space-2);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.topic-clear:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.topic-status {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+/* A chip the current selection matched: why this item is still showing.
+   Border weight and the mark carry it, not only the colour. */
+.chip[data-match] {
+  border-color: var(--action);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: inset 0 calc(var(--rule-strong) * -2) 0 0 var(--action);
+}
+
+.entry-chips {
+  margin-top: var(--space-3);
+}
+
+.filter-empty {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-3) var(--space-4);
+  border: var(--rule) dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+}
+
 /*
  * ================================================================ WIDE LAYER
  *
@@ -3964,6 +4160,7 @@ body.guest-overlay-open {
   .tile-intro { grid-column: span 3; padding: var(--space-6) var(--space-5); }
   .tile-portrait { grid-column: span 3; grid-row: span 2; min-height: 0; }
   .tile-story { grid-column: span 6; }
+  .tile-filter { grid-column: span 6; }
   .tile-spec { grid-column: span 3; }
   .tile-lab { grid-column: span 3; }
   .tile-hc { grid-column: span 3; }
@@ -4226,6 +4423,7 @@ body.guest-overlay-open {
   .tile-portrait { grid-column: span 5; grid-row: span 2; }
   .tile-spec { grid-column: span 7; }
   .tile-story { grid-column: span 12; }
+  .tile-filter { grid-column: span 12; }
   .tile-lab { grid-column: span 4; }
   .tile-hc { grid-column: span 5; }
   .tile-emr { grid-column: span 3; }
