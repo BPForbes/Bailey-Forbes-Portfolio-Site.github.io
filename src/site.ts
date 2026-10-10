@@ -11,6 +11,10 @@ import {
 import { publishedAt } from "./buildInfo.js";
 import { icon } from "./icons.js";
 import { mountDecks } from "./deck.js";
+import { mountDisplayControl } from "./display.js";
+import { createSheet } from "./sheet.js";
+import { mountStory } from "./story.js";
+import { mountTopicFilters } from "./topics.js";
 import { mountGuestWindows } from "./guestWindow.js";
 import { renderLanguageChart } from "./languageChart.js";
 import { mountNamedReleases } from "./releases.js";
@@ -33,19 +37,26 @@ if (header) {
             <span>Indiana</span>
           </span>
         </a>
-        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
-          <span class="nav-toggle-icon" aria-hidden="true">${icon("bars")}${icon("xmark")}</span>
-          Menu
-        </button>
-        <ul class="nav-links" id="site-nav">
-          <li><a data-nav="home" href="${ROUTES.home}">Home</a></li>
-          <li><a data-nav="projects" href="${ROUTES.projects}">Projects</a></li>
-          <li><a data-nav="experience" href="${ROUTES.experience}">Experience</a></li>
-          <li><a data-nav="about" href="${ROUTES.about}">About</a></li>
-          <li><a data-nav="contact" href="${ROUTES.contact}">Contact</a></li>
-        </ul>
+        <div class="nav-tools">
+          <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-sheet">
+            <span class="nav-toggle-icon" aria-hidden="true">${icon("bars")}${icon("xmark")}</span>
+            Menu
+          </button>
+          <ul class="nav-links" id="site-nav">
+            <li><a data-nav="home" href="${ROUTES.home}">Home</a></li>
+            <li><a data-nav="projects" href="${ROUTES.projects}">Projects</a></li>
+            <li><a data-nav="experience" href="${ROUTES.experience}">Experience</a></li>
+            <li><a data-nav="about" href="${ROUTES.about}">About</a></li>
+            <li><a data-nav="contact" href="${ROUTES.contact}">Contact</a></li>
+          </ul>
+          <div class="display" data-display></div>
+        </div>
       </div>
     `;
+  const displayMount = header.querySelector<HTMLElement>("[data-display]");
+  if (displayMount) {
+    mountDisplayControl(displayMount);
+  }
 }
 
 const footer = document.querySelector<HTMLElement>("[data-site-footer]");
@@ -61,6 +72,9 @@ if (footer) {
   const year = (published ?? synced).slice(0, 4);
 
   footer.innerHTML = `
+      <div class="wrap">
+        <p class="footer-colophon">Colophon</p>
+      </div>
       <div class="wrap footer-grid">
         <p>
           © ${year} Bailey P Forbes.${published === undefined ? "" : `
@@ -79,43 +93,51 @@ if (footer) {
     `;
 }
 
-document.querySelectorAll<HTMLAnchorElement>(`[data-nav="${page}"]`).forEach((link) => {
-  link.setAttribute("aria-current", "page");
-});
-
 const toggle = document.querySelector<HTMLButtonElement>(".nav-toggle");
 const links = document.querySelector<HTMLElement>(".nav-links");
 if (toggle && links) {
-  const setOpen = (open: boolean): void => {
-    links.classList.toggle("is-open", open);
-    toggle.setAttribute("aria-expanded", String(open));
-  };
+  /*
+   * The compact menu is a bottom sheet (src/sheet.ts), built from the same
+   * links the wide layout shows inline. The inline list stays in the page and
+   * is simply not displayed below 56rem; the sheet's copy is only in the DOM
+   * as a closed dialog until it is opened, so the page has one visible nav.
+   */
+  const sheet = createSheet({ id: "nav-sheet", title: "Menu" });
+  const list = document.createElement("ul");
+  list.className = "sheet-nav";
+  links.querySelectorAll<HTMLAnchorElement>("a").forEach((source) => {
+    const item = document.createElement("li");
+    const copy = source.cloneNode(true) as HTMLAnchorElement;
+    item.appendChild(copy);
+    list.appendChild(item);
+  });
+  const nav = document.createElement("nav");
+  nav.setAttribute("aria-label", "Primary");
+  nav.appendChild(list);
+  sheet.body.appendChild(nav);
 
   toggle.addEventListener("click", () => {
-    setOpen(!links.classList.contains("is-open"));
+    sheet.open(toggle, list.querySelector<HTMLAnchorElement>('[aria-current="page"]') ?? list.querySelector("a"));
   });
 
-  // A tapped destination must close the menu, otherwise an in-page hash link
-  // leaves the panel covering the section it just scrolled to.
-  links.addEventListener("click", (event: MouseEvent) => {
-    if (event.target instanceof HTMLAnchorElement) {
-      setOpen(false);
+  // A tapped destination must close the sheet, otherwise an in-page hash link
+  // leaves it covering the section it just scrolled to.
+  list.addEventListener("click", (event: MouseEvent) => {
+    if (event.target instanceof Element && event.target.closest("a")) {
+      sheet.close();
     }
   });
 
-  document.addEventListener("keydown", (event: KeyboardEvent) => {
-    if (event.key === "Escape" && links.classList.contains("is-open")) {
-      setOpen(false);
-      toggle.focus();
-    }
-  });
-
-  // The wide layer shows every link inline, so an open compact panel has no
-  // meaning there. Left set, it would spring back open on the way down.
-  window.matchMedia("(min-width: 56rem)").addEventListener("change", () => {
-    setOpen(false);
+  // The wide layer shows every link inline, so an open compact sheet has no
+  // meaning there. Left open, it would sit over a layout that has no menu.
+  window.matchMedia("(min-width: 56rem)").addEventListener("change", (event: MediaQueryListEvent) => {
+    if (event.matches) sheet.close();
   });
 }
+
+document.querySelectorAll<HTMLAnchorElement>(`[data-nav="${page}"]`).forEach((link) => {
+  link.setAttribute("aria-current", "page");
+});
 
 function isProjectId(value: string): value is ProjectId {
   return Object.prototype.hasOwnProperty.call(PORTFOLIO.projects, value);
@@ -308,3 +330,11 @@ function mountRepositoryFacts(): void {
 }
 
 mountRepositoryFacts();
+
+// Last, after the repository figures are in place, so the counters count to
+// the synced numbers rather than the HTML fallbacks.
+mountStory();
+
+// After the story module has marked the reveal targets, so an item the filter
+// hides on load is simply not revealed until it is shown again.
+mountTopicFilters();

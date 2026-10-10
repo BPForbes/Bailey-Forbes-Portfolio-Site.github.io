@@ -89,7 +89,16 @@ existing_components_and_tokens:
   - "src/guestWindow.ts — the live-lab guest window (titlebar, dock, stage, states)"
   - "Components: .btn, .card, .entry, .chip, .kicker, .eyebrow, .section-head, .timeline, .guest-window, .note, .stat-list, .spec-list"
 visual_direction: >
-  Workshop notebook, not a product landing page. Warm near-black ground, one
+  THE THEME IS A COMMIT LOG (2026-10-10). Every project page already draws
+  its history as a git branch; the home page is the trunk those branches
+  come off: a numbered record whose chapters are nodes on a line, a story
+  strip that draws itself from beat to beat as it is read, a left-margin
+  trunk that fills with the reader's progress, project rows that preview
+  their own branch texture on hover, and figures that count up to the
+  numbers the résumé states. All motion is keyed to the reader (load,
+  scroll, hover), runs once, and collapses to the final state under
+  reduced motion or the Display control. Underneath that: workshop
+  notebook, not a product landing page. Warm near-black ground, one
   copper action colour, one patina accent for provenance labels. Fraunces for
   headings (editorial, slightly bookish), Sora for reading text, IBM Plex Mono
   reserved for dates, versions, labels and code — the things that are literally
@@ -406,48 +415,84 @@ disagree, the stylesheet is wrong.
 ## B1. Token roles (R12)
 
 Semantic role tokens are defined in `:root` and are the only names components
-may use. The raw palette (`--copper`, `--patina`, `--stone`, …) exists solely to
-give the role tokens a value; do not reference a raw palette name from a
-component rule.
+may use. The raw palette (`--p-copper`, `--p-patina`, `--p-stone`, …) exists
+solely to give the role tokens a value; do not reference a raw palette name
+from a component rule.
 
-| Role token | Value | Used for |
-|---|---|---|
-| `--surface-page` | `#10120f` | Page ground |
-| `--surface-raised` | `#181a16` | Cards, entries, guest window |
-| `--surface-sunken` | `#1f221c` | Titlebars, notes, inset strips |
-| `--surface-invert` | `#f3ead8` | Card stock, `.note-card` only |
-| `--text` | `#ebe6d8` | Headings and body |
-| `--text-muted` | `#c4bdae` | Supporting prose |
-| `--text-subtle` | `#8f897b` | Metadata, captions, legends |
-| `--text-on-action` | `#0b0c0a` | Label on a filled action |
-| `--text-on-invert` | `#2a2418` | Ink on card stock |
-| `--text-on-invert-muted` | `#6b5e48` | The mono label on card stock |
-| `--border` | `#2c2f28` | Separation between static surfaces |
-| `--border-strong` | `#3d4036` | Emphasised static separation |
-| `--border-interactive` | `#6d7264` | Any border that *is* the control's visible boundary (≥3:1, WCAG 1.4.11) |
-| `--action` / `--action-hover` | `#c98a4a` / `#e0b27a` | The single call-to-action colour |
-| `--accent` | `#7ea36a` | Provenance labels (`.eyebrow`) — "this came from the git record" |
-| `--focus` | `#e0b27a` | Focus ring, on every focusable element |
-| `--status-ok` / `--status-wait` / `--status-error` | `#9dc389` / `#e0b27a` / `#e0685c` | Live-lab status, always paired with text |
+Since the 2026-10-10 redesign the one token layer has **four renderings**: two
+themes (dark, the default workshop ground; and paper, a light rendering) each
+with a standard and a high-contrast cut. The rendering is chosen by attributes
+the Display control writes onto `<html>` (`data-theme`, `data-contrast`,
+`data-motion`, `data-text`; see B4) or, with none set, by the visitor's own
+`prefers-color-scheme` / `prefers-contrast` / `prefers-reduced-motion`. Both
+themes live in one declaration per token via `light-dark()` (light value
+first), switched by `color-scheme`; the dark values are also declared plainly
+first as the fallback for a browser without it.
 
-Measured contrast (sRGB, computed from the values above on 2026-09-15):
-`--text` 15.1:1 on page, `--text-muted` 9.4:1 on raised, `--text-subtle` 4.6:1
-on sunken, `--text-on-invert` 12.9:1 and `--text-on-invert-muted` 5.3:1 on card
-stock, `--status-error` 4.8:1 on sunken, `--border-interactive` 3.3–3.8:1
-across the three surfaces, `--text-on-action` on `--action` 6.7:1. Every one of
-those was then re-checked against the *rendered* pages, not just the token
-table — see B5.
+| Role token | Dark | Paper | Dark · high contrast | Paper · high contrast | Used for |
+|---|---|---|---|---|---|
+| `--surface-page` | `#10120f` | `#f4eee2` | `#000000` | `#ffffff` | Page ground |
+| `--surface-raised` | `#181a16` | `#fbf7ee` | `#0d0e0c` | `#ffffff` | Hover bands, guest window, panel |
+| `--surface-sunken` | `#1f221c` | `#ebe3d2` | `#161815` | `#f1f1f1` | Titlebars, notes, inset strips |
+| `--surface-invert` | `#f3ead8` | `#fffaf0` | `#ffffff` | `#ffffff` | Card stock, `.note-card` only |
+| `--text` | `#ebe6d8` | `#1f1b14` | `#ffffff` | `#000000` | Headings and body |
+| `--text-muted` | `#c4bdae` | `#4a4336` | `#f1ede4` | `#111111` | Supporting prose |
+| `--text-subtle` | `#8f897b` | `#605847` | `#d9d4c7` | `#2a2a2a` | Metadata, captions, legends |
+| `--text-on-action` | `#0b0c0a` | `#ffffff` | `#000000` | `#ffffff` | Label on a filled action |
+| `--text-on-invert` | `#2a2418` | `#2a2418` | `#000000` | `#000000` | Ink on card stock |
+| `--text-on-invert-muted` | `#6b5e48` | `#5c5040` | `#2b2b2b` | `#2b2b2b` | The mono label on card stock |
+| `--border` | `#2c2f28` | `#d8cfbb` | `#6f746a` | `#8a8a8a` | Separation between static surfaces |
+| `--border-strong` | `#3d4036` | `#b9ad94` | `#9ea396` | `#5a5a5a` | Rules: section heads, ledger rows, entries |
+| `--border-interactive` | `#6d7264` | `#7d7460` | `#c9cdc3` | `#2a2a2a` | Any border that *is* the control's visible boundary (≥3:1, WCAG 1.4.11) |
+| `--action` / `--action-hover` | `#c98a4a` / `#e0b27a` | `#8a4612` / `#6b350c` | `#f3bd74` / `#ffd59a` | `#6b3400` / `#4a2300` | The single call-to-action colour; links and folio numerals use `--action-hover` |
+| `--accent` | `#7ea36a` | `#3f6b33` | `#b8e0a4` | `#1f4d17` | Provenance labels (`.eyebrow`) — "this came from the git record" |
+| `--focus` | `#e0b27a` | `#8a4612` | `#ffffff` | `#000000` | Focus ring, on every focusable element |
+| `--status-ok` / `--status-wait` / `--status-error` | `#9dc389` / `#e0b27a` / `#e0685c` | `#2f6a2a` / `#8a4612` / `#a8281f` | `#b8e0a4` / `#f3bd74` / `#ff9d93` | `#1f4d17` / `#6b3400` / `#9c1c12` | Live-lab and form status, always paired with text |
+| `--rule` / `--rule-strong` | `1px` / `1px` | same | `2px` / `2px` | `2px` / `2px` | Hairline thickness; every rule and control border reads it |
+| `--ground-line` | 5% bone | 7% ink | transparent | transparent | The ruled grid in the page margins (`.site-ground`) |
+| `--glass-tint` / `-bar` / `-sheet` | 74% / 86% / 93% of the raised surface | 72% / 84% / 93% of the paper surface | the opaque surface | the opaque surface | Glass fills for tiles and entries, the header bar, and sheets |
+| `--glass-blur`, `--glass-saturate` | 20px, 1.7 | 20px, 1.7 | 0px, 1 | 0px, 1 | The backdrop blur and colour boost behind every glass surface |
+| `--glass-fill`, `--glass-rim`, `--glass-hi`, `--glass-gloss` | white 6%, 16%, 22%, a 16px edge | white 50%, brown 24%, white 95%, a 16px edge | none | none | Inner fill for controls, the outer hairline, the lit top edge, the specular edge |
+| `--glow-a`, `--glow-b`, `--scrim` | copper 18%, patina 13%, 55% black | copper 22%, patina 18%, 40% ink | transparent, 72% black | transparent, 72% black | The ambient colour behind the glass, and the sheet scrim |
+
+Measured contrast (sRGB, `tools/contrast.py`, 2026-10-10): in every rendering
+every text role holds ≥4.5:1 on all three surfaces, `--text-on-action` ≥4.5:1
+on `--action` and `--action-hover`, and `--border-interactive`, `--focus` and
+`--action` ≥3:1 on all three surfaces. The weakest pairs are `--accent` on
+`--surface-sunken` in paper (4.9:1) and `--text-subtle` on `--surface-sunken`
+in dark (4.6:1). The high-contrast cuts hold ≥7:1 for every text role. Every
+one of those was then re-checked against the *rendered* pages, not just the
+token table — see B5.
+
+**Glass is held to the same bar on its worst backdrop, not the flat colour.**
+`tools/contrast.py` also checks every text role a glass surface carries against the
+worst thing that surface can sit over: tiles and entries over the page plus both
+glows at full strength; the header bar over pure white (dark theme) or pure black
+(paper), as a bright or dark photograph scrolling beneath it; sheets over the scrim
+over the same extremes; chips over the worst tile plus their fill. All pass at 4.5:1
+or better (the tightest, `--text-subtle` on a dark tile, is 4.61:1). The gloss is
+confined to a 16px edge so it never sits behind text, and the header's secondary
+text uses the muted role for the same reason.
 
 Scales: spacing `--space-1` 0.25rem through `--space-9` 5rem (a 4px-based
-ramp); radii `--radius-sm/md/lg`; `--elevation-1`; `--motion-fast` 120ms and
-`--motion-base` 200ms, both zeroed under `prefers-reduced-motion`.
+ramp); radii `--radius-sm/md/lg` (3/4/6px — small on purpose, this is a drafted
+document, not rounded tiles); `--elevation-1`; `--motion-fast` 120ms and
+`--motion-base` 200ms, both zeroed under `prefers-reduced-motion` or the
+Display control's "Reduced". `:root[data-text="large"]` sets the root font
+size to 118%; everything is in rem, so that one declaration scales the page.
 
 ## B2. Typography (R13)
 
-- **Fraunces** — headings only, two weights (560, 640).
+- **Fraunces** — headings only, loaded as a variable font with its `opsz`,
+  `wght`, `SOFT` and `WONK` axes. The page title (`h1`) and the résumé figures
+  turn `SOFT` up; the `h1` alone turns `WONK` on — the slanted terminals and
+  old-style forms are the one place the face is allowed its quirk, so the
+  name reads as lettering and everything else stays a plain serif.
 - **Sora** — reading text and controls, two weights (400, 600).
 - **IBM Plex Mono** — one weight (400), reserved for dates, version strings,
-  status text, labels and `<code>`. Never for prose.
+  status text, labels and `<code>`, and since the redesign for the running
+  head (nav links), button labels, chips and the spec sheet — everything that
+  is a label or a record rather than a sentence. Never for prose.
 
 Heading sizes use `clamp()` with a floor that fits "Electronic medical record"
 and "Bailey Forbes" inside a 320 CSS px viewport without horizontal overflow.
@@ -477,10 +522,32 @@ anchor the label instead of vanishing into it.
 
 ## B3. Container rules (R07)
 
-- **`.card`** — only for a discrete destination: one project the visitor can
-  open. Nothing else gets a card.
+- **`.tile`** in **`.bento`** — the home page's overview (2026-10-10, the
+  "use a template" pass, built in this stack after the bento-grid pattern
+  rather than adopting a template's code). A tile is a summary or a
+  destination of a *different kind* from its neighbours — who this is, the
+  story line, a lab, a project, skills, what is happening now, the ways to
+  reach him — taken in at once. That is why the overview is a grid of tiles
+  while everything below it stays ruled rows: a list is for repeated records
+  of one kind. Tiles have the site's only rounder corners (`--radius-tile`,
+  18px), varied spans (one, six and twelve columns across the three layers),
+  and lift 2px on hover only when they hold a destination.
+- **`.ledger`** (`<ol>` of `.ledger-row`) — the project list: one discrete
+  destination per row, numbered in the margin, ruled off from the next. It
+  replaced a grid of `.card` tiles on the home and projects pages because
+  five boxes in a grid is the shape every portfolio has; a numbered index is
+  the shape a parts list has. On the index page the whole row is one link
+  (`.ledger-link`); on the home page each row carries its own actions.
+- **`.card`** — still only for a discrete destination the visitor can open,
+  kept for any future use that is genuinely a tile. Nothing else gets a card.
+- **`.spec-sheet`** (`<dl>`) — the home hero's at-a-glance facts (based,
+  stack, now, latest release, status) as ruled label/value rows in mono. It
+  replaced a row of pill badges: the same facts, in the shape of a datasheet
+  header rather than a tag cloud.
 - **`.entry`** — a repeated record with the same fields (role/org/dates, or
-  release/date/summary).
+  release/date/summary). Ruled, not boxed, since the redesign: a rule above
+  each record is enough to separate repeated records, and a box around each
+  was the generic-résumé look.
 - **`.note-card` in a `.deck`** — one item in a browsable collection that is
   read, not opened (a dish, a game). It is a card because the items are
   discrete and parallel, and a cycling stack because the collection is short,
@@ -497,12 +564,34 @@ anchor the label instead of vanishing into it.
   statement plus its evidence sentence. An accent-coloured left rule, the
   same idiom `.note` already uses for a callout, but at full text strength
   rather than `.note`'s muted small print: this is confidence, not a caveat.
+- **`.chip[data-topic]`** — a topic tag: a technology or a practice the work actually
+  used. It is the only thing the topic filter reads, so what a visitor sees on a card is
+  exactly what the filter matches. Its text must equal the label in `src/topics.ts`.
+  A chip without `data-topic` (a version, a commit count, "Axum", "HIPAA testing") is a
+  fact about the item, not a filter topic.
 - **Plain prose in `.prose`** — anything that is simply read.
 
 ## B4. Recorded exceptions
 
 | Exception | Reason | How to evaluate |
 |---|---|---|
+| The site has a **Display control** (header, `src/display.ts`) offering theme, contrast, motion and text size | Asked for directly ("still ADA compliant — perhaps a setting?"). The default rendering already meets AA; the control exists so a visitor can go past it: a 7:1 high-contrast cut, reduced motion without changing an OS setting, a larger root size, and a paper theme for anyone who reads dark pages badly. Each choice is written as a `data-*` attribute on `<html>` and the stylesheet does the rest; "System" means the attribute is absent and the OS media query decides, so the no-JS page, the first paint and the settled page agree. The choice is kept in `localStorage` (`bf-display`) and re-applied by a four-line inline script in every page's `<head>` before first paint, so nothing flashes. Native radios in fieldsets, so grouping, arrow keys and announcement cost nothing. | The panel must open from the button on Enter, land focus on the current theme radio, change the rendering on an arrow key, persist across a reload, close on Escape with focus returned to the button, and close on a click outside. Checked that way, keyboard only, by `tools/audit-a11y.mjs`. If the inline boot script and `applyPrefs()` ever disagree, the page will flash on load — they must stay identical. |
+| **The home page opens on a bento overview** (`.bento-section`) | Asked for ("perhaps a template?") and chosen over adopting one: a bento grid built in this stack keeps the labs, timelines, decks and the Display control, which a template port would have discarded. The overview replaced the hero, the story strip and the featured ledger; the record (experience, education, off the clock, contact) continues below it, and the trunk walks that record. The ledger stays on the projects index. Two facts moved into tiles rather than being duplicated: skills (out of Education, now "Education") and "Right now" (out of Off the clock). | Tiles must stack in source order at 320px with nothing hidden; the h1 must stay inside the intro tile and the section be labelled by it; no tile may rely on hover for anything its text does not carry; every lab tile's primary action must reach the lab (`#live-lab`) and its secondary the write-up. Checked at 390 / 900 / 1440 px in dark and paper. |
+| **A live local clock** in the spec sheet (`[data-local-time]`) | A fact about where he is, kept current: the hour in Indiana, formatted by `Intl` for `America/Indiana/Indianapolis`, refreshed on the minute. `aria-live="off"`, so it is read when reached and never announced on change; the `<time>` carries the machine value. Falls back to the static text "Eastern time" without script or `Intl`. | The displayed hour must match Indianapolis (EDT/EST by date, checked against the `datetime` attribute). It must never announce. |
+| **"Copy" beside the email address** (`.copy-btn`) | A small convenience the mailto link does not give: the address on the clipboard. Drawn only where `navigator.clipboard` exists; the link is the real route and works regardless. Success and failure are spoken through a `role="status"` line and shown on the button for two seconds, so the outcome is not colour alone (R25). | With the clipboard unavailable the button must not exist. After a click the status line must read the address and "copied", and the button must return to "Copy". |
+| **The story strip** (`.tile-story`, `.story-line`) on the home page | The theme needs a story told in order, and the page's sections are ordered by importance to a recruiter, not by time. The strip is six dated beats — tutoring, the EMR team, Flinstone's origin, Baker Hill, the Homework Central migration, now — each a fact that already appears on this page or a project page (R15: nothing new is claimed), joined by a line that draws from beat to beat as each is reached, with "Now" drawn as HEAD (an open ring) rather than a filled commit. Links in it go to the project pages. | Every sentence must trace to an existing page. The line must draw only once, in reading order, and be fully drawn with no script or under reduced motion (`src/story.ts` adds `.is-seen` to every beat in that case). At 320px the beats stack with the line vertical; at the wide layer they run across. |
+| **Sections and records arrive on scroll** (`.reveal`, added by `src/story.ts`) | Motion that explains change (R27): a chapter appears as the reader reaches it, 12px and 360ms, staggered 60ms between records that arrive together — the skill's scroll-reveal band, chosen over a slide. The class is added by script, so with scripting off nothing is hidden, and nothing is added at all under reduced motion. | Nothing below the fold may be hidden without script. Under reduced motion `document.querySelectorAll(".reveal")` must be empty. An element must never reveal twice. |
+| **Résumé figures count up** (`.stat-list dt`) | The one "effect" in the strip, and it is about the numbers: the figure is reached, not shown. The authored text stays in the DOM in a visually-hidden span and the counting happens in an aria-hidden twin, so assistive technology reads "sixteen thousand" once and never a number on its way there. 900ms, ease-out, lands on the authored string exactly. | After counting, the visible twin must equal the hidden original byte for byte (checked in the story capture). Under reduced motion no twin is created. Figures with a prefix (`~70`, `<2 weeks`) or suffix (`584 million`) keep them throughout. |
+| **The trunk** (`nav.trunk`, home page, ≥80rem) | The theme's spine: a page-local nav in the left margin, one node per numbered chapter, the line between them filling with the reader's progress and the current chapter ringed. It is real links in a real `<nav aria-label>` with `aria-current="location"`, so it is a table of contents first and a progress indicator second. Only built where the margin can hold it; the header nav covers everything else. | Every node must be reachable by Tab and show the chapter title on focus, not only on hover. `--trunk-progress` must reach 1 at the last chapter and be 1 immediately under reduced motion. The nav must never overlap the content column (its left edge is computed from `--measure-page`). |
+| **A project row previews its branch on hover** (`.ledger-motif`) | Hovering (or focusing into) a row in the log shows, faintly and only on the row's right half, the same motif its project page draws, with its flow line running only while the row is active — a preview of the branch you would switch to. It is pointer- and focus-driven decoration, carries nothing not in the row's text, is `aria-hidden`, sits under the text, and is not clipped in a way that could cut a focus ring. | Nothing in the row may depend on the motif; the flow animation must be paused when the row is not hovered or focused; the row must not set `overflow: hidden` (a focus ring on its right-hand action would be cut). |
+| **The hero writes itself in on load** | ~700ms of CSS keyframes: the kicker's rule draws, the title and lede rise, the spec sheet's rows and the actions follow, the portrait's offset rule slides in. It is the one load-time animation and it is what makes arriving on the page feel like a page being opened rather than a template being served. CSS only; the sitewide reduced-motion rule zeroes its durations, so it becomes a plain first paint. | Under reduced motion the kicker rule's computed transform must be the identity and the title's opacity 1 at first paint (checked in the story capture). Nothing may animate after it settles. |
+| **Menus open as sheets** (`src/sheet.ts`, `.sheet`) | Asked for: a bottom sheet on a phone and a side sheet on a desktop. The Display control and the compact navigation menu are both sheets. Each is one native modal `<dialog>`, so the browser supplies focus trapping, an inert page behind it and Escape; the stylesheet picks the shape, a bottom sheet with a grab handle below 56rem and a 26rem side sheet from the right above it, so a resized window reshapes an open sheet. The scrim click, focus return to the opener, the page scroll lock on a phone, and a drag-down-to-dismiss on the handle are added in script. Open and close are transitions on transform and opacity, with `display` and `overlay` transitioned as discrete properties so the closing motion is seen. The wide layout keeps its inline links; only the compact menu is a sheet. | The sheet must open on Enter from its button and land focus on its first useful control (the current theme choice, or the current page); Escape and the close button close it and return focus to the button; clicking the scrim closes it; `aria-expanded` is true only while open. Dragging is a shortcut only, never the sole route (WCAG 2.5.7). `tools/audit-a11y.mjs` opens both sheets by keyboard, audits their text and targets while open, and checks the close. |
+| **Glass surfaces** (`--glass-*` tokens, applied once in the "glass" block of `css/styles.css`) | Asked for, in the manner of Apple's Liquid Glass: translucent tinted surfaces with a backdrop blur and colour boost, a lit top edge, and a soft ambient glow behind so there is something to refract. It covers the header bar, tiles, role entries, sheets, the live lab's chrome, and the fill of controls. It is the one effect on the site that can hurt legibility, so it is bounded: tints are dense enough for the worst backdrop (see B1), controls keep their own interactive border rather than the glass rim, and the filled action keeps its colour with a sheen that fades before the label. Glass resolves to the opaque surface, with the glow removed, in both high-contrast cuts, under the OS reduced-transparency preference, and in a browser that cannot blur. | `tests/glass.test.mjs` checks that all three collapse conditions set the opaque tokens, that the default is opaque until blur is proven, and that every `backdrop-filter` is driven by the blur token. `tools/contrast.py` checks the worst-case backdrops. If a new glass surface carries text, add its case there. |
+| **Animations replay in both scroll directions** (`src/story.ts`) | Asked for: reveals, the story line and the résumé counters run every time they come into view, scrolling down or back up, not once per visit. Two observers per element: one fires as it crosses the viewport; the other watches a band 35% of a screen taller on both sides and resets it only after it is well out of that band, so the reset is never visible. The counter restarts from zero, cancels a count in progress when it leaves, and restores its authored text. The tiles and the page heroes join the same system, so the first load is the same entrance, with a first-paint hold keyed to `html.js` that only applies where the reveal will run and fades itself in after 2.5 seconds if the script never arrives. | Under reduced motion `.reveal` must not exist and nothing is hidden; with scripting off nothing is hidden; with the site script blocked the tiles must be visible within 3 seconds. Scroll to Experience, away, and back: the figure counts again each time. `.reveal-ready` is set only once the observers are attached. |
+| **Filter by topic** (`[data-topic-filter]`, `src/topics.ts`) on the home page and the projects index | Asked for directly: pick topics such as Rust or Cloudflare and hide the projects and roles that used none of them. Toggle buttons with `aria-pressed`, grouped as Languages, Platforms and Practice, each with its item count. Selection is OR, so adding a topic never hides more. The state is in the URL (`?topics=rust,cloudflare`) through `replaceState`, so a filtered view can be shared without adding history entries. A polite status line says what is shown ("2 of 5 projects and 2 of 4 roles tagged Rust or C#"), a group whose items are all hidden shows a line saying so, and matched chips are drawn heavier with a rule beneath. The groups sit in a native disclosure that is open on the wide layer and closed on the compact one, because 22 toggles fill a phone's screen. The control is revealed by script, so with scripting off nothing is hidden. Education entries, the skills tile and the story are not filtered: they are not tied to one technology. | `tests/topics.test.mjs` checks the topic list, the OR match, the URL round trip, that every `data-topic` on a page is known and its chip says its label, that every filter item carries a topic, and that every topic is used. In a browser: Space on a topic toggles it; Clear returns focus to the first topic; a `?topics=` link pre-selects; with JavaScript off no item is hidden and the control is absent. |
+| **Topic assignments** | Each tag is evidenced. Languages come from the repositories' Linguist splits (`data/project-metadata.json`): Flinstone C and Assembly; KeyQuorum Rust and TypeScript (its lab); Homework Central C#, TypeScript and Rust (its `rust/` kernels); QPU TypeScript; the EMR's Kotlin and Java are the curated estimate. Platforms and practice come from each repository's code and docs: Flinstone's Cloudflare Worker and Durable Object, Emscripten shell (WebAssembly), TCP/IP and Wi-Fi stack (networking) and kernel (systems programming); KeyQuorum's SQLite store, Cloudflare Workers, R2 and Access, WebAssembly lab, security model, and relay operations with Terraform, backups and secrets (system administration); Homework Central's React frontend, PostgreSQL, Docker Compose and Kubernetes layout (Docker, system administration) and neural moderation model (machine learning); QPU's React workbench, compiler and quantum simulator; the EMR's Firebase and HIPAA-focused testing (security). Roles carry the stack the résumé names: Baker Hill C#, TypeScript and CI/CD; the EMR team Kotlin, Java, Firebase and security; tutoring security, because it included cybersecurity. HTML is not a topic: it is a fraction of a percent of every repository. | A new tag needs the same kind of evidence. Do not tag an item with a topic its repository or the résumé does not show. |
+| A faint **ruled grid** (`.site-ground`) sits behind the page | R14 asks every effect to earn its place. This is the one texture on the site and it is what makes a wide window read as a drafting sheet with the content set on it rather than a dark void with a column in the middle. It is masked out from behind the content column entirely, so no text is ever painted over it; it is zero-width on a phone, where there is no margin; and it is transparent in the high-contrast cut. | `tools/audit-a11y.mjs` measures every text node against its real painted background; the grid must never appear in that measurement. If a future layout puts text in the margins, the grid has to go. |
+| **Section heads and ledger rows are numbered** with generated content | The folio numerals are what make the page read as a numbered document, but they are decoration: the `<ol>` already gives assistive technology the count and position, and a heading does not need "zero one" read before it. They use the `content: … / ""` alternative-text syntax so the number is painted and not announced. | Only the home page's top-level sections are counted (`.wrap > section`); the project pages' nested sections must never acquire numbers, because they would count in an order that means nothing. Check with a screen reader or the accessibility tree that no numeral is announced. |
 | The two CLI projects show a styled text transcript, not a screenshot | R15 asks for real evidence of the product running, and for a terminal that evidence *is* text. Kept as text it stays selectable, searchable, legible at any zoom and reflows on a phone; a PNG of a shell does none of that and is heavier. The transcripts are literal output from a real local run, with the command lines marked so they can be picked out. | Every line must be reproducible by running the stated command at the stated commit. Any edit for layout must be disclosed in the caption — the Flinstone one reflows a six-item list onto two lines and says so; the KeyQuorum one abbreviates a secret and says so. Nothing else may be changed. |
 | The timeline shows five entries at a time, with three levels of detail | The history stays scannable as dates and titles while exactly one commit is readable, which is what keeps a nineteen-entry rail from being a wall. Selection is explicit — click, arrow keys, or the pager — rather than derived from scroll position, and the expanded card is a third level asked for on purpose. The card is bounded and scrolls rather than truncating, because "show details" has to mean all of them; a card free to grow would push the other four commits off the screen and undo the window. | Exactly one entry may show a summary, and at most one may show a card. The visible "n of m" and the range readout are what tell you the rest of the history exists, so neither is optional chrome. Verify by reaching the last entry with the keyboard alone. |
 | The expanded card scrolls natively, with no on-screen up/down control | An earlier pass added a pair of buttons for this. They turned out to be redundant: the body is already `overflow-y: auto` and focusable, so wheel, touch, and the keyboard all reach it without anything drawn on top. A bottom fade is the only added chrome, and only once the body actually overflows — it hints that there is more to read without claiming a control that does nothing new. | The body must be reachable and scrollable by keyboard alone (Tab to it, then arrow keys or Page Down). The fade must track real scroll position — present while `scrollTop` is short of the bottom, gone once it is not — never a static decoration. |
@@ -596,6 +685,52 @@ Chromium (Playwright), not read off the source:
 - **Navigation**: the narrow-screen menu opens, closes on Escape, and closes
   when a destination is chosen.
 - **No console or page errors** on any page.
+- **Sheets, glass and replay pass (2026-10-10)**, Playwright at 390 and 1440 px: the
+  Display sheet is 416px wide and flush right on desktop and full-width flush bottom
+  on a phone; the nav sheet opens on a phone with five links, focus on the current
+  page, closes on a link press with the hash applied; Escape, the close button, the
+  scrim click and the handle drag each close a sheet and return focus to its button.
+  Glass computes to `blur(20px) saturate(1.7)` on tiles and the header, and to an
+  opaque surface with no blur or glow under high contrast. The Experience counter
+  counts from zero on each arrival, from above and from below, and its elements reset
+  only once far off screen; the story beats go 6, 0, 6 on leaving and returning; under
+  reduced motion no `.reveal` exists and tiles are fully opaque; with the site script
+  blocked tiles are hidden at 0.3s and visible at 2.9s. The rendered audit now also
+  audits the open sheets; its 23 reports are unchanged and are all the controls inside
+  closed disclosures.
+- **Topic filter pass (2026-10-10)**, Playwright at 390 and 1440 px: 22 topics render in
+  three groups with counts; Rust shows KeyQuorum and Homework Central and the roles empty
+  state; Rust or C# also shows the two roles that used C#; Clear restores everything and
+  focus; `/projects/?topics=cloudflare` pre-selects and shows Flinstone and KeyQuorum with
+  their Cloudflare chips marked; with JavaScript off the control is absent and nothing is
+  hidden; no horizontal overflow on a phone, where the topics start collapsed. The rendered
+  audit is unchanged.
+- **Bento pass (2026-10-10)**, Playwright at 390 / 900 / 1440 px in dark and
+  paper: tiles stack, pair and span as the three layers say; the heading
+  order is h1 then h2s with no skipped level; the clock reads the Indiana
+  hour with a matching `datetime`; the copy control is present under a
+  clipboard-capable context; a lab tile lifts, brightens its motif and runs
+  its flow line on hover. `tools/audit-a11y.mjs` re-run after the change is
+  unchanged.
+- **Story pass (2026-10-10)**, Playwright at 1440px: the trunk builds with six
+  nodes, marks the current chapter with `aria-current` and fills to the
+  scrolled progress; every counter lands on its authored text exactly; the
+  story line draws beat by beat; under `reducedMotion: reduce` no `.reveal`
+  class exists, every beat is marked seen, trunk progress is 1 and the hero
+  is at its final state on first paint. The rendered audit below was re-run
+  after these additions and is unchanged.
+- **Redesign pass (2026-10-10)**, `tools/audit-a11y.mjs` against all eight pages
+  in all four renderings at 320 / 768 / 1280 px: every rendered text node
+  measured against its real painted background meets 4.5:1 (3:1 where the
+  rendered size qualifies as large); no standalone target under 24 × 24 CSS px
+  (inline links excepted per B4); no horizontal overflow; every focusable
+  element reached by Tab shows an outline of at least 2 px; the Display
+  control's open / arrow-key / persist / Escape / focus-return sequence
+  passes keyboard-only; the saved preference is applied before first paint
+  (the `data-*` attributes are present on `<html>` when the page is read).
+  Token-level contrast for all four renderings is `tools/contrast.py`, which
+  exits non-zero on any failing pair. Screenshots of the dark, paper and
+  dark-high-contrast renderings were reviewed at 1280 and 390 px.
 
 Not verified, and not claimed anywhere on the site:
 
@@ -646,6 +781,9 @@ Not verified, and not claimed anywhere on the site:
   (12 seeded approved examples, 0 pending feedback) from a fresh install of
   that branch.
 
+- Whether the `content: … / ""` alternative-text syntax hides the folio
+  numerals in every screen reader. It is specified and shipped in Chromium,
+  WebKit and Firefox, but see the next item.
 - Real assistive-technology output. There is no screen reader in the build
   environment, so the semantics were checked structurally (roles, accessible
   names, heading order), which is not the same as hearing them (R26).
@@ -677,3 +815,12 @@ states. The frontend remains unpublished until Resend domain verification and
 its encrypted API key are ready. Automated backend tests and TypeScript compile
 pass; production email delivery and interactive browser verification remain
 pending those prerequisites.
+
+## Related instruction files
+
+These files refer to each other. A change to one that affects another should update both.
+
+- [`AGENTS.md`](AGENTS.md): the design rule set this site is built to
+- [`docs/agents/multi-repo.md`](docs/agents/multi-repo.md): evidence rules R15 and R16 apply to project figures
+- [`projects/AGENTS.md`](projects/AGENTS.md): design rules and evidence rules for project pages
+- [`src/AGENTS.md`](src/AGENTS.md): design rules the components must follow

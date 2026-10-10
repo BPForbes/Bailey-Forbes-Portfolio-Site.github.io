@@ -8,10 +8,25 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,640&family=IBM+Plex+Mono:wght@400&family=Sora:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,400..700,0..100,0..1&family=IBM+Plex+Mono:wght@400&family=Sora:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/styles.css" />
+  <script>
+    /* Display preferences (src/display.ts) applied before first paint, so a
+       saved theme never flashes. An absent attribute means "follow the OS". */
+    (function () {
+      try {
+        var r = document.documentElement; r.classList.add("js");
+        var p = JSON.parse(localStorage.getItem("bf-display") || "{}");
+        if (p.theme === "dark" || p.theme === "light") r.setAttribute("data-theme", p.theme);
+        if (p.contrast === "standard" || p.contrast === "high") r.setAttribute("data-contrast", p.contrast);
+        if (p.motion === "full" || p.motion === "reduced") r.setAttribute("data-motion", p.motion);
+        if (p.text === "large") r.setAttribute("data-text", "large");
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body data-page="projects">
+  <div class="site-ground" aria-hidden="true"></div>
   <header class="site-header" data-site-header></header>
   <main id="main">
     <div class="wrap">

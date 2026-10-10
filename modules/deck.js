@@ -1,3 +1,4 @@
+import { prefersReducedMotion } from "./display.js";
 const POSES = [
   { x: 0, y: 0, r: 0, s: 1, o: 1 },
   { x: 13, y: -4.45, r: 2.4, s: 0.975, o: 1 },
@@ -32,9 +33,6 @@ function poseAt(depth) {
 }
 function easeOut(t) {
   return 1 - (1 - t) * (1 - t) * (1 - t);
-}
-function prefersReducedMotion() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 function mountDecks() {
   document.querySelectorAll("[data-deck]").forEach(mountDeck);

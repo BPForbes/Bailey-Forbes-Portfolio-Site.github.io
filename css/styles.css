@@ -8,7 +8,36 @@
  *      (B3). Prose does not get a box.
  */
 
+/*
+ * ---------------------------------------------------------------- tokens --
+ *
+ * One token layer, four renderings. The site has two themes (the dark
+ * workshop ground that is its default, and a paper rendering for light
+ * mode) and each has a standard and a high-contrast cut. All four are
+ * selected here, by attributes the Display control writes onto <html>
+ * (src/display.ts) or, with scripting off and nothing chosen, by the
+ * visitor's own OS preferences:
+ *
+ *   data-theme     dark | light       (absent = follow prefers-color-scheme)
+ *   data-contrast  standard | high    (absent = follow prefers-contrast)
+ *   data-motion    full | reduced     (absent = follow prefers-reduced-motion)
+ *   data-text      default | large
+ *
+ * Components still use the SEMANTIC role tokens only (B1). The raw palette
+ * exists to give those roles a value in each rendering; do not reference it
+ * from a component.
+ *
+ * Every text/surface pair below holds >=4.5:1 and every control boundary and
+ * focus ring >=3:1 in all four renderings — the figures are in DESIGN.md B1
+ * and the check is tools/contrast.py. The dark values are written first as
+ * the fallback, then re-declared with light-dark() so one declaration can
+ * carry both themes and the switch is just `color-scheme`. light-dark()
+ * takes the LIGHT value first.
+ */
+
 :root {
+  color-scheme: dark;
+
   /* Raw palette — referenced only by the role tokens directly below it. */
   --p-near-black: #10120f;
   --p-bark: #181a16;
@@ -28,6 +57,23 @@
   --p-paper-ink: #2a2418;
   --p-paper-ink-soft: #6b5e48;
   --p-ink: #0b0c0a;
+
+  /* The paper rendering's raw palette. */
+  --p-paper-page: #f4eee2;
+  --p-paper-raised: #fbf7ee;
+  --p-paper-sunken: #ebe3d2;
+  --p-paper-card: #fffaf0;
+  --p-paper-text: #1f1b14;
+  --p-paper-muted: #4a4336;
+  --p-paper-subtle: #605847;
+  --p-paper-line: #d8cfbb;
+  --p-paper-line-strong: #b9ad94;
+  --p-paper-stone: #7d7460;
+  --p-copper-deep: #8a4612;
+  --p-copper-deeper: #6b350c;
+  --p-patina-deep: #3f6b33;
+  --p-patina-deeper: #2f6a2a;
+  --p-rust-deep: #a8281f;
 
   /* Surfaces */
   --surface-page: var(--p-near-black);
@@ -61,6 +107,42 @@
   --status-wait: var(--p-copper-soft);
   --status-error: var(--p-rust);
 
+  /* Hairline rules and the ruled ground. The ground is a faint grid drawn
+     only in the page margins (see .site-ground), so no text ever sits on it. */
+  --rule: 1px;
+  --rule-strong: 1px;
+  --ground-line: rgba(235, 230, 216, 0.05);
+
+  /*
+   * Glass. A tinted, blurred surface with a lit edge, in the manner of Apple's
+   * Liquid Glass but tuned so text keeps its contrast on it: the tint is dense
+   * enough that the worst backdrop the surface can sit over still gives every
+   * text role >=4.5:1 (tools/contrast.py checks that case, not just the flat
+   * one). Where blur is unavailable, in either high-contrast cut, or when the
+   * OS asks for reduced transparency, every glass token collapses to the opaque
+   * surface and the glow behind it disappears.
+   */
+  --glass-opaque: var(--p-bark);
+  --glass-tint: rgba(24, 26, 22, 0.74);
+  --glass-tint-bar: rgba(16, 18, 15, 0.86);
+  --glass-tint-sheet: rgba(24, 26, 22, 0.93);
+  --glass-fill: rgba(255, 255, 255, 0.06);
+  --glass-rim: rgba(255, 255, 255, 0.16);
+  --glass-hi: rgba(255, 255, 255, 0.22);
+  --glass-gloss: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 16px);
+  --glass-sheen: rgba(255, 255, 255, 0.2);
+  --glass-shadow: 0 10px 34px rgba(0, 0, 0, 0.32);
+  --glass-blur: 20px;
+  --glass-saturate: 1.7;
+  --glow-a: rgba(201, 138, 74, 0.18);
+  --glow-b: rgba(126, 163, 106, 0.13);
+  --scrim: rgba(8, 9, 7, 0.55);
+  --radius-sheet: 24px;
+  /* Resolved below: opaque until the browser proves it can blur. */
+  --glass-bg: var(--glass-opaque);
+  --glass-bg-bar: var(--glass-opaque);
+  --glass-bg-sheet: var(--glass-opaque);
+
   /* Spacing scale (4px ramp). Layout rhythm uses these, not one-off values. */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -72,10 +154,14 @@
   --space-8: 3.5rem;
   --space-9: 5rem;
 
-  /* Radii, elevation, motion */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  /* Radii, elevation, motion. The radii are small on purpose: this is a
+     drafted document, not a pile of rounded tiles. */
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  /* Tiles in the overview grid: rounder than a rule-bound record, still far
+     from a pill. */
+  --radius-tile: 18px;
   --elevation-1: 0 18px 50px rgba(0, 0, 0, 0.35);
   --motion-fast: 120ms;
   --motion-base: 200ms;
@@ -99,6 +185,204 @@
   --content-padding: 1rem;
   --section-spacing: var(--space-6);
   --nav-h: 56px;
+}
+
+/* --- theme: dark | light ---------------------------------------------------- */
+
+/* Which rendering `color-scheme` resolves to. An explicit choice wins; with
+   none made the browser's own preference decides, scripting or not. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+  }
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+@supports (color: light-dark(#fff, #000)) {
+  :root {
+    --surface-page: light-dark(var(--p-paper-page), var(--p-near-black));
+    --surface-raised: light-dark(var(--p-paper-raised), var(--p-bark));
+    --surface-sunken: light-dark(var(--p-paper-sunken), var(--p-moss-dark));
+    --surface-invert: light-dark(var(--p-paper-card), var(--p-paper));
+
+    --text: light-dark(var(--p-paper-text), var(--p-bone));
+    --text-muted: light-dark(var(--p-paper-muted), var(--p-linen));
+    --text-subtle: light-dark(var(--p-paper-subtle), var(--p-ash));
+    --text-on-action: light-dark(#ffffff, var(--p-ink));
+    --text-on-invert: light-dark(var(--p-paper-ink), var(--p-paper-ink));
+    --text-on-invert-muted: light-dark(#5c5040, var(--p-paper-ink-soft));
+
+    --border: light-dark(var(--p-paper-line), var(--p-line));
+    --border-strong: light-dark(var(--p-paper-line-strong), var(--p-line-strong));
+    --border-interactive: light-dark(var(--p-paper-stone), var(--p-stone));
+
+    --action: light-dark(var(--p-copper-deep), var(--p-copper));
+    --action-hover: light-dark(var(--p-copper-deeper), var(--p-copper-soft));
+    --accent: light-dark(var(--p-patina-deep), var(--p-patina));
+    --focus: light-dark(var(--p-copper-deep), var(--p-copper-soft));
+
+    --status-ok: light-dark(var(--p-patina-deeper), var(--p-patina-soft));
+    --status-wait: light-dark(var(--p-copper-deep), var(--p-copper-soft));
+    --status-error: light-dark(var(--p-rust-deep), var(--p-rust));
+
+    --ground-line: light-dark(rgba(42, 36, 24, 0.07), rgba(235, 230, 216, 0.05));
+
+    --glass-opaque: light-dark(var(--p-paper-raised), var(--p-bark));
+    --glass-tint: light-dark(rgba(251, 247, 238, 0.72), rgba(24, 26, 22, 0.74));
+    --glass-tint-bar: light-dark(rgba(244, 238, 226, 0.84), rgba(16, 18, 15, 0.86));
+    --glass-tint-sheet: light-dark(rgba(251, 247, 238, 0.93), rgba(24, 26, 22, 0.93));
+    --glass-fill: light-dark(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.06));
+    --glass-rim: light-dark(rgba(90, 72, 40, 0.24), rgba(255, 255, 255, 0.16));
+    --glass-hi: light-dark(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.22));
+    --glass-gloss: light-dark(linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 16px), linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 16px));
+    --glass-sheen: light-dark(rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.2));
+    --glass-shadow: light-dark(0 10px 34px rgba(42, 36, 24, 0.16), 0 10px 34px rgba(0, 0, 0, 0.32));
+    --glow-a: light-dark(rgba(201, 138, 74, 0.22), rgba(201, 138, 74, 0.18));
+    --glow-b: light-dark(rgba(126, 163, 106, 0.18), rgba(126, 163, 106, 0.13));
+    --scrim: light-dark(rgba(31, 27, 20, 0.4), rgba(8, 9, 7, 0.55));
+    --elevation-1: light-dark(0 18px 50px rgba(42, 36, 24, 0.14), 0 18px 50px rgba(0, 0, 0, 0.35));
+  }
+}
+
+/* --- contrast: standard | high ---------------------------------------------- */
+
+/*
+ * The high-contrast cut: 7:1 or better for every text role, thicker rules,
+ * a white (or black) focus ring, no translucent texture anywhere. The block
+ * is written twice because a media query cannot share a rule with an
+ * attribute selector: once for the explicit choice, once for an OS
+ * preference with no choice made. Keep the two identical.
+ */
+:root[data-contrast="high"] {
+  --surface-page: light-dark(#ffffff, #000000);
+  --surface-raised: light-dark(#ffffff, #0d0e0c);
+  --surface-sunken: light-dark(#f1f1f1, #161815);
+  --surface-invert: light-dark(#ffffff, #ffffff);
+  --text: light-dark(#000000, #ffffff);
+  --text-muted: light-dark(#111111, #f1ede4);
+  --text-subtle: light-dark(#2a2a2a, #d9d4c7);
+  --text-on-action: light-dark(#ffffff, #000000);
+  --text-on-invert: #000000;
+  --text-on-invert-muted: #2b2b2b;
+  --border: light-dark(#8a8a8a, #6f746a);
+  --border-strong: light-dark(#5a5a5a, #9ea396);
+  --border-interactive: light-dark(#2a2a2a, #c9cdc3);
+  --action: light-dark(#6b3400, #f3bd74);
+  --action-hover: light-dark(#4a2300, #ffd59a);
+  --accent: light-dark(#1f4d17, #b8e0a4);
+  --focus: light-dark(#000000, #ffffff);
+  --status-ok: light-dark(#1f4d17, #b8e0a4);
+  --status-wait: light-dark(#6b3400, #f3bd74);
+  --status-error: light-dark(#9c1c12, #ff9d93);
+  --ground-line: transparent;
+  --elevation-1: none;
+  --rule: 2px;
+  --rule-strong: 2px;
+  --glass-opaque: var(--surface-raised);
+  --glass-tint: var(--surface-raised);
+  --glass-tint-bar: var(--surface-page);
+  --glass-tint-sheet: var(--surface-raised);
+  --glass-fill: transparent;
+  --glass-rim: var(--border-strong);
+  --glass-hi: transparent;
+  --glass-gloss: none;
+  --glass-sheen: transparent;
+  --glass-shadow: none;
+  --glass-blur: 0px;
+  --glass-saturate: 1;
+  --glow-a: transparent;
+  --glow-b: transparent;
+  --scrim: rgba(0, 0, 0, 0.72);
+}
+
+@media (prefers-contrast: more) {
+  :root:not([data-contrast="standard"]) {
+    --surface-page: light-dark(#ffffff, #000000);
+    --surface-raised: light-dark(#ffffff, #0d0e0c);
+    --surface-sunken: light-dark(#f1f1f1, #161815);
+    --surface-invert: light-dark(#ffffff, #ffffff);
+    --text: light-dark(#000000, #ffffff);
+    --text-muted: light-dark(#111111, #f1ede4);
+    --text-subtle: light-dark(#2a2a2a, #d9d4c7);
+    --text-on-action: light-dark(#ffffff, #000000);
+    --text-on-invert: #000000;
+    --text-on-invert-muted: #2b2b2b;
+    --border: light-dark(#8a8a8a, #6f746a);
+    --border-strong: light-dark(#5a5a5a, #9ea396);
+    --border-interactive: light-dark(#2a2a2a, #c9cdc3);
+    --action: light-dark(#6b3400, #f3bd74);
+    --action-hover: light-dark(#4a2300, #ffd59a);
+    --accent: light-dark(#1f4d17, #b8e0a4);
+    --focus: light-dark(#000000, #ffffff);
+    --status-ok: light-dark(#1f4d17, #b8e0a4);
+    --status-wait: light-dark(#6b3400, #f3bd74);
+    --status-error: light-dark(#9c1c12, #ff9d93);
+    --ground-line: transparent;
+    --elevation-1: none;
+    --rule: 2px;
+    --rule-strong: 2px;
+    --glass-opaque: var(--surface-raised);
+    --glass-tint: var(--surface-raised);
+    --glass-tint-bar: var(--surface-page);
+    --glass-tint-sheet: var(--surface-raised);
+    --glass-fill: transparent;
+    --glass-rim: var(--border-strong);
+    --glass-hi: transparent;
+    --glass-gloss: none;
+    --glass-sheen: transparent;
+    --glass-shadow: none;
+    --glass-blur: 0px;
+    --glass-saturate: 1;
+    --glow-a: transparent;
+    --glow-b: transparent;
+    --scrim: rgba(0, 0, 0, 0.72);
+  }
+}
+
+/*
+ * Glass resolves to its opaque surface unless the browser can blur behind it,
+ * and goes opaque again when the OS asks for reduced transparency. A visitor
+ * who chose the standard contrast cut explicitly still gets the OS transparency
+ * preference honoured, since that is a different need (legibility over noise).
+ */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root {
+    --glass-bg: var(--glass-tint);
+    --glass-bg-bar: var(--glass-tint-bar);
+    --glass-bg-sheet: var(--glass-tint-sheet);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-tint: var(--glass-opaque);
+    --glass-tint-bar: var(--surface-page);
+    --glass-tint-sheet: var(--glass-opaque);
+    --glass-fill: transparent;
+    --glass-hi: transparent;
+    --glass-gloss: none;
+    --glass-sheen: transparent;
+    --glass-blur: 0px;
+    --glass-saturate: 1;
+    --glow-a: transparent;
+    --glow-b: transparent;
+  }
+}
+
+/* --- text: default | large -------------------------------------------------- */
+
+/* Everything below is in rem, so this one declaration scales the whole
+   page — the same mechanism as the browser's own font-size setting, which
+   it adds to rather than replaces. */
+:root[data-text="large"] {
+  font-size: 118%;
 }
 
 /*
@@ -138,9 +422,40 @@ body {
   background: var(--surface-page);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 16.5px;
+  font-size: 1.03rem;
   line-height: 1.65;
   -webkit-text-size-adjust: 100%;
+  /* Tap feedback without the 300ms wait; pinch-zoom is untouched. */
+  touch-action: manipulation;
+}
+
+/*
+ * The ruled ground: a faint 4rem grid, the one texture on the site, and it
+ * is confined to the page margins (the space outside --measure-page) so no
+ * text is ever measured against it. It is what makes a wide window read as a
+ * drafting sheet with the content set on it, rather than a dark void with a
+ * column in the middle. Zero-width on a phone, where there is no margin, and
+ * transparent in the high-contrast cut.
+ */
+.site-ground {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--ground-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--ground-line) 1px, transparent 1px);
+  background-size: 4rem 4rem;
+  background-position: 50% 0;
+  /* Cut the grid out from behind the content column. */
+  -webkit-mask:
+    linear-gradient(#000, #000) 50% 0 / min(100%, calc(var(--measure-page) + var(--content-padding) * 2)) 100% no-repeat,
+    linear-gradient(#000, #000);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000, #000) 50% 0 / min(100%, calc(var(--measure-page) + var(--content-padding) * 2)) 100% no-repeat,
+    linear-gradient(#000, #000);
+  mask-composite: exclude;
 }
 
 /* height:auto is load-bearing: without it the width/height attributes (kept for
@@ -162,7 +477,7 @@ figcaption {
 
 a {
   color: var(--action-hover);
-  text-decoration-thickness: 1px;
+  text-decoration-thickness: var(--rule);
   text-underline-offset: 0.18em;
   transition: color var(--motion-fast) ease-out;
 }
@@ -268,7 +583,7 @@ dt > .icon,
      the first paint the same height as the hydrated one (CLS). */
   min-height: var(--nav-h);
   background: var(--surface-page);
-  border-bottom: 1px solid var(--border);
+  border-bottom: var(--rule) solid var(--border-strong);
 }
 
 .nav-wrap {
@@ -300,8 +615,9 @@ dt > .icon,
   height: 36px;
   display: grid;
   place-items: center;
-  border: 1px solid var(--action);
+  border: var(--rule) solid var(--action);
   border-radius: var(--radius-sm);
+  color: var(--action-hover);
   font-family: var(--font-display);
   font-size: 0.95rem;
   font-weight: 600;
@@ -320,14 +636,24 @@ dt > .icon,
 }
 
 .brand-text span {
-  color: var(--text-subtle);
+  color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-/* Compact: a disclosure panel under the header bar, opened by .nav-toggle. */
+/* The toggle, the links and the Display control, as one cluster. The link
+   panel positions itself against the header, not this box, so the box is
+   deliberately not a containing block in the compact layer. */
+.nav-tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Compact: hidden. The menu there is a bottom sheet (src/sheet.ts); the wide
+   layer below shows this list inline. */
 .nav-links {
   display: none;
   position: absolute;
@@ -344,10 +670,6 @@ dt > .icon,
   border-bottom: 1px solid var(--border);
 }
 
-.nav-links.is-open {
-  display: flex;
-}
-
 .nav-links a {
   display: inline-flex;
   align-items: center;
@@ -356,7 +678,10 @@ dt > .icon,
   border-radius: var(--radius-sm);
   color: var(--text-muted);
   text-decoration: none;
-  font-size: 0.92rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   transition: color var(--motion-fast) ease-out, background-color var(--motion-fast) ease-out;
 }
 
@@ -369,7 +694,7 @@ dt > .icon,
    alone), so it survives a monochrome or high-contrast rendering. */
 .nav-links a[aria-current="page"] {
   color: var(--text);
-  box-shadow: inset 0 -2px 0 0 var(--action);
+  box-shadow: inset 0 calc(var(--rule-strong) * -2) 0 0 var(--action);
 }
 
 .nav-toggle {
@@ -379,11 +704,13 @@ dt > .icon,
   min-height: var(--tap-comfortable);
   background: transparent;
   color: var(--text);
-  border: 1px solid var(--border-interactive);
+  border: var(--rule) solid var(--border-interactive);
   border-radius: var(--radius-sm);
   padding: 0 var(--space-3);
-  font-family: inherit;
-  font-size: 0.92rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: border-color var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
 }
@@ -453,22 +780,46 @@ h4 {
   letter-spacing: -0.02em;
   line-height: 1.15;
   overflow-wrap: break-word;
+  font-variation-settings: "SOFT" 20, "WONK" 0;
 }
 
-/* Floors are set so the longest real heading — "Electronic medical record" —
-   fits a 320px viewport without horizontal overflow (R24). */
+/*
+ * Floors are set so the longest real heading — "Electronic medical record" —
+ * fits a 320px viewport without horizontal overflow (R24).
+ *
+ * The page title is the one place Fraunces' "wonky" alternates are turned on:
+ * the slanted terminals and the old-style letterforms are what make the name
+ * read as a set piece of lettering rather than a default serif. Everywhere
+ * else the axis stays off, so the quirk is a signature, not a texture.
+ */
 h1 {
   margin: 0 0 var(--space-4);
-  font-size: clamp(2.1rem, 6vw, 4.4rem);
+  font-size: clamp(2.5rem, 8vw, 6rem);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  font-variation-settings: "SOFT" 40, "WONK" 1;
 }
 
 .kicker {
-  margin: 0 0 var(--space-3);
-  color: var(--action);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-4);
+  color: var(--action-hover);
   font-family: var(--font-mono);
   font-size: 0.78rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+}
+
+/* A short leader rule before the kicker, like the dash before a running head. */
+.kicker::before {
+  content: "";
+  flex: none;
+  width: 2rem;
+  height: var(--rule-strong);
+  background: var(--action);
 }
 
 .lede {
@@ -478,18 +829,50 @@ h1 {
   font-size: 1.12rem;
 }
 
-/* The blurb belongs to its heading, so it sits under it rather than being
-   pushed to the far edge of a 1120px row (R08: related items sit closer). */
+/*
+ * Section heads are numbered like the sections of a spec: a rule across the
+ * top, a two-digit folio in mono, then the title. The blurb belongs to its
+ * heading, so it sits under it rather than being pushed to the far edge of a
+ * 1120px row (R08: related items sit closer).
+ *
+ * Only the home page's top-level sections are counted (`.wrap > section`);
+ * the project pages' sections are nested inside a prose column and a
+ * disclosure and would number in an order that means nothing. The numeral is
+ * generated content with an empty alternative text, so assistive technology
+ * reads the heading, not "zero one Featured work".
+ */
+main {
+  counter-reset: section;
+}
+
+.wrap > section:not(.hero):not(.bento-section) {
+  counter-increment: section;
+}
+
 .section-head {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
   margin-bottom: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: var(--rule-strong) solid var(--border-strong);
 }
 
 .section-head h2 {
   margin: 0;
   font-size: clamp(1.7rem, 3vw, 2.4rem);
+}
+
+.wrap > section > .section-head h2::before {
+  content: counter(section, decimal-leading-zero) / "";
+  display: inline-block;
+  margin-right: var(--space-4);
+  color: var(--action-hover);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  vertical-align: 0.45em;
 }
 
 .section-head p,
@@ -620,6 +1003,7 @@ code {
   margin: var(--space-5) 0 0;
   padding: var(--space-3) var(--space-4);
   border-left: 3px solid var(--action);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   background: var(--surface-sunken);
   color: var(--text-muted);
   font-size: 0.9rem;
@@ -642,23 +1026,47 @@ code {
   width: min(10rem, 40vw);
 }
 
-.hero-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  list-style: none;
+/*
+ * The spec sheet: the facts a datasheet would print in its header block —
+ * where, what, current release, status — as label/value rows ruled off from
+ * each other, in mono because they are records. It replaces a row of pill
+ * badges, which said the same things in the shape every portfolio uses.
+ */
+.spec-sheet {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   margin: var(--space-5) 0 0;
-  padding: 0;
+  max-width: 34rem;
+  border-top: var(--rule) solid var(--border-strong);
 }
 
-.hero-pills li {
-  padding: var(--space-1) var(--space-3);
-  border: 1px solid var(--border-strong);
-  border-radius: 999px;
-  color: var(--text-muted);
+.spec-sheet > div {
+  display: grid;
+  grid-template-columns: minmax(7rem, 9rem) minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: baseline;
+  padding: var(--space-2) 0;
+  border-bottom: var(--rule) solid var(--border);
+}
+
+.spec-sheet dt {
+  color: var(--text-subtle);
   font-family: var(--font-mono);
   font-size: 0.72rem;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.spec-sheet dd {
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+.spec-sheet dd .icon {
+  margin-right: 0.45em;
+  color: var(--action);
 }
 
 .hero-actions {
@@ -671,11 +1079,14 @@ code {
 /* One portrait on the page, sized so it supports the name rather than
    replacing the evidence of work (R05, R14). */
 .portrait-frame {
+  position: relative;
   margin: 0;
   overflow: hidden;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  border: var(--rule) solid var(--border-strong);
   background: var(--surface-raised);
+  /* A second, offset rule behind the plate: the one drafting flourish. */
+  box-shadow: var(--space-2) var(--space-2) 0 0 var(--border);
 }
 
 .portrait-frame img {
@@ -688,7 +1099,7 @@ code {
 
 .portrait-frame figcaption {
   padding: var(--space-2) var(--space-3);
-  border-top: 1px solid var(--border);
+  border-top: var(--rule) solid var(--border-strong);
   color: var(--text-subtle);
   font-family: var(--font-mono);
   font-size: 0.7rem;
@@ -763,10 +1174,12 @@ code {
   gap: var(--space-2);
   min-height: var(--tap-comfortable);
   padding: var(--space-2) var(--space-4);
-  border-radius: 999px;
-  border: 1px solid transparent;
-  font-family: inherit;
-  font-size: 0.95rem;
+  border-radius: var(--radius-sm);
+  border: var(--rule) solid transparent;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
   /* ease-out: the state is arriving, not settling mid-visibility (motion-cookbook §2). */
@@ -784,14 +1197,26 @@ code {
   transform: scale(0.97);
 }
 
+/* The glyph leans into the action on hover: motion that says "this goes
+   somewhere", 2px, nothing more. */
+.btn .icon {
+  transition: transform var(--motion-fast) ease-out;
+}
+
+.btn:hover .icon {
+  transform: translateX(2px);
+}
+
 .btn-primary {
   background: var(--action);
+  border-color: var(--action);
   color: var(--text-on-action);
   font-weight: 600;
 }
 
 .btn-primary:hover {
   background: var(--action-hover);
+  border-color: var(--action-hover);
   color: var(--text-on-action);
 }
 
@@ -820,8 +1245,8 @@ code {
   flex-direction: column;
   padding: var(--space-4);
   background: var(--surface-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border: var(--rule) solid var(--border-strong);
+  border-radius: var(--radius-md);
   text-decoration: none;
   color: inherit;
   /* --motion-base, not -fast: a full card is a larger surface than a button
@@ -877,11 +1302,12 @@ code {
   align-items: center;
   min-height: var(--tap-min);
   padding: var(--space-1) var(--space-2);
-  border: 1px solid var(--border-strong);
-  border-radius: 999px;
+  border: var(--rule) solid var(--border-strong);
+  border-radius: var(--radius-sm);
   color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: 0.72rem;
+  letter-spacing: 0.02em;
 }
 
 .card-actions {
@@ -889,6 +1315,158 @@ code {
   flex-wrap: wrap;
   gap: var(--space-3);
   margin-top: var(--space-4);
+}
+
+/*
+ * The ledger (B3): the project list as numbered, ruled rows rather than a
+ * grid of tiles. Each row is one discrete destination — a project — so it
+ * carries what the old .card carried (period, role, title, blurb, tags,
+ * actions), laid out the way an index or a parts list lays it out: a folio
+ * numeral in the margin, the record beside it, a rule beneath. The numeral
+ * is generated with empty alternative text; the <ol> already gives the
+ * reader the count and the position.
+ */
+.ledger {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: ledger;
+  border-top: var(--rule-strong) solid var(--border-strong);
+}
+
+.ledger-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-5) 0 var(--space-5) 2.75rem;
+  border-bottom: var(--rule) solid var(--border-strong);
+  counter-increment: ledger;
+  transition: background-color var(--motion-base) ease-out;
+}
+
+.ledger-row::before {
+  content: counter(ledger, decimal-leading-zero) / "";
+  position: absolute;
+  left: 0;
+  top: calc(var(--space-5) + 0.35em);
+  color: var(--action-hover);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  transition: color var(--motion-fast) ease-out;
+}
+
+/* A whole-row link, on the index page. The <a> fills the <li>; the row's own
+   padding is moved onto it so the whole ruled band is the target. */
+.ledger-row:has(> .ledger-link) {
+  padding: 0;
+}
+
+.ledger-link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-5) 0 var(--space-5) 2.75rem;
+  color: inherit;
+  text-decoration: none;
+  transition: background-color var(--motion-base) ease-out;
+}
+
+.ledger-row:hover,
+.ledger-link:hover {
+  background: var(--surface-raised);
+}
+
+.ledger-row:hover::before {
+  color: var(--action);
+}
+
+.ledger-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
+
+.ledger-row h2,
+.ledger-row h3 {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+}
+
+.ledger-row h2 .icon,
+.ledger-row h3 .icon {
+  margin-right: 0.4em;
+  color: var(--action);
+}
+
+.ledger-link:hover h2 {
+  color: var(--action-hover);
+}
+
+.ledger-row p {
+  margin: 0;
+  max-width: var(--measure-prose);
+  color: var(--text-muted);
+}
+
+.ledger-row .chips {
+  margin-top: var(--space-1);
+}
+
+.ledger-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+/*
+ * A project's own texture behind its row — the same tile its page's hero
+ * draws (src/projectMotif.ts), so hovering a row in the log previews the
+ * branch you would be switching to. Hidden until hover or keyboard focus
+ * lands in the row, clipped to the row, never above its text, and its flow
+ * line only moves while the row is active. Pointer-only by nature; the row
+ * carries nothing in it that is not also in its text.
+ */
+.ledger-motif {
+  overflow: hidden;
+  position: absolute;
+  inset: 0;
+  left: auto;
+  width: min(46%, 28rem);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 45%);
+  mask-image: linear-gradient(to right, transparent, #000 45%);
+  transition: opacity var(--motion-base) ease-out;
+}
+
+.ledger-motif .project-motif {
+  opacity: 0.16;
+  animation-play-state: paused;
+}
+
+.ledger-motif .project-motif-flow {
+  animation-play-state: paused;
+}
+
+.ledger-row:hover > .ledger-motif,
+.ledger-row:focus-within > .ledger-motif {
+  opacity: 1;
+}
+
+.ledger-row:hover .project-motif-flow,
+.ledger-row:focus-within .project-motif-flow {
+  animation-play-state: running;
+}
+
+.ledger-row > :not(.ledger-motif),
+.ledger-link > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* .entry is a repeated record with the same fields (B3). */
@@ -907,10 +1485,8 @@ code {
 }
 
 .entry {
-  padding: var(--space-4);
-  background: var(--surface-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  padding: var(--space-4) 0 var(--space-2);
+  border-top: var(--rule) solid var(--border-strong);
 }
 
 .entry-head {
@@ -1171,7 +1747,7 @@ code {
   grid-template-columns: minmax(0, 1fr);
   gap: 0;
   margin: 0;
-  border-top: 1px solid var(--border);
+  border-top: var(--rule) solid var(--border-strong);
 }
 
 .spec-list dt a {
@@ -1218,13 +1794,18 @@ code {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  padding-left: var(--space-4);
+  border-left: var(--rule) solid var(--border-strong);
 }
 
 .stat-list dt {
   font-family: var(--font-display);
-  font-size: 1.7rem;
-  line-height: 1.1;
+  font-size: 2.2rem;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
   color: var(--action-hover);
+  font-variation-settings: "SOFT" 40, "WONK" 0;
 }
 
 .stat-list dd {
@@ -2157,8 +2738,8 @@ code {
   flex-direction: column;
   overflow: hidden;
   background: var(--surface-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border: var(--rule) solid var(--border-strong);
+  border-radius: var(--radius-md);
   box-shadow: var(--elevation-1);
 }
 
@@ -2419,9 +3000,18 @@ body.guest-overlay-open {
 .site-footer {
   margin-top: var(--space-6);
   padding: var(--space-6) 0 var(--space-7);
-  border-top: 1px solid var(--border);
+  border-top: var(--rule-strong) solid var(--border-strong);
   color: var(--text-subtle);
   font-size: 0.9rem;
+}
+
+.footer-colophon {
+  margin: 0 0 var(--space-3);
+  color: var(--action-hover);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .footer-grid {
@@ -2449,6 +3039,9 @@ body.guest-overlay-open {
   display: inline-flex;
   align-items: center;
   min-height: var(--tap-min);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
 }
 
 .contact-list {
@@ -2512,18 +3105,222 @@ body.guest-overlay-open {
 
 /* -------------------------------------------------------------- narrow ---- */
 
+/*
+ * Reduced motion, from either source: the OS preference (unless the visitor
+ * has explicitly chosen full motion in the Display control) or the control
+ * itself. Both blocks must stay identical; a media query cannot share a rule
+ * with an attribute selector. Scripts ask src/display.ts, which reads both.
+ */
 @media (prefers-reduced-motion: reduce) {
-  html {
+  :root:not([data-motion="full"]) {
     scroll-behavior: auto;
   }
 
-  *,
-  *::before,
-  *::after {
+  :root:not([data-motion="full"]) *,
+  :root:not([data-motion="full"]) *::before,
+  :root:not([data-motion="full"]) *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+:root[data-motion="reduced"] {
+  scroll-behavior: auto;
+}
+
+:root[data-motion="reduced"] *,
+:root[data-motion="reduced"] *::before,
+:root[data-motion="reduced"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/*
+ * High contrast, beyond the token swap: links always underlined, the
+ * project-page motif texture gone (it was a 12% tint, which is exactly the
+ * kind of thing the cut exists to remove), and nothing translucent.
+ */
+:root[data-contrast="high"] a,
+:root[data-contrast="high"] .contact-value {
+  text-decoration: underline;
+}
+
+:root[data-contrast="high"] [data-project-motif],
+:root[data-contrast="high"] .site-ground {
+  display: none;
+}
+
+:root[data-contrast="high"] .chip > .icon {
+  opacity: 1;
+}
+
+@media (prefers-contrast: more) {
+  :root:not([data-contrast="standard"]) a,
+  :root:not([data-contrast="standard"]) .contact-value {
+    text-decoration: underline;
+  }
+
+  :root:not([data-contrast="standard"]) [data-project-motif],
+  :root:not([data-contrast="standard"]) .site-ground {
+    display: none;
+  }
+
+  :root:not([data-contrast="standard"]) .chip > .icon {
+    opacity: 1;
+  }
+}
+
+/* -------------------------------------------------------- display control -- */
+
+/*
+ * The Display control: a button in the header that opens a small panel of
+ * radio groups — theme, contrast, motion, text size. Native radios inside
+ * <fieldset>/<legend>, so the group semantics, arrow-key movement and the
+ * checked state all come from the browser; the stylesheet only draws each
+ * group as a segmented row. The panel is a sheet (see "sheets" below): a bottom
+ * sheet on a phone and a side sheet on a wide screen, opened by the button.
+ */
+.display {
+  position: static;
+  display: flex;
+  align-items: center;
+}
+
+/* On a phone the word is dropped and the button is the glyph alone; the
+   accessible name is on the button, not the glyph (B2, R17). */
+.display-toggle-label {
+  display: none;
+}
+
+.display-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-comfortable);
+  padding: 0 var(--space-3);
+  background: transparent;
+  color: var(--text);
+  border: var(--rule) solid var(--border-interactive);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
+}
+
+.display-toggle:hover {
+  border-color: var(--action);
+}
+
+.display-toggle:active {
+  transform: scale(0.97);
+}
+
+.display-toggle[aria-expanded="true"] {
+  border-color: var(--action);
+  color: var(--action-hover);
+}
+
+.display-hint {
+  margin: 0 0 var(--space-4);
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+[data-display-form] {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.display-group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.display-group legend {
+  padding: 0;
+  margin-bottom: var(--space-2);
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.display-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Each option is a label wrapping its radio. The radio is visually hidden
+   but stays in the tree and focusable; the label draws the state. */
+.display-option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-comfortable);
+  padding: 0 var(--space-3);
+  border: var(--rule) solid var(--border-interactive);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition:
+    border-color var(--motion-fast) ease-out,
+    background-color var(--motion-fast) ease-out,
+    color var(--motion-fast) ease-out;
+}
+
+.display-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.display-option:hover {
+  border-color: var(--action);
+  color: var(--text);
+}
+
+/* Checked is drawn as a filled option AND a leading mark, so the state is
+   not carried by colour alone (R25). */
+.display-option:has(input:checked) {
+  background: var(--action);
+  border-color: var(--action);
+  color: var(--text-on-action);
+  font-weight: 600;
+}
+
+.display-option:has(input:checked)::before {
+  content: "";
+  display: inline-block;
+  width: 0.45em;
+  height: 0.75em;
+  margin-right: var(--space-2);
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-0.1em) rotate(45deg);
+}
+
+.display-option:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.display-reset {
+  justify-self: start;
 }
 
 /* Contact form: existing semantic tokens, plain single-column layout. */
@@ -2570,6 +3367,1140 @@ body.guest-overlay-open {
   color: var(--status-error);
 }
 
+/* ------------------------------------------------------------- the story -- */
+
+/*
+ * THE THEME: a commit log. The project pages each draw one branch of git
+ * history; the home page is the trunk those branches come off. What follows
+ * is the motion that makes that read as a story rather than a stack of
+ * sections — and every piece of it is keyed to the reader's own progress
+ * (load, scroll, hover), replays on every entry in either scroll direction,
+ * and collapses to its final state under reduced motion. Nothing here loops
+ * and nothing moves while you read.
+ */
+
+/* --- elements arrive each time they are reached ------------------------------ */
+
+/*
+ * `.reveal` is added by src/story.ts, never authored in markup: with scripting
+ * off there is no class and nothing is hidden. `.is-seen` is added each time
+ * an element crosses into view and removed once it is well off screen, so the
+ * entrance replays whichever way the page is scrolled. The offset is 12px —
+ * enough to read as arriving, small enough to read as a fade (the skill's
+ * 8–16px band) — and the stagger is set per element by the script and dropped
+ * once the fade ends.
+ */
+.reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 360ms ease-out var(--reveal-delay, 0ms),
+    transform 360ms ease-out var(--reveal-delay, 0ms);
+}
+
+.reveal.is-seen {
+  opacity: 1;
+  transform: none;
+}
+
+/* Tiles also animate their border and shadow on hover; list all four so the
+   entrance does not replace the hover transition. */
+.tile.reveal {
+  transition:
+    opacity 360ms ease-out var(--reveal-delay, 0ms),
+    transform 360ms ease-out var(--reveal-delay, 0ms),
+    border-color var(--motion-base) ease-out,
+    box-shadow var(--motion-base) ease-out;
+}
+
+/* The kicker's leading rule draws with its block, and redraws with it. */
+.kicker::before {
+  transform-origin: left center;
+  transition: transform 520ms ease-out calc(var(--reveal-delay, 0ms) + 120ms);
+}
+
+.reveal:not(.is-seen) .kicker::before,
+.kicker.reveal:not(.is-seen)::before {
+  transform: scaleX(0);
+}
+
+/*
+ * First paint. The reveal state above only exists once the script has added
+ * `.reveal`, which is after the first paint, so the tiles and the page heroes
+ * would show for a frame and then vanish. The head script sets `html.js` before
+ * anything is drawn, and these rules hold exactly those elements back until
+ * src/story.ts adds `.reveal-ready`, when the rules above take over.
+ *
+ * Two guards keep a failed script from leaving them hidden: the rules apply
+ * only where the reveal will actually run (not under reduced motion, whichever
+ * source set it), and each one carries a zero-length animation that fades the
+ * element in after 2.5 seconds if `.reveal-ready` never arrives.
+ */
+@keyframes reveal-fail-open {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html.js:not(.reveal-ready):not([data-motion="reduced"]) :is(.bento > .tile, .page-hero > :not([data-project-motif])) {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: reveal-fail-open 0s 2.5s forwards;
+  }
+}
+
+html.js:not(.reveal-ready)[data-motion="full"] :is(.bento > .tile, .page-hero > :not([data-project-motif])) {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: reveal-fail-open 0s 2.5s forwards;
+}
+
+/* --- the story strip ---------------------------------------------------------- */
+
+/*
+ * Six beats on one line, the line drawing from each beat to the next as it
+ * is reached. Each beat is a list item; the line is the item's ::before and
+ * the node its ::after, so the whole thing is one <ol> with no extra markup.
+ * Compact stacks the beats; the wide layer lays them across the page.
+ */
+.story-line {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 2.75rem;
+}
+
+.story-beat {
+  position: relative;
+  transition:
+    opacity 360ms ease-out var(--beat-delay, 0ms),
+    transform 360ms ease-out var(--beat-delay, 0ms);
+}
+
+/* The unreached state exists only where script will reach the beat (`html.js`
+   is set by the head script); without script every beat is shown, filled and
+   joined, so the story is whole. */
+html.js .story-beat:not(.is-seen) {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* The node: an open commit, filled once reached. */
+.story-beat::after {
+  content: "";
+  position: absolute;
+  left: -2.75rem;
+  top: 0.35rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--action);
+  background: var(--action);
+  transition: background-color var(--motion-base) ease-out var(--beat-delay, 0ms);
+}
+
+html.js .story-beat:not(.is-seen)::after {
+  background: var(--surface-page);
+}
+
+/* "Now" is the HEAD: a ring, not a filled commit — it is still being written. */
+.story-beat-now::after,
+html.js .story-beat-now.is-seen::after {
+  border-color: var(--accent);
+  background: var(--surface-page);
+  box-shadow: 0 0 0 3px var(--surface-page), 0 0 0 4px var(--accent);
+}
+
+/* The line from this beat to the next, drawn top-down when the next arrives. */
+.story-beat::before {
+  content: "";
+  position: absolute;
+  left: calc(-2.75rem + 5px);
+  top: 1.1rem;
+  bottom: calc(-1 * var(--space-5) - 0.35rem);
+  width: 2px;
+  background: var(--action);
+  transform-origin: top center;
+  transition: transform 420ms ease-out var(--beat-delay, 0ms);
+}
+
+html.js .story-beat::before {
+  transform: scaleY(0);
+}
+
+html.js .story-beat.is-seen + .story-beat.is-seen::before,
+html.js .story-beat.is-seen:has(+ .story-beat.is-seen)::before {
+  transform: scaleY(1);
+}
+
+.story-beat:last-child::before {
+  display: none;
+}
+
+.story-when {
+  margin: 0 0 var(--space-1);
+  color: var(--action-hover);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.story-what {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  max-width: 34rem;
+}
+
+/* --- the trunk ---------------------------------------------------------------- */
+
+/*
+ * A page-local nav in the left margin: one node per numbered chapter, the
+ * line between them filling with the reader's progress, the current chapter
+ * marked. Built by src/story.ts on the home page only, and only shown where
+ * the margin outside the content column is wide enough to hold it. The
+ * numeral is the visible label; the chapter title is the accessible name and
+ * appears beside the node on hover or focus.
+ */
+.trunk {
+  display: none;
+}
+
+@media (min-width: 80rem) {
+  .trunk {
+    position: fixed;
+    left: max(var(--space-5), calc((100vw - var(--measure-page)) / 2 - 4.5rem));
+    top: 50%;
+    z-index: 10;
+    display: block;
+    transform: translateY(-50%);
+  }
+
+  .trunk-track {
+    position: absolute;
+    left: calc(var(--tap-min) / 2 - 1px);
+    top: var(--tap-min);
+    bottom: var(--tap-min);
+    width: 2px;
+    background: var(--border-strong);
+    border-radius: 2px;
+  }
+
+  .trunk-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--action);
+    transform: scaleY(var(--trunk-progress, 0));
+    transform-origin: top center;
+    transition: transform var(--motion-base) linear;
+  }
+
+  .trunk-list {
+    position: relative;
+    display: grid;
+    gap: var(--space-6);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .trunk-node {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: var(--tap-comfortable);
+    min-height: var(--tap-comfortable);
+    color: var(--text-subtle);
+    text-decoration: none;
+  }
+
+  /* The commit dot: open until the reader has passed it. */
+  .trunk-node::before {
+    content: "";
+    position: absolute;
+    left: calc(var(--tap-min) / 2 - 6px);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--border-interactive);
+    background: var(--surface-page);
+    transition: border-color var(--motion-base) ease-out, background-color var(--motion-base) ease-out;
+  }
+
+  .trunk-node.is-committed::before {
+    border-color: var(--action);
+    background: var(--action);
+  }
+
+  .trunk-node[aria-current]::before {
+    box-shadow: 0 0 0 3px var(--surface-page), 0 0 0 4px var(--action);
+  }
+
+  .trunk-numeral {
+    margin-left: var(--tap-min);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+  }
+
+  .trunk-node[aria-current] .trunk-numeral,
+  .trunk-node:hover .trunk-numeral {
+    color: var(--action-hover);
+  }
+
+  /* The title, shown beside the numeral on hover or focus; never only on hover
+     for anything the page needs, since the numeral links regardless. */
+  .trunk-label {
+    opacity: 0;
+    transform: translateX(-4px);
+    white-space: nowrap;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    color: var(--text);
+    transition: opacity var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
+  }
+
+  .trunk-node:hover .trunk-label,
+  .trunk-node:focus-visible .trunk-label {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ----------------------------------------------------------------- bento --- */
+
+/*
+ * The overview: the top of the home page as a bento grid. Tiles of varied
+ * size, each a summary or a destination — who this is, the story line, the
+ * three labs, the two other projects, skills, what is happening now, and the
+ * ways to reach him. Below it the page continues as the record (experience,
+ * education, off the clock, contact), which the trunk in the margin walks.
+ *
+ * Why a grid of tiles here and ruled rows everywhere else (B3): the overview
+ * is a set of *different kinds* of things that should be taken in at once;
+ * a list is for repeated records of one kind. The compact layer stacks the
+ * tiles in source order; the mid and wide layers at the foot of this file
+ * give each its span.
+ */
+.bento {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+}
+
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-5);
+  background: var(--surface-raised);
+  border: var(--rule) solid var(--border-strong);
+  border-radius: var(--radius-tile);
+  overflow: hidden;
+  transition: border-color var(--motion-base) ease-out, transform var(--motion-base) ease-out;
+}
+
+/* A tile with a destination lifts on hover: 2px, no scale, text stays crisp. */
+.tile:not(.tile-filter):has(.btn):hover,
+.tile:not(.tile-filter):has(.btn):focus-within {
+  border-color: var(--action);
+  transform: translateY(-2px);
+}
+
+/* Everything in a tile sits above its motif. */
+.tile > :not(.tile-motif) {
+  position: relative;
+  z-index: 1;
+}
+
+.tile-label {
+  margin: 0;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tile h2 {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.2vw, 1.75rem);
+}
+
+.tile h2 .icon {
+  margin-right: 0.4em;
+  color: var(--action);
+}
+
+.tile > p:not(.tile-label):not(.kicker):not(.lede):not(.source-note) {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.tile .chips {
+  margin-top: 0;
+}
+
+.tile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding-top: var(--space-2);
+}
+
+/* --- intro ------------------------------------------------------------------- */
+
+.tile-intro {
+  padding: var(--space-6) var(--space-5);
+}
+
+.tile-intro h1 {
+  margin: 0;
+}
+
+.tile-intro .lede {
+  font-size: 1.05rem;
+}
+
+.tile-intro .hero-actions {
+  margin-top: var(--space-2);
+}
+
+/* --- portrait: the photograph fills the tile, caption on a plate ---------- */
+
+.tile-portrait {
+  padding: 0;
+  min-height: 20rem;
+  background: var(--surface-sunken);
+}
+
+/* Doubled class: the generic `.tile > *` rule above sets position: relative
+   on every tile child, and the picture and caption must out-rank it. */
+.tile.tile-portrait > picture {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.tile-portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 12%;
+}
+
+.tile.tile-portrait > figcaption {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-3);
+  padding: var(--space-1) var(--space-3);
+  background: var(--surface-raised);
+  border: var(--rule) solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* --- story: the strip lives in a tile now ---------------------------------- */
+
+.tile-story .story-line {
+  padding-top: 0;
+}
+
+/* --- spec sheet in a tile: no outer rule, the tile is the frame ------------ */
+
+.tile-spec .spec-sheet {
+  margin: 0;
+  max-width: none;
+  border-top: 0;
+}
+
+.tile-spec .spec-sheet > div:last-child {
+  border-bottom: 0;
+}
+
+/* --- labs and projects: their own branch texture behind the text ---------- */
+
+/*
+ * The motif is the one its project page draws (src/projectMotif.ts). In a
+ * tile it is faint and still; hovering or focusing into the tile brightens
+ * it and sets its flow line moving — the same preview the ledger rows give,
+ * for the same reason.
+ */
+.tile-motif {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 30%, transparent 85%);
+  mask-image: linear-gradient(to bottom, #000 30%, transparent 85%);
+  transition: opacity var(--motion-base) ease-out;
+}
+
+.tile-motif .project-motif {
+  opacity: 0.09;
+  transition: opacity var(--motion-base) ease-out;
+}
+
+.tile-motif .project-motif-flow {
+  animation-play-state: paused;
+}
+
+.tile:hover .tile-motif .project-motif,
+.tile:focus-within .tile-motif .project-motif {
+  opacity: 0.18;
+}
+
+.tile:hover .project-motif-flow,
+.tile:focus-within .project-motif-flow {
+  animation-play-state: running;
+}
+
+/* --- skills ------------------------------------------------------------------ */
+
+.skill-rows {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.skill-rows > div {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.skill-rows dt {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.skill-rows dt .icon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+  vertical-align: -0.22rem;
+  color: var(--action);
+}
+
+.skill-rows dd {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+/* --- now ------------------------------------------------------------------------ */
+
+.tile-now .now-list {
+  font-size: 0.95rem;
+}
+
+.tile-now .source-note {
+  margin-top: auto;
+  font-size: 0.78rem;
+}
+
+/* --- reach: the direct routes, with a copy control for the address ----------- */
+
+.reach-list {
+  display: grid;
+  gap: var(--space-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.reach-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.reach-list a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-comfortable);
+  color: var(--action-hover);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.reach-list a .icon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.55rem;
+  color: var(--action);
+}
+
+/* "Copy", drawn by src/story.ts only where the clipboard is available. */
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap-min);
+  padding: 0 var(--space-2);
+  background: transparent;
+  border: var(--rule) solid var(--border-interactive);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color var(--motion-fast) ease-out, color var(--motion-fast) ease-out;
+}
+
+.copy-btn:hover {
+  border-color: var(--action);
+  color: var(--text);
+}
+
+.copy-btn[data-copied="true"] {
+  border-color: var(--status-ok);
+  color: var(--status-ok);
+}
+
+/* ---------------------------------------------------------- topic filter -- */
+
+/*
+ * Filter by topic (src/topics.ts). The control is revealed by script, so with
+ * scripting off it does not exist and everything is shown. Each topic is a
+ * toggle button with aria-pressed, grouped as Languages / Platforms / Practice,
+ * with the number of items that carry it. Pressed is drawn as a filled button
+ * AND a leading check, so the state is not carried by colour alone (R25), the
+ * same idiom as the Display control's options.
+ */
+.topic-filter {
+  margin: 0 0 var(--space-5);
+  padding: var(--space-4) 0;
+  border-top: var(--rule) solid var(--border-strong);
+  border-bottom: var(--rule) solid var(--border-strong);
+}
+
+.filter-title {
+  margin: 0;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tile .filter-title {
+  font-size: 0.72rem;
+}
+
+.filter-hint {
+  margin: var(--space-1) 0 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.topic-disclosure {
+  margin-top: var(--space-2);
+}
+
+.topic-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap-comfortable);
+  cursor: pointer;
+  list-style: none;
+  color: var(--action-hover);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.topic-summary::-webkit-details-marker {
+  display: none;
+}
+
+.topic-disclosure[open] > .topic-summary .disclosure-toggle {
+  transform: rotate(225deg);
+}
+
+.topic-selected {
+  color: var(--text-muted);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.topic-filter-body {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.topic-group {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.topic-group-label {
+  margin: 0;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.topic-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.topic-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-comfortable);
+  padding: 0 var(--space-3);
+  background: transparent;
+  border: var(--rule) solid var(--border-interactive);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition:
+    border-color var(--motion-fast) ease-out,
+    background-color var(--motion-fast) ease-out,
+    color var(--motion-fast) ease-out,
+    transform var(--motion-fast) ease-out;
+}
+
+.topic-btn:hover {
+  border-color: var(--action);
+  color: var(--text);
+}
+
+.topic-btn:active {
+  transform: scale(0.97);
+}
+
+.topic-count {
+  min-width: 1.4em;
+  padding: 0 0.35em;
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--text-subtle);
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+.topic-btn[aria-pressed="true"] {
+  background: var(--action);
+  border-color: var(--action);
+  color: var(--text-on-action);
+  font-weight: 600;
+}
+
+.topic-btn[aria-pressed="true"]::before {
+  content: "";
+  display: inline-block;
+  width: 0.4em;
+  height: 0.7em;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-0.1em) rotate(45deg);
+}
+
+.topic-btn[aria-pressed="true"] .topic-count {
+  background: transparent;
+  color: var(--text-on-action);
+}
+
+.topic-filter-footer {
+  margin-top: var(--space-2);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.topic-clear:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.topic-status {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+/* A chip the current selection matched: why this item is still showing.
+   Border weight and the mark carry it, not only the colour. */
+.chip[data-match] {
+  border-color: var(--action);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: inset 0 calc(var(--rule-strong) * -2) 0 0 var(--action);
+}
+
+.entry-chips {
+  margin-top: var(--space-3);
+}
+
+.filter-empty {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-3) var(--space-4);
+  border: var(--rule) dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+}
+
+/* ------------------------------------------------------------------ sheets -- */
+
+/*
+ * A sheet is the one way this site opens a menu over the page (src/sheet.ts):
+ * a native modal <dialog>, so focus is trapped, the page behind is inert and
+ * Escape closes it, all supplied by the browser. Below 56rem it rises from the
+ * bottom edge as a bottom sheet with a grab handle; from 56rem it slides in
+ * from the right as a side sheet. It is one element and the stylesheet picks
+ * the shape, so resizing a window with a sheet open reshapes it.
+ *
+ * It opens and closes with a transition on transform and opacity. `display`
+ * and `overlay` are transitioned as discrete properties so the closing motion
+ * is seen before the dialog leaves the top layer; a browser without that
+ * simply shows and hides it.
+ */
+.sheet {
+  position: fixed;
+  inset: auto 0 0 0;
+  width: 100%;
+  max-width: none;
+  max-height: min(88dvh, 44rem);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  color: var(--text);
+  transform: translateY(100%);
+  opacity: 0;
+  transition:
+    transform 360ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 220ms ease-out,
+    overlay 360ms allow-discrete,
+    display 360ms allow-discrete;
+}
+
+.sheet[open] {
+  transform: none;
+  opacity: 1;
+}
+
+@starting-style {
+  .sheet[open] {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+.sheet::backdrop {
+  background: var(--scrim);
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.4));
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.4));
+  opacity: 0;
+  transition:
+    opacity 360ms ease-out,
+    overlay 360ms allow-discrete,
+    display 360ms allow-discrete;
+}
+
+.sheet[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .sheet[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+/* The page behind a bottom sheet does not scroll. On a wide screen the side
+   sheet leaves it alone, so the scrollbar does not appear and vanish. */
+@media (max-width: 55.99rem) {
+  body.sheet-open {
+    overflow: hidden;
+  }
+}
+
+.sheet-surface {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  min-height: 100%;
+  padding: 0 var(--space-5) calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+}
+
+/* The grab handle: bottom sheet only, and only a pointer shortcut. The close
+   button and Escape are the real ways out (WCAG 2.5.7). */
+.sheet-grab {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-3) 0 var(--space-1);
+  cursor: grab;
+  touch-action: none;
+}
+
+.sheet-grab span {
+  width: 2.75rem;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--border-interactive);
+  opacity: 0.7;
+}
+
+.sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.sheet-head h2 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.sheet-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-comfortable);
+  height: var(--tap-comfortable);
+  padding: 0;
+  background: var(--glass-fill);
+  color: var(--text);
+  border: var(--rule) solid var(--border-interactive);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: border-color var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
+}
+
+.sheet-close:hover {
+  border-color: var(--action);
+}
+
+.sheet-close:active {
+  transform: scale(0.94);
+}
+
+.sheet-nav {
+  display: grid;
+  gap: var(--space-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sheet-nav a {
+  display: flex;
+  align-items: center;
+  min-height: 3.25rem;
+  padding: 0 var(--space-4);
+  border: var(--rule) solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background-color var(--motion-fast) ease-out, border-color var(--motion-fast) ease-out;
+}
+
+.sheet-nav a:hover {
+  background: var(--glass-fill);
+  border-color: var(--glass-rim);
+}
+
+/* The current page: a bar and a mark as well as the fill, so it is not
+   colour alone (R25). */
+.sheet-nav a[aria-current="page"] {
+  background: var(--glass-fill);
+  border-color: var(--glass-rim);
+  box-shadow: inset 4px 0 0 0 var(--action);
+}
+
+@media (min-width: 56rem) {
+  .sheet {
+    inset: 0 0 0 auto;
+    width: min(26rem, 100%);
+    height: 100dvh;
+    max-height: none;
+    border-radius: var(--radius-sheet) 0 0 var(--radius-sheet);
+    transform: translateX(100%);
+  }
+
+  .sheet[open] {
+    transform: none;
+  }
+
+  @starting-style {
+    .sheet[open] {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+
+  .sheet-surface {
+    padding-top: var(--space-5);
+  }
+
+  .sheet-grab {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------- glass -- */
+
+/*
+ * The glass treatment, applied once to everything that is a surface: the
+ * header bar, tiles, role entries, sheets, and the live lab's chrome.
+ * A translucent tint, a blur and saturation boost of whatever is behind it, a
+ * lit top edge, and a faint gloss gradient. Behind it sits a soft ambient glow
+ * (body::before) so there is something coloured to refract. The tokens are in
+ * the token layer; this block only applies them.
+ *
+ * Text never sits on bare glass. The tints are dense enough for the worst
+ * backdrop to still clear 4.5:1, which tools/contrast.py checks, and the two
+ * secondary text roles in the header use the muted colour for that reason.
+ * Controls keep their own interactive border (>=3:1), not the glass rim.
+ */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(52rem 36rem at 10% -8%, var(--glow-a), transparent 62%),
+    radial-gradient(46rem 36rem at 98% 26%, var(--glow-b), transparent 62%),
+    radial-gradient(44rem 32rem at 24% 106%, var(--glow-a), transparent 60%);
+}
+
+.site-header {
+  background-color: var(--glass-bg-bar);
+  background-image: var(--glass-gloss);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border-bottom-color: var(--glass-rim);
+  box-shadow: inset 0 -1px 0 var(--glass-hi);
+}
+
+.tile,
+.entry,
+.sheet,
+.guest-titlebar,
+.guest-dock {
+  background-color: var(--glass-bg);
+  background-image: var(--glass-gloss);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+}
+
+.tile,
+.entry {
+  border-color: var(--glass-rim);
+  border-radius: var(--radius-tile);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-hi);
+}
+
+.entry {
+  padding: var(--space-4) var(--space-5) var(--space-3);
+  border-style: solid;
+  border-width: var(--rule);
+}
+
+.sheet {
+  background-color: var(--glass-bg-sheet);
+  border: var(--rule) solid var(--glass-rim);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-hi);
+}
+
+.guest-titlebar,
+.guest-dock {
+  border-bottom-color: var(--glass-rim);
+}
+
+/* A tile that holds a destination lifts on hover; the lift keeps the glass
+   shadow and brightens its rim rather than swapping to a flat border. */
+.tile:not(.tile-filter):has(.btn):hover,
+.tile:not(.tile-filter):has(.btn):focus-within {
+  border-color: var(--action);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-hi), 0 0 0 1px var(--action);
+}
+
+/* Controls: a faint glass fill inside their own interactive border. */
+.btn-ghost,
+.chip,
+.nav-toggle,
+.display-toggle,
+.topic-btn,
+.display-option,
+.copy-btn,
+.guest-btn,
+.guest-dock-btn,
+.deck-btn,
+.tl-expand,
+.tl-open {
+  background-color: var(--glass-fill);
+}
+
+.btn-ghost,
+.nav-toggle,
+.display-toggle,
+.topic-btn,
+.display-option {
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
+}
+
+/* The filled action keeps its colour and gains a lit edge and a soft sheen at
+   the top, fading out before the label so the label's contrast is unchanged. */
+.btn-primary,
+.btn-primary:hover,
+.topic-btn[aria-pressed="true"],
+.display-option:has(input:checked),
+.guest-dock-btn[aria-pressed="true"] {
+  background-image: linear-gradient(180deg, var(--glass-sheen), transparent 55%);
+  box-shadow: inset 0 1px 0 var(--glass-hi);
+}
+
 /*
  * ================================================================ WIDE LAYER
  *
@@ -2596,6 +4527,34 @@ body.guest-overlay-open {
   section {
     padding: var(--space-4) 0 var(--section-spacing);
   }
+
+  /*
+   * --- bento: the mid layer, six columns -------------------------------------
+   *
+   * Between 56rem and 76rem the page is wide enough for two or three tiles
+   * abreast but not for twelve columns. The portrait takes the right half
+   * for two rows; the intro and the spec sheet stack beside it; everything
+   * else pairs up. `dense` lets a later small tile fill a gap an earlier
+   * tall one left.
+   */
+  .bento {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-auto-rows: minmax(6rem, auto);
+    grid-auto-flow: dense;
+    gap: var(--space-4);
+  }
+
+  .tile-intro { grid-column: span 3; padding: var(--space-6) var(--space-5); }
+  .tile-portrait { grid-column: span 3; grid-row: span 2; min-height: 0; }
+  .tile-story { grid-column: span 6; }
+  .tile-filter { grid-column: span 6; }
+  .tile-spec { grid-column: span 3; }
+  .tile-lab { grid-column: span 3; }
+  .tile-hc { grid-column: span 3; }
+  .tile-emr { grid-column: span 3; }
+  .tile-skills { grid-column: span 3; }
+  .tile-now { grid-column: span 3; }
+  .tile-reach { grid-column: span 3; }
 
   /* --- hero: copy and portrait side by side --------------------------------- */
 
@@ -2634,6 +4593,89 @@ body.guest-overlay-open {
 
   .nav-links a {
     padding: 0 var(--space-3);
+  }
+
+  .nav-tools {
+    gap: var(--space-4);
+  }
+
+  /* --- display control: the word comes back beside the glyph --------------- */
+
+  .display-toggle-label {
+    display: inline;
+  }
+
+  /* --- story strip: six beats across the page ------------------------------- */
+
+  .story-line {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--space-4);
+    padding: 1.6rem 0 0;
+  }
+
+  .story-beat::after {
+    left: 0;
+    top: -1.6rem;
+  }
+
+  /* Across the page the line runs left to right, drawn from the node to the
+     next column's node. */
+  .story-beat::before {
+    left: 12px;
+    right: calc(-1 * var(--space-4));
+    top: calc(-1.6rem + 5px);
+    bottom: auto;
+    width: auto;
+    height: 2px;
+    transform-origin: left center;
+  }
+
+  html.js .story-beat::before {
+    transform: scaleX(0);
+  }
+
+  html.js .story-beat.is-seen + .story-beat.is-seen::before,
+  html.js .story-beat.is-seen:has(+ .story-beat.is-seen)::before {
+    transform: scaleX(1);
+  }
+
+  .story-what {
+    font-size: 0.9rem;
+  }
+
+  /* --- ledger: folio, record, and the side column ---------------------------- */
+
+  .ledger-row,
+  .ledger-link {
+    grid-template-columns: minmax(0, 1fr) minmax(12rem, 16rem);
+    column-gap: var(--space-7);
+    padding-left: 4rem;
+  }
+
+  .ledger-row > .ledger-head {
+    grid-column: 1;
+  }
+
+  .ledger-row > h2,
+  .ledger-row > h3,
+  .ledger-row > p,
+  .ledger-row > .chips,
+  .ledger-link > .ledger-head,
+  .ledger-link > h2,
+  .ledger-link > p,
+  .ledger-link > .chips {
+    grid-column: 1;
+  }
+
+  .ledger-actions,
+  .ledger-side {
+    grid-column: 2;
+    grid-row: 1 / span 5;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    margin-top: 0.35rem;
   }
 
   /* --- records: let the grid find its own column count ---------------------- */
@@ -2731,5 +4773,59 @@ body.guest-overlay-open {
   .guest-frame,
   .guest-panel {
     min-height: 28rem;
+  }
+}
+
+/* Two spacing hooks that used to be inline styles on the home page. */
+.experience-after-stats {
+  margin-top: var(--space-6);
+}
+
+.sub-head-spaced {
+  margin-top: var(--space-6);
+}
+
+/*
+ * ============================================================= BENTO, WIDE
+ *
+ * From 76rem the overview has its twelve columns: intro and spec sheet
+ * stacked in the left seven beside the portrait, the story across, the three
+ * labs abreast, then Homework Central / EMR / skills, then now / reach.
+ */
+@media (min-width: 76rem) {
+  .bento {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-rows: minmax(7rem, auto);
+  }
+
+  .tile-intro { grid-column: span 7; padding: var(--space-7) var(--space-6) var(--space-6); }
+  .tile-portrait { grid-column: span 5; grid-row: span 2; }
+  .tile-spec { grid-column: span 7; }
+  .tile-story { grid-column: span 12; }
+  .tile-filter { grid-column: span 12; }
+  .tile-lab { grid-column: span 4; }
+  .tile-hc { grid-column: span 5; }
+  .tile-emr { grid-column: span 3; }
+  .tile-skills { grid-column: span 4; }
+  .tile-now { grid-column: span 5; }
+  .tile-reach { grid-column: span 7; }
+
+  .tile-reach .reach-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-4);
+  }
+
+  /* Beside the portrait, the spec sheet reads as two columns of rows. */
+  .tile-spec .spec-sheet {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-5);
+  }
+
+  .tile-spec .spec-sheet > div {
+    grid-template-columns: minmax(6rem, 7.5rem) minmax(0, 1fr);
+  }
+
+  .tile-spec .spec-sheet > div:nth-last-child(2) {
+    border-bottom: 0;
   }
 }
