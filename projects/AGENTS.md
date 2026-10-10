@@ -11,4 +11,13 @@ The five project folders (`emr`, `flinstone`, `homework-central`, `keyquorum`, `
 - Copy about a project must match that project's own docs. For KeyQuorum read [`docs/agents/keyquorum.md`](../docs/agents/keyquorum.md) first; for the others see [`docs/agents/multi-repo.md`](../docs/agents/multi-repo.md).
 - The EMR page says its client tree is private and its language split is an estimate. Keep both statements.
 
-Root rules: [`AGENTS.md`](../AGENTS.md). Design rules: [`DESIGN.md`](../DESIGN.md). Where this folder fits: [`docs/agents/multi-repo.md`](../docs/agents/multi-repo.md).
+## Related instruction files
+
+These files refer to each other. A change to one that affects another should update both.
+
+- [`AGENTS.md`](../AGENTS.md): project pages and their data
+- [`DESIGN.md`](../DESIGN.md): design rules and evidence rules for project pages
+- [`docs/agents/keyquorum.md`](../docs/agents/keyquorum.md): KeyQuorum copy must match its own docs
+- [`docs/agents/multi-repo.md`](../docs/agents/multi-repo.md): project data and embeds come from other repositories
+- [`projects/CLAUDE.md`](CLAUDE.md): Claude Code imports this file
+- [`src/AGENTS.md`](../src/AGENTS.md): the lab mounts and origins that pages use

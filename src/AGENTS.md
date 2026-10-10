@@ -11,4 +11,12 @@ Everything here is compiled by `tsc` (strict, `noUncheckedIndexedAccess`, `exact
 - Tests in `tests/` run against `modules/` in Node, with no DOM. A module they import must load without one. `prefersReducedMotion()` in `display.ts` is the model: it checks for a missing `document` and `matchMedia`.
 - Do not add a runtime dependency without a reason the bundle cannot avoid. The commit-body chunk is already large and must stay lazy-loaded.
 
-Root rules: [`AGENTS.md`](../AGENTS.md). Design rules: [`DESIGN.md`](../DESIGN.md). Where this folder fits: [`docs/agents/multi-repo.md`](../docs/agents/multi-repo.md).
+## Related instruction files
+
+These files refer to each other. A change to one that affects another should update both.
+
+- [`AGENTS.md`](../AGENTS.md): TypeScript sources and the build
+- [`DESIGN.md`](../DESIGN.md): design rules the components must follow
+- [`docs/agents/multi-repo.md`](../docs/agents/multi-repo.md): src/apps.ts holds the lab origins from other repositories
+- [`projects/AGENTS.md`](../projects/AGENTS.md): the lab mounts and origins that pages use
+- [`src/CLAUDE.md`](CLAUDE.md): Claude Code imports this file

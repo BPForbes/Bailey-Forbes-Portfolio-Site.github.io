@@ -771,3 +771,12 @@ states. The frontend remains unpublished until Resend domain verification and
 its encrypted API key are ready. Automated backend tests and TypeScript compile
 pass; production email delivery and interactive browser verification remain
 pending those prerequisites.
+
+## Related instruction files
+
+These files refer to each other. A change to one that affects another should update both.
+
+- [`AGENTS.md`](AGENTS.md): the design rule set this site is built to
+- [`docs/agents/multi-repo.md`](docs/agents/multi-repo.md): evidence rules R15 and R16 apply to project figures
+- [`projects/AGENTS.md`](projects/AGENTS.md): design rules and evidence rules for project pages
+- [`src/AGENTS.md`](src/AGENTS.md): design rules the components must follow

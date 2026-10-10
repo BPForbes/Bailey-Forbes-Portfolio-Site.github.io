@@ -148,3 +148,12 @@ Rules the source enforces, which agents here must respect when reading or writin
 - A claim about KeyQuorum on the site must match its own docs. The site says "early
   scaffolding" and "deployed, acceptance pending" where the evidence says so. Do not
   upgrade either.
+
+## Related instruction files
+
+These files refer to each other. A change to one that affects another should update both.
+
+- [`AGENTS.md`](../../AGENTS.md): KeyQuorum's Cloudflare layout and kq formats
+- [`docs/agents/deployment.md`](deployment.md): KeyQuorum's Cloudflare pieces are deployed elsewhere
+- [`docs/agents/multi-repo.md`](multi-repo.md): KeyQuorum is the most complex linked project
+- [`projects/AGENTS.md`](../../projects/AGENTS.md): KeyQuorum copy must match its own docs

@@ -20,7 +20,11 @@ file adds to these rules and points back here.
 | `docs/agents/keyquorum.md` | KeyQuorum's Cloudflare layout and kq file formats | Anything about KeyQuorum |
 | `tools/README.md` | The audit and contrast scripts | Layout or token changes |
 
-Each folder file links back to this one. Keep the links in step when you add a file.
+Instruction files refer to each other in both directions. Each one ends with a
+"Related instruction files" section. When you add a reference from A to B, add the
+reverse reference from B to A in the same change. `tests/instruction-links.test.mjs`
+(run by `npm test`) fails on any one-way reference, on a missing `CLAUDE.md` beside an
+`AGENTS.md`, and on a file that refers to no other.
 
 ## What this repository is
 
@@ -152,3 +156,16 @@ The skill set is installed into `.claude/skills/` and is gitignored. Never commi
   `portfolio-project-updated`.
 - The contact form is not live until the sender domain is verified and the secrets are set.
   Do not describe it as working in copy.
+
+## Related instruction files
+
+These files refer to each other. A change to one that affects another should update both.
+
+- [`CLAUDE.md`](CLAUDE.md): Claude Code imports this file; this file names the Claude Code specifics
+- [`DESIGN.md`](DESIGN.md): the design rule set this site is built to
+- [`contact-worker/AGENTS.md`](contact-worker/AGENTS.md): the contact API
+- [`docs/agents/deployment.md`](docs/agents/deployment.md): what is deployed and where
+- [`docs/agents/keyquorum.md`](docs/agents/keyquorum.md): KeyQuorum's Cloudflare layout and kq formats
+- [`docs/agents/multi-repo.md`](docs/agents/multi-repo.md): how the other project repositories connect
+- [`projects/AGENTS.md`](projects/AGENTS.md): project pages and their data
+- [`src/AGENTS.md`](src/AGENTS.md): TypeScript sources and the build

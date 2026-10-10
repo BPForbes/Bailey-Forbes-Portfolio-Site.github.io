@@ -12,4 +12,10 @@ A separate Cloudflare Worker, `portfolio-contact`. It validates the form, checks
 - `CONTACT_FROM` must match the verified Resend domain. Do not change it to an unverified address.
 - Deploying this Worker is a human step. Do not run `wrangler deploy` without a request to do it.
 
-Root rules: [`AGENTS.md`](../AGENTS.md). Design rules: [`DESIGN.md`](../DESIGN.md). Where this folder fits: [`docs/agents/multi-repo.md`](../docs/agents/multi-repo.md).
+## Related instruction files
+
+These files refer to each other. A change to one that affects another should update both.
+
+- [`AGENTS.md`](../AGENTS.md): the contact API
+- [`contact-worker/CLAUDE.md`](CLAUDE.md): Claude Code imports this file
+- [`docs/agents/deployment.md`](../docs/agents/deployment.md): the contact API runbook and deploy rules

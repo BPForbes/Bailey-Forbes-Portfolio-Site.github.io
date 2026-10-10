@@ -112,3 +112,13 @@ Then run `tools/audit-a11y.mjs` and `tools/contrast.py` when the layout or token
 - A workflow change touches a security boundary: the notify token, the deploy key, and
   the publish step. Keep `permissions` minimal, and never interpolate `${{ }}` values
   into a shell script that holds a token.
+
+## Related instruction files
+
+These files refer to each other. A change to one that affects another should update both.
+
+- [`AGENTS.md`](../../AGENTS.md): what is deployed and where
+- [`CLAUDE.md`](../../CLAUDE.md): the session hook and the skill install
+- [`contact-worker/AGENTS.md`](../../contact-worker/AGENTS.md): the contact API runbook and deploy rules
+- [`docs/agents/keyquorum.md`](keyquorum.md): KeyQuorum's Cloudflare pieces are deployed elsewhere
+- [`docs/agents/multi-repo.md`](multi-repo.md): notify and sync feed the deploy

@@ -28,3 +28,11 @@ If the skills are missing in a session, re-run the hook's last step by hand:
 Other project repositories are attached read-only unless a human attaches one with push
 access. You may read them and cite them. Do not push to them, and do not assume a file you
 read there is in this repository. See [`docs/agents/multi-repo.md`](docs/agents/multi-repo.md).
+
+## Related instruction files
+
+These files refer to each other. A change to one that affects another should update both.
+
+- [`AGENTS.md`](AGENTS.md): Claude Code imports this file; this file names the Claude Code specifics
+- [`docs/agents/deployment.md`](docs/agents/deployment.md): the session hook and the skill install
+- [`docs/agents/multi-repo.md`](docs/agents/multi-repo.md): other repositories are read-only context

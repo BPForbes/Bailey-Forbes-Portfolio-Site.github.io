@@ -104,3 +104,15 @@ jobs:
 - Changes that belong in another repository go to that repository. This repository's
   agents may read the others, and may propose a patch for them, but must not push to
   them. Access to other repositories is read-only unless a human attaches one with push.
+
+## Related instruction files
+
+These files refer to each other. A change to one that affects another should update both.
+
+- [`AGENTS.md`](../../AGENTS.md): how the other project repositories connect
+- [`CLAUDE.md`](../../CLAUDE.md): other repositories are read-only context
+- [`DESIGN.md`](../../DESIGN.md): evidence rules R15 and R16 apply to project figures
+- [`docs/agents/deployment.md`](deployment.md): notify and sync feed the deploy
+- [`docs/agents/keyquorum.md`](keyquorum.md): KeyQuorum is the most complex linked project
+- [`projects/AGENTS.md`](../../projects/AGENTS.md): project data and embeds come from other repositories
+- [`src/AGENTS.md`](../../src/AGENTS.md): src/apps.ts holds the lab origins from other repositories
