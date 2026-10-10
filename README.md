@@ -12,6 +12,17 @@ roles in `css/styles.css`, which container each kind of content gets, the
 exceptions that were granted and why, and exactly what was and was not verified.
 Read it before changing layout, tokens, or component behaviour.
 
+## The theme
+
+The site reads as a commit log. Each project page draws its history as a git
+branch; the home page is the trunk: a numbered record whose chapters sit on a
+line in the left margin, a story strip that draws from beat to beat as it is
+read, project rows that preview their own branch texture on hover, and résumé
+figures that count up to the number the page states. `src/story.ts` is the
+module; every piece of it runs once, is keyed to the reader's own progress,
+and collapses to its final state under reduced motion or the Display control.
+DESIGN.md B4 records each piece and how to check it.
+
 ## Display setting
 
 The header's **Display** control lets a visitor choose a theme (dark, paper,

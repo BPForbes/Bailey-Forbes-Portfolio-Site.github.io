@@ -690,9 +690,9 @@ h4 {
  */
 h1 {
   margin: 0 0 var(--space-4);
-  font-size: clamp(2.3rem, 7vw, 5rem);
+  font-size: clamp(2.5rem, 8vw, 6rem);
   font-weight: 600;
-  line-height: 1.02;
+  line-height: 0.98;
   letter-spacing: -0.03em;
   font-variation-settings: "SOFT" 40, "WONK" 1;
 }
@@ -1093,6 +1093,16 @@ code {
   transform: scale(0.97);
 }
 
+/* The glyph leans into the action on hover: motion that says "this goes
+   somewhere", 2px, nothing more. */
+.btn .icon {
+  transition: transform var(--motion-fast) ease-out;
+}
+
+.btn:hover .icon {
+  transform: translateX(2px);
+}
+
 .btn-primary {
   background: var(--action);
   border-color: var(--action);
@@ -1306,6 +1316,53 @@ code {
   flex-wrap: wrap;
   gap: var(--space-3);
   margin-top: var(--space-2);
+}
+
+/*
+ * A project's own texture behind its row — the same tile its page's hero
+ * draws (src/projectMotif.ts), so hovering a row in the log previews the
+ * branch you would be switching to. Hidden until hover or keyboard focus
+ * lands in the row, clipped to the row, never above its text, and its flow
+ * line only moves while the row is active. Pointer-only by nature; the row
+ * carries nothing in it that is not also in its text.
+ */
+.ledger-motif {
+  overflow: hidden;
+  position: absolute;
+  inset: 0;
+  left: auto;
+  width: min(46%, 28rem);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 45%);
+  mask-image: linear-gradient(to right, transparent, #000 45%);
+  transition: opacity var(--motion-base) ease-out;
+}
+
+.ledger-motif .project-motif {
+  opacity: 0.16;
+  animation-play-state: paused;
+}
+
+.ledger-motif .project-motif-flow {
+  animation-play-state: paused;
+}
+
+.ledger-row:hover > .ledger-motif,
+.ledger-row:focus-within > .ledger-motif {
+  opacity: 1;
+}
+
+.ledger-row:hover .project-motif-flow,
+.ledger-row:focus-within .project-motif-flow {
+  animation-play-state: running;
+}
+
+.ledger-row > :not(.ledger-motif),
+.ledger-link > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* .entry is a repeated record with the same fields (B3). */
@@ -3083,6 +3140,17 @@ body.guest-overlay-open {
   display: none;
 }
 
+.display-panel:not([hidden]) {
+  animation: panel-in var(--motion-base) ease-out;
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
 .display-panel-head {
   display: flex;
   align-items: baseline;
@@ -3237,6 +3305,324 @@ body.guest-overlay-open {
   color: var(--status-error);
 }
 
+/* ------------------------------------------------------------- the story -- */
+
+/*
+ * THE THEME: a commit log. The project pages each draw one branch of git
+ * history; the home page is the trunk those branches come off. What follows
+ * is the motion that makes that read as a story rather than a stack of
+ * sections — and every piece of it is keyed to the reader's own progress
+ * (load, scroll, hover), runs once, and collapses to its final state under
+ * reduced motion. Nothing here loops and nothing moves while you read.
+ */
+
+/* --- the hero arrives ------------------------------------------------------ */
+
+/*
+ * On load the hero writes itself in: the kicker's rule draws, the name and
+ * lede rise, the spec sheet's rows and the actions follow, the portrait's
+ * offset rule slides into place. ~700ms end to end, CSS only, so it needs no
+ * script and the reduced-motion rule (which zeroes animation durations)
+ * turns it into a plain first paint.
+ */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes draw-in {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.hero-copy > *,
+.hero-portrait,
+.page-hero > :not([data-project-motif]) {
+  animation: rise-in 420ms ease-out both;
+}
+
+.hero .kicker::before,
+.page-hero .kicker::before {
+  transform-origin: left center;
+  animation: draw-in 500ms ease-out both;
+}
+
+.hero .lede,
+.page-hero .lede {
+  animation-delay: 90ms;
+}
+
+.hero .spec-sheet {
+  animation-delay: 180ms;
+}
+
+.hero .spec-sheet > div {
+  animation: rise-in 360ms ease-out both;
+}
+
+.hero .spec-sheet > div:nth-child(2) { animation-delay: 240ms; }
+.hero .spec-sheet > div:nth-child(3) { animation-delay: 300ms; }
+.hero .spec-sheet > div:nth-child(4) { animation-delay: 360ms; }
+.hero .spec-sheet > div:nth-child(5) { animation-delay: 420ms; }
+
+.hero .hero-actions,
+.page-hero .hero-actions {
+  animation-delay: 300ms;
+}
+
+.hero-portrait {
+  animation-delay: 120ms;
+}
+
+@keyframes plate-in {
+  from {
+    box-shadow: 0 0 0 0 var(--border);
+  }
+}
+
+.hero .portrait-frame {
+  animation: plate-in 600ms 420ms ease-out both;
+}
+
+/* --- sections arrive as they are reached ------------------------------------- */
+
+/*
+ * `.reveal` is added by src/story.ts, never authored in markup: with
+ * scripting off there is no class and nothing is hidden. The offset is 12px
+ * — enough to read as arriving, small enough to read as a fade (the skill's
+ * 8–16px band) — and the stagger is set per element by the script.
+ */
+.reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 360ms ease-out var(--reveal-delay, 0ms),
+    transform 360ms ease-out var(--reveal-delay, 0ms);
+}
+
+.reveal.is-seen {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- the story strip ---------------------------------------------------------- */
+
+/*
+ * Six beats on one line, the line drawing from each beat to the next as it
+ * is reached. Each beat is a list item; the line is the item's ::before and
+ * the node its ::after, so the whole thing is one <ol> with no extra markup.
+ * Compact stacks the beats; the wide layer lays them across the page.
+ */
+.story-line {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 2.75rem;
+}
+
+.story-beat {
+  position: relative;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 360ms ease-out var(--beat-delay, 0ms),
+    transform 360ms ease-out var(--beat-delay, 0ms);
+}
+
+.story-beat.is-seen {
+  opacity: 1;
+  transform: none;
+}
+
+/* The node: an open commit, filled once reached. */
+.story-beat::after {
+  content: "";
+  position: absolute;
+  left: -2.75rem;
+  top: 0.35rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--action);
+  background: var(--surface-page);
+  transition: background-color var(--motion-base) ease-out var(--beat-delay, 0ms);
+}
+
+.story-beat.is-seen::after {
+  background: var(--action);
+}
+
+/* "Now" is the HEAD: a ring, not a filled commit — it is still being written. */
+.story-beat-now::after {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--surface-page), 0 0 0 4px var(--accent);
+}
+
+.story-beat-now.is-seen::after {
+  background: var(--surface-page);
+}
+
+/* The line from this beat to the next, drawn top-down when the next arrives. */
+.story-beat::before {
+  content: "";
+  position: absolute;
+  left: calc(-2.75rem + 5px);
+  top: 1.1rem;
+  bottom: calc(-1 * var(--space-5) - 0.35rem);
+  width: 2px;
+  background: var(--action);
+  transform: scaleY(0);
+  transform-origin: top center;
+  transition: transform 420ms ease-out var(--beat-delay, 0ms);
+}
+
+.story-beat.is-seen + .story-beat.is-seen::before,
+.story-beat.is-seen:has(+ .story-beat.is-seen)::before {
+  transform: scaleY(1);
+}
+
+.story-beat:last-child::before {
+  display: none;
+}
+
+.story-when {
+  margin: 0 0 var(--space-1);
+  color: var(--action-hover);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.story-what {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  max-width: 34rem;
+}
+
+/* --- the trunk ---------------------------------------------------------------- */
+
+/*
+ * A page-local nav in the left margin: one node per numbered chapter, the
+ * line between them filling with the reader's progress, the current chapter
+ * marked. Built by src/story.ts on the home page only, and only shown where
+ * the margin outside the content column is wide enough to hold it. The
+ * numeral is the visible label; the chapter title is the accessible name and
+ * appears beside the node on hover or focus.
+ */
+.trunk {
+  display: none;
+}
+
+@media (min-width: 80rem) {
+  .trunk {
+    position: fixed;
+    left: max(var(--space-5), calc((100vw - var(--measure-page)) / 2 - 4.5rem));
+    top: 50%;
+    z-index: 10;
+    display: block;
+    transform: translateY(-50%);
+  }
+
+  .trunk-track {
+    position: absolute;
+    left: calc(var(--tap-min) / 2 - 1px);
+    top: var(--tap-min);
+    bottom: var(--tap-min);
+    width: 2px;
+    background: var(--border-strong);
+    border-radius: 2px;
+  }
+
+  .trunk-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--action);
+    transform: scaleY(var(--trunk-progress, 0));
+    transform-origin: top center;
+    transition: transform var(--motion-base) linear;
+  }
+
+  .trunk-list {
+    position: relative;
+    display: grid;
+    gap: var(--space-6);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .trunk-node {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: var(--tap-comfortable);
+    min-height: var(--tap-comfortable);
+    color: var(--text-subtle);
+    text-decoration: none;
+  }
+
+  /* The commit dot: open until the reader has passed it. */
+  .trunk-node::before {
+    content: "";
+    position: absolute;
+    left: calc(var(--tap-min) / 2 - 6px);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--border-interactive);
+    background: var(--surface-page);
+    transition: border-color var(--motion-base) ease-out, background-color var(--motion-base) ease-out;
+  }
+
+  .trunk-node.is-committed::before {
+    border-color: var(--action);
+    background: var(--action);
+  }
+
+  .trunk-node[aria-current]::before {
+    box-shadow: 0 0 0 3px var(--surface-page), 0 0 0 4px var(--action);
+  }
+
+  .trunk-numeral {
+    margin-left: var(--tap-min);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+  }
+
+  .trunk-node[aria-current] .trunk-numeral,
+  .trunk-node:hover .trunk-numeral {
+    color: var(--action-hover);
+  }
+
+  /* The title, shown beside the numeral on hover or focus; never only on hover
+     for anything the page needs, since the numeral links regardless. */
+  .trunk-label {
+    opacity: 0;
+    transform: translateX(-4px);
+    white-space: nowrap;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    color: var(--text);
+    transition: opacity var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
+  }
+
+  .trunk-node:hover .trunk-label,
+  .trunk-node:focus-visible .trunk-label {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /*
  * ================================================================ WIDE LAYER
  *
@@ -3322,6 +3708,41 @@ body.guest-overlay-open {
     right: 0;
     width: 24rem;
     padding: var(--space-4) var(--space-5) var(--space-5);
+  }
+
+  /* --- story strip: six beats across the page ------------------------------- */
+
+  .story-line {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--space-4);
+    padding: 1.6rem 0 0;
+  }
+
+  .story-beat::after {
+    left: 0;
+    top: -1.6rem;
+  }
+
+  /* Across the page the line runs left to right, drawn from the node to the
+     next column's node. */
+  .story-beat::before {
+    left: 12px;
+    right: calc(-1 * var(--space-4));
+    top: calc(-1.6rem + 5px);
+    bottom: auto;
+    width: auto;
+    height: 2px;
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  .story-beat.is-seen + .story-beat.is-seen::before,
+  .story-beat.is-seen:has(+ .story-beat.is-seen)::before {
+    transform: scaleX(1);
+  }
+
+  .story-what {
+    font-size: 0.9rem;
   }
 
   /* --- ledger: folio, record, and the side column ---------------------------- */

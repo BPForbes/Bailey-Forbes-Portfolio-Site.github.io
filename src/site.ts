@@ -12,6 +12,7 @@ import { publishedAt } from "./buildInfo.js";
 import { icon } from "./icons.js";
 import { mountDecks } from "./deck.js";
 import { mountDisplayControl } from "./display.js";
+import { mountStory } from "./story.js";
 import { mountGuestWindows } from "./guestWindow.js";
 import { renderLanguageChart } from "./languageChart.js";
 import { mountNamedReleases } from "./releases.js";
@@ -319,3 +320,7 @@ function mountRepositoryFacts(): void {
 }
 
 mountRepositoryFacts();
+
+// Last, after the repository figures are in place, so the counters count to
+// the synced numbers rather than the HTML fallbacks.
+mountStory();
