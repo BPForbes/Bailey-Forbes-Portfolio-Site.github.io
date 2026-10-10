@@ -10,7 +10,10 @@ css/vendor/
 .env.*
 contact-worker/worker-configuration.d.ts
 
-# Python bytecode from running the .claude/skills scripts locally
+# The UI/UX Pro Max skill set is installed into .claude/skills/ by the
+# session-start hook (.claude/hooks/session-start.sh) or locally with
+# `npx ui-ux-pro-max-cli init --ai claude`, never committed.
+.claude/skills/
 __pycache__/
 *.pyc
 .coverage

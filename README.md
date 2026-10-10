@@ -42,27 +42,23 @@ against a local server on port 4173) measures the rendered pages.
 
 ## UI/UX skills
 
-`.claude/skills/` carries the complete
+UI work in a Claude Code session uses the
 [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)
-plugin (v2.13.0, MIT), installed into this repository so UI work in a Claude
-Code session has it without a marketplace step. That is the seven skills the
-plugin's manifest ships, exactly as its `.claude/skills/` tree has them:
+skill set (MIT). It is **not committed**: `.claude/skills/` is gitignored and
+the skills are installed into it when a session starts.
 
-| Skill | What it holds |
-|---|---|
-| `ui-ux-pro-max` | The search engine (`scripts/search.py` plus `core.py`, `design_system.py`, `reasoning_contract.py`, `validate_data.py`), its CSV and JSON data (styles, palettes, typography, UX guidelines, icons, motion, charts, 22 stacks), the two reference files, and its own test suite with fixtures |
-| `design` | Logo, corporate-identity, icon, banner, slides and social-photo guidance, with its CSV data and the `cip/`, `logo/`, `icon/` scripts |
-| `design-system` | Token architecture references, slide data and the token and slide validators |
-| `ui-styling` | shadcn/ui and Tailwind references, the config generators, and the canvas font set with their OFL licences |
-| `brand` | Brand guideline references, templates and the brand asset scripts |
-| `slides` | HTML presentation references |
-| `banner-design` | Banner sizes and styles reference |
+- **Cloud sessions**: `.claude/hooks/session-start.sh` (registered in
+  `.claude/settings.json`) installs the npm dependencies, builds the site, and
+  runs `npx ui-ux-pro-max-cli init --ai claude`, which writes the core skill
+  and its six sub-skills (design, design-system, ui-styling, brand, slides,
+  banner-design) into `.claude/skills/`.
+- **A local checkout**: either run the same command once in the project, or
+  install the plugin from Claude Code's marketplace
+  (`/plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill`, then
+  `/plugin install ui-ux-pro-max@ui-ux-pro-max-skill`), or install it for every
+  project with `npx ui-ux-pro-max-cli init --ai claude --global`. None of
+  those touch the repository.
 
-One local change: the core `SKILL.md` invokes its script as
-`${CLAUDE_PLUGIN_ROOT:-.}/.claude/skills/ui-ux-pro-max/scripts/search.py`,
-because that variable is only set under a marketplace plugin install and this
-is a project-level copy; the fallback is the project root. Try it with
-`python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<query>" --domain ux`.
 The skills are guidance only; DESIGN.md remains the rule set this site is
 built to. `.claude/` is excluded from the Cloudflare asset upload.
 
