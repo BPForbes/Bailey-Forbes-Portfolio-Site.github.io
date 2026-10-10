@@ -140,7 +140,11 @@ The skill set is installed into `.claude/skills/` and is gitignored. Never commi
 
 - Branch from `main`. Use a descriptive branch name and keep one concern per branch.
 - Commit messages say what changed and why. Do not put a model name in a commit message,
-  pull request, comment, or any file in the repository.
+  pull request, comment, or any file in the repository. That includes `Co-Authored-By`
+  trailers: keep the session link trailer and leave the model out.
+- Never force-push a branch that has a pull request. If pushed history needs a correction,
+  fix it going forward in a follow-up commit, or open a second pull request whose base is
+  the first one's branch.
 - A pull request must pass `typecheck.yml`. Run `npm test` locally before you push.
 - Do not open a pull request unless the user asks for one.
 
