@@ -129,6 +129,9 @@
   --radius-sm: 3px;
   --radius-md: 4px;
   --radius-lg: 6px;
+  /* Tiles in the overview grid: rounder than a rule-bound record, still far
+     from a pill. */
+  --radius-tile: 12px;
   --elevation-1: 0 18px 50px rgba(0, 0, 0, 0.35);
   --motion-fast: 120ms;
   --motion-base: 200ms;
@@ -741,7 +744,7 @@ main {
   counter-reset: section;
 }
 
-.wrap > section:not(.hero) {
+.wrap > section:not(.hero):not(.bento-section) {
   counter-increment: section;
 }
 
@@ -3338,53 +3341,35 @@ body.guest-overlay-open {
   }
 }
 
-.hero-copy > *,
-.hero-portrait,
+.bento > .tile,
 .page-hero > :not([data-project-motif]) {
   animation: rise-in 420ms ease-out both;
 }
 
-.hero .kicker::before,
+.bento > .tile:nth-child(2) { animation-delay: 70ms; }
+.bento > .tile:nth-child(3) { animation-delay: 140ms; }
+.bento > .tile:nth-child(4) { animation-delay: 210ms; }
+.bento > .tile:nth-child(5) { animation-delay: 280ms; }
+.bento > .tile:nth-child(6) { animation-delay: 350ms; }
+.bento > .tile:nth-child(7) { animation-delay: 420ms; }
+.bento > .tile:nth-child(8) { animation-delay: 490ms; }
+.bento > .tile:nth-child(9) { animation-delay: 560ms; }
+.bento > .tile:nth-child(10) { animation-delay: 630ms; }
+.bento > .tile:nth-child(11) { animation-delay: 700ms; }
+.bento > .tile:nth-child(12) { animation-delay: 770ms; }
+
+.tile-intro .kicker::before,
 .page-hero .kicker::before {
   transform-origin: left center;
   animation: draw-in 500ms ease-out both;
 }
 
-.hero .lede,
 .page-hero .lede {
   animation-delay: 90ms;
 }
 
-.hero .spec-sheet {
-  animation-delay: 180ms;
-}
-
-.hero .spec-sheet > div {
-  animation: rise-in 360ms ease-out both;
-}
-
-.hero .spec-sheet > div:nth-child(2) { animation-delay: 240ms; }
-.hero .spec-sheet > div:nth-child(3) { animation-delay: 300ms; }
-.hero .spec-sheet > div:nth-child(4) { animation-delay: 360ms; }
-.hero .spec-sheet > div:nth-child(5) { animation-delay: 420ms; }
-
-.hero .hero-actions,
 .page-hero .hero-actions {
   animation-delay: 300ms;
-}
-
-.hero-portrait {
-  animation-delay: 120ms;
-}
-
-@keyframes plate-in {
-  from {
-    box-shadow: 0 0 0 0 var(--border);
-  }
-}
-
-.hero .portrait-frame {
-  animation: plate-in 600ms 420ms ease-out both;
 }
 
 /* --- sections arrive as they are reached ------------------------------------- */
@@ -3623,6 +3608,316 @@ body.guest-overlay-open {
   }
 }
 
+/* ----------------------------------------------------------------- bento --- */
+
+/*
+ * The overview: the top of the home page as a bento grid. Tiles of varied
+ * size, each a summary or a destination — who this is, the story line, the
+ * three labs, the two other projects, skills, what is happening now, and the
+ * ways to reach him. Below it the page continues as the record (experience,
+ * education, off the clock, contact), which the trunk in the margin walks.
+ *
+ * Why a grid of tiles here and ruled rows everywhere else (B3): the overview
+ * is a set of *different kinds* of things that should be taken in at once;
+ * a list is for repeated records of one kind. The compact layer stacks the
+ * tiles in source order; the mid and wide layers at the foot of this file
+ * give each its span.
+ */
+.bento {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+}
+
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-5);
+  background: var(--surface-raised);
+  border: var(--rule) solid var(--border-strong);
+  border-radius: var(--radius-tile);
+  overflow: hidden;
+  transition: border-color var(--motion-base) ease-out, transform var(--motion-base) ease-out;
+}
+
+/* A tile with a destination lifts on hover: 2px, no scale, text stays crisp. */
+.tile:has(.btn):hover,
+.tile:has(.btn):focus-within {
+  border-color: var(--action);
+  transform: translateY(-2px);
+}
+
+/* Everything in a tile sits above its motif. */
+.tile > :not(.tile-motif) {
+  position: relative;
+  z-index: 1;
+}
+
+.tile-label {
+  margin: 0;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tile h2 {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.2vw, 1.75rem);
+}
+
+.tile h2 .icon {
+  margin-right: 0.4em;
+  color: var(--action);
+}
+
+.tile > p:not(.tile-label):not(.kicker):not(.lede):not(.source-note) {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.tile .chips {
+  margin-top: 0;
+}
+
+.tile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding-top: var(--space-2);
+}
+
+/* --- intro ------------------------------------------------------------------- */
+
+.tile-intro {
+  padding: var(--space-6) var(--space-5);
+}
+
+.tile-intro h1 {
+  margin: 0;
+}
+
+.tile-intro .lede {
+  font-size: 1.05rem;
+}
+
+.tile-intro .hero-actions {
+  margin-top: var(--space-2);
+}
+
+/* --- portrait: the photograph fills the tile, caption on a plate ---------- */
+
+.tile-portrait {
+  padding: 0;
+  min-height: 20rem;
+  background: var(--surface-sunken);
+}
+
+/* Doubled class: the generic `.tile > *` rule above sets position: relative
+   on every tile child, and the picture and caption must out-rank it. */
+.tile.tile-portrait > picture {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.tile-portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 12%;
+}
+
+.tile.tile-portrait > figcaption {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-3);
+  padding: var(--space-1) var(--space-3);
+  background: var(--surface-raised);
+  border: var(--rule) solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* --- story: the strip lives in a tile now ---------------------------------- */
+
+.tile-story .story-line {
+  padding-top: 0;
+}
+
+/* --- spec sheet in a tile: no outer rule, the tile is the frame ------------ */
+
+.tile-spec .spec-sheet {
+  margin: 0;
+  max-width: none;
+  border-top: 0;
+}
+
+.tile-spec .spec-sheet > div:last-child {
+  border-bottom: 0;
+}
+
+/* --- labs and projects: their own branch texture behind the text ---------- */
+
+/*
+ * The motif is the one its project page draws (src/projectMotif.ts). In a
+ * tile it is faint and still; hovering or focusing into the tile brightens
+ * it and sets its flow line moving — the same preview the ledger rows give,
+ * for the same reason.
+ */
+.tile-motif {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 30%, transparent 85%);
+  mask-image: linear-gradient(to bottom, #000 30%, transparent 85%);
+  transition: opacity var(--motion-base) ease-out;
+}
+
+.tile-motif .project-motif {
+  opacity: 0.09;
+  transition: opacity var(--motion-base) ease-out;
+}
+
+.tile-motif .project-motif-flow {
+  animation-play-state: paused;
+}
+
+.tile:hover .tile-motif .project-motif,
+.tile:focus-within .tile-motif .project-motif {
+  opacity: 0.18;
+}
+
+.tile:hover .project-motif-flow,
+.tile:focus-within .project-motif-flow {
+  animation-play-state: running;
+}
+
+/* --- skills ------------------------------------------------------------------ */
+
+.skill-rows {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.skill-rows > div {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.skill-rows dt {
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.skill-rows dt .icon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+  vertical-align: -0.22rem;
+  color: var(--action);
+}
+
+.skill-rows dd {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+/* --- now ------------------------------------------------------------------------ */
+
+.tile-now .now-list {
+  font-size: 0.95rem;
+}
+
+.tile-now .source-note {
+  margin-top: auto;
+  font-size: 0.78rem;
+}
+
+/* --- reach: the direct routes, with a copy control for the address ----------- */
+
+.reach-list {
+  display: grid;
+  gap: var(--space-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.reach-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.reach-list a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-comfortable);
+  color: var(--action-hover);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.reach-list a .icon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.55rem;
+  color: var(--action);
+}
+
+/* "Copy", drawn by src/story.ts only where the clipboard is available. */
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap-min);
+  padding: 0 var(--space-2);
+  background: transparent;
+  border: var(--rule) solid var(--border-interactive);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color var(--motion-fast) ease-out, color var(--motion-fast) ease-out;
+}
+
+.copy-btn:hover {
+  border-color: var(--action);
+  color: var(--text);
+}
+
+.copy-btn[data-copied="true"] {
+  border-color: var(--status-ok);
+  color: var(--status-ok);
+}
+
 /*
  * ================================================================ WIDE LAYER
  *
@@ -3649,6 +3944,33 @@ body.guest-overlay-open {
   section {
     padding: var(--space-4) 0 var(--section-spacing);
   }
+
+  /*
+   * --- bento: the mid layer, six columns -------------------------------------
+   *
+   * Between 56rem and 76rem the page is wide enough for two or three tiles
+   * abreast but not for twelve columns. The portrait takes the right half
+   * for two rows; the intro and the spec sheet stack beside it; everything
+   * else pairs up. `dense` lets a later small tile fill a gap an earlier
+   * tall one left.
+   */
+  .bento {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-auto-rows: minmax(6rem, auto);
+    grid-auto-flow: dense;
+    gap: var(--space-4);
+  }
+
+  .tile-intro { grid-column: span 3; padding: var(--space-6) var(--space-5); }
+  .tile-portrait { grid-column: span 3; grid-row: span 2; min-height: 0; }
+  .tile-story { grid-column: span 6; }
+  .tile-spec { grid-column: span 3; }
+  .tile-lab { grid-column: span 3; }
+  .tile-hc { grid-column: span 3; }
+  .tile-emr { grid-column: span 3; }
+  .tile-skills { grid-column: span 3; }
+  .tile-now { grid-column: span 3; }
+  .tile-reach { grid-column: span 3; }
 
   /* --- hero: copy and portrait side by side --------------------------------- */
 
@@ -3885,4 +4207,48 @@ body.guest-overlay-open {
 
 .sub-head-spaced {
   margin-top: var(--space-6);
+}
+
+/*
+ * ============================================================= BENTO, WIDE
+ *
+ * From 76rem the overview has its twelve columns: intro and spec sheet
+ * stacked in the left seven beside the portrait, the story across, the three
+ * labs abreast, then Homework Central / EMR / skills, then now / reach.
+ */
+@media (min-width: 76rem) {
+  .bento {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-rows: minmax(7rem, auto);
+  }
+
+  .tile-intro { grid-column: span 7; padding: var(--space-7) var(--space-6) var(--space-6); }
+  .tile-portrait { grid-column: span 5; grid-row: span 2; }
+  .tile-spec { grid-column: span 7; }
+  .tile-story { grid-column: span 12; }
+  .tile-lab { grid-column: span 4; }
+  .tile-hc { grid-column: span 5; }
+  .tile-emr { grid-column: span 3; }
+  .tile-skills { grid-column: span 4; }
+  .tile-now { grid-column: span 5; }
+  .tile-reach { grid-column: span 7; }
+
+  .tile-reach .reach-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-4);
+  }
+
+  /* Beside the portrait, the spec sheet reads as two columns of rows. */
+  .tile-spec .spec-sheet {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-5);
+  }
+
+  .tile-spec .spec-sheet > div {
+    grid-template-columns: minmax(6rem, 7.5rem) minmax(0, 1fr);
+  }
+
+  .tile-spec .spec-sheet > div:nth-last-child(2) {
+    border-bottom: 0;
+  }
 }

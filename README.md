@@ -15,10 +15,11 @@ Read it before changing layout, tokens, or component behaviour.
 ## The theme
 
 The site reads as a commit log. Each project page draws its history as a git
-branch; the home page is the trunk: a numbered record whose chapters sit on a
-line in the left margin, a story strip that draws from beat to beat as it is
-read, project rows that preview their own branch texture on hover, and résumé
-figures that count up to the number the page states. `src/story.ts` is the
+branch; the home page opens on a bento overview (who this is, the story line
+drawing from beat to beat, the three labs with their own branch textures
+running on hover, the other projects, skills, now, and a live Indiana clock)
+and continues as the record: numbered chapters on a trunk in the left margin,
+with résumé figures that count up to the number the page states. `src/story.ts` is the
 module; every piece of it runs once, is keyed to the reader's own progress,
 and collapses to its final state under reduced motion or the Display control.
 DESIGN.md B4 records each piece and how to check it.

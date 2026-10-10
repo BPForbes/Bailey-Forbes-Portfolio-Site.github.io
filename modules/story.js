@@ -112,7 +112,7 @@ function mountStoryLine() {
 function mountTrunk(reduced) {
   const main = document.querySelector("main");
   const sections = Array.from(
-    document.querySelectorAll(".wrap > section:not(.hero)[id][aria-labelledby]")
+    document.querySelectorAll(".wrap > section:not(.hero):not(.bento-section)[id][aria-labelledby]")
   );
   if (!main || sections.length < 2) return;
   const nav = document.createElement("nav");
@@ -158,7 +158,7 @@ function mountTrunk(reduced) {
     const last = tops[tops.length - 1] ?? first;
     const progress = reduced ? 1 : Math.max(0, Math.min(1, (probe - first) / Math.max(1, last - first)));
     fill.style.setProperty("--trunk-progress", String(progress));
-    let current = 0;
+    let current = -1;
     tops.forEach((top, i) => {
       if (probe >= top) current = i;
     });
@@ -177,7 +177,63 @@ function mountTrunk(reduced) {
   window.addEventListener("resize", onScroll);
   update();
 }
+function mountLocalTime() {
+  const el = document.querySelector("[data-local-time]");
+  if (!el || typeof Intl === "undefined") return;
+  const zone = "America/Indiana/Indianapolis";
+  let clock;
+  let stamp;
+  try {
+    clock = new Intl.DateTimeFormat("en-US", { timeZone: zone, hour: "numeric", minute: "2-digit", timeZoneName: "short" });
+    stamp = new Intl.DateTimeFormat("sv-SE", { timeZone: zone, hour: "2-digit", minute: "2-digit", hour12: false });
+  } catch {
+    return;
+  }
+  const tick = () => {
+    const now = /* @__PURE__ */ new Date();
+    el.textContent = clock.format(now);
+    el.dateTime = stamp.format(now);
+  };
+  tick();
+  const toNextMinute = 6e4 - Date.now() % 6e4;
+  window.setTimeout(() => {
+    tick();
+    window.setInterval(tick, 6e4);
+  }, toNextMinute);
+}
+function mountCopyEmail() {
+  const mount = document.querySelector("[data-copy-email]");
+  const status = document.querySelector("[data-copy-status]");
+  const address = mount?.getAttribute("data-copy-email") ?? "";
+  if (!mount || !status || !address || !navigator.clipboard?.writeText) return;
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "copy-btn";
+  button.textContent = "Copy";
+  button.setAttribute("aria-label", `Copy ${address}`);
+  mount.replaceChildren(button);
+  let timer = 0;
+  button.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(address);
+      button.textContent = "Copied";
+      button.setAttribute("data-copied", "true");
+      status.textContent = `${address} copied to the clipboard.`;
+    } catch {
+      button.textContent = "Copy";
+      status.textContent = "Could not copy. The address is the link beside this button.";
+      return;
+    }
+    window.clearTimeout(timer);
+    timer = window.setTimeout(() => {
+      button.textContent = "Copy";
+      button.removeAttribute("data-copied");
+    }, 2e3);
+  });
+}
 function mountStory() {
+  mountLocalTime();
+  mountCopyEmail();
   const reduced = prefersReducedMotion();
   if (!reduced && "IntersectionObserver" in window) {
     mountReveals();
