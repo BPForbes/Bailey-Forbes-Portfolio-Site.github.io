@@ -110,6 +110,14 @@ TypeScript in `src/` is the source of truth. `npm run build` (`tsc`) emits ES mo
 
 Cloudflare Workers Builds uses [`wrangler.jsonc`](wrangler.jsonc) to publish this tree as static assets after `npm run build`. Preview branches run `npx wrangler versions upload`. GitHub Pages remains the current host for `bailey-forbes.com` until that custom domain is attached to the Worker.
 
+## Agent instructions
+
+Coding agents read [`AGENTS.md`](AGENTS.md) (canonical) through `CLAUDE.md`. It indexes
+the folder-level files in `src/`, `projects/` and `contact-worker/`, and the references
+in `docs/agents/`: how the project repositories link, how each one deploys, and KeyQuorum's
+Cloudflare setup and kq file formats. GitHub Pages publishes the repository root, so those
+files are public.
+
 ## Project data
 
 Project data comes from two places, and the split between them is deliberate.
