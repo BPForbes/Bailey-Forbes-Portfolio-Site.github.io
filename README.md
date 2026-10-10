@@ -40,14 +40,31 @@ To verify a change to any of it: `python3 tools/contrast.py` checks every
 token pair in all four renderings, and `tools/audit-a11y.mjs` (Playwright,
 against a local server on port 4173) measures the rendered pages.
 
-## UI/UX skill
+## UI/UX skills
 
-`.claude/skills/ui-ux-pro-max/` is the
+`.claude/skills/` carries the complete
 [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)
-skill for Claude Code, installed into this repository so UI work in a Claude
-session can query its style, palette, typography and accessibility guidance
-(`python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<query>" --domain ux`).
-It is guidance only; DESIGN.md remains the rule set this site is built to.
+plugin (v2.13.0, MIT), installed into this repository so UI work in a Claude
+Code session has it without a marketplace step. That is the seven skills the
+plugin's manifest ships, exactly as its `.claude/skills/` tree has them:
+
+| Skill | What it holds |
+|---|---|
+| `ui-ux-pro-max` | The search engine (`scripts/search.py` plus `core.py`, `design_system.py`, `reasoning_contract.py`, `validate_data.py`), its CSV and JSON data (styles, palettes, typography, UX guidelines, icons, motion, charts, 22 stacks), the two reference files, and its own test suite with fixtures |
+| `design` | Logo, corporate-identity, icon, banner, slides and social-photo guidance, with its CSV data and the `cip/`, `logo/`, `icon/` scripts |
+| `design-system` | Token architecture references, slide data and the token and slide validators |
+| `ui-styling` | shadcn/ui and Tailwind references, the config generators, and the canvas font set with their OFL licences |
+| `brand` | Brand guideline references, templates and the brand asset scripts |
+| `slides` | HTML presentation references |
+| `banner-design` | Banner sizes and styles reference |
+
+One local change: the core `SKILL.md` invokes its script as
+`${CLAUDE_PLUGIN_ROOT:-.}/.claude/skills/ui-ux-pro-max/scripts/search.py`,
+because that variable is only set under a marketplace plugin install and this
+is a project-level copy; the fallback is the project root. Try it with
+`python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<query>" --domain ux`.
+The skills are guidance only; DESIGN.md remains the rule set this site is
+built to. `.claude/` is excluded from the Cloudflare asset upload.
 
 ## Project evidence
 

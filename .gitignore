@@ -9,3 +9,8 @@ css/vendor/
 .env
 .env.*
 contact-worker/worker-configuration.d.ts
+
+# Python bytecode from running the .claude/skills scripts locally
+__pycache__/
+*.pyc
+.coverage
