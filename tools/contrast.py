@@ -47,5 +47,52 @@ for name,t in themes.items():
         r=cr(t[fg],t[bg]); flag="" if r>=req else "  <-- FAIL"; 
         if r<req: fails+=1
         print(f"  {fg:>18} on {bg:<8} {r:5.2f} (need {req}){flag}")
+
+# ---------------------------------------------------------------------------
+# Glass: the same text roles on the translucent surfaces, against the WORST
+# backdrop each surface can sit over, not the flat page colour. The values are
+# the --glass-* and --glow-* tokens in css/styles.css; keep them in step.
+#
+#   tile / entry   page + both glows at full strength (nothing else is behind)
+#   header bar     an extreme backdrop: pure white under the dark theme, pure
+#                  black under paper (a bright or dark photograph scrolling by)
+#   sheet          the page under the modal scrim, same extremes
+#   chip           a glass fill over the worst tile
+#
+# The gloss is a 16px edge above where text starts, so it is not part of any
+# text case. High-contrast cuts use the opaque surface and are covered above.
+# ---------------------------------------------------------------------------
+def rgb(h):
+    h=h.lstrip('#'); return tuple(int(h[i:i+2],16) for i in (0,2,4))
+def over(fg_rgb, alpha, bg_rgb):
+    return tuple(a*alpha + b*(1-alpha) for a,b in zip(fg_rgb,bg_rgb))
+def hexs(c): return '#%02x%02x%02x' % tuple(max(0,min(255,round(v))) for v in c)
+GLASS = {
+ "dark": dict(tint=((24,26,22),.74), bar=((16,18,15),.86), sheet=((24,26,22),.93),
+              glow=[((201,138,74),.18),((126,163,106),.13)], scrim=((8,9,7),.55),
+              fill=((255,255,255),.06), extreme=(255,255,255)),
+ "light": dict(tint=((251,247,238),.72), bar=((244,238,226),.84), sheet=((251,247,238),.93),
+              glow=[((201,138,74),.22),((126,163,106),.18)], scrim=((31,27,20),.40),
+              fill=((255,255,255),.50), extreme=(0,0,0)),
+}
+print("== glass (worst-case backdrops)")
+for name,g in GLASS.items():
+    t=themes[name]; page=rgb(t["page"])
+    worst_page=page
+    for c,a in g["glow"]: worst_page=over(c,a,worst_page)
+    tile=over(*g["tint"], worst_page)
+    surfaces={
+      "tile":  (tile, ("text","muted","subtle","action_hover","accent")),
+      # Chips and the controls sharing the fill use muted text, and the timeline
+      # buttons the action colour; none uses the subtle role.
+      "chip":  (over(g["fill"][0],g["fill"][1],tile), ("muted","action_hover")),
+      "bar":   (over(*g["bar"], g["extreme"]), ("text","muted","action_hover")),
+      "sheet": (over(*g["sheet"], over(*g["scrim"], g["extreme"])), ("text","muted","subtle","action_hover")),
+    }
+    for surf,(bg,roles) in surfaces.items():
+        for role in roles:
+            r=cr(t[role], hexs(bg)); flag="" if r>=4.5 else "  <-- FAIL"
+            if r<4.5: fails+=1
+            print(f"  {name:>5} {surf:<6} {role:>13} on {hexs(bg)}  {r:5.2f} (need 4.5){flag}")
 print("FAILS:",fails)
 sys.exit(1 if fails else 0)

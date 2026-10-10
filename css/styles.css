@@ -113,6 +113,36 @@
   --rule-strong: 1px;
   --ground-line: rgba(235, 230, 216, 0.05);
 
+  /*
+   * Glass. A tinted, blurred surface with a lit edge, in the manner of Apple's
+   * Liquid Glass but tuned so text keeps its contrast on it: the tint is dense
+   * enough that the worst backdrop the surface can sit over still gives every
+   * text role >=4.5:1 (tools/contrast.py checks that case, not just the flat
+   * one). Where blur is unavailable, in either high-contrast cut, or when the
+   * OS asks for reduced transparency, every glass token collapses to the opaque
+   * surface and the glow behind it disappears.
+   */
+  --glass-opaque: var(--p-bark);
+  --glass-tint: rgba(24, 26, 22, 0.74);
+  --glass-tint-bar: rgba(16, 18, 15, 0.86);
+  --glass-tint-sheet: rgba(24, 26, 22, 0.93);
+  --glass-fill: rgba(255, 255, 255, 0.06);
+  --glass-rim: rgba(255, 255, 255, 0.16);
+  --glass-hi: rgba(255, 255, 255, 0.22);
+  --glass-gloss: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 16px);
+  --glass-sheen: rgba(255, 255, 255, 0.2);
+  --glass-shadow: 0 10px 34px rgba(0, 0, 0, 0.32);
+  --glass-blur: 20px;
+  --glass-saturate: 1.7;
+  --glow-a: rgba(201, 138, 74, 0.18);
+  --glow-b: rgba(126, 163, 106, 0.13);
+  --scrim: rgba(8, 9, 7, 0.55);
+  --radius-sheet: 24px;
+  /* Resolved below: opaque until the browser proves it can blur. */
+  --glass-bg: var(--glass-opaque);
+  --glass-bg-bar: var(--glass-opaque);
+  --glass-bg-sheet: var(--glass-opaque);
+
   /* Spacing scale (4px ramp). Layout rhythm uses these, not one-off values. */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -131,7 +161,7 @@
   --radius-lg: 6px;
   /* Tiles in the overview grid: rounder than a rule-bound record, still far
      from a pill. */
-  --radius-tile: 12px;
+  --radius-tile: 18px;
   --elevation-1: 0 18px 50px rgba(0, 0, 0, 0.35);
   --motion-fast: 120ms;
   --motion-base: 200ms;
@@ -203,6 +233,20 @@
     --status-error: light-dark(var(--p-rust-deep), var(--p-rust));
 
     --ground-line: light-dark(rgba(42, 36, 24, 0.07), rgba(235, 230, 216, 0.05));
+
+    --glass-opaque: light-dark(var(--p-paper-raised), var(--p-bark));
+    --glass-tint: light-dark(rgba(251, 247, 238, 0.72), rgba(24, 26, 22, 0.74));
+    --glass-tint-bar: light-dark(rgba(244, 238, 226, 0.84), rgba(16, 18, 15, 0.86));
+    --glass-tint-sheet: light-dark(rgba(251, 247, 238, 0.93), rgba(24, 26, 22, 0.93));
+    --glass-fill: light-dark(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.06));
+    --glass-rim: light-dark(rgba(90, 72, 40, 0.24), rgba(255, 255, 255, 0.16));
+    --glass-hi: light-dark(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.22));
+    --glass-gloss: light-dark(linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 16px), linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 16px));
+    --glass-sheen: light-dark(rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.2));
+    --glass-shadow: light-dark(0 10px 34px rgba(42, 36, 24, 0.16), 0 10px 34px rgba(0, 0, 0, 0.32));
+    --glow-a: light-dark(rgba(201, 138, 74, 0.22), rgba(201, 138, 74, 0.18));
+    --glow-b: light-dark(rgba(126, 163, 106, 0.18), rgba(126, 163, 106, 0.13));
+    --scrim: light-dark(rgba(31, 27, 20, 0.4), rgba(8, 9, 7, 0.55));
     --elevation-1: light-dark(0 18px 50px rgba(42, 36, 24, 0.14), 0 18px 50px rgba(0, 0, 0, 0.35));
   }
 }
@@ -241,6 +285,21 @@
   --elevation-1: none;
   --rule: 2px;
   --rule-strong: 2px;
+  --glass-opaque: var(--surface-raised);
+  --glass-tint: var(--surface-raised);
+  --glass-tint-bar: var(--surface-page);
+  --glass-tint-sheet: var(--surface-raised);
+  --glass-fill: transparent;
+  --glass-rim: var(--border-strong);
+  --glass-hi: transparent;
+  --glass-gloss: none;
+  --glass-sheen: transparent;
+  --glass-shadow: none;
+  --glass-blur: 0px;
+  --glass-saturate: 1;
+  --glow-a: transparent;
+  --glow-b: transparent;
+  --scrim: rgba(0, 0, 0, 0.72);
 }
 
 @media (prefers-contrast: more) {
@@ -269,6 +328,51 @@
     --elevation-1: none;
     --rule: 2px;
     --rule-strong: 2px;
+    --glass-opaque: var(--surface-raised);
+    --glass-tint: var(--surface-raised);
+    --glass-tint-bar: var(--surface-page);
+    --glass-tint-sheet: var(--surface-raised);
+    --glass-fill: transparent;
+    --glass-rim: var(--border-strong);
+    --glass-hi: transparent;
+    --glass-gloss: none;
+    --glass-sheen: transparent;
+    --glass-shadow: none;
+    --glass-blur: 0px;
+    --glass-saturate: 1;
+    --glow-a: transparent;
+    --glow-b: transparent;
+    --scrim: rgba(0, 0, 0, 0.72);
+  }
+}
+
+/*
+ * Glass resolves to its opaque surface unless the browser can blur behind it,
+ * and goes opaque again when the OS asks for reduced transparency. A visitor
+ * who chose the standard contrast cut explicitly still gets the OS transparency
+ * preference honoured, since that is a different need (legibility over noise).
+ */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root {
+    --glass-bg: var(--glass-tint);
+    --glass-bg-bar: var(--glass-tint-bar);
+    --glass-bg-sheet: var(--glass-tint-sheet);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-tint: var(--glass-opaque);
+    --glass-tint-bar: var(--surface-page);
+    --glass-tint-sheet: var(--glass-opaque);
+    --glass-fill: transparent;
+    --glass-hi: transparent;
+    --glass-gloss: none;
+    --glass-sheen: transparent;
+    --glass-blur: 0px;
+    --glass-saturate: 1;
+    --glow-a: transparent;
+    --glow-b: transparent;
   }
 }
 
@@ -532,7 +636,7 @@ dt > .icon,
 }
 
 .brand-text span {
-  color: var(--text-subtle);
+  color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.08em;
@@ -548,7 +652,8 @@ dt > .icon,
   gap: var(--space-2);
 }
 
-/* Compact: a disclosure panel under the header bar, opened by .nav-toggle. */
+/* Compact: hidden. The menu there is a bottom sheet (src/sheet.ts); the wide
+   layer below shows this list inline. */
 .nav-links {
   display: none;
   position: absolute;
@@ -563,10 +668,6 @@ dt > .icon,
   padding: var(--space-2) var(--content-padding) var(--space-4);
   background: var(--surface-page);
   border-bottom: 1px solid var(--border);
-}
-
-.nav-links.is-open {
-  display: flex;
 }
 
 .nav-links a {
@@ -3078,8 +3179,8 @@ body.guest-overlay-open {
  * radio groups — theme, contrast, motion, text size. Native radios inside
  * <fieldset>/<legend>, so the group semantics, arrow-key movement and the
  * checked state all come from the browser; the stylesheet only draws each
- * group as a segmented row. The panel is a non-modal dialog: Escape and a
- * click outside close it and focus returns to the button (src/display.ts).
+ * group as a segmented row. The panel is a sheet (see "sheets" below): a bottom
+ * sheet on a phone and a side sheet on a wide screen, opened by the button.
  */
 .display {
   position: static;
@@ -3124,55 +3225,13 @@ body.guest-overlay-open {
   color: var(--action-hover);
 }
 
-.display-panel {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(100% + var(--space-2));
-  z-index: 25;
-  display: grid;
-  gap: var(--space-4);
-  padding: var(--space-4) var(--content-padding) var(--space-5);
-  background: var(--surface-raised);
-  border: var(--rule) solid var(--border-strong);
-  border-radius: var(--radius-md);
-  box-shadow: var(--elevation-1);
+.display-hint {
+  margin: 0 0 var(--space-4);
+  color: var(--text-muted);
+  font-size: 0.88rem;
 }
 
-.display-panel[hidden] {
-  display: none;
-}
-
-.display-panel:not([hidden]) {
-  animation: panel-in var(--motion-base) ease-out;
-}
-
-@keyframes panel-in {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-}
-
-.display-panel-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-3);
-}
-
-.display-panel h2 {
-  margin: 0;
-  font-size: 1.2rem;
-}
-
-.display-panel p {
-  margin: 0;
-  color: var(--text-subtle);
-  font-size: 0.85rem;
-}
-
-.display-panel form {
+[data-display-form] {
   display: grid;
   gap: var(--space-4);
 }
@@ -3315,70 +3374,21 @@ body.guest-overlay-open {
  * history; the home page is the trunk those branches come off. What follows
  * is the motion that makes that read as a story rather than a stack of
  * sections — and every piece of it is keyed to the reader's own progress
- * (load, scroll, hover), runs once, and collapses to its final state under
- * reduced motion. Nothing here loops and nothing moves while you read.
+ * (load, scroll, hover), replays on every entry in either scroll direction,
+ * and collapses to its final state under reduced motion. Nothing here loops
+ * and nothing moves while you read.
  */
 
-/* --- the hero arrives ------------------------------------------------------ */
+/* --- elements arrive each time they are reached ------------------------------ */
 
 /*
- * On load the hero writes itself in: the kicker's rule draws, the name and
- * lede rise, the spec sheet's rows and the actions follow, the portrait's
- * offset rule slides into place. ~700ms end to end, CSS only, so it needs no
- * script and the reduced-motion rule (which zeroes animation durations)
- * turns it into a plain first paint.
- */
-@keyframes rise-in {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-}
-
-@keyframes draw-in {
-  from {
-    transform: scaleX(0);
-  }
-}
-
-.bento > .tile,
-.page-hero > :not([data-project-motif]) {
-  animation: rise-in 420ms ease-out both;
-}
-
-.bento > .tile:nth-child(2) { animation-delay: 70ms; }
-.bento > .tile:nth-child(3) { animation-delay: 140ms; }
-.bento > .tile:nth-child(4) { animation-delay: 210ms; }
-.bento > .tile:nth-child(5) { animation-delay: 280ms; }
-.bento > .tile:nth-child(6) { animation-delay: 350ms; }
-.bento > .tile:nth-child(7) { animation-delay: 420ms; }
-.bento > .tile:nth-child(8) { animation-delay: 490ms; }
-.bento > .tile:nth-child(9) { animation-delay: 560ms; }
-.bento > .tile:nth-child(10) { animation-delay: 630ms; }
-.bento > .tile:nth-child(11) { animation-delay: 700ms; }
-.bento > .tile:nth-child(12) { animation-delay: 770ms; }
-
-.tile-intro .kicker::before,
-.page-hero .kicker::before {
-  transform-origin: left center;
-  animation: draw-in 500ms ease-out both;
-}
-
-.page-hero .lede {
-  animation-delay: 90ms;
-}
-
-.page-hero .hero-actions {
-  animation-delay: 300ms;
-}
-
-/* --- sections arrive as they are reached ------------------------------------- */
-
-/*
- * `.reveal` is added by src/story.ts, never authored in markup: with
- * scripting off there is no class and nothing is hidden. The offset is 12px
- * — enough to read as arriving, small enough to read as a fade (the skill's
- * 8–16px band) — and the stagger is set per element by the script.
+ * `.reveal` is added by src/story.ts, never authored in markup: with scripting
+ * off there is no class and nothing is hidden. `.is-seen` is added each time
+ * an element crosses into view and removed once it is well off screen, so the
+ * entrance replays whichever way the page is scrolled. The offset is 12px —
+ * enough to read as arriving, small enough to read as a fade (the skill's
+ * 8–16px band) — and the stagger is set per element by the script and dropped
+ * once the fade ends.
  */
 .reveal {
   opacity: 0;
@@ -3391,6 +3401,60 @@ body.guest-overlay-open {
 .reveal.is-seen {
   opacity: 1;
   transform: none;
+}
+
+/* Tiles also animate their border and shadow on hover; list all four so the
+   entrance does not replace the hover transition. */
+.tile.reveal {
+  transition:
+    opacity 360ms ease-out var(--reveal-delay, 0ms),
+    transform 360ms ease-out var(--reveal-delay, 0ms),
+    border-color var(--motion-base) ease-out,
+    box-shadow var(--motion-base) ease-out;
+}
+
+/* The kicker's leading rule draws with its block, and redraws with it. */
+.kicker::before {
+  transform-origin: left center;
+  transition: transform 520ms ease-out calc(var(--reveal-delay, 0ms) + 120ms);
+}
+
+.reveal:not(.is-seen) .kicker::before,
+.kicker.reveal:not(.is-seen)::before {
+  transform: scaleX(0);
+}
+
+/*
+ * First paint. The reveal state above only exists once the script has added
+ * `.reveal`, which is after the first paint, so the tiles and the page heroes
+ * would show for a frame and then vanish. The head script sets `html.js` before
+ * anything is drawn, and these rules hold exactly those elements back until
+ * src/story.ts adds `.reveal-ready`, when the rules above take over.
+ *
+ * Two guards keep a failed script from leaving them hidden: the rules apply
+ * only where the reveal will actually run (not under reduced motion, whichever
+ * source set it), and each one carries a zero-length animation that fades the
+ * element in after 2.5 seconds if `.reveal-ready` never arrives.
+ */
+@keyframes reveal-fail-open {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html.js:not(.reveal-ready):not([data-motion="reduced"]) :is(.bento > .tile, .page-hero > :not([data-project-motif])) {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: reveal-fail-open 0s 2.5s forwards;
+  }
+}
+
+html.js:not(.reveal-ready)[data-motion="full"] :is(.bento > .tile, .page-hero > :not([data-project-motif])) {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: reveal-fail-open 0s 2.5s forwards;
 }
 
 /* --- the story strip ---------------------------------------------------------- */
@@ -4114,6 +4178,327 @@ body.guest-overlay-open {
   color: var(--text-muted);
 }
 
+/* ------------------------------------------------------------------ sheets -- */
+
+/*
+ * A sheet is the one way this site opens a menu over the page (src/sheet.ts):
+ * a native modal <dialog>, so focus is trapped, the page behind is inert and
+ * Escape closes it, all supplied by the browser. Below 56rem it rises from the
+ * bottom edge as a bottom sheet with a grab handle; from 56rem it slides in
+ * from the right as a side sheet. It is one element and the stylesheet picks
+ * the shape, so resizing a window with a sheet open reshapes it.
+ *
+ * It opens and closes with a transition on transform and opacity. `display`
+ * and `overlay` are transitioned as discrete properties so the closing motion
+ * is seen before the dialog leaves the top layer; a browser without that
+ * simply shows and hides it.
+ */
+.sheet {
+  position: fixed;
+  inset: auto 0 0 0;
+  width: 100%;
+  max-width: none;
+  max-height: min(88dvh, 44rem);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  color: var(--text);
+  transform: translateY(100%);
+  opacity: 0;
+  transition:
+    transform 360ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 220ms ease-out,
+    overlay 360ms allow-discrete,
+    display 360ms allow-discrete;
+}
+
+.sheet[open] {
+  transform: none;
+  opacity: 1;
+}
+
+@starting-style {
+  .sheet[open] {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+.sheet::backdrop {
+  background: var(--scrim);
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.4));
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.4));
+  opacity: 0;
+  transition:
+    opacity 360ms ease-out,
+    overlay 360ms allow-discrete,
+    display 360ms allow-discrete;
+}
+
+.sheet[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .sheet[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+/* The page behind a bottom sheet does not scroll. On a wide screen the side
+   sheet leaves it alone, so the scrollbar does not appear and vanish. */
+@media (max-width: 55.99rem) {
+  body.sheet-open {
+    overflow: hidden;
+  }
+}
+
+.sheet-surface {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  min-height: 100%;
+  padding: 0 var(--space-5) calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+}
+
+/* The grab handle: bottom sheet only, and only a pointer shortcut. The close
+   button and Escape are the real ways out (WCAG 2.5.7). */
+.sheet-grab {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-3) 0 var(--space-1);
+  cursor: grab;
+  touch-action: none;
+}
+
+.sheet-grab span {
+  width: 2.75rem;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--border-interactive);
+  opacity: 0.7;
+}
+
+.sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.sheet-head h2 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.sheet-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-comfortable);
+  height: var(--tap-comfortable);
+  padding: 0;
+  background: var(--glass-fill);
+  color: var(--text);
+  border: var(--rule) solid var(--border-interactive);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: border-color var(--motion-fast) ease-out, transform var(--motion-fast) ease-out;
+}
+
+.sheet-close:hover {
+  border-color: var(--action);
+}
+
+.sheet-close:active {
+  transform: scale(0.94);
+}
+
+.sheet-nav {
+  display: grid;
+  gap: var(--space-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sheet-nav a {
+  display: flex;
+  align-items: center;
+  min-height: 3.25rem;
+  padding: 0 var(--space-4);
+  border: var(--rule) solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background-color var(--motion-fast) ease-out, border-color var(--motion-fast) ease-out;
+}
+
+.sheet-nav a:hover {
+  background: var(--glass-fill);
+  border-color: var(--glass-rim);
+}
+
+/* The current page: a bar and a mark as well as the fill, so it is not
+   colour alone (R25). */
+.sheet-nav a[aria-current="page"] {
+  background: var(--glass-fill);
+  border-color: var(--glass-rim);
+  box-shadow: inset 4px 0 0 0 var(--action);
+}
+
+@media (min-width: 56rem) {
+  .sheet {
+    inset: 0 0 0 auto;
+    width: min(26rem, 100%);
+    height: 100dvh;
+    max-height: none;
+    border-radius: var(--radius-sheet) 0 0 var(--radius-sheet);
+    transform: translateX(100%);
+  }
+
+  .sheet[open] {
+    transform: none;
+  }
+
+  @starting-style {
+    .sheet[open] {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+
+  .sheet-surface {
+    padding-top: var(--space-5);
+  }
+
+  .sheet-grab {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------- glass -- */
+
+/*
+ * The glass treatment, applied once to everything that is a surface: the
+ * header bar, tiles, role entries, sheets, and the live lab's chrome.
+ * A translucent tint, a blur and saturation boost of whatever is behind it, a
+ * lit top edge, and a faint gloss gradient. Behind it sits a soft ambient glow
+ * (body::before) so there is something coloured to refract. The tokens are in
+ * the token layer; this block only applies them.
+ *
+ * Text never sits on bare glass. The tints are dense enough for the worst
+ * backdrop to still clear 4.5:1, which tools/contrast.py checks, and the two
+ * secondary text roles in the header use the muted colour for that reason.
+ * Controls keep their own interactive border (>=3:1), not the glass rim.
+ */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(52rem 36rem at 10% -8%, var(--glow-a), transparent 62%),
+    radial-gradient(46rem 36rem at 98% 26%, var(--glow-b), transparent 62%),
+    radial-gradient(44rem 32rem at 24% 106%, var(--glow-a), transparent 60%);
+}
+
+.site-header {
+  background-color: var(--glass-bg-bar);
+  background-image: var(--glass-gloss);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border-bottom-color: var(--glass-rim);
+  box-shadow: inset 0 -1px 0 var(--glass-hi);
+}
+
+.tile,
+.entry,
+.sheet,
+.guest-titlebar,
+.guest-dock {
+  background-color: var(--glass-bg);
+  background-image: var(--glass-gloss);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+}
+
+.tile,
+.entry {
+  border-color: var(--glass-rim);
+  border-radius: var(--radius-tile);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-hi);
+}
+
+.entry {
+  padding: var(--space-4) var(--space-5) var(--space-3);
+  border-style: solid;
+  border-width: var(--rule);
+}
+
+.sheet {
+  background-color: var(--glass-bg-sheet);
+  border: var(--rule) solid var(--glass-rim);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-hi);
+}
+
+.guest-titlebar,
+.guest-dock {
+  border-bottom-color: var(--glass-rim);
+}
+
+/* A tile that holds a destination lifts on hover; the lift keeps the glass
+   shadow and brightens its rim rather than swapping to a flat border. */
+.tile:not(.tile-filter):has(.btn):hover,
+.tile:not(.tile-filter):has(.btn):focus-within {
+  border-color: var(--action);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-hi), 0 0 0 1px var(--action);
+}
+
+/* Controls: a faint glass fill inside their own interactive border. */
+.btn-ghost,
+.chip,
+.nav-toggle,
+.display-toggle,
+.topic-btn,
+.display-option,
+.copy-btn,
+.guest-btn,
+.guest-dock-btn,
+.deck-btn,
+.tl-expand,
+.tl-open {
+  background-color: var(--glass-fill);
+}
+
+.btn-ghost,
+.nav-toggle,
+.display-toggle,
+.topic-btn,
+.display-option {
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
+}
+
+/* The filled action keeps its colour and gains a lit edge and a soft sheen at
+   the top, fading out before the label so the label's contrast is unchanged. */
+.btn-primary,
+.btn-primary:hover,
+.topic-btn[aria-pressed="true"],
+.display-option:has(input:checked),
+.guest-dock-btn[aria-pressed="true"] {
+  background-image: linear-gradient(180deg, var(--glass-sheen), transparent 55%);
+  box-shadow: inset 0 1px 0 var(--glass-hi);
+}
+
 /*
  * ================================================================ WIDE LAYER
  *
@@ -4212,21 +4597,10 @@ body.guest-overlay-open {
     gap: var(--space-4);
   }
 
-  /* --- display control: a popover under its own button --------------------- */
-
-  .display {
-    position: relative;
-  }
+  /* --- display control: the word comes back beside the glyph --------------- */
 
   .display-toggle-label {
     display: inline;
-  }
-
-  .display-panel {
-    left: auto;
-    right: 0;
-    width: 24rem;
-    padding: var(--space-4) var(--space-5) var(--space-5);
   }
 
   /* --- story strip: six beats across the page ------------------------------- */

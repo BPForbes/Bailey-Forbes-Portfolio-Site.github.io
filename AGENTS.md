@@ -90,7 +90,7 @@ anything under `src/`.
 |---|---|
 | `home/index.html` | The home page: bento overview, story, the record, contact |
 | `projects/` | Project index, one folder per project (`emr`, `flinstone`, `homework-central`, `keyquorum`, `qpu`), plus the old `*.html` redirects |
-| `src/` | TypeScript sources. `site.ts` and `contact.ts` are the entry points. `display.ts` is the Display control. `story.ts` is the home page's motion. `topics.ts` is the topic list and filter. `apps.ts` holds the lab URLs |
+| `src/` | TypeScript sources. `site.ts` and `contact.ts` are the entry points. `display.ts` is the Display control. `story.ts` is the home page's motion and replays on every scroll entry. `sheet.ts` is the bottom and side sheet used by the menus. `topics.ts` is the topic list and filter. `apps.ts` holds the lab URLs |
 | `css/styles.css` | The single stylesheet. Token layer at the top, then compact styles, then the wide layer at the foot |
 | `data/`, `src/generated/` | Generated project facts (do not edit) |
 | `scripts/` | The metadata sync and the project-to-repository mapping (`project-sources.mjs`) |
@@ -115,7 +115,7 @@ anything under `src/`.
 [`DESIGN.md`](DESIGN.md) is the rule set this site is built to. Read Part A (R01–R30) before
 a visual change, and Part B for what this site actually does with them. The current
 direction is a commit-log theme: a bento overview, a story strip, and a trunk. Keep the
-Display control working. It exposes theme, contrast, motion, and text size.
+Display control working. It exposes theme, contrast, motion, and text size. Surfaces use the glass tokens; any new text-bearing glass surface needs a case in `tools/contrast.py`.
 
 The UI/UX Pro Max skill (below) is guidance. It does not override DESIGN.md.
 

@@ -1,4 +1,5 @@
 import { icon } from "./icons.js";
+import { createSheet } from "./sheet.js";
 const STORAGE_KEY = "bf-display";
 const DEFAULTS = { theme: "system", contrast: "system", motion: "system", text: "default" };
 const OPTIONS = {
@@ -106,37 +107,28 @@ function mountDisplayControl(mount) {
   mount.innerHTML = `
     <button class="display-toggle" type="button" aria-expanded="false" aria-controls="display-panel" aria-label="Display settings">
       ${icon("sliders")}<span class="display-toggle-label" aria-hidden="true">Display</span>
-    </button>
-    <div class="display-panel" id="display-panel" role="dialog" aria-labelledby="display-title" hidden>
-      <div class="display-panel-head">
-        <h2 id="display-title">Display</h2>
-        <p>Kept on this device.</p>
-      </div>
-      <form data-display-form>
-        ${renderGroup("theme", prefs.theme)}
-        ${renderGroup("contrast", prefs.contrast)}
-        ${renderGroup("motion", prefs.motion)}
-        ${renderGroup("text", prefs.text)}
-        <button class="btn btn-ghost display-reset" type="button" data-display-reset>Use system settings</button>
-      </form>
-    </div>`;
+    </button>`;
   const toggle = mount.querySelector(".display-toggle");
-  const panel = mount.querySelector(".display-panel");
-  const form = mount.querySelector("[data-display-form]");
-  const reset = mount.querySelector("[data-display-reset]");
-  if (!toggle || !panel || !form || !reset) {
+  if (!toggle) {
     return;
   }
-  const setOpen = (open) => {
-    panel.hidden = !open;
-    toggle.setAttribute("aria-expanded", String(open));
-  };
+  const sheet = createSheet({ id: "display-panel", title: "Display" });
+  sheet.body.innerHTML = `
+    <p class="display-hint">Kept on this device.</p>
+    <form data-display-form>
+      ${renderGroup("theme", prefs.theme)}
+      ${renderGroup("contrast", prefs.contrast)}
+      ${renderGroup("motion", prefs.motion)}
+      ${renderGroup("text", prefs.text)}
+      <button class="btn btn-ghost display-reset" type="button" data-display-reset>Use system settings</button>
+    </form>`;
+  const form = sheet.body.querySelector("[data-display-form]");
+  const reset = sheet.body.querySelector("[data-display-reset]");
+  if (!form || !reset) {
+    return;
+  }
   toggle.addEventListener("click", () => {
-    const open = panel.hidden;
-    setOpen(open);
-    if (open) {
-      form.querySelector('input[name="theme"]:checked')?.focus();
-    }
+    sheet.open(toggle, form.querySelector('input[name="theme"]:checked'));
   });
   form.addEventListener("change", () => {
     const data = new FormData(form);
@@ -156,22 +148,6 @@ function mountDisplayControl(mount) {
     }
     applyPrefs(prefs);
     savePrefs(prefs);
-  });
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !panel.hidden) {
-      setOpen(false);
-      toggle.focus();
-    }
-  });
-  document.addEventListener("pointerdown", (event) => {
-    if (!panel.hidden && event.target instanceof Node && !mount.contains(event.target)) {
-      setOpen(false);
-    }
-  });
-  panel.addEventListener("focusout", (event) => {
-    if (event.relatedTarget instanceof Node && !mount.contains(event.relatedTarget)) {
-      setOpen(false);
-    }
   });
 }
 export {

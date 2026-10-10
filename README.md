@@ -26,7 +26,8 @@ DESIGN.md B4 records each piece and how to check it.
 
 ## Display setting
 
-The header's **Display** control lets a visitor choose a theme (dark, paper,
+The header's **Display** control opens as a sheet (a bottom sheet on a phone, a side
+sheet on a desktop) and lets a visitor choose a theme (dark, paper,
 or system), a contrast cut (standard or high), motion (full or reduced) and a
 text size. The choice is saved in `localStorage` under `bf-display`, written
 onto `<html>` as `data-theme` / `data-contrast` / `data-motion` / `data-text`,

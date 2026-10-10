@@ -15,7 +15,8 @@
        saved theme never flashes. An absent attribute means "follow the OS". */
     (function () {
       try {
-        var p = JSON.parse(localStorage.getItem("bf-display") || "{}"), r = document.documentElement;
+        var r = document.documentElement; r.classList.add("js");
+        var p = JSON.parse(localStorage.getItem("bf-display") || "{}");
         if (p.theme === "dark" || p.theme === "light") r.setAttribute("data-theme", p.theme);
         if (p.contrast === "standard" || p.contrast === "high") r.setAttribute("data-contrast", p.contrast);
         if (p.motion === "full" || p.motion === "reduced") r.setAttribute("data-motion", p.motion);

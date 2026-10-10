@@ -1,5 +1,7 @@
 import { prefersReducedMotion } from "./display.js";
 const REVEAL_SELECTOR = [
+  ".bento > .tile",
+  ".page-hero > :not([data-project-motif])",
   ".section-head",
   ".ledger-row",
   ".entry",
@@ -15,25 +17,63 @@ const REVEAL_SELECTOR = [
   ".transcript",
   ".lang-chart-figure"
 ].join(", ");
+function observeReplay(targets, handlers, enterOptions) {
+  const shown = /* @__PURE__ */ new Set();
+  const enter = new IntersectionObserver((entries) => {
+    let step = 0;
+    for (const entry of entries) {
+      const el = entry.target;
+      if (!entry.isIntersecting || shown.has(el)) continue;
+      shown.add(el);
+      handlers.enter(el, step);
+      step += 1;
+    }
+  }, enterOptions);
+  const leave = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const el = entry.target;
+        if (entry.isIntersecting || !shown.has(el)) continue;
+        shown.delete(el);
+        handlers.leave(el);
+      }
+    },
+    { rootMargin: "35% 0px 35% 0px", threshold: 0 }
+  );
+  for (const el of targets) {
+    enter.observe(el);
+    leave.observe(el);
+  }
+}
 function mountReveals() {
   const targets = Array.from(document.querySelectorAll(REVEAL_SELECTOR));
   if (targets.length === 0) return;
-  targets.forEach((el) => el.classList.add("reveal"));
-  const observer = new IntersectionObserver(
-    (entries) => {
-      let step = 0;
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        const el = entry.target;
+  for (const el of targets) {
+    el.classList.add("reveal");
+    el.addEventListener("transitionend", (event) => {
+      if (event.target === el && event.propertyName === "opacity" && el.classList.contains("is-seen")) {
+        el.style.removeProperty("--reveal-delay");
+      }
+    });
+  }
+  observeReplay(
+    targets,
+    {
+      // Elements that cross together are staggered 60ms apart (the skill's
+      // 0.02–0.1s band), so a column of records deals in rather than popping
+      // as one slab.
+      enter(el, step) {
         el.style.setProperty("--reveal-delay", `${Math.min(step, 6) * 60}ms`);
         el.classList.add("is-seen");
-        observer.unobserve(el);
-        step += 1;
+      },
+      leave(el) {
+        el.classList.remove("is-seen");
+        el.style.removeProperty("--reveal-delay");
       }
     },
     { rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
   );
-  targets.forEach((el) => observer.observe(el));
+  document.documentElement.classList.add("reveal-ready");
 }
 function mountCounters() {
   const figures = Array.from(document.querySelectorAll(".stat-list dt"));
@@ -63,7 +103,17 @@ function mountCounters() {
     const body = item.grouped ? Number(whole).toLocaleString("en-US") : whole;
     return `${item.prefix}${body}${frac !== void 0 ? `.${frac}` : ""}${item.suffix}`;
   };
+  const frames = /* @__PURE__ */ new Map();
+  const settle = (item) => {
+    item.shown.textContent = item.dt.querySelector(".visually-hidden")?.textContent ?? item.shown.textContent;
+  };
+  const stop = (item) => {
+    const pending = frames.get(item.dt);
+    if (pending !== void 0) cancelAnimationFrame(pending);
+    frames.delete(item.dt);
+  };
   const run = (item) => {
+    stop(item);
     const duration = 900;
     const start = performance.now();
     const frame = (now) => {
@@ -71,43 +121,50 @@ function mountCounters() {
       const eased = 1 - (1 - t) * (1 - t) * (1 - t);
       item.shown.textContent = format(item.target * eased, item);
       if (t < 1) {
-        requestAnimationFrame(frame);
+        frames.set(item.dt, requestAnimationFrame(frame));
       } else {
-        item.shown.textContent = item.dt.querySelector(".visually-hidden")?.textContent ?? item.shown.textContent;
+        frames.delete(item.dt);
+        settle(item);
       }
     };
     item.shown.textContent = format(0, item);
-    requestAnimationFrame(frame);
+    frames.set(item.dt, requestAnimationFrame(frame));
   };
-  const observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        const item = prepared.find((candidate) => candidate.dt === entry.target);
+  const byElement = new Map(prepared.map((item) => [item.dt, item]));
+  observeReplay(
+    prepared.map((item) => item.dt),
+    {
+      enter(el) {
+        const item = byElement.get(el);
         if (item) run(item);
-        observer.unobserve(entry.target);
+      },
+      leave(el) {
+        const item = byElement.get(el);
+        if (!item) return;
+        stop(item);
+        settle(item);
       }
     },
     { threshold: 0.5 }
   );
-  prepared.forEach((item) => observer.observe(item.dt));
 }
 function mountStoryLine() {
   const beats = Array.from(document.querySelectorAll(".story-beat"));
   if (beats.length === 0) return;
-  const observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        const el = entry.target;
+  observeReplay(
+    beats,
+    {
+      enter(el) {
         el.style.setProperty("--beat-delay", `${beats.indexOf(el) * 90}ms`);
         el.classList.add("is-seen");
-        observer.unobserve(el);
+      },
+      leave(el) {
+        el.classList.remove("is-seen");
+        el.style.removeProperty("--beat-delay");
       }
     },
     { threshold: 0.35 }
   );
-  beats.forEach((el) => observer.observe(el));
 }
 function mountTrunk(reduced) {
   const main = document.querySelector("main");

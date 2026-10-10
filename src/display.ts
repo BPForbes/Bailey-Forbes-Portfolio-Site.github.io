@@ -15,14 +15,16 @@
  *      reads the same localStorage key this module writes. This module never
  *      has to race the stylesheet; it only draws the panel and handles
  *      changes.
- *   3. **The panel is native form controls.** Radios in fieldsets give
- *      grouping, arrow-key movement and announcement for free; the script
- *      adds only open/close, Escape, click-outside and focus return.
+ *   3. **The panel is native form controls in a native dialog.** Radios in
+ *      fieldsets give grouping, arrow-key movement and announcement for free,
+ *      and src/sheet.ts supplies the dialog: a bottom sheet on a phone, a side
+ *      sheet on a wide screen, with Escape, scrim click and focus return.
  *
  * Nothing here is required for the site to work: with the key empty the
  * page is exactly what the OS preferences make it.
  */
 import { icon } from "./icons.js";
+import { createSheet } from "./sheet.js";
 
 export const STORAGE_KEY = "bf-display";
 
@@ -174,42 +176,35 @@ export function mountDisplayControl(mount: HTMLElement): void {
   mount.innerHTML = `
     <button class="display-toggle" type="button" aria-expanded="false" aria-controls="display-panel" aria-label="Display settings">
       ${icon("sliders")}<span class="display-toggle-label" aria-hidden="true">Display</span>
-    </button>
-    <div class="display-panel" id="display-panel" role="dialog" aria-labelledby="display-title" hidden>
-      <div class="display-panel-head">
-        <h2 id="display-title">Display</h2>
-        <p>Kept on this device.</p>
-      </div>
-      <form data-display-form>
-        ${renderGroup("theme", prefs.theme)}
-        ${renderGroup("contrast", prefs.contrast)}
-        ${renderGroup("motion", prefs.motion)}
-        ${renderGroup("text", prefs.text)}
-        <button class="btn btn-ghost display-reset" type="button" data-display-reset>Use system settings</button>
-      </form>
-    </div>`;
-
+    </button>`;
   const toggle = mount.querySelector<HTMLButtonElement>(".display-toggle");
-  const panel = mount.querySelector<HTMLElement>(".display-panel");
-  const form = mount.querySelector<HTMLFormElement>("[data-display-form]");
-  const reset = mount.querySelector<HTMLButtonElement>("[data-display-reset]");
-  if (!toggle || !panel || !form || !reset) {
+  if (!toggle) {
     return;
   }
 
-  const setOpen = (open: boolean): void => {
-    panel.hidden = !open;
-    toggle.setAttribute("aria-expanded", String(open));
-  };
+  // The panel is a sheet: a bottom sheet on a phone, a side sheet beside the
+  // page on a wide screen (src/sheet.ts). The toggle stays in the header.
+  const sheet = createSheet({ id: "display-panel", title: "Display" });
+  sheet.body.innerHTML = `
+    <p class="display-hint">Kept on this device.</p>
+    <form data-display-form>
+      ${renderGroup("theme", prefs.theme)}
+      ${renderGroup("contrast", prefs.contrast)}
+      ${renderGroup("motion", prefs.motion)}
+      ${renderGroup("text", prefs.text)}
+      <button class="btn btn-ghost display-reset" type="button" data-display-reset>Use system settings</button>
+    </form>`;
+
+  const form = sheet.body.querySelector<HTMLFormElement>("[data-display-form]");
+  const reset = sheet.body.querySelector<HTMLButtonElement>("[data-display-reset]");
+  if (!form || !reset) {
+    return;
+  }
 
   toggle.addEventListener("click", () => {
-    const open = panel.hidden;
-    setOpen(open);
-    if (open) {
-      // Land on the current theme choice, so a keyboard visitor is inside
-      // the first group rather than back on the button that opened it.
-      form.querySelector<HTMLInputElement>('input[name="theme"]:checked')?.focus();
-    }
+    // Land on the current theme choice, so a keyboard visitor is inside the
+    // first group rather than on the close button.
+    sheet.open(toggle, form.querySelector<HTMLInputElement>('input[name="theme"]:checked'));
   });
 
   form.addEventListener("change", () => {
@@ -231,26 +226,5 @@ export function mountDisplayControl(mount: HTMLElement): void {
     }
     applyPrefs(prefs);
     savePrefs(prefs);
-  });
-
-  document.addEventListener("keydown", (event: KeyboardEvent) => {
-    if (event.key === "Escape" && !panel.hidden) {
-      setOpen(false);
-      toggle.focus();
-    }
-  });
-
-  document.addEventListener("pointerdown", (event: PointerEvent) => {
-    if (!panel.hidden && event.target instanceof Node && !mount.contains(event.target)) {
-      setOpen(false);
-    }
-  });
-
-  // Tabbing out of the panel's last control closes it, so the next Tab stop
-  // is the page, not a panel the visitor has visibly left behind.
-  panel.addEventListener("focusout", (event: FocusEvent) => {
-    if (event.relatedTarget instanceof Node && !mount.contains(event.relatedTarget)) {
-      setOpen(false);
-    }
   });
 }

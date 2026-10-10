@@ -16,13 +16,17 @@
  *      (OS preference and the Display control) are read through
  *      prefersReducedMotion(); when it is set, no observer is attached, no
  *      counter runs, and the trunk is drawn complete.
- *   3. **Motion explains change.** A section fades up once, as it enters;
- *      the story's line draws once, as its beats are reached; the trunk
- *      fills in step with how far the reader has come. None of it loops.
+ *   3. **Motion explains change, and replays it.** A section fades up each
+ *      time it enters the screen, scrolling down or back up; the story's line
+ *      redraws as its beats are reached again; figures count up again. An
+ *      element is reset only after it is well off screen, so no one ever sees
+ *      a reset. Nothing loops while you read.
  */
 import { prefersReducedMotion } from "./display.js";
 
 const REVEAL_SELECTOR = [
+  ".bento > .tile",
+  ".page-hero > :not([data-project-motif])",
   ".section-head",
   ".ledger-row",
   ".entry",
@@ -39,38 +43,100 @@ const REVEAL_SELECTOR = [
   ".lang-chart-figure",
 ].join(", ");
 
-/** Fade-up on entry, once, with a small stagger between siblings that arrive together. */
+/**
+ * Run `enter` each time an element comes into view and `leave` each time it
+ * has gone well out of view, so an animation can be replayed on the way back.
+ *
+ * Two observers do it. The first fires as an element crosses the viewport; the
+ * second watches a band 35% of a screen taller on both sides and fires only
+ * once the element has left that band. The gap is the point: the reset happens
+ * where nobody is looking, so scrolling back never shows a half-reset element.
+ * `enter` receives the element's position among those that crossed in the same
+ * callback, for staggering.
+ */
+function observeReplay(
+  targets: readonly HTMLElement[],
+  handlers: { enter(el: HTMLElement, step: number): void; leave(el: HTMLElement): void },
+  enterOptions: IntersectionObserverInit,
+): void {
+  const shown = new Set<HTMLElement>();
+
+  const enter = new IntersectionObserver((entries) => {
+    let step = 0;
+    for (const entry of entries) {
+      const el = entry.target as HTMLElement;
+      if (!entry.isIntersecting || shown.has(el)) continue;
+      shown.add(el);
+      handlers.enter(el, step);
+      step += 1;
+    }
+  }, enterOptions);
+
+  const leave = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const el = entry.target as HTMLElement;
+        if (entry.isIntersecting || !shown.has(el)) continue;
+        shown.delete(el);
+        handlers.leave(el);
+      }
+    },
+    { rootMargin: "35% 0px 35% 0px", threshold: 0 },
+  );
+
+  for (const el of targets) {
+    enter.observe(el);
+    leave.observe(el);
+  }
+}
+
+/** Fade-up on every entry, with a small stagger between elements that arrive together. */
 function mountReveals(): void {
   const targets = Array.from(document.querySelectorAll<HTMLElement>(REVEAL_SELECTOR));
   if (targets.length === 0) return;
 
-  targets.forEach((el) => el.classList.add("reveal"));
+  for (const el of targets) {
+    el.classList.add("reveal");
+    // The stagger delay is for the entrance only. Once the fade has finished,
+    // drop it so a later hover transition on the same element is not delayed.
+    el.addEventListener("transitionend", (event: TransitionEvent) => {
+      if (event.target === el && event.propertyName === "opacity" && el.classList.contains("is-seen")) {
+        el.style.removeProperty("--reveal-delay");
+      }
+    });
+  }
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      // Elements that cross together are staggered by their order, 60ms
-      // apart (the skill's 0.02–0.1s band), so a column of records deals in
-      // rather than popping as one slab.
-      let step = 0;
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        const el = entry.target as HTMLElement;
+  observeReplay(
+    targets,
+    {
+      // Elements that cross together are staggered 60ms apart (the skill's
+      // 0.02–0.1s band), so a column of records deals in rather than popping
+      // as one slab.
+      enter(el, step) {
         el.style.setProperty("--reveal-delay", `${Math.min(step, 6) * 60}ms`);
         el.classList.add("is-seen");
-        observer.unobserve(el);
-        step += 1;
-      }
+      },
+      leave(el) {
+        el.classList.remove("is-seen");
+        el.style.removeProperty("--reveal-delay");
+      },
     },
     { rootMargin: "0px 0px -8% 0px", threshold: 0.08 },
   );
-  targets.forEach((el) => observer.observe(el));
+
+  // From here the stylesheet's own hidden state takes over from the
+  // pre-hide that covered the first paint (see "the story" in styles.css).
+  document.documentElement.classList.add("reveal-ready");
 }
 
 /**
- * Count a résumé figure up to itself. The element's text is the truth and
- * stays in the tree for assistive technology inside a visually-hidden span;
- * the counting happens in an aria-hidden twin, so a screen reader never
- * hears "two thousand" on its way to "sixteen thousand".
+ * Count a résumé figure up to itself, every time it comes into view. The
+ * element's text is the truth and stays in the tree for assistive technology
+ * inside a visually-hidden span; the counting happens in an aria-hidden twin,
+ * so a screen reader never hears "two thousand" on its way to "sixteen
+ * thousand". Leaving the screen cancels a count in progress and puts the
+ * authored text back, so the figure is never left showing a number it did not
+ * reach.
  */
 function mountCounters(): void {
   const figures = Array.from(document.querySelectorAll<HTMLElement>(".stat-list dt"));
@@ -105,7 +171,21 @@ function mountCounters(): void {
     return `${item.prefix}${body}${frac !== undefined ? `.${frac}` : ""}${item.suffix}`;
   };
 
+  const frames = new Map<HTMLElement, number>();
+
+  const settle = (item: (typeof prepared)[number]): void => {
+    // Land exactly on the authored text, whatever the rounding did.
+    item.shown.textContent = item.dt.querySelector(".visually-hidden")?.textContent ?? item.shown.textContent;
+  };
+
+  const stop = (item: (typeof prepared)[number]): void => {
+    const pending = frames.get(item.dt);
+    if (pending !== undefined) cancelAnimationFrame(pending);
+    frames.delete(item.dt);
+  };
+
   const run = (item: (typeof prepared)[number]): void => {
+    stop(item);
     const duration = 900;
     const start = performance.now();
     const frame = (now: number): void => {
@@ -113,51 +193,57 @@ function mountCounters(): void {
       const eased = 1 - (1 - t) * (1 - t) * (1 - t);
       item.shown.textContent = format(item.target * eased, item);
       if (t < 1) {
-        requestAnimationFrame(frame);
+        frames.set(item.dt, requestAnimationFrame(frame));
       } else {
-        // Land exactly on the authored text, whatever the rounding did.
-        item.shown.textContent = item.dt.querySelector(".visually-hidden")?.textContent ?? item.shown.textContent;
+        frames.delete(item.dt);
+        settle(item);
       }
     };
     item.shown.textContent = format(0, item);
-    requestAnimationFrame(frame);
+    frames.set(item.dt, requestAnimationFrame(frame));
   };
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        const item = prepared.find((candidate) => candidate.dt === entry.target);
+  const byElement = new Map(prepared.map((item) => [item.dt, item]));
+  observeReplay(
+    prepared.map((item) => item.dt),
+    {
+      enter(el) {
+        const item = byElement.get(el);
         if (item) run(item);
-        observer.unobserve(entry.target);
-      }
+      },
+      leave(el) {
+        const item = byElement.get(el);
+        if (!item) return;
+        stop(item);
+        settle(item);
+      },
     },
     { threshold: 0.5 },
   );
-  prepared.forEach((item) => observer.observe(item.dt));
 }
 
 /**
- * The story strip: a line that draws from beat to beat as each is reached.
- * The beats are plain list items; the line is CSS, keyed off `.is-seen` on
- * each item, so this only has to observe.
+ * The story strip: a line that draws from beat to beat each time the beats are
+ * reached, scrolling down or back up. The beats are plain list items; the line
+ * is CSS, keyed off `.is-seen` on each item, so this only toggles the class.
  */
 function mountStoryLine(): void {
   const beats = Array.from(document.querySelectorAll<HTMLElement>(".story-beat"));
   if (beats.length === 0) return;
-  const observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        const el = entry.target as HTMLElement;
+  observeReplay(
+    beats,
+    {
+      enter(el) {
         el.style.setProperty("--beat-delay", `${beats.indexOf(el) * 90}ms`);
         el.classList.add("is-seen");
-        observer.unobserve(el);
-      }
+      },
+      leave(el) {
+        el.classList.remove("is-seen");
+        el.style.removeProperty("--beat-delay");
+      },
     },
     { threshold: 0.35 },
   );
-  beats.forEach((el) => observer.observe(el));
 }
 
 /**

@@ -93,16 +93,24 @@ for (const rendering of renderings) {
       // The Display control, keyboard only, once per page in the first rendering/width.
       if (rendering.tag === "dark" && width === 1280) {
         const toggle = page.locator(".display-toggle");
-        await toggle.focus(); await page.keyboard.press("Enter");
+        await toggle.focus(); await page.keyboard.press("Enter"); await page.waitForTimeout(600);
         const open = await page.locator("#display-panel").isVisible();
         const focused = await page.evaluate(() => document.activeElement?.id);
         if (!open || focused !== "display-theme-dark") say(`${label}: panel open=${open} focus=${focused}`);
+        // The sheet is open and nothing is mid-transition: audit its own text
+        // and targets now, before the theme is changed below. (After a switch,
+        // links inside not-yet-revealed content keep their old colour until
+        // they scroll into view, which would be reported as a false failure.)
+        for (const l of await page.evaluate(CONTRAST_SCRIPT)) say(label + ": sheet contrast " + l.r + ' "' + l.text + '" (' + l.sel + ")");
+        for (const t of await page.evaluate(TARGET_SCRIPT)) say(label + ": sheet target " + t.w + "x" + t.h + ' "' + t.text + '" (' + t.sel + ")");
         await page.keyboard.press("ArrowRight");
         const theme = await page.evaluate(() => document.documentElement.getAttribute("data-theme"));
         if (theme !== "light") say(`${label}: arrow key did not switch theme (got ${theme})`);
         const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("bf-display")));
         if (stored.theme !== "light") say(`${label}: not persisted ${JSON.stringify(stored)}`);
         await page.keyboard.press("Escape");
+        // Closing is a transition; wait for the sheet to be hidden, not a fixed delay.
+        await page.locator("#display-panel").waitFor({ state: "hidden", timeout: 3000 }).catch(() => {});
         const closed = await page.locator("#display-panel").isHidden();
         const back = await page.evaluate(() => document.activeElement?.className);
         if (!closed || !/display-toggle/.test(back)) say(`${label}: Escape close=${closed} focus=${back}`);
@@ -113,6 +121,22 @@ for (const rendering of renderings) {
           return out;
         });
         for (const r of rings) say(`${label}: no focus ring on ${r}`);
+      }
+      // The compact menu is a bottom sheet: keyboard open, content, close, focus.
+      if (rendering.tag === "dark" && width === 320) {
+        const navToggle = page.locator(".nav-toggle");
+        await navToggle.focus(); await page.keyboard.press("Enter"); await page.waitForTimeout(600);
+        const visible = await page.locator("#nav-sheet").isVisible();
+        const links = await page.locator("#nav-sheet a").count();
+        const expanded = await navToggle.getAttribute("aria-expanded");
+        if (!visible || links !== 5 || expanded !== "true") say(label + ": nav sheet visible=" + visible + " links=" + links + " expanded=" + expanded);
+        for (const l of await page.evaluate(CONTRAST_SCRIPT)) say(label + ": nav sheet contrast " + l.r + ' "' + l.text + '" (' + l.sel + ")");
+        for (const t of await page.evaluate(TARGET_SCRIPT)) say(label + ": nav sheet target " + t.w + "x" + t.h + ' "' + t.text + '" (' + t.sel + ")");
+        await page.keyboard.press("Escape");
+        await page.locator("#nav-sheet").waitFor({ state: "hidden", timeout: 3000 }).catch(() => {});
+        const closedNav = await page.locator("#nav-sheet").isHidden();
+        const backTo = await page.evaluate(() => document.activeElement?.className);
+        if (!closedNav || !/nav-toggle/.test(backTo)) say(label + ": nav sheet Escape closed=" + closedNav + " focus=" + backTo);
       }
       await page.close();
     }

@@ -12,6 +12,7 @@ import { publishedAt } from "./buildInfo.js";
 import { icon } from "./icons.js";
 import { mountDecks } from "./deck.js";
 import { mountDisplayControl } from "./display.js";
+import { createSheet } from "./sheet.js";
 import { mountStory } from "./story.js";
 import { mountTopicFilters } from "./topics.js";
 import { mountGuestWindows } from "./guestWindow.js";
@@ -34,7 +35,7 @@ if (header) {
           </span>
         </a>
         <div class="nav-tools">
-          <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+          <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-sheet">
             <span class="nav-toggle-icon" aria-hidden="true">${icon("bars")}${icon("xmark")}</span>
             Menu
           </button>
@@ -80,34 +81,37 @@ if (footer) {
       </div>
     `;
 }
-document.querySelectorAll(`[data-nav="${page}"]`).forEach((link) => {
-  link.setAttribute("aria-current", "page");
-});
 const toggle = document.querySelector(".nav-toggle");
 const links = document.querySelector(".nav-links");
 if (toggle && links) {
-  const setOpen = (open) => {
-    links.classList.toggle("is-open", open);
-    toggle.setAttribute("aria-expanded", String(open));
-  };
+  const sheet = createSheet({ id: "nav-sheet", title: "Menu" });
+  const list = document.createElement("ul");
+  list.className = "sheet-nav";
+  links.querySelectorAll("a").forEach((source) => {
+    const item = document.createElement("li");
+    const copy = source.cloneNode(true);
+    item.appendChild(copy);
+    list.appendChild(item);
+  });
+  const nav = document.createElement("nav");
+  nav.setAttribute("aria-label", "Primary");
+  nav.appendChild(list);
+  sheet.body.appendChild(nav);
   toggle.addEventListener("click", () => {
-    setOpen(!links.classList.contains("is-open"));
+    sheet.open(toggle, list.querySelector('[aria-current="page"]') ?? list.querySelector("a"));
   });
-  links.addEventListener("click", (event) => {
-    if (event.target instanceof HTMLAnchorElement) {
-      setOpen(false);
+  list.addEventListener("click", (event) => {
+    if (event.target instanceof Element && event.target.closest("a")) {
+      sheet.close();
     }
   });
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && links.classList.contains("is-open")) {
-      setOpen(false);
-      toggle.focus();
-    }
-  });
-  window.matchMedia("(min-width: 56rem)").addEventListener("change", () => {
-    setOpen(false);
+  window.matchMedia("(min-width: 56rem)").addEventListener("change", (event) => {
+    if (event.matches) sheet.close();
   });
 }
+document.querySelectorAll(`[data-nav="${page}"]`).forEach((link) => {
+  link.setAttribute("aria-current", "page");
+});
 function isProjectId(value) {
   return Object.prototype.hasOwnProperty.call(PORTFOLIO.projects, value);
 }
