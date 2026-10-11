@@ -4576,6 +4576,7 @@ body::before {
   .tile-lab { grid-column: span 3; }
   .tile-hc { grid-column: span 3; }
   .tile-emr { grid-column: span 3; }
+  .tile-mitm { grid-column: span 6; }
   .tile-skills { grid-column: span 3; }
   .tile-now { grid-column: span 3; }
   .tile-reach { grid-column: span 3; }
@@ -4814,7 +4815,8 @@ body::before {
  *
  * From 76rem the overview has its twelve columns: intro and spec sheet
  * stacked in the left seven beside the portrait, the story across, the three
- * labs abreast, then Homework Central / EMR / skills, then now / reach.
+ * labs abreast, then Homework Central / EMR / the MiTM lab / skills (four
+ * even columns), then now / reach.
  */
 @media (min-width: 76rem) {
   .bento {
@@ -4828,8 +4830,9 @@ body::before {
   .tile-story { grid-column: span 12; }
   .tile-filter { grid-column: span 12; }
   .tile-lab { grid-column: span 4; }
-  .tile-hc { grid-column: span 5; }
-  .tile-emr { grid-column: span 3; }
+  .tile-hc { grid-column: span 4; }
+  .tile-emr { grid-column: span 4; }
+  .tile-mitm { grid-column: span 4; }
   .tile-skills { grid-column: span 4; }
   .tile-now { grid-column: span 5; }
   .tile-reach { grid-column: span 7; }

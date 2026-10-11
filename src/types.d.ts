@@ -5,7 +5,8 @@ export type ProjectId =
   | "homework-central"
   | "flinstone"
   | "keyquorum"
-  | "qpu";
+  | "qpu"
+  | "mitm-lab";
 
 export interface LanguageShare {
   name: string;

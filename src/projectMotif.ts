@@ -20,6 +20,8 @@
  *                                   the project actually implements.
  *   pulse    (EMR)                — an ECG line: the one project restrained
  *                                   enough to earn a literal nod (medical).
+ *   relay    (MiTM Lab)           — a line with a third point tapping it:
+ *                                   the interception the project demonstrates.
  *
  * Opacity stays low (~10%) and the layer is `aria-hidden` with no pointer
  * events, so it never competes with the hero's actual text or controls, and
@@ -27,7 +29,7 @@
  * `prefers-reduced-motion` rule rather than needing its own guard.
  */
 
-type MotifKey = "circuit" | "network" | "gate" | "tree" | "pulse";
+type MotifKey = "circuit" | "network" | "gate" | "tree" | "pulse" | "relay";
 
 const TILE_SIZE = 40;
 
@@ -63,6 +65,11 @@ const TILES: Record<MotifKey, { paths: readonly string[]; flow: string; flowLeng
     paths: ["M0 24 H10 L14 8 L20 34 L24 24 H40"],
     flow: "M0 24 H10 L14 8 L20 34 L24 24 H40",
     flowLength: 60,
+  },
+  relay: {
+    paths: ["M4 10 H36", "M4 10 L20 30", "M36 10 L20 30"],
+    flow: "M4 10 L20 30 L36 10",
+    flowLength: 44,
   },
 };
 
