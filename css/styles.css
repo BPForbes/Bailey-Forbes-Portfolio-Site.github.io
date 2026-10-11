@@ -801,25 +801,55 @@ h1 {
   font-variation-settings: "SOFT" 40, "WONK" 1;
 }
 
-.kicker {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
+/* Breadcrumb: where this page sits, as a real list of links (WAI-ARIA APG). */
+.breadcrumb {
   margin: 0 0 var(--space-4);
-  color: var(--action-hover);
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
 }
 
-/* A short leader rule before the kicker, like the dash before a running head. */
-.kicker::before {
-  content: "";
-  flex: none;
-  width: 2rem;
-  height: var(--rule-strong);
-  background: var(--action);
+.breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.breadcrumb li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.breadcrumb li + li::before {
+  content: "/";
+  color: var(--text-subtle);
+}
+
+.breadcrumb a,
+.breadcrumb [aria-current] {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.5rem;
+}
+
+.breadcrumb [aria-current] {
+  color: var(--text);
+}
+
+/* The line under a page title: role, dates, stack. Plain text, not a label. */
+.page-meta {
+  margin: 0 0 var(--space-4);
+  color: var(--text-muted);
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+h1:has(+ .page-meta) {
+  margin-bottom: var(--space-2);
 }
 
 .lede {
@@ -882,13 +912,13 @@ main {
   max-width: var(--measure-prose);
 }
 
-.eyebrow {
+/* The date on a project row. */
+.ledger-date {
   margin: 0;
   color: var(--accent);
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .prose {
@@ -2914,8 +2944,15 @@ code {
   text-align: center;
 }
 
-.guest-error .eyebrow {
+.guest-error .guest-status {
   color: var(--status-error);
+}
+
+.guest-status {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .guest-panel h3 {
@@ -3413,17 +3450,6 @@ body.guest-overlay-open {
     box-shadow var(--motion-base) ease-out;
 }
 
-/* The kicker's leading rule draws with its block, and redraws with it. */
-.kicker::before {
-  transform-origin: left center;
-  transition: transform 520ms ease-out calc(var(--reveal-delay, 0ms) + 120ms);
-}
-
-.reveal:not(.is-seen) .kicker::before,
-.kicker.reveal:not(.is-seen)::before {
-  transform: scaleX(0);
-}
-
 /*
  * First paint. The reveal state above only exists once the script has added
  * `.reveal`, which is after the first paint, so the tiles and the page heroes
@@ -3726,11 +3752,9 @@ html.js .story-beat.is-seen:has(+ .story-beat.is-seen)::before {
 
 .tile-label {
   margin: 0;
-  color: var(--text-subtle);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .tile h2 {
@@ -3743,7 +3767,7 @@ html.js .story-beat.is-seen:has(+ .story-beat.is-seen)::before {
   color: var(--action);
 }
 
-.tile > p:not(.tile-label):not(.kicker):not(.lede):not(.source-note) {
+.tile > p:not(.tile-label):not(.page-meta):not(.lede):not(.source-note) {
   margin: 0;
   color: var(--text-muted);
   font-size: 0.95rem;
