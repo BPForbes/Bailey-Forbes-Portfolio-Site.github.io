@@ -33,7 +33,7 @@ TypeScript in `src/` compiled to `js/` and bundled by `tools/build.mjs`. There i
 server, no analytics, no build step beyond `tsc` and esbuild, and runtime requests to third parties only for Google Fonts, the embedded project labs, and the contact form (Cloudflare Turnstile and the contact API). Every behaviour is
 client-side and must work with scripting off, at least in its final state.
 
-The site presents Bailey's work in five projects. Four have their own repositories; see
+The site presents Bailey's work in six projects. Four have their own repositories; see
 [`docs/agents/multi-repo.md`](docs/agents/multi-repo.md).
 
 ## Hard rules
