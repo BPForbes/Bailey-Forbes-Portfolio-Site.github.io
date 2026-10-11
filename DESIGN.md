@@ -436,8 +436,8 @@ first as the fallback for a browser without it.
 | `--surface-sunken` | `#1f221c` | `#ebe3d2` | `#161815` | `#f1f1f1` | Titlebars, notes, inset strips |
 | `--surface-invert` | `#f3ead8` | `#fffaf0` | `#ffffff` | `#ffffff` | Card stock, `.note-card` only |
 | `--text` | `#ebe6d8` | `#1f1b14` | `#ffffff` | `#000000` | Headings and body |
-| `--text-muted` | `#c4bdae` | `#4a4336` | `#f1ede4` | `#111111` | Supporting prose |
-| `--text-subtle` | `#8f897b` | `#605847` | `#d9d4c7` | `#2a2a2a` | Metadata, captions, legends |
+| `--text-muted` | `#c4bdae` | `#332e24` | `#f1ede4` | `#111111` | Supporting prose |
+| `--text-subtle` | `#8f897b` | `#453d2e` | `#d9d4c7` | `#2a2a2a` | Metadata, captions, legends |
 | `--text-on-action` | `#0b0c0a` | `#ffffff` | `#000000` | `#ffffff` | Label on a filled action |
 | `--text-on-invert` | `#2a2418` | `#2a2418` | `#000000` | `#000000` | Ink on card stock |
 | `--text-on-invert-muted` | `#6b5e48` | `#5c5040` | `#2b2b2b` | `#2b2b2b` | The mono label on card stock |
