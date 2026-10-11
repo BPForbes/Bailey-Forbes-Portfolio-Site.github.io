@@ -2646,6 +2646,89 @@ code {
 }
 
 /*
+ * A project diagram, redrawn as inline SVG from the project's own report
+ * figures (R15: a meaningful diagram, not decoration) rather than embedded as
+ * a raster image: it stays crisp at any zoom, its labels are real text that
+ * follows the Display control's theme and contrast, and it costs nothing to
+ * keep in sync with the source figure. Legitimate traffic and a forged or
+ * blocked path never differ by colour alone — a dashed stroke and a label
+ * carry the distinction too (R-use-of-colour).
+ */
+.diagram {
+  margin: var(--space-5) 0 0;
+  min-width: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--surface-page);
+}
+
+.diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.diagram-node {
+  fill: var(--surface-raised);
+  stroke: var(--border-strong);
+  stroke-width: 1.5;
+}
+
+.diagram-node-title {
+  fill: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.diagram-node-meta {
+  fill: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.diagram-edge-label {
+  fill: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.diagram-line-ok {
+  stroke: var(--action);
+  stroke-width: 2;
+  fill: none;
+}
+
+.diagram-line-attack {
+  stroke: var(--status-error);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  fill: none;
+}
+
+.diagram-boundary {
+  stroke: var(--text-subtle);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 4;
+}
+
+.diagram-marker-ok {
+  fill: var(--action);
+}
+
+.diagram-marker-attack {
+  fill: var(--status-error);
+}
+
+.diagram figcaption {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border-strong);
+  color: var(--text-subtle);
+  font-size: 0.85rem;
+}
+
+/*
  * A terminal transcript, kept as text rather than a picture of text: it stays
  * selectable, searchable, legible at any zoom, and reflows on a phone, none of
  * which a screenshot of a shell does.

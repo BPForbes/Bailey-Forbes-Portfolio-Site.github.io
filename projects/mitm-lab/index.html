@@ -99,6 +99,53 @@
           why its reach is normally local: an attacker has to be on the same network segment as
           the devices it targets.
         </p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 640 262" role="img" aria-labelledby="arp-diagram-title arp-diagram-desc">
+            <title id="arp-diagram-title">ARP spoofing redirects the victim's traffic through the attacker</title>
+            <desc id="arp-diagram-desc">
+              The victim and the router each send the attacker their real traffic, believing they are
+              talking to each other. The attacker keeps that up by sending each of them a forged ARP
+              reply that names the attacker's own MAC address as the other device's.
+            </desc>
+            <defs>
+              <marker id="arp-arrow-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-ok" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+              <marker id="arp-arrow-attack" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-attack" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+            </defs>
+
+            <rect class="diagram-node" x="20" y="24" width="180" height="56" rx="4" />
+            <text class="diagram-node-title" x="110" y="48" text-anchor="middle">Victim</text>
+            <text class="diagram-node-meta" x="110" y="66" text-anchor="middle">192.168.1.50</text>
+
+            <rect class="diagram-node" x="440" y="24" width="180" height="56" rx="4" />
+            <text class="diagram-node-title" x="530" y="48" text-anchor="middle">Router</text>
+            <text class="diagram-node-meta" x="530" y="66" text-anchor="middle">192.168.1.1</text>
+
+            <rect class="diagram-node" x="220" y="186" width="200" height="56" rx="4" />
+            <text class="diagram-node-title" x="320" y="210" text-anchor="middle">Attacker (MiTM)</text>
+            <text class="diagram-node-meta" x="320" y="228" text-anchor="middle">192.168.1.76</text>
+
+            <path class="diagram-line-ok" marker-end="url(#arp-arrow-ok)" d="M80 80 L250 186" />
+            <text class="diagram-edge-label" x="20" y="116">real traffic</text>
+
+            <path class="diagram-line-ok" marker-end="url(#arp-arrow-ok)" d="M390 186 L560 80" />
+            <text class="diagram-edge-label" x="494" y="116">forwarded on</text>
+
+            <path class="diagram-line-attack" marker-end="url(#arp-arrow-attack)" d="M295 186 L155 80" />
+            <text class="diagram-edge-label" x="36" y="172">forged ARP reply</text>
+
+            <path class="diagram-line-attack" marker-end="url(#arp-arrow-attack)" d="M400 186 L500 80" />
+            <text class="diagram-edge-label" x="456" y="172">forged ARP reply</text>
+          </svg>
+          <figcaption>
+            Redrawn from the project report. Solid lines are the victim's and router's real traffic,
+            now routed through the attacker; dashed lines are the forged ARP replies that redirect it.
+          </figcaption>
+        </figure>
       </section>
 
       <details class="disclosure">
@@ -118,6 +165,49 @@
           segment — they are running commands as the compromised device, on whatever network
           segments that device can reach.
         </p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 640 220" role="img" aria-labelledby="rs-diagram-title rs-diagram-desc">
+            <title id="rs-diagram-title">A reverse shell crosses the firewall an inbound connection could not</title>
+            <desc id="rs-diagram-desc">
+              A firewall configured to block inbound connections still allows the victim's own
+              outbound connection out. A reverse shell uses that outbound connection, so the
+              attacker's commands travel over a channel the victim opened.
+            </desc>
+            <defs>
+              <marker id="rs-arrow-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-ok" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+              <marker id="rs-arrow-attack" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-attack" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+            </defs>
+
+            <rect class="diagram-node" x="30" y="64" width="170" height="56" rx="4" />
+            <text class="diagram-node-title" x="115" y="88" text-anchor="middle">Victim</text>
+            <text class="diagram-node-meta" x="115" y="106" text-anchor="middle">behind the firewall</text>
+
+            <rect class="diagram-node" x="440" y="64" width="170" height="56" rx="4" />
+            <text class="diagram-node-title" x="525" y="88" text-anchor="middle">Attacker</text>
+            <text class="diagram-node-meta" x="525" y="106" text-anchor="middle">listening</text>
+
+            <line class="diagram-boundary" x1="300" y1="16" x2="300" y2="204" />
+            <text class="diagram-edge-label" x="300" y="12" text-anchor="middle">firewall</text>
+
+            <path class="diagram-line-attack" marker-end="url(#rs-arrow-attack)" d="M440 92 L200 92" />
+            <circle cx="300" cy="92" r="7" fill="none" class="diagram-line-attack" />
+            <text class="diagram-edge-label" x="320" y="78">inbound — blocked</text>
+
+            <path class="diagram-line-ok" marker-end="url(#rs-arrow-ok)" d="M200 152 L440 152" />
+            <text class="diagram-edge-label" x="320" y="172" text-anchor="middle">outbound reverse shell — allowed</text>
+          </svg>
+          <figcaption>
+            Redrawn from the project report. The attacker's own inbound attempt is stopped at the
+            firewall; the victim's outbound connection is not, and that is the connection the
+            reverse shell rides on.
+          </figcaption>
+        </figure>
+
         <p>
           That is the actual finding of the project: a device compromised by a reverse shell can
           be made to carry out ARP spoofing of its own, against other devices on networks it
