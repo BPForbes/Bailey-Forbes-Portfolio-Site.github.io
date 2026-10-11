@@ -12,6 +12,57 @@ roles in `css/styles.css`, which container each kind of content gets, the
 exceptions that were granted and why, and exactly what was and was not verified.
 Read it before changing layout, tokens, or component behaviour.
 
+## The theme
+
+The site reads as a commit log. Each project page draws its history as a git
+branch; the home page opens on a bento overview (who this is, the story line
+drawing from beat to beat, the three labs with their own branch textures
+running on hover, the other projects, skills, now, and a live Indiana clock)
+and continues as the record: numbered chapters on a trunk in the left margin,
+with résumé figures that count up to the number the page states. `src/story.ts` is the
+module; every piece of it runs once, is keyed to the reader's own progress,
+and collapses to its final state under reduced motion or the Display control.
+DESIGN.md B4 records each piece and how to check it.
+
+## Display setting
+
+The header's **Display** control opens as a sheet (a bottom sheet on a phone, a side
+sheet on a desktop) and lets a visitor choose a theme (dark, paper,
+or system), a contrast cut (standard or high), motion (full or reduced) and a
+text size. The choice is saved in `localStorage` under `bf-display`, written
+onto `<html>` as `data-theme` / `data-contrast` / `data-motion` / `data-text`,
+and re-applied before first paint by the inline script in every page's
+`<head>`. With nothing chosen the page follows the OS preferences, with or
+without JavaScript. `src/display.ts` draws the control; the token layer at
+the top of `css/styles.css` does the rendering; DESIGN.md B1 and B4 record
+the four renderings and why the control exists.
+
+To verify a change to any of it: `python3 tools/contrast.py` checks every
+token pair in all four renderings, and `tools/audit-a11y.mjs` (Playwright,
+against a local server on port 4173) measures the rendered pages.
+
+## UI/UX skills
+
+UI work in a Claude Code session uses the
+[UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)
+skill set (MIT). It is **not committed**: `.claude/skills/` is gitignored and
+the skills are installed into it when a session starts.
+
+- **Cloud sessions**: `.claude/hooks/session-start.sh` (registered in
+  `.claude/settings.json`) installs the npm dependencies, builds the site, and
+  runs `npx ui-ux-pro-max-cli init --ai claude`, which writes the core skill
+  and its six sub-skills (design, design-system, ui-styling, brand, slides,
+  banner-design) into `.claude/skills/`.
+- **A local checkout**: either run the same command once in the project, or
+  install the plugin from Claude Code's marketplace
+  (`/plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill`, then
+  `/plugin install ui-ux-pro-max@ui-ux-pro-max-skill`), or install it for every
+  project with `npx ui-ux-pro-max-cli init --ai claude --global`. None of
+  those touch the repository.
+
+The skills are guidance only; DESIGN.md remains the rule set this site is
+built to. `.claude/` is excluded from the Cloudflare asset upload.
+
 ## Project evidence
 
 The QPU and Homework Central screenshots and the Flinstone and KeyQuorum
@@ -59,6 +110,14 @@ Open `http://localhost:4173/home/`.
 TypeScript in `src/` is the source of truth. `npm run build` (`tsc`) emits ES modules into `js/` for the browser; that folder is gitignored. Pages and Cloudflare Workers Builds compile it on deploy, so you do not commit a second handwritten copy of each file.
 
 Cloudflare Workers Builds uses [`wrangler.jsonc`](wrangler.jsonc) to publish this tree as static assets after `npm run build`. Preview branches run `npx wrangler versions upload`. GitHub Pages remains the current host for `bailey-forbes.com` until that custom domain is attached to the Worker.
+
+## Agent instructions
+
+Coding agents read [`AGENTS.md`](AGENTS.md) (canonical) through `CLAUDE.md`. It indexes
+the folder-level files in `src/`, `projects/` and `contact-worker/`, and the references
+in `docs/agents/`: how the project repositories link, how each one deploys, and KeyQuorum's
+Cloudflare setup and kq file formats. GitHub Pages publishes the repository root, so those
+files are public.
 
 ## Project data
 

@@ -1,6 +1,6 @@
 const GENERATED_PROJECT_METADATA = {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-26T09:53:15.423Z",
+  "generatedAt": "2026-10-09T20:45:50.935Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -244,7 +244,7 @@ const GENERATED_PROJECT_METADATA = {
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-09-26T09:53:13.669Z"
+      "fetchedAt": "2026-10-09T20:45:47.663Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -254,10 +254,10 @@ const GENERATED_PROJECT_METADATA = {
       "defaultBranch": "main",
       "description": "A community platform for people to collaborate when it comes to each other\u2019s education.",
       "createdAt": "2026-06-07T21:07:48Z",
-      "pushedAt": "2026-09-25T08:26:08Z",
-      "commitCount": 19,
-      "mergedPullRequestCount": 57,
-      "pullRequestCount": 72,
+      "pushedAt": "2026-10-09T08:28:18Z",
+      "commitCount": 21,
+      "mergedPullRequestCount": 59,
+      "pullRequestCount": 74,
       "languages": [
         {
           "name": "C#",
@@ -416,7 +416,7 @@ const GENERATED_PROJECT_METADATA = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-09-26T09:53:14.903Z"
+      "fetchedAt": "2026-10-09T20:45:49.710Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -426,18 +426,111 @@ const GENERATED_PROJECT_METADATA = {
       "defaultBranch": "main",
       "description": "KeyQuorum is a secure file-sharing system centered on hardware key sharing. Files are encrypted and bound to registered physical tokens, such as USB devices. Access requires the necessary hardware keys to be presented before a protected file can be unlocked, providing layered, hardware-backed access control.",
       "createdAt": "2026-08-24T17:17:46Z",
-      "pushedAt": "2026-09-22T19:56:42Z",
-      "commitCount": 31,
-      "mergedPullRequestCount": 21,
-      "pullRequestCount": 31,
+      "pushedAt": "2026-10-09T20:28:32Z",
+      "commitCount": 82,
+      "mergedPullRequestCount": 83,
+      "pullRequestCount": 104,
       "languages": [
         {
           "name": "Rust",
-          "bytes": 1130723,
-          "pct": 100
+          "bytes": 3746649,
+          "pct": 81.5
+        },
+        {
+          "name": "JavaScript",
+          "bytes": 516491,
+          "pct": 11.2
+        },
+        {
+          "name": "TypeScript",
+          "bytes": 281023,
+          "pct": 6.1
+        },
+        {
+          "name": "CSS",
+          "bytes": 30821,
+          "pct": 0.7
+        },
+        {
+          "name": "HCL",
+          "bytes": 15427,
+          "pct": 0.3
+        },
+        {
+          "name": "Shell",
+          "bytes": 4269,
+          "pct": 0.1
+        },
+        {
+          "name": "HTML",
+          "bytes": 1732,
+          "pct": 0.1
         }
       ],
       "generatedTimelineEvents": [
+        {
+          "date": "2026-10-09",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Add an isolated Access-protected console preview candidate",
+          "detail": "The public relay bot preview does not serve the admin console. This adds a separate Access-protected console preview that composes the existing relay and admin handlers around one preview-local Durable Object. Its root opens `/relay/admin/`;",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/117",
+          "identity": "pr:BPForbes/KeyQuorum#117"
+        },
+        {
+          "date": "2026-10-08",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Add sealed backups, blob storage, packages, and enrollment support",
+          "detail": "This PR implements four major features for KeyQuorum: sealed database backups to R2, large letter storage in R2 buckets, provider packages (`.kqpkg`) for client setup, and enrollment requests (`.kqreq`) for key distribution.",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/105",
+          "identity": "pr:BPForbes/KeyQuorum#105"
+        },
+        {
+          "date": "2026-10-04",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "SOC 2 audit: relay hardening, signed audit trail, zeroized secrets, outbox and inbox ring buffers",
+          "detail": "A repository audit against the SOC 2 Trust Services Criteria, built on the review rules and security tooling from #74. Every control, its evidence and the audit log are in the new `docs/soc2-controls.md`. `main` (through `d0b10af`, all Dependabot upgrades) is merged in, and the conflicts are resolved.",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/84",
+          "identity": "pr:BPForbes/KeyQuorum#84"
+        },
+        {
+          "date": "2026-10-03",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Add security scanning CI, an SBOM job, a security policy and strict SOC 2 review rules",
+          "detail": "Adds the quick SOC 2-readiness items: automated dependency, secret and static scanning, an SBOM, a security policy, and strict review rules for CodeRabbit, Codex and Claude. No Rust or Lab behavior changes.",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/74",
+          "identity": "pr:BPForbes/KeyQuorum#74"
+        },
+        {
+          "date": "2026-10-02",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Feature-gate legacy CLI tests, migrate legacy inbox files, and narrow CI feature set",
+          "detail": "- Limit CI to the explicit runtime/profile features the project uses and avoid building unrelated feature sets by removing `--all-features` from CI jobs. - Preserve compatibility for older test code and legacy CLI verbs by introducing an opt-in feature for legacy tests.",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/73",
+          "identity": "pr:BPForbes/KeyQuorum#73"
+        },
+        {
+          "date": "2026-09-30",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Add export support for tracked-file (.kqtf) bundles",
+          "detail": "- Provide a portable, sealed `KQXB` export path for complete tracked-file containers (`.kqtf`) so a verified tracked-file can be handed to a recipient without access to the local DB.",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/69",
+          "identity": "pr:BPForbes/KeyQuorum#69"
+        },
+        {
+          "date": "2026-09-27",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Add a LaTeX manual for KeyQuorum",
+          "detail": "Documents the customer-facing keyquorum/keyquorum-device CLI end to end: hardware keys, devices and custody modes, quorum trees and locked files, password/vault protection, signatures/export/share, private sign bridges, authenticated updates (reissue/restructure), device transfer, direct file delivery, and the mailbox\u2026",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/37",
+          "identity": "pr:BPForbes/KeyQuorum#37"
+        },
         {
           "date": "2026-09-01",
           "kind": "feature",
@@ -482,19 +575,10 @@ const GENERATED_PROJECT_METADATA = {
           "detail": "* **New Features** * Added secure password-based encryption for files and stored credentials. * Added local storage for protected files, credentials, hardware keys, sharing links, and audit events. * Added password-protected file locking and unlocking with tamper detection.",
           "href": "https://github.com/BPForbes/KeyQuorum/pull/2",
           "identity": "pr:BPForbes/KeyQuorum#2"
-        },
-        {
-          "date": "2026-08-24",
-          "kind": "feature",
-          "project": "keyquorum",
-          "title": "Expand .gitignore and add project/agent instruction files",
-          "detail": "Broaden .gitignore to cover env files, IDEs, OS files, logs, Python tooling, future Tauri/frontend output, and security-sensitive local artifacts (keys, secrets, test data).",
-          "href": "https://github.com/BPForbes/KeyQuorum/pull/1",
-          "identity": "pr:BPForbes/KeyQuorum#1"
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-09-26T09:53:15.423Z"
+      "fetchedAt": "2026-10-09T20:45:50.935Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -531,7 +615,7 @@ const GENERATED_PROJECT_METADATA = {
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-09-26T09:53:14.287Z"
+      "fetchedAt": "2026-10-09T20:45:48.703Z"
     }
   }
 };

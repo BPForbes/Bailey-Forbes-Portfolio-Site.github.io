@@ -25,6 +25,7 @@
  * position, so assistive technology reads all five in order regardless of
  * which one is on top. Only the eye is asked to take them one at a time.
  */
+import { prefersReducedMotion } from "./display.js";
 
 /** Where a card sits at each depth. x is px, y is rem, r is degrees. */
 interface Pose {
@@ -89,9 +90,6 @@ function easeOut(t: number): number {
   return 1 - (1 - t) * (1 - t) * (1 - t);
 }
 
-function prefersReducedMotion(): boolean {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
 
 export function mountDecks(): void {
   document.querySelectorAll<HTMLElement>("[data-deck]").forEach(mountDeck);

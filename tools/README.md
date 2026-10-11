@@ -17,3 +17,24 @@ Icon shapes are CC BY 4.0. Attribution is in the site README.
 
 To add an icon: add its name to `extract-icons.mjs`, run
 `node tools/extract-icons.mjs`, then paste the markup from `icons.json`.
+
+## contrast.py
+
+Every role-token pair that carries text, a control boundary or a focus ring,
+in all four renderings (dark / paper × standard / high contrast), against its
+WCAG 2.2 AA floor. The values are the table in DESIGN.md B1; update both
+when a token changes. `python3 tools/contrast.py` exits non-zero on a failure.
+
+## audit-a11y.mjs
+
+The rendered-page audit DESIGN.md B5 describes: text contrast against the
+real painted background, standalone target sizes, horizontal overflow, focus
+rings, console errors and the Display control's keyboard behaviour, on every
+page, in every rendering, at 320 / 768 / 1280 px. Needs a server on port
+4173 (`python3 -m http.server 4173`) and Playwright with Chromium:
+
+```bash
+NODE_PATH=$(npm root -g) node tools/audit-a11y.mjs
+```
+
+Items it reports as `UNFOCUSABLE` inside a closed `<details>` are expected.
