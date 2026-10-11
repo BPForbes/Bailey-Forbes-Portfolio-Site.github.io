@@ -87,7 +87,7 @@ existing_components_and_tokens:
   - "css/styles.css — the single stylesheet and the token layer (:root)"
   - "src/site.ts — injected header and footer, timeline renderer, language bars"
   - "src/guestWindow.ts — the live-lab guest window (titlebar, dock, stage, states)"
-  - "Components: .btn, .card, .entry, .chip, .breadcrumb, .page-meta, .ledger-date, .guest-status, .section-head, .timeline, .guest-window, .note, .stat-list, .spec-list"
+  - "Components: .btn, .card, .entry, .chip, .breadcrumb, .page-meta, .ledger-date, .guest-panel-label, .section-head, .timeline, .guest-window, .note, .stat-list, .spec-list"
 visual_direction: >
   THE THEME IS A COMMIT LOG (2026-10-10). Every project page already draws
   its history as a git branch; the home page is the trunk those branches
@@ -445,7 +445,7 @@ first as the fallback for a browser without it.
 | `--border-strong` | `#3d4036` | `#b9ad94` | `#9ea396` | `#5a5a5a` | Rules: section heads, ledger rows, entries |
 | `--border-interactive` | `#6d7264` | `#7d7460` | `#c9cdc3` | `#2a2a2a` | Any border that *is* the control's visible boundary (≥3:1, WCAG 1.4.11) |
 | `--action` / `--action-hover` | `#c98a4a` / `#e0b27a` | `#8a4612` / `#6b350c` | `#f3bd74` / `#ffd59a` | `#6b3400` / `#4a2300` | The single call-to-action colour; links and folio numerals use `--action-hover` |
-| `--accent` | `#7ea36a` | `#3f6b33` | `#b8e0a4` | `#1f4d17` | Provenance labels (`.ledger-date`, `.guest-status`) — "this came from the git record" |
+| `--accent` | `#7ea36a` | `#3f6b33` | `#b8e0a4` | `#1f4d17` | Provenance labels (`.ledger-date`, `.guest-panel-label`) — "this came from the git record" |
 | `--focus` | `#e0b27a` | `#8a4612` | `#ffffff` | `#000000` | Focus ring, on every focusable element |
 | `--status-ok` / `--status-wait` / `--status-error` | `#9dc389` / `#e0b27a` / `#e0685c` | `#2f6a2a` / `#8a4612` / `#a8281f` | `#b8e0a4` / `#f3bd74` / `#ff9d93` | `#1f4d17` / `#6b3400` / `#9c1c12` | Live-lab and form status, always paired with text |
 | `--rule` / `--rule-strong` | `1px` / `1px` | same | `2px` / `2px` | `2px` / `2px` | Hairline thickness; every rule and control border reads it |
@@ -537,7 +537,7 @@ anchor the label instead of vanishing into it.
   index open with a breadcrumb (`Home / Projects / Name`, an `<ol>` of links
   with `aria-current="page"` on the last), and the role, dates or stack sit in
   a plain sentence-case line under the title. Labels elsewhere (`.tile-label`,
-  `.ledger-date`, `.guest-status`) are sentence-case semibold text, not
+  `.ledger-date`, `.guest-panel-label`) are sentence-case semibold text, not
   tracked-out capitals.
 - **`.ledger`** (`<ol>` of `.ledger-row`) — the project list: one discrete
   destination per row, numbered in the margin, ruled off from the next. It

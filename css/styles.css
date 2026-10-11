@@ -2944,11 +2944,11 @@ code {
   text-align: center;
 }
 
-.guest-error .guest-status {
+.guest-error .guest-panel-label {
   color: var(--status-error);
 }
 
-.guest-status {
+.guest-panel-label {
   margin: 0;
   color: var(--accent);
   font-size: 0.9rem;

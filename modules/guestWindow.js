@@ -49,7 +49,7 @@ function createGuestWindow(mount) {
         hidden
       ></iframe>
       <div class="guest-panel guest-offline" data-guest-offline hidden>
-        <p class="guest-status">Not attached</p>
+        <p class="guest-panel-label">Not attached</p>
         <h3 data-guest-offline-title>Nothing to run here yet</h3>
         <p data-guest-offline-note></p>
         <div class="guest-panel-actions">
@@ -57,7 +57,7 @@ function createGuestWindow(mount) {
         </div>
       </div>
       <div class="guest-panel guest-error" data-guest-error hidden>
-        <p class="guest-status">Could not attach</p>
+        <p class="guest-panel-label">Could not attach</p>
         <h3 data-guest-error-title>The lab did not respond</h3>
         <p data-guest-error-note></p>
         <div class="guest-panel-actions">
@@ -68,7 +68,7 @@ function createGuestWindow(mount) {
         </div>
       </div>
       <div class="guest-panel guest-boot" data-guest-boot hidden>
-        <p class="guest-status">Attaching</p>
+        <p class="guest-panel-label">Attaching</p>
         <p data-guest-boot-text>Connecting\u2026</p>
       </div>
     </div>
