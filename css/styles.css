@@ -2707,6 +2707,26 @@ code {
   fill: none;
 }
 
+/*
+ * A second pair, for a diagram with four arrows rather than two: each arrow
+ * gets its own colour (not just its own dash pattern), so two solid or two
+ * dashed arrows in the same diagram are never told apart by direction alone.
+ * Style (solid/dashed) still carries the real-vs-forged distinction on its
+ * own, same as the pair above.
+ */
+.diagram-line-ok-alt {
+  stroke: var(--accent);
+  stroke-width: 2;
+  fill: none;
+}
+
+.diagram-line-attack-alt {
+  stroke: var(--status-wait);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  fill: none;
+}
+
 .diagram-boundary {
   stroke: var(--text-subtle);
   stroke-width: 1.5;
@@ -2719,6 +2739,14 @@ code {
 
 .diagram-marker-attack {
   fill: var(--status-error);
+}
+
+.diagram-marker-ok-alt {
+  fill: var(--accent);
+}
+
+.diagram-marker-attack-alt {
+  fill: var(--status-wait);
 }
 
 /* The key under the diagram, same shape as the report's own "Legend:" block:

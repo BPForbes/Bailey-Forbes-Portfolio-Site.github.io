@@ -106,7 +106,7 @@ export const PORTFOLIO: PortfolioData = {
       kind: "release",
       project: "mitm-lab",
       title: "Report and demonstration completed",
-      detail: "Information Security project with Deecon Precht at Indiana University Southeast: a reverse shell extends a local ARP-spoofing MiTM attack past its own network segment, run on an isolated private network, plus the detection and prevention measures that stop it.",
+      detail: "Information Security coursework with Deecon Precht at Indiana University Southeast: a reverse shell extends a local ARP-spoofing MiTM attack past its own network segment, run on an isolated private network, plus the detection and prevention measures that stop it.",
     },
     {
       date: "2025-05-28",

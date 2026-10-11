@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Extending MiTM via reverse shells — Bailey Forbes</title>
-  <meta name="description" content="Information Security project with Deecon Precht: a reverse shell extends a local ARP-spoofing MiTM attack past its own network segment, on an isolated private network, plus the detection and prevention that stop it." />
+  <meta name="description" content="Information Security coursework with Deecon Precht: a reverse shell extends a local ARP-spoofing MiTM attack past its own network segment, on an isolated private network, plus the detection and prevention that stop it." />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -40,10 +40,10 @@
           </ol>
         </nav>
         <h1>Extending MiTM via reverse shells</h1>
-        <p class="page-meta">Course project with Deecon Precht · Information Security · Jul 2024</p>
+        <p class="page-meta">Coursework with Deecon Precht · Information Security · Jul 2024</p>
         <p class="lede">
           A local ARP-spoofing man-in-the-middle attack is confined to one network segment. This
-          project, built with Deecon Precht on an isolated private network, shows how a reverse
+          work, built with Deecon Precht on an isolated private network, shows how a reverse
           shell extends that reach past the segment it started on — and documents the traffic
           monitoring, firewall, and intrusion-detection measures that catch and stop it.
         </p>
@@ -74,7 +74,7 @@
       <div class="strength">
         <p class="strength-label">Attack-and-defense security research</p>
         <p class="strength-evidence">
-          A two-person Information Security project at Indiana University Southeast demonstrating how a
+          Two-person Information Security coursework at Indiana University Southeast demonstrating how a
           reverse shell turns a local ARP-spoofing attack into one that can reach past its own
           network — run entirely on an isolated private network — and the monitoring, firewall,
           and intrusion-detection work that defends against it.
@@ -86,7 +86,7 @@
       <section class="prose" aria-labelledby="mitm-why-title">
         <h2 id="mitm-why-title">Why it exists</h2>
         <p>
-          A course project for Information Security, built with Deecon Precht, on a private lab network we
+          Coursework for Information Security, built with Deecon Precht, on a private lab network we
           controlled end to end: a victim host, a router, and an attacker host, all on addresses
           we assigned ourselves. The question was whether a man-in-the-middle attack, which ARP
           spoofing confines to one local network segment, could be made to reach further — and
@@ -112,8 +112,14 @@
               <marker id="arp-arrow-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                 <path class="diagram-marker-ok" d="M0 0 L10 5 L0 10 Z" />
               </marker>
+              <marker id="arp-arrow-ok-alt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-ok-alt" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
               <marker id="arp-arrow-attack" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                 <path class="diagram-marker-attack" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+              <marker id="arp-arrow-attack-alt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-attack-alt" d="M0 0 L10 5 L0 10 Z" />
               </marker>
             </defs>
 
@@ -129,18 +135,21 @@
             <text class="diagram-node-title" x="320" y="210" text-anchor="middle">Attacker (MiTM)</text>
             <text class="diagram-node-meta" x="320" y="228" text-anchor="middle">192.168.1.76</text>
 
-            <path class="diagram-line-ok" marker-end="url(#arp-arrow-ok)" d="M80 80 L250 186" />
-            <path class="diagram-line-ok" marker-end="url(#arp-arrow-ok)" d="M390 186 L560 80" />
-            <path class="diagram-line-attack" marker-end="url(#arp-arrow-attack)" d="M295 186 L155 80" />
-            <path class="diagram-line-attack" marker-end="url(#arp-arrow-attack)" d="M400 186 L500 80" />
+            <!-- Each pair below arcs between the same two points, bowing to
+                 opposite sides, so two arrows sharing an endpoint never read
+                 as one floating, disconnected segment. -->
+            <path class="diagram-line-ok" marker-end="url(#arp-arrow-ok)" d="M100 80 Q199 104 260 186" />
+            <path class="diagram-line-attack" marker-end="url(#arp-arrow-attack)" d="M260 186 Q161 162 100 80" />
+            <path class="diagram-line-ok-alt" marker-end="url(#arp-arrow-ok-alt)" d="M380 186 Q454 104 560 80" />
+            <path class="diagram-line-attack-alt" marker-end="url(#arp-arrow-attack-alt)" d="M380 186 Q491 162 560 80" />
           </svg>
           <ul class="diagram-legend">
             <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok" x1="0" y1="5" x2="28" y2="5" /></svg>Victim → attacker: the victim's real traffic</li>
-            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok" x1="0" y1="5" x2="28" y2="5" /></svg>Attacker → router: forwarded on to its real destination</li>
             <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-attack" x1="0" y1="5" x2="28" y2="5" /></svg>Attacker → victim: forged ARP reply</li>
-            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-attack" x1="0" y1="5" x2="28" y2="5" /></svg>Attacker → router: forged ARP reply</li>
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok-alt" x1="0" y1="5" x2="28" y2="5" /></svg>Attacker → router: forwarded on to its real destination</li>
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-attack-alt" x1="0" y1="5" x2="28" y2="5" /></svg>Attacker → router: forged ARP reply</li>
           </ul>
-          <figcaption>Redrawn from the project report.</figcaption>
+          <figcaption>Redrawn from the report.</figcaption>
         </figure>
       </section>
 
@@ -200,13 +209,13 @@
             <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok" x1="0" y1="5" x2="28" y2="5" /></svg>Outbound reverse shell — allowed, then carries the attacker's commands</li>
           </ul>
           <figcaption>
-            Redrawn from the project report. The attacker's own inbound attempt is stopped at the
+            Redrawn from the report. The attacker's own inbound attempt is stopped at the
             firewall; the victim's outbound connection is not.
           </figcaption>
         </figure>
 
         <p>
-          That is the actual finding of the project: a device compromised by a reverse shell can
+          That is the actual finding: a device compromised by a reverse shell can
           be made to carry out ARP spoofing of its own, against other devices on networks it
           connects to later. The initial, local attack effectively travels with the compromised
           device rather than staying put. Ettercap did the ARP spoofing and MiTM interception;
@@ -228,7 +237,7 @@
       <section class="prose">
         <h2><svg class="icon icon-head" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M256 0c4.6 0 9.2 1 13.4 2.9L457.7 82.8c22 9.3 38.4 31 38.3 57.2c-.5 99.2-41.3 280.7-213.6 363.2c-16.7 8-36.1 8-52.8 0C57.3 420.7 16.5 239.2 16 140c-.1-26.2 16.3-47.9 38.3-57.2L242.7 2.9C246.8 1 251.4 0 256 0zm0 66.8l0 378.1C394 378 431.1 230.1 432 141.4L256 66.8s0 0 0 0z"/></svg>Detection and prevention</h2>
         <p>
-          Every attack in this project has a defense documented beside it, because the point was
+          Every attack here has a defense documented beside it, because the point was
           to understand both sides.
         </p>
         <p><strong>Against ARP spoofing:</strong> strong, unique device and account passwords;
