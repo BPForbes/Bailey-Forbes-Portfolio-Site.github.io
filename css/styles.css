@@ -1876,6 +1876,33 @@ code {
   font-size: 0.85rem;
 }
 
+/*
+ * A legal or safety caveat that must be read, not skimmed past: the same
+ * accent-rule shape as .strength, but in the error role rather than action,
+ * so a warning reads as a warning rather than as a second confidence
+ * statement.
+ */
+.legal-note {
+  margin: var(--space-5) 0;
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--status-error);
+}
+
+.legal-note-label {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--status-error);
+}
+
+.legal-note p {
+  margin: 0;
+  max-width: var(--measure-prose);
+  color: var(--text);
+}
+
 .about-col .btn {
   margin-top: var(--space-4);
 }
