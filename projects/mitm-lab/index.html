@@ -59,7 +59,7 @@
         </div>
         <div>
           <dt>7</dt>
-          <dd>Tools used: Ettercap, NMap, netcat, MSFVenom, SSH, TCPDump, Wireshark</dd>
+          <dd>Tools used: Ettercap, NMap (which bundles netcat), MSFVenom or a scripted payload, SSH, TCPDump, Wireshark</dd>
         </div>
         <div>
           <dt>4</dt>
@@ -90,8 +90,11 @@
           host, a router, and an attacker host, all on addresses we assigned ourselves.
         </p>
         <p>
-          The question was simple. A man-in-the-middle attack is normally stuck on one local
-          network. Could it be made to reach further, and what would actually catch it if it did.
+          A man-in-the-middle, or MiTM, attack is a third party sitting between two devices that
+          believe they are talking directly to each other, able to read or change the traffic
+          passing between them. That attack is normally stuck on one local network. The question
+          was simple: could it be made to reach further, and what would actually catch it if it
+          did.
         </p>
         <p>
           Every device on a network answers to two addresses: an IP address, like a street
@@ -287,9 +290,9 @@
           the lab was recorded with a tool called tcpdump, roughly a dashboard camera that records
           everything passing on a stretch of road.</p>
         <p>
-          That recording was played back afterward in Wireshark, filtered down to the moments
-          that mattered, the way you would skip straight to the few minutes of footage that
-          actually show the car you are interested in. The recording, not just the attack
+          That recording was played back afterward in Wireshark, filtered down by protocol to
+          just the ARP traffic, the way you would skip straight to the few minutes of footage
+          that actually show the car you are interested in. The recording, not just the attack
           appearing to work, is what confirmed the forged replies really arrived.
         </p>
 
@@ -426,10 +429,11 @@
           rather than staying put.
         </p>
         <p>
-          Ettercap did the ARP spoofing and MiTM interception. Netcat, run as <code>ncat</code>
-          rather than <code>nc</code> for cross-platform compatibility, opened the reverse shell.
-          MSFVenom generated the payload that triggers it, though a short script using a
-          programming language's own networking libraries works the same way.
+          Ettercap did the ARP spoofing and MiTM interception. Netcat, which Kali packages
+          alongside NMap rather than as its own install, run as <code>ncat</code> rather than
+          <code>nc</code> for cross-platform compatibility, opened the reverse shell. MSFVenom
+          generated the payload that triggers it, though a short script using a programming
+          language's own networking libraries works the same way.
         </p>
         <p>
           MSFVenom's payloads were not reliable in our testing, which is worth noting on its own.
