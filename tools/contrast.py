@@ -20,7 +20,7 @@ themes = {
    border="#2c2f28",border_strong="#3d4036",border_interactive="#6d7264",
    action="#c98a4a",action_hover="#e0b27a",accent="#7ea36a",focus="#e0b27a",ok="#9dc389",wait="#e0b27a",error="#e0685c"),
  "light": dict(page="#f4eee2",raised="#fbf7ee",sunken="#ebe3d2",invert="#fffaf0",
-   text="#1f1b14",muted="#4a4336",subtle="#605847",on_action="#ffffff",on_invert="#2a2418",on_invert_muted="#5c5040",
+   text="#1f1b14",muted="#332e24",subtle="#453d2e",on_action="#ffffff",on_invert="#2a2418",on_invert_muted="#5c5040",
    border="#d8cfbb",border_strong="#b9ad94",border_interactive="#7d7460",
    action="#8a4612",action_hover="#6b350c",accent="#3f6b33",focus="#8a4612",ok="#2f6a2a",wait="#8a4612",error="#a8281f"),
  "dark-hc": dict(page="#000000",raised="#0d0e0c",sunken="#161815",invert="#ffffff",

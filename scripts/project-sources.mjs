@@ -70,4 +70,5 @@ export const PORTFOLIO_PROJECT_IDS = Object.freeze([
   "flinstone",
   "keyquorum",
   "qpu",
+  "mitm-lab",
 ]);

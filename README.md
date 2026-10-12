@@ -153,8 +153,9 @@ repository facts; curated copy wins for anything written by a person.
   `Team of five`, `HIPAA testing`. These describe the work, not the tree, and
   GitHub cannot know them.
 - All curated timeline prose in `src/data.ts`.
-- Everything about the **EMR**, which has no public repository. Its page says so,
-  and its language split is explicitly labelled an estimate.
+- Everything about the **EMR** and the **MiTM lab**, neither of which has a public
+  repository. The EMR page says so, and its language split is explicitly labelled
+  an estimate; the MiTM lab page says so and carries no language split at all.
 - Résumé figures such as the "11 core kernel releases" count.
 - The captured shell transcripts on the project pages, which are records of a
   real session and are not re-derived.
@@ -337,6 +338,7 @@ GitHub Pages serves each folder’s `index.html` without showing the filename. O
 | `/projects/keyquorum/` | KeyQuorum (live WebAssembly security lab) |
 | `/projects/homework-central/` | Homework Central |
 | `/projects/emr/` | Electronic medical record |
+| `/projects/mitm-lab/` | Extending MiTM via reverse shells |
 | `/timeline/` | Redirects to `/projects/` |
 | `/404.html` | Not found, with a list of every real page |
 

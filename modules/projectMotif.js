@@ -24,6 +24,11 @@ const TILES = {
     paths: ["M0 24 H10 L14 8 L20 34 L24 24 H40"],
     flow: "M0 24 H10 L14 8 L20 34 L24 24 H40",
     flowLength: 60
+  },
+  relay: {
+    paths: ["M4 10 H36", "M4 10 L20 30", "M36 10 L20 30"],
+    flow: "M4 10 L20 30 L36 10",
+    flowLength: 44
   }
 };
 function isMotifKey(value) {

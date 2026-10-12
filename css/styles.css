@@ -64,8 +64,8 @@
   --p-paper-sunken: #ebe3d2;
   --p-paper-card: #fffaf0;
   --p-paper-text: #1f1b14;
-  --p-paper-muted: #4a4336;
-  --p-paper-subtle: #605847;
+  --p-paper-muted: #332e24;
+  --p-paper-subtle: #453d2e;
   --p-paper-line: #d8cfbb;
   --p-paper-line-strong: #b9ad94;
   --p-paper-stone: #7d7460;
@@ -1876,6 +1876,33 @@ code {
   font-size: 0.85rem;
 }
 
+/*
+ * A legal or safety caveat that must be read, not skimmed past: the same
+ * accent-rule shape as .strength, but in the error role rather than action,
+ * so a warning reads as a warning rather than as a second confidence
+ * statement.
+ */
+.legal-note {
+  margin: var(--space-5) 0;
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--status-error);
+}
+
+.legal-note-label {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--status-error);
+}
+
+.legal-note p {
+  margin: 0;
+  max-width: var(--measure-prose);
+  color: var(--text);
+}
+
 .about-col .btn {
   margin-top: var(--space-4);
 }
@@ -2646,6 +2673,145 @@ code {
 }
 
 /*
+ * A project diagram, redrawn as inline SVG from the project's own report
+ * figures (R15: a meaningful diagram, not decoration) rather than embedded as
+ * a raster image: it stays crisp at any zoom, its labels are real text that
+ * follows the Display control's theme and contrast, and it costs nothing to
+ * keep in sync with the source figure. Legitimate traffic and a forged or
+ * blocked path never differ by colour alone — a dashed stroke and a label
+ * carry the distinction too (R-use-of-colour).
+ */
+.diagram {
+  margin: var(--space-5) 0 0;
+  min-width: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--surface-page);
+}
+
+.diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.diagram-node {
+  fill: var(--surface-raised);
+  stroke: var(--border-strong);
+  stroke-width: 1.5;
+}
+
+.diagram-node-title {
+  fill: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.diagram-node-meta {
+  fill: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.diagram-edge-label {
+  fill: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.diagram-line-ok {
+  stroke: var(--action);
+  stroke-width: 2;
+  fill: none;
+}
+
+.diagram-line-attack {
+  stroke: var(--status-error);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  fill: none;
+}
+
+/*
+ * A second pair, for a diagram with four arrows rather than two: each arrow
+ * gets its own colour (not just its own dash pattern), so two solid or two
+ * dashed arrows in the same diagram are never told apart by direction alone.
+ * Style (solid/dashed) still carries the real-vs-forged distinction on its
+ * own, same as the pair above.
+ */
+.diagram-line-ok-alt {
+  stroke: var(--accent);
+  stroke-width: 2;
+  fill: none;
+}
+
+.diagram-line-attack-alt {
+  stroke: var(--status-wait);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  fill: none;
+}
+
+.diagram-boundary {
+  stroke: var(--text-subtle);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 4;
+}
+
+.diagram-marker-ok {
+  fill: var(--action);
+}
+
+.diagram-marker-attack {
+  fill: var(--status-error);
+}
+
+.diagram-marker-ok-alt {
+  fill: var(--accent);
+}
+
+.diagram-marker-attack-alt {
+  fill: var(--status-wait);
+}
+
+/* The key under the diagram, same shape as the report's own "Legend:" block:
+   a line sample (not a colour alone) beside what it means. */
+.diagram-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  margin: 0;
+  padding: 0 var(--space-4) var(--space-3);
+  list-style: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.diagram-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Specificity over `.diagram svg` (width: 100%), which would otherwise
+   stretch this swatch to the legend's full column width. */
+.diagram-legend .diagram-legend-swatch {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 10px;
+  overflow: visible;
+}
+
+.diagram figcaption {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border-strong);
+  color: var(--text-subtle);
+  font-size: 0.85rem;
+}
+
+/*
  * A terminal transcript, kept as text rather than a picture of text: it stays
  * selectable, searchable, legible at any zoom, and reflows on a phone, none of
  * which a screenshot of a shell does.
@@ -3040,15 +3206,6 @@ body.guest-overlay-open {
   border-top: var(--rule-strong) solid var(--border-strong);
   color: var(--text-subtle);
   font-size: 0.9rem;
-}
-
-.footer-colophon {
-  margin: 0 0 var(--space-3);
-  color: var(--action-hover);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
 }
 
 .footer-grid {
@@ -4576,6 +4733,7 @@ body::before {
   .tile-lab { grid-column: span 3; }
   .tile-hc { grid-column: span 3; }
   .tile-emr { grid-column: span 3; }
+  .tile-mitm { grid-column: span 6; }
   .tile-skills { grid-column: span 3; }
   .tile-now { grid-column: span 3; }
   .tile-reach { grid-column: span 3; }
@@ -4814,7 +4972,8 @@ body::before {
  *
  * From 76rem the overview has its twelve columns: intro and spec sheet
  * stacked in the left seven beside the portrait, the story across, the three
- * labs abreast, then Homework Central / EMR / skills, then now / reach.
+ * labs abreast, then Homework Central / EMR / the MiTM lab / skills (four
+ * even columns), then now / reach.
  */
 @media (min-width: 76rem) {
   .bento {
@@ -4828,9 +4987,10 @@ body::before {
   .tile-story { grid-column: span 12; }
   .tile-filter { grid-column: span 12; }
   .tile-lab { grid-column: span 4; }
-  .tile-hc { grid-column: span 5; }
+  .tile-hc { grid-column: span 3; }
   .tile-emr { grid-column: span 3; }
-  .tile-skills { grid-column: span 4; }
+  .tile-mitm { grid-column: span 3; }
+  .tile-skills { grid-column: span 3; }
   .tile-now { grid-column: span 5; }
   .tile-reach { grid-column: span 7; }
 

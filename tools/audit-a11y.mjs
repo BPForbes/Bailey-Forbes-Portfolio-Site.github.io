@@ -5,7 +5,7 @@
 // Display control's keyboard behaviour — in every theme/contrast rendering.
 import { chromium } from "playwright";
 const base = "http://localhost:4173";
-const pages = ["/home/", "/projects/", "/projects/flinstone/", "/projects/homework-central/", "/projects/keyquorum/", "/projects/qpu/", "/projects/emr/", "/404.html"];
+const pages = ["/home/", "/projects/", "/projects/flinstone/", "/projects/homework-central/", "/projects/keyquorum/", "/projects/qpu/", "/projects/emr/", "/projects/mitm-lab/", "/404.html"];
 const renderings = [
   { tag: "dark", prefs: { theme: "dark", contrast: "standard" } },
   { tag: "light", prefs: { theme: "light", contrast: "standard" } },

@@ -6,14 +6,16 @@ const PORTFOLIO = {
     "homework-central": "Homework Central",
     flinstone: "Flinstone Kernel",
     keyquorum: "KeyQuorum",
-    qpu: "QPU"
+    qpu: "QPU",
+    "mitm-lab": "Extending MiTM via reverse shells"
   },
   projectOrder: [
     "emr",
     "qpu",
     "flinstone",
     "homework-central",
-    "keyquorum"
+    "keyquorum",
+    "mitm-lab"
   ],
   languages: {
     emr: [
@@ -96,6 +98,13 @@ const PORTFOLIO = {
       project: "emr",
       title: "Sponsor handoff",
       detail: "May closes securing and transfers administrative ownership after onboarding. Team measured about 60% improvement in record-processing efficiency versus the spreadsheet baseline."
+    },
+    {
+      date: "2024-07-31",
+      kind: "release",
+      project: "mitm-lab",
+      title: "Report and demonstration completed",
+      detail: "Security research with Deecon Precht at Indiana University Southeast: a reverse shell extends a local ARP-spoofing MiTM attack past its own network segment, run on an isolated private network, plus the detection and prevention measures that stop it."
     },
     {
       date: "2025-05-28",
