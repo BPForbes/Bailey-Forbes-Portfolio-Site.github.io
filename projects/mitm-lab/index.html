@@ -467,27 +467,63 @@
           <summary><span class="disclosure-toggle" aria-hidden="true"></span>netlab command reference</summary>
           <div class="disclosure-body">
             <div class="disclosure-body-inner">
-              <div class="transcript">
-                <p class="transcript-bar">netlab help · security build</p>
-                <pre><code><b>netlab consent</b>                       the lab boundary: fabricated topology, no real network
-<b>netlab pods</b>                          list the simulated pods
-<b>netlab hosts</b> &lt;pod&gt;                  the pod's fabricated host table (SSID, IP, MAC, role)
-<b>netlab scan</b> &lt;pod&gt;                   host discovery: which hosts answer, with MACs
-<b>netlab wpa</b> &lt;pod&gt;                    the pod AP's simulated security and PSK
-<b>netlab topology</b> &lt;pod&gt;               ASCII map of the pod
-<b>netlab traceroute</b> &lt;pod&gt; &lt;dst&gt;      simulated hop path to a host in the pod
-<b>netlab monitor</b> &lt;pod&gt;                replay the pod's simulated frame script
-<b>netlab arp-demo</b> &lt;pod&gt;               walk through how an ARP-spoof MiTM works
-<b>netlab capture</b> &lt;pod&gt;                print the simulated frames and raise the ARP-conflict alert
-<b>netlab rs-explain</b>                    explain reverse-shell mechanics, with no injection
-<b>netlab defend</b>                        the detection and prevention checklist
-<b>netlab pod</b> create|join|members|host|leave   pod membership, keyed on your real account
-<b>netlab listen</b> [cancel]               open (or cancel) a listener: the attacker side
-<b>netlab accept</b>                        accept the open listener: the victim side
-<b>netlab</b> &lt;cmd&gt;                        while bound, runs in the sandbox
-<b>netlab end</b>                           close the binding, from either side
-<b>netlab start</b> | stop                  isolate the real network for the demo, or restore it
-<b>netlab status</b>                        pod, host, binding, and network mode</code></pre>
+              <div class="cmd-list">
+                <div class="transcript cmd-line"><pre><code>netlab consent</code></pre></div>
+                <p class="cmd-desc">The lab boundary: a fabricated topology, with no real network.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab pods</code></pre></div>
+                <p class="cmd-desc">List the simulated pods.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab hosts &lt;pod&gt;</code></pre></div>
+                <p class="cmd-desc">The pod's fabricated host table: SSID, IP, MAC, and role.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab scan &lt;pod&gt;</code></pre></div>
+                <p class="cmd-desc">Host discovery: which hosts answer, with their MACs.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab wpa &lt;pod&gt;</code></pre></div>
+                <p class="cmd-desc">The pod access point's simulated security and PSK.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab topology &lt;pod&gt;</code></pre></div>
+                <p class="cmd-desc">An ASCII map of the pod.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab traceroute &lt;pod&gt; &lt;dst&gt;</code></pre></div>
+                <p class="cmd-desc">The simulated hop path to a host in the pod.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab monitor &lt;pod&gt;</code></pre></div>
+                <p class="cmd-desc">Replay the pod's simulated frame script.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab arp-demo &lt;pod&gt;</code></pre></div>
+                <p class="cmd-desc">Walk through how an ARP-spoofing MiTM works.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab capture &lt;pod&gt;</code></pre></div>
+                <p class="cmd-desc">Print the simulated frames and raise the ARP-conflict alert.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab rs-explain</code></pre></div>
+                <p class="cmd-desc">Explain reverse-shell mechanics, with no injection.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab defend</code></pre></div>
+                <p class="cmd-desc">The detection and prevention checklist.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab pod create|join|members|host|leave</code></pre></div>
+                <p class="cmd-desc">Pod membership, keyed on your real account.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab listen [cancel]</code></pre></div>
+                <p class="cmd-desc">Open, or cancel, a listener: the attacker side.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab accept</code></pre></div>
+                <p class="cmd-desc">Accept the open listener: the victim side.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab &lt;cmd&gt;</code></pre></div>
+                <p class="cmd-desc">While a binding is open, runs in the sandbox.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab end</code></pre></div>
+                <p class="cmd-desc">Close the binding, from either side.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab start | stop</code></pre></div>
+                <p class="cmd-desc">Isolate the real network for the demo, or restore it.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab status</code></pre></div>
+                <p class="cmd-desc">Pod, host, binding, and network mode.</p>
               </div>
               <p class="evidence-note">
                 Transcribed from the security build's own <code>netlab help</code> and the verbs it

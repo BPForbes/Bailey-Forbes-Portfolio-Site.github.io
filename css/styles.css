@@ -2879,6 +2879,26 @@ code {
   background: #000;
 }
 
+/* One command per block: the command alone in its code line, its meaning
+ * in prose just below, so each reads on its own at any width. */
+.cmd-list {
+  margin-top: var(--space-4);
+}
+
+.cmd-line {
+  margin: var(--space-4) 0 0;
+}
+
+.cmd-line pre {
+  padding: var(--space-3) var(--space-4);
+}
+
+.cmd-desc {
+  margin: var(--space-2) 0 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
 /* ----------------------------------------------------------- lang chart --- */
 
 /*
