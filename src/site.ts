@@ -72,9 +72,6 @@ if (footer) {
   const year = (published ?? synced).slice(0, 4);
 
   footer.innerHTML = `
-      <div class="wrap">
-        <p class="footer-colophon">Colophon</p>
-      </div>
       <div class="wrap footer-grid">
         <p>
           © ${year} Bailey P Forbes.${published === undefined ? "" : `

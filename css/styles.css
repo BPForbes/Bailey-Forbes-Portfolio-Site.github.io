@@ -3181,15 +3181,6 @@ body.guest-overlay-open {
   font-size: 0.9rem;
 }
 
-.footer-colophon {
-  margin: 0 0 var(--space-3);
-  color: var(--action-hover);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
 .footer-grid {
   display: flex;
   justify-content: space-between;
