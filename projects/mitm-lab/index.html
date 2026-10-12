@@ -173,6 +173,61 @@
           </ul>
           <figcaption>Redrawn from the report.</figcaption>
         </figure>
+
+        <p>
+          That locality is not a policy choice, it is the protocol itself. ARP operates at Layer
+          2 of the OSI model, the Data Link Layer, which only exists within one network segment. A
+          router bridges separate segments at Layer 3 and does not forward ARP traffic between
+          them, so a forged ARP reply simply stops at the router's edge. Spoofing it only ever
+          works within earshot.
+        </p>
+        <p>
+          A reverse shell is not a Layer 2 trick. It is an ordinary Layer 3/4 connection, the kind
+          a router forwards without a second thought. Once it gives the attacker a foothold on a
+          device, that device becomes the new vantage point: whatever network segment it later
+          joins, the same local ARP spoofing can be run again from there. The attacker hops
+          segment to segment with the compromised device rather than ever actually breaking
+          Layer 2's reach.
+        </p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 640 230" role="img" aria-labelledby="layer-diagram-title layer-diagram-desc">
+            <title id="layer-diagram-title">ARP stays inside one segment; a routed connection does not</title>
+            <desc id="layer-diagram-desc">
+              ARP spoofing operates at Layer 2 of the OSI model and never crosses a router into
+              another network segment. A reverse shell is an ordinary Layer 3/4 connection, the
+              kind a router forwards normally, so it can reach the attacker from any segment the
+              compromised device later joins.
+            </desc>
+            <defs>
+              <marker id="layer-arrow-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-ok" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+              <marker id="layer-arrow-attack" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-attack" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+            </defs>
+
+            <rect class="diagram-node" x="20" y="60" width="240" height="70" rx="4" />
+            <text class="diagram-node-title" x="140" y="88" text-anchor="middle">This network segment</text>
+            <text class="diagram-node-meta" x="140" y="106" text-anchor="middle">ARP spoofing happens here</text>
+
+            <rect class="diagram-node" x="380" y="60" width="240" height="70" rx="4" />
+            <text class="diagram-node-title" x="500" y="88" text-anchor="middle">A different network</text>
+            <text class="diagram-node-meta" x="500" y="106" text-anchor="middle">reached only by routing</text>
+
+            <line class="diagram-boundary" x1="320" y1="10" x2="320" y2="200" />
+            <text class="diagram-edge-label" x="320" y="6" text-anchor="middle">router: Layer 2 stops here</text>
+
+            <path class="diagram-line-attack" marker-end="url(#layer-arrow-attack)" d="M60 130 Q140 164 220 130" />
+            <path class="diagram-line-ok" marker-end="url(#layer-arrow-ok)" d="M260 95 L380 95" />
+          </svg>
+          <ul class="diagram-legend">
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-attack" x1="0" y1="5" x2="28" y2="5" /></svg>ARP spoofing: Layer 2 only, stays inside this segment</li>
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok" x1="0" y1="5" x2="28" y2="5" /></svg>Reverse shell: an ordinary Layer 3/4 connection, crosses like any routed traffic</li>
+          </ul>
+          <figcaption>Why the attack needed a reverse shell to go anywhere past its own segment.</figcaption>
+        </figure>
       </section>
 
       <section class="prose" aria-labelledby="mitm-lab-title">
@@ -488,6 +543,15 @@
         </p>
       </section>
 
+          </div>
+        </div>
+      </details>
+
+      <details class="disclosure">
+        <summary><span class="disclosure-toggle" aria-hidden="true"></span>Read the prevention strategies</summary>
+        <div class="disclosure-body">
+          <div class="disclosure-body-inner">
+
       <section class="prose">
         <h2><svg class="icon icon-head" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M256 0c4.6 0 9.2 1 13.4 2.9L457.7 82.8c22 9.3 38.4 31 38.3 57.2c-.5 99.2-41.3 280.7-213.6 363.2c-16.7 8-36.1 8-52.8 0C57.3 420.7 16.5 239.2 16 140c-.1-26.2 16.3-47.9 38.3-57.2L242.7 2.9C246.8 1 251.4 0 256 0zm0 66.8l0 378.1C394 378 431.1 230.1 432 141.4L256 66.8s0 0 0 0z"/></svg>Detection and prevention</h2>
         <p>
@@ -503,6 +567,98 @@
           rather than only inbound; endpoint protection that can recognize and block a reverse
           shell payload before it runs; and an intrusion detection system to flag the pattern even
           when the payload itself is novel.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 640 200" role="img" aria-labelledby="mon-diagram-title mon-diagram-desc">
+            <title id="mon-diagram-title">Traffic monitoring flags connections that do not belong</title>
+            <desc id="mon-diagram-desc">
+              Network traffic passes a monitoring point. Traffic to a known, expected destination
+              continues normally. Traffic to an unfamiliar host or port, the pattern a reverse
+              shell produces, is flagged and blocked instead of being left to leave the network.
+            </desc>
+            <defs>
+              <marker id="mon-arrow-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-ok" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+              <marker id="mon-arrow-attack" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-attack" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+            </defs>
+
+            <rect class="diagram-node" x="20" y="70" width="160" height="60" rx="4" />
+            <text class="diagram-node-title" x="100" y="96" text-anchor="middle">Device</text>
+            <text class="diagram-node-meta" x="100" y="114" text-anchor="middle">on the network</text>
+
+            <rect class="diagram-node" x="240" y="70" width="160" height="60" rx="4" />
+            <text class="diagram-node-title" x="320" y="96" text-anchor="middle">Monitoring</text>
+            <text class="diagram-node-meta" x="320" y="114" text-anchor="middle">traffic analysis / IDS</text>
+
+            <rect class="diagram-node" x="460" y="10" width="160" height="56" rx="4" />
+            <text class="diagram-node-title" x="540" y="34" text-anchor="middle">Expected</text>
+            <text class="diagram-node-meta" x="540" y="52" text-anchor="middle">known destination</text>
+
+            <rect class="diagram-node" x="460" y="134" width="160" height="56" rx="4" />
+            <text class="diagram-node-title" x="540" y="158" text-anchor="middle">Unfamiliar</text>
+            <text class="diagram-node-meta" x="540" y="176" text-anchor="middle">unknown host or port</text>
+
+            <path class="diagram-line-ok" marker-end="url(#mon-arrow-ok)" d="M180 100 L240 100" />
+            <path class="diagram-line-ok" marker-end="url(#mon-arrow-ok)" d="M400 95 Q430 70 460 42" />
+            <path class="diagram-line-attack" marker-end="url(#mon-arrow-attack)" d="M400 110 Q430 140 460 162" />
+            <circle cx="460" cy="162" r="7" fill="none" class="diagram-line-attack" />
+          </svg>
+          <ul class="diagram-legend">
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok" x1="0" y1="5" x2="28" y2="5" /></svg>Ordinary traffic: reaches its expected destination</li>
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-attack" x1="0" y1="5" x2="28" y2="5" /></svg>Unusual outbound traffic: flagged, then blocked rather than left to leave</li>
+          </ul>
+          <figcaption>What traffic analysis and an intrusion detection system are watching for.</figcaption>
+        </figure>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 640 210" role="img" aria-labelledby="fw-diagram-title fw-diagram-desc">
+            <title id="fw-diagram-title">Minimal open ports and outbound rules close the door the attack used</title>
+            <desc id="fw-diagram-desc">
+              A firewall with egress rules restricts outbound connections the same way it
+              restricts inbound ones, and port forwarding is limited to the ports a device
+              actually needs, so neither the reverse shell's outbound connection nor an
+              unnecessary open port has anywhere to go.
+            </desc>
+            <defs>
+              <marker id="fw-arrow-ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-ok" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+              <marker id="fw-arrow-attack" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path class="diagram-marker-attack" d="M0 0 L10 5 L0 10 Z" />
+              </marker>
+            </defs>
+
+            <rect class="diagram-node" x="20" y="77" width="150" height="56" rx="4" />
+            <text class="diagram-node-title" x="95" y="101" text-anchor="middle">Device</text>
+            <text class="diagram-node-meta" x="95" y="119" text-anchor="middle">on the network</text>
+
+            <rect class="diagram-node" x="210" y="77" width="170" height="56" rx="4" />
+            <text class="diagram-node-title" x="295" y="101" text-anchor="middle">Firewall</text>
+            <text class="diagram-node-meta" x="295" y="119" text-anchor="middle">egress rules, minimal ports</text>
+
+            <rect class="diagram-node" x="440" y="16" width="180" height="56" rx="4" />
+            <text class="diagram-node-title" x="530" y="40" text-anchor="middle">Needed</text>
+            <text class="diagram-node-meta" x="530" y="58" text-anchor="middle">the few ports in use</text>
+
+            <rect class="diagram-node" x="440" y="140" width="180" height="56" rx="4" />
+            <text class="diagram-node-title" x="530" y="164" text-anchor="middle">Everything else</text>
+            <text class="diagram-node-meta" x="530" y="182" text-anchor="middle">in or out</text>
+
+            <path class="diagram-line-ok" marker-end="url(#fw-arrow-ok)" d="M170 105 L210 105" />
+            <path class="diagram-line-ok" marker-end="url(#fw-arrow-ok)" d="M380 95 Q410 60 440 44" />
+            <path class="diagram-line-attack" marker-end="url(#fw-arrow-attack)" d="M380 115 Q410 150 440 168" />
+            <circle cx="440" cy="168" r="7" fill="none" class="diagram-line-attack" />
+          </svg>
+          <ul class="diagram-legend">
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-ok" x1="0" y1="5" x2="28" y2="5" /></svg>Only the ports a device actually needs are forwarded or allowed out</li>
+            <li><svg class="diagram-legend-swatch" viewBox="0 0 28 10" aria-hidden="true"><line class="diagram-line-attack" x1="0" y1="5" x2="28" y2="5" /></svg>Every other port, inbound or outbound, is closed by default</li>
+          </ul>
+          <figcaption>Egress filtering closes the same outbound path the reverse shell relied on.</figcaption>
+        </figure>
+
         <p>
           Network-wide, the same monitoring and firewall discipline is reinforced by DNSSEC
           against DNS spoofing, key-based SSH authentication in place of passwords with
