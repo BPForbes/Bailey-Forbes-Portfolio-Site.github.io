@@ -417,6 +417,127 @@
         </p>
       </section>
 
+      <section class="prose" id="security-lab" aria-labelledby="security-lab-title">
+        <h2 id="security-lab-title">Run the security lab</h2>
+        <p>
+          The security-features build of the Flinstone kernel lab runs below as a guest window. It
+          adds the netlab simulation: fabricated pods, a listener and accept binding, and a disposable
+          sandbox for the reverse shell. The simulation runs in memory against fabricated hosts.
+        </p>
+        <div data-guest-window data-guest="flinstone-security" data-guest-solo id="security-lab-window"></div>
+        <p class="note">
+          Known limitation: the lab needs cross-origin isolation. If the window reports that it could
+          not attach, open
+          <a href="https://bpforbes.github.io/Bailey-Forbes-Flinstone/security/">the security lab on its own page</a>
+          once and come back. The window has a reload button for exactly this.
+        </p>
+
+        <h3>Watch the demo</h3>
+        <figure class="demo-video">
+          <video controls preload="metadata" playsinline width="1280" height="720" aria-describedby="demo-video-note">
+            <source src="/projects/mitm-lab/media/flinstone-mitm-rs-demo.mp4" type="video/mp4" />
+            <p>
+              Your browser cannot play this video.
+              <a href="/projects/mitm-lab/media/flinstone-mitm-rs-demo.mp4">Download the demo (MP4)</a>.
+            </p>
+          </video>
+          <figcaption id="demo-video-note" class="evidence-note">
+            Video demo of the Flinstone lab of MitM + RS using pre-populated data.
+          </figcaption>
+        </figure>
+
+        <details class="disclosure">
+          <summary><span class="disclosure-toggle" aria-hidden="true"></span>How to run the lab</summary>
+          <div class="disclosure-body">
+            <div class="disclosure-body-inner">
+              <ol>
+                <li>Wait for the window above to attach. The panel's buttons turn on once the shell is ready. If it reports that it could not attach, use the reload button in the window.</li>
+                <li>Under <strong>Network segment</strong>, pick <code>redteam-lab</code> or <code>blueteam-lab</code>. The recon buttons act on that fabricated network.</li>
+                <li>Under <strong>Pod</strong>, keep the name <code>redcell</code> or type your own, then press <strong>Create pod</strong>. You become its first member.</li>
+                <li>To add a second member, open a second session as another account in the <strong>Users and sessions</strong> panel, then press <strong>Join pod (as me)</strong> in that session.</li>
+                <li>Under <strong>Reverse shell</strong>, press <strong>Listen (attacker)</strong> in one session. In the other member's session, press <strong>Accept (victim)</strong>. A member cannot accept their own listener.</li>
+                <li>While the binding is open, type <code>netlab &lt;cmd&gt;</code> in the terminal. It runs in a disposable sandbox labeled for the victim, never the victim's real account, files, or terminal.</li>
+                <li>Accepting isolates the lab from the real network, as <strong>Start demo (isolate)</strong> does. Press <strong>End binding</strong> from either session to close it. That restores the network, as <strong>Stop demo (resume real net)</strong> does.</li>
+              </ol>
+            </div>
+          </div>
+        </details>
+
+        <details class="disclosure">
+          <summary><span class="disclosure-toggle" aria-hidden="true"></span>netlab command reference</summary>
+          <div class="disclosure-body">
+            <div class="disclosure-body-inner">
+              <div class="cmd-list">
+                <div class="transcript cmd-line"><pre><code>netlab consent</code></pre></div>
+                <p class="cmd-desc">The lab boundary: a fabricated topology, with no real network.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab pods</code></pre></div>
+                <p class="cmd-desc">List the simulated pods.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab hosts &lt;pod&gt;</code></pre></div>
+                <p class="cmd-desc">The pod's fabricated host table: SSID, IP, MAC, and role.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab scan &lt;pod&gt;</code></pre></div>
+                <p class="cmd-desc">Host discovery: which hosts answer, with their MACs.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab wpa &lt;pod&gt;</code></pre></div>
+                <p class="cmd-desc">The pod access point's simulated security and PSK.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab topology &lt;pod&gt;</code></pre></div>
+                <p class="cmd-desc">An ASCII map of the pod.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab traceroute &lt;pod&gt; &lt;dst&gt;</code></pre></div>
+                <p class="cmd-desc">The simulated hop path to a host in the pod.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab monitor &lt;pod&gt;</code></pre></div>
+                <p class="cmd-desc">Replay the pod's simulated frame script.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab arp-demo &lt;pod&gt;</code></pre></div>
+                <p class="cmd-desc">Walk through how an ARP-spoofing MiTM works.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab capture &lt;pod&gt;</code></pre></div>
+                <p class="cmd-desc">Print the simulated frames and raise the ARP-conflict alert.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab rs-explain</code></pre></div>
+                <p class="cmd-desc">Explain reverse-shell mechanics, with no injection.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab defend</code></pre></div>
+                <p class="cmd-desc">The detection and prevention checklist.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab pod create|join|members|host|leave</code></pre></div>
+                <p class="cmd-desc">Pod membership, keyed on your real account.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab listen [cancel]</code></pre></div>
+                <p class="cmd-desc">Open, or cancel, a listener: the attacker side.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab accept</code></pre></div>
+                <p class="cmd-desc">Accept the open listener: the victim side.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab &lt;cmd&gt;</code></pre></div>
+                <p class="cmd-desc">While a binding is open, runs in the sandbox.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab end</code></pre></div>
+                <p class="cmd-desc">Close the binding, from either side.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab start | stop</code></pre></div>
+                <p class="cmd-desc">Isolate the real network for the demo, or restore it.</p>
+
+                <div class="transcript cmd-line"><pre><code>netlab status</code></pre></div>
+                <p class="cmd-desc">Pod, host, binding, and network mode.</p>
+              </div>
+              <p class="evidence-note">
+                Transcribed from the security build's own <code>netlab help</code> and the verbs it
+                accepts. Inside a binding, the sandbox answers <code>whoami</code>, <code>hostname</code>,
+                <code>uname</code>, <code>pwd</code>, <code>ifconfig</code>, <code>netstat</code>,
+                <code>ls</code>, <code>write</code>, <code>cat</code>, and <code>rm</code>. Any other
+                command reports that it ran in the sandbox; its output is not modeled. The hosted
+                shell's file-based <code>pcap</code> commands are not part of this build.
+              </p>
+            </div>
+          </div>
+        </details>
+      </section>
+
       <details class="disclosure">
         <summary><span class="disclosure-toggle" aria-hidden="true"></span>Read the technical write-up</summary>
         <div class="disclosure-body">

@@ -215,7 +215,7 @@ function createGuestWindow(mount) {
     iframe.hidden = false;
     iframe.title = `${guest.name} \u2014 ${guest.subtitle}`;
     iframe.setAttribute("allow", guest.iframeAllow);
-    iframe.referrerPolicy = guest.id === "flinstone" ? "strict-origin" : "strict-origin-when-cross-origin";
+    iframe.referrerPolicy = guest.id === "flinstone" || guest.id === "flinstone-security" ? "strict-origin" : "strict-origin-when-cross-origin";
     bootTextEl.textContent = `Attaching ${guest.name} from ${guest.origin}\u2026`;
     bootEl.hidden = false;
     setStatus("Connecting\u2026", "wait");

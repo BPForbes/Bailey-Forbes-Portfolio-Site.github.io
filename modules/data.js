@@ -661,7 +661,7 @@ const PORTFOLIO = {
         startDate: "2026-09-18",
         endDate: null,
         summary: "Portfolio notification \xB7 curated releases",
-        description: "Notifies bailey-forbes.com only after the validated lab is actually published, and adds a hand-curated releases list to project-metadata.json. Latest GA on main.",
+        description: "Notifies bailey-forbes.com only after the validated lab is actually published, and adds a hand-curated releases list to project-metadata.json.",
         url: "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/main/version/locked"
       }
     ]

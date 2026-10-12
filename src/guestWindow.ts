@@ -267,7 +267,9 @@ function createGuestWindow(mount: HTMLElement): void {
     iframe.title = `${guest.name} — ${guest.subtitle}`;
     iframe.setAttribute("allow", guest.iframeAllow);
     iframe.referrerPolicy =
-      guest.id === "flinstone" ? "strict-origin" : "strict-origin-when-cross-origin";
+      guest.id === "flinstone" || guest.id === "flinstone-security"
+        ? "strict-origin"
+        : "strict-origin-when-cross-origin";
 
     bootTextEl.textContent = `Attaching ${guest.name} from ${guest.origin}…`;
     bootEl.hidden = false;
