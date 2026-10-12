@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-12T13:11:37.036Z",
+  "generatedAt": "2026-10-12T22:33:35.853Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -9,42 +9,42 @@
       "name": "Bailey-Forbes-Flinstone",
       "defaultBranch": "main",
       "createdAt": "2025-05-28T17:51:02Z",
-      "pushedAt": "2026-09-20T03:46:42Z",
-      "commitCount": 400,
-      "mergedPullRequestCount": 164,
-      "pullRequestCount": 222,
-      "latestVersion": "5.1.0",
+      "pushedAt": "2026-10-12T22:30:01Z",
+      "commitCount": 514,
+      "mergedPullRequestCount": 166,
+      "pullRequestCount": 225,
+      "latestVersion": "5.2.0",
       "latestVersionSource": "version-manifest:version/locked",
       "languages": [
         {
           "name": "C",
-          "bytes": 2792382,
+          "bytes": 2909037,
           "pct": 76.8
         },
         {
           "name": "Shell",
-          "bytes": 207796,
-          "pct": 5.7
+          "bytes": 209931,
+          "pct": 5.6
         },
         {
           "name": "Python",
-          "bytes": 172320,
+          "bytes": 178442,
           "pct": 4.7
         },
         {
-          "name": "Assembly",
-          "bytes": 142369,
-          "pct": 3.9
+          "name": "JavaScript",
+          "bytes": 156772,
+          "pct": 4.1
         },
         {
-          "name": "JavaScript",
-          "bytes": 141218,
-          "pct": 3.9
+          "name": "Assembly",
+          "bytes": 143978,
+          "pct": 3.8
         },
         {
           "name": "Makefile",
-          "bytes": 74680,
-          "pct": 2.1
+          "bytes": 76697,
+          "pct": 2
         },
         {
           "name": "C++",
@@ -53,7 +53,7 @@
         },
         {
           "name": "CSS",
-          "bytes": 13588,
+          "bytes": 15101,
           "pct": 0.4
         },
         {
@@ -63,8 +63,8 @@
         },
         {
           "name": "HTML",
-          "bytes": 6538,
-          "pct": 0.2
+          "bytes": 10731,
+          "pct": 0.3
         },
         {
           "name": "Nix",
@@ -78,6 +78,15 @@
         }
       ],
       "generatedTimelineEvents": [
+        {
+          "date": "2026-10-12",
+          "kind": "feature",
+          "project": "flinstone",
+          "title": "Promote develop to main: netlab security lab (SECFEAT) and the second Pages variant",
+          "detail": "Merged pull request #371: Promote develop to main: netlab security lab (SECFEAT) and the second Pages variant.",
+          "href": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/pull/371",
+          "identity": "pr:BPForbes/Bailey-Forbes-Flinstone#371"
+        },
         {
           "date": "2026-09-17",
           "kind": "feature",
@@ -150,7 +159,7 @@
           "endDate": null,
           "summary": "Project-metadata contract · Pages",
           "description": "Flintstone publishes project-metadata.json alongside its validated browser lab on every promoted deploy: GitHub-derived languages, a merged-pull-request timeline, and release milestones, gated by the same fail-closed promotion checks as the lab itself. Latest GA on main.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
         },
         {
           "id": "4-5-4",
@@ -159,7 +168,7 @@
           "endDate": null,
           "summary": "Emscripten shell · shared relay",
           "description": "Sandboxed Emscripten Flinstone Shell as the default lab, and a shared relay room on a Cloudflare Durable Object with BroadcastChannel fallback. Latest GM promote on main.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
         },
         {
           "id": "4-5-1-4-5-3",
@@ -168,7 +177,7 @@
           "endDate": null,
           "summary": "Relay CI · Cloudflare lab · guest DNS",
           "description": "Relay CI stabilised and Cloudflare Worker artifacts for first-visit lab boot; the QMP cont timeout fixed; guest DNS moved to same-origin /lab-dns with a Cloudflare DoH fallback.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
         },
         {
           "id": "4-5-0",
@@ -177,7 +186,7 @@
           "endDate": null,
           "summary": "Freestanding boot · lab identity",
           "description": "Freestanding x86-64 BIOS boot candidate with long-mode entry, lab identity, and concurrent sessions. States plainly that the guest is not the hosted ELF.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
         },
         {
           "id": "4-4-0",
@@ -186,7 +195,7 @@
           "endDate": null,
           "summary": "Browser-kernel contract · CI gate",
           "description": "Schema-versioned P8 browser-kernel artifact contract, a static lab harness, and a fail-closed CI promotion gate.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
         },
         {
           "id": "4-3-0",
@@ -195,7 +204,7 @@
           "endDate": null,
           "summary": "Wi-Fi · WPA2/WPA3-SAE · nl80211",
           "description": "Production Wi-Fi: 802.11ax drivers, WPA2 and WPA3-SAE supplication, FullMAC and nl80211 backends, TWT, and post-association DHCP.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
         },
         {
           "id": "4-2-0",
@@ -204,7 +213,7 @@
           "endDate": null,
           "summary": "P3 networking · WSL · Linux hosting",
           "description": "P3 networking, server foundations, WSL and native Linux integration.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
         },
         {
           "id": "4-1-0-4-1-1",
@@ -213,7 +222,7 @@
           "endDate": "2026-05-24",
           "summary": "Identity · su/sudo · issue sweep",
           "description": "Identity stack; then issues #169-#222 (ARM ABI, sessions, batch argv, SHA-256 fetches, threadpool).",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
         },
         {
           "id": "4-0-0-4-0-1",
@@ -222,7 +231,7 @@
           "endDate": "2026-05-19",
           "summary": "Contracts · IPC/VFS · serial-j1",
           "description": "Inheritable system contracts; then IPC/VFS/shell hardening and serial -j1 default builds.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
         },
         {
           "id": "3-3-0",
@@ -231,7 +240,7 @@
           "endDate": null,
           "summary": "fs_jail · audit · FL1 history",
           "description": "Contract surfaces for fs_jail and audit; FL1 history vs post-exec audit log.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
         },
         {
           "id": "2-2-4-3-2-3",
@@ -240,11 +249,11 @@
           "endDate": "2026-05-12",
           "summary": "Shell · FAT32 · AArch64 · disk history",
           "description": "Syscall-style shell dispatch, FAT32 host volumes, AArch64/Pi defaults, disk-backed history, OS roadmap.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e55f8c6191e2a4057fafd49c44e967723266ddb0/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-10-12T13:11:33.955Z"
+      "fetchedAt": "2026-10-12T22:33:33.588Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -416,7 +425,7 @@
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-12T13:11:35.978Z"
+      "fetchedAt": "2026-10-12T22:33:34.917Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -578,7 +587,7 @@
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-12T13:11:37.036Z"
+      "fetchedAt": "2026-10-12T22:33:35.853Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -615,7 +624,7 @@
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-10-12T13:11:35.101Z"
+      "fetchedAt": "2026-10-12T22:33:34.202Z"
     }
   }
 }
