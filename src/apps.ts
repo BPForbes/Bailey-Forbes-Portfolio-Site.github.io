@@ -6,6 +6,9 @@ export const QPU_GUEST_SRC =
 export const FLINTSTONE_GUEST_SRC =
   "https://bpforbes.github.io/Bailey-Forbes-Flinstone/";
 
+export const FLINTSTONE_SECURITY_GUEST_SRC =
+  "https://bpforbes.github.io/Bailey-Forbes-Flinstone/security/";
+
 export const KEYQUORUM_GUEST_SRC =
   "https://bpforbes.github.io/KeyQuorum/";
 
@@ -13,7 +16,7 @@ export const QPU_EMBED_SOURCE = "qpu-guest";
 export const FLINTSTONE_EMBED_SOURCE = "flinstone-guest";
 export const KEYQUORUM_EMBED_SOURCE = "keyquorum-guest";
 
-export type GuestId = "qpu" | "flinstone" | "keyquorum";
+export type GuestId = "qpu" | "flinstone" | "flinstone-security" | "keyquorum";
 
 interface GuestBase {
   name: string;
@@ -37,11 +40,15 @@ export interface FlinstoneGuest extends LiveGuestBase {
   id: "flinstone";
 }
 
+export interface FlinstoneSecurityGuest extends LiveGuestBase {
+  id: "flinstone-security";
+}
+
 export interface KeyQuorumGuest extends LiveGuestBase {
   id: "keyquorum";
 }
 
-export type LiveGuest = QpuGuest | FlinstoneGuest | KeyQuorumGuest;
+export type LiveGuest = QpuGuest | FlinstoneGuest | FlinstoneSecurityGuest | KeyQuorumGuest;
 export interface OfflineGuest extends GuestBase {
   id: GuestId;
   kind: "offline";
@@ -69,6 +76,17 @@ export const GUESTS: { readonly [K in GuestId]: Extract<GuestApp, { id: K }> } =
     subtitle: "Kernel lab",
     repo: "https://github.com/BPForbes/Bailey-Forbes-Flinstone",
     src: FLINTSTONE_GUEST_SRC,
+    origin: GITHUB_PAGES_ORIGIN,
+    embedSource: FLINTSTONE_EMBED_SOURCE,
+    iframeAllow: "cross-origin-isolated; fullscreen; clipboard-write",
+  },
+  "flinstone-security": {
+    id: "flinstone-security",
+    kind: "live",
+    name: "Flinstone security build",
+    subtitle: "MitM + reverse-shell lab",
+    repo: "https://github.com/BPForbes/Bailey-Forbes-Flinstone",
+    src: FLINTSTONE_SECURITY_GUEST_SRC,
     origin: GITHUB_PAGES_ORIGIN,
     embedSource: FLINTSTONE_EMBED_SOURCE,
     iframeAllow: "cross-origin-isolated; fullscreen; clipboard-write",
@@ -109,7 +127,7 @@ export function isGuestReadyMessage(guest: LiveGuest, data: unknown): boolean {
     return false;
   }
 
-  if (guest.id === "flinstone" || guest.id === "keyquorum") {
+  if (guest.id === "flinstone" || guest.id === "flinstone-security" || guest.id === "keyquorum") {
     return (
       "schemaVersion" in data &&
       data.schemaVersion === 1 &&

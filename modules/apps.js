@@ -1,6 +1,7 @@
 const GITHUB_PAGES_ORIGIN = "https://bpforbes.github.io";
 const QPU_GUEST_SRC = "https://bpforbes.github.io/BPForbes.QPU.github.io/?embed=1";
 const FLINTSTONE_GUEST_SRC = "https://bpforbes.github.io/Bailey-Forbes-Flinstone/";
+const FLINTSTONE_SECURITY_GUEST_SRC = "https://bpforbes.github.io/Bailey-Forbes-Flinstone/security/";
 const KEYQUORUM_GUEST_SRC = "https://bpforbes.github.io/KeyQuorum/";
 const QPU_EMBED_SOURCE = "qpu-guest";
 const FLINTSTONE_EMBED_SOURCE = "flinstone-guest";
@@ -24,6 +25,17 @@ const GUESTS = {
     subtitle: "Kernel lab",
     repo: "https://github.com/BPForbes/Bailey-Forbes-Flinstone",
     src: FLINTSTONE_GUEST_SRC,
+    origin: GITHUB_PAGES_ORIGIN,
+    embedSource: FLINTSTONE_EMBED_SOURCE,
+    iframeAllow: "cross-origin-isolated; fullscreen; clipboard-write"
+  },
+  "flinstone-security": {
+    id: "flinstone-security",
+    kind: "live",
+    name: "Flinstone security build",
+    subtitle: "MitM + reverse-shell lab",
+    repo: "https://github.com/BPForbes/Bailey-Forbes-Flinstone",
+    src: FLINTSTONE_SECURITY_GUEST_SRC,
     origin: GITHUB_PAGES_ORIGIN,
     embedSource: FLINTSTONE_EMBED_SOURCE,
     iframeAllow: "cross-origin-isolated; fullscreen; clipboard-write"
@@ -57,7 +69,7 @@ function isGuestReadyMessage(guest, data) {
   if (data.source !== guest.embedSource || data.type !== "ready") {
     return false;
   }
-  if (guest.id === "flinstone" || guest.id === "keyquorum") {
+  if (guest.id === "flinstone" || guest.id === "flinstone-security" || guest.id === "keyquorum") {
     return "schemaVersion" in data && data.schemaVersion === 1 && "commit" in data && typeof data.commit === "string" && data.commit.length > 0;
   }
   return true;
@@ -65,6 +77,7 @@ function isGuestReadyMessage(guest, data) {
 export {
   FLINTSTONE_EMBED_SOURCE,
   FLINTSTONE_GUEST_SRC,
+  FLINTSTONE_SECURITY_GUEST_SRC,
   GITHUB_PAGES_ORIGIN,
   GUESTS,
   GUEST_ORDER,

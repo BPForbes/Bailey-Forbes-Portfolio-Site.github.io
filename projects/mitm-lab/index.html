@@ -417,6 +417,22 @@
         </p>
       </section>
 
+      <section class="prose" id="security-lab" aria-labelledby="security-lab-title">
+        <h2 id="security-lab-title">Run the security lab</h2>
+        <p>
+          The security-features build of the Flinstone kernel lab runs below as a guest window. It
+          adds the netlab simulation: fabricated pods, a listener and accept binding, and a disposable
+          sandbox for the reverse shell. The simulation runs in memory against fabricated hosts.
+        </p>
+        <div data-guest-window data-guest="flinstone-security" data-guest-solo id="security-lab-window"></div>
+        <p class="note">
+          Known limitation: the lab needs cross-origin isolation. If the window reports that it could
+          not attach, open
+          <a href="https://bpforbes.github.io/Bailey-Forbes-Flinstone/security/">the security lab on its own page</a>
+          once and come back. The window has a reload button for exactly this.
+        </p>
+      </section>
+
       <details class="disclosure">
         <summary><span class="disclosure-toggle" aria-hidden="true"></span>Read the technical write-up</summary>
         <div class="disclosure-body">
