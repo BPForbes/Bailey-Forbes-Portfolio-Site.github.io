@@ -1348,13 +1348,15 @@ code {
 }
 
 /*
- * The ledger (B3): the project list as numbered, ruled rows rather than a
- * grid of tiles. Each row is one discrete destination — a project — so it
- * carries what the old .card carried (period, role, title, blurb, tags,
- * actions), laid out the way an index or a parts list lays it out: a folio
- * numeral in the margin, the record beside it, a rule beneath. The numeral
- * is generated with empty alternative text; the <ol> already gives the
- * reader the count and the position.
+ * The ledger (B3): the project list as numbered, ruled rows. Each row is one
+ * discrete destination — a project — so it carries what the old .card carried
+ * (period, role, title, blurb, tags, actions), laid out the way an index or a
+ * parts list lays it out: a folio numeral in the margin, the record beside it,
+ * a rule beneath. The numeral is generated with empty alternative text; the
+ * <ol> already gives the reader the count and the position.
+ *
+ * On a wide screen the rows form a two-column grid, so the six projects read
+ * as three rows of two, in source order. See the wide layer below.
  */
 .ledger {
   list-style: none;
@@ -4894,6 +4896,31 @@ body::before {
     align-items: flex-start;
     gap: var(--space-3);
     margin-top: 0.35rem;
+  }
+
+  /*
+   * Six projects read as a 2 × 3 grid, in source order. Each cell is about half
+   * the measure, too narrow for the side column, so inside the grid a row
+   * stacks its record and its actions in one column.
+   */
+  .ledger {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-6);
+  }
+
+  .ledger .ledger-row,
+  .ledger .ledger-link {
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+    padding-left: 2.75rem;
+  }
+
+  .ledger .ledger-actions,
+  .ledger .ledger-side {
+    grid-column: 1;
+    grid-row: auto;
+    margin-top: var(--space-2);
   }
 
   /* --- records: let the grid find its own column count ---------------------- */

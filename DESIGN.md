@@ -541,10 +541,13 @@ anchor the label instead of vanishing into it.
   tracked-out capitals.
 - **`.ledger`** (`<ol>` of `.ledger-row`) — the project list: one discrete
   destination per row, numbered in the margin, ruled off from the next. It
-  replaced a grid of `.card` tiles on the home and projects pages because
-  five boxes in a grid is the shape every portfolio has; a numbered index is
-  the shape a parts list has. On the index page the whole row is one link
-  (`.ledger-link`); on the home page each row carries its own actions.
+  replaced a grid of `.card` tiles on the projects page because five boxes in
+  a grid is the shape every portfolio has; a numbered index is the shape a
+  parts list has. On a wide screen (56rem and up) the six rows lay out as a
+  2 × 3 grid in source order, at the owner's request (2026-10-12), keeping
+  their numerals and rules; each row stacks its record and actions in its
+  cell. The whole row is one link (`.ledger-link`). The ledger now appears
+  only on the projects index.
 - **`.card`** — still only for a discrete destination the visitor can open,
   kept for any future use that is genuinely a tile. Nothing else gets a card.
 - **`.spec-sheet`** (`<dl>`) — the home hero's at-a-glance facts (based,
