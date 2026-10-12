@@ -2863,6 +2863,22 @@ code {
   font-size: 0.85rem;
 }
 
+/* A recorded demo of the live lab. Controls only: it never autoplays, so it
+ * holds still under reduced motion without any script. */
+.demo-video {
+  margin: var(--space-5) 0 0;
+  min-width: 0;
+}
+
+.demo-video video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: #000;
+}
+
 /* ----------------------------------------------------------- lang chart --- */
 
 /*
