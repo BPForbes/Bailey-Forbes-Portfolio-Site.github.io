@@ -756,9 +756,12 @@
             <text class="diagram-node-title" x="95" y="101" text-anchor="middle">Device</text>
             <text class="diagram-node-meta" x="95" y="119" text-anchor="middle">on the network</text>
 
-            <rect class="diagram-node" x="210" y="77" width="170" height="56" rx="4" />
-            <text class="diagram-node-title" x="295" y="101" text-anchor="middle">Firewall</text>
-            <text class="diagram-node-meta" x="295" y="119" text-anchor="middle">egress rules, minimal ports</text>
+            <!-- The meta line is wider than the box, so it wraps to two lines
+                 and the box grows around it; its centre stays at y=105, where
+                 the arrows meet it. -->
+            <rect class="diagram-node" x="210" y="70" width="170" height="70" rx="4" />
+            <text class="diagram-node-title" x="295" y="95" text-anchor="middle">Firewall</text>
+            <text class="diagram-node-meta" x="295" y="113" text-anchor="middle"><tspan x="295">egress rules,</tspan><tspan x="295" dy="14">minimal ports</tspan></text>
 
             <rect class="diagram-node" x="440" y="16" width="180" height="56" rx="4" />
             <text class="diagram-node-title" x="530" y="40" text-anchor="middle">Needed</text>
