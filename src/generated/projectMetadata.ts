@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-17T09:23:19.205Z",
+  "generatedAt": "2026-10-18T09:39:06.260Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -263,7 +263,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-10-17T09:23:16.493Z"
+      "fetchedAt": "2026-10-18T09:39:03.894Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -435,7 +435,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-17T09:23:18.263Z"
+      "fetchedAt": "2026-10-18T09:39:05.429Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -597,7 +597,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-17T09:23:19.205Z"
+      "fetchedAt": "2026-10-18T09:39:06.260Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -634,7 +634,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-10-17T09:23:17.399Z"
+      "fetchedAt": "2026-10-18T09:39:04.723Z"
     }
   }
 };
