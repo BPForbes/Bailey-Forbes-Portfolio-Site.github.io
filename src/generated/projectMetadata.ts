@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-19T10:47:47.820Z",
+  "generatedAt": "2026-10-19T13:44:18.573Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -263,7 +263,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-10-19T10:47:45.106Z"
+      "fetchedAt": "2026-10-19T13:44:15.513Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -435,7 +435,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-19T10:47:46.650Z"
+      "fetchedAt": "2026-10-19T13:44:17.329Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -445,10 +445,10 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "defaultBranch": "main",
       "description": "KeyQuorum is a secure file-sharing system centered on hardware key sharing. Files are encrypted and bound to registered physical tokens, such as USB devices. Access requires the necessary hardware keys to be presented before a protected file can be unlocked, providing layered, hardware-backed access control.",
       "createdAt": "2026-08-24T17:17:46Z",
-      "pushedAt": "2026-10-16T00:57:14Z",
-      "commitCount": 83,
-      "mergedPullRequestCount": 84,
-      "pullRequestCount": 108,
+      "pushedAt": "2026-10-19T13:40:50Z",
+      "commitCount": 85,
+      "mergedPullRequestCount": 86,
+      "pullRequestCount": 114,
       "languages": [
         {
           "name": "Rust",
@@ -597,7 +597,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-19T10:47:47.820Z"
+      "fetchedAt": "2026-10-19T13:44:18.573Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -634,7 +634,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-10-19T10:47:45.896Z"
+      "fetchedAt": "2026-10-19T13:44:16.444Z"
     }
   }
 };
