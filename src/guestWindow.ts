@@ -55,6 +55,7 @@ function createGuestWindow(mount: HTMLElement): void {
       <p class="guest-status" data-guest-status data-tone="wait" role="status">Connecting…</p>
       <div class="guest-title-actions">
         <button type="button" class="guest-btn" data-guest-retry hidden>${icon("rotate-right")}Reload the lab</button>
+        <button type="button" class="guest-btn" data-guest-develop aria-pressed="false" hidden>In development</button>
         <button type="button" class="guest-btn" data-guest-fullscreen>${icon("expand")}Fullscreen</button>
         <button type="button" class="guest-btn" data-guest-restore hidden>${icon("compress")}Exit fullscreen</button>
         <button type="button" class="guest-btn" data-guest-min>${icon("compress")}Minimize</button>
@@ -122,6 +123,7 @@ function createGuestWindow(mount: HTMLElement): void {
   const bootEl = mustQuery(shell, "[data-guest-boot]");
   const bootTextEl = mustQuery(shell, "[data-guest-boot-text]");
   const retryBtn = mustQuery(shell, "[data-guest-retry]", HTMLButtonElement);
+  const developBtn = mustQuery(shell, "[data-guest-develop]", HTMLButtonElement);
   const fullscreenBtn = mustQuery(shell, "[data-guest-fullscreen]", HTMLButtonElement);
   const restoreBtn = mustQuery(shell, "[data-guest-restore]", HTMLButtonElement);
   const minBtn = mustQuery(shell, "[data-guest-min]", HTMLButtonElement);
@@ -267,7 +269,7 @@ function createGuestWindow(mount: HTMLElement): void {
     iframe.title = `${guest.name} — ${guest.subtitle}`;
     iframe.setAttribute("allow", guest.iframeAllow);
     iframe.referrerPolicy =
-      guest.id === "flinstone" || guest.id === "flinstone-security"
+      guest.id === "flinstone" || guest.id === "flinstone-security" || guest.id === "flinstone-develop"
         ? "strict-origin"
         : "strict-origin-when-cross-origin";
 
@@ -356,6 +358,11 @@ function createGuestWindow(mount: HTMLElement): void {
     for (const [dockId, button] of dockButtons) {
       button.setAttribute("aria-pressed", String(dockId === id));
     }
+
+    // The In development switch belongs to the Flinstone build pair: main
+    // (flinstone, flinstone-security) and develop (flinstone-develop).
+    developBtn.hidden = id !== "flinstone" && id !== "flinstone-develop";
+    developBtn.setAttribute("aria-pressed", String(id === "flinstone-develop"));
 
     if (alreadyShowing && isLiveGuest(guest) && !iframe.hidden) {
       refreshStatus();
@@ -470,6 +477,9 @@ function createGuestWindow(mount: HTMLElement): void {
   showBtn.addEventListener("click", () => {
     showStage();
     minBtn.focus();
+  });
+  developBtn.addEventListener("click", () => {
+    setGuest(currentId === "flinstone-develop" ? "flinstone" : "flinstone-develop");
   });
   retryBtn.addEventListener("click", retry);
   errorRetryEl.addEventListener("click", retry);
