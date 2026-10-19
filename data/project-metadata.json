@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-19T14:26:19.865Z",
+  "generatedAt": "2026-10-19T16:53:59.255Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -9,7 +9,7 @@
       "name": "Bailey-Forbes-Flinstone",
       "defaultBranch": "main",
       "createdAt": "2025-05-28T17:51:02Z",
-      "pushedAt": "2026-10-16T12:24:52Z",
+      "pushedAt": "2026-10-19T15:12:34Z",
       "commitCount": 515,
       "mergedPullRequestCount": 168,
       "pullRequestCount": 227,
@@ -253,7 +253,7 @@
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-10-19T14:26:16.433Z"
+      "fetchedAt": "2026-10-19T16:53:56.275Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -425,7 +425,7 @@
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-19T14:26:18.635Z"
+      "fetchedAt": "2026-10-19T16:53:58.178Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -435,15 +435,15 @@
       "defaultBranch": "main",
       "description": "KeyQuorum is a secure file-sharing system centered on hardware key sharing. Files are encrypted and bound to registered physical tokens, such as USB devices. Access requires the necessary hardware keys to be presented before a protected file can be unlocked, providing layered, hardware-backed access control.",
       "createdAt": "2026-08-24T17:17:46Z",
-      "pushedAt": "2026-10-19T14:03:58Z",
-      "commitCount": 86,
-      "mergedPullRequestCount": 87,
-      "pullRequestCount": 114,
+      "pushedAt": "2026-10-19T16:34:10Z",
+      "commitCount": 87,
+      "mergedPullRequestCount": 88,
+      "pullRequestCount": 115,
       "languages": [
         {
           "name": "Rust",
-          "bytes": 3746753,
-          "pct": 81.5
+          "bytes": 3763766,
+          "pct": 81.4
         },
         {
           "name": "JavaScript",
@@ -474,9 +474,23 @@
           "name": "HTML",
           "bytes": 1732,
           "pct": 0.1
+        },
+        {
+          "name": "C",
+          "bytes": 1245,
+          "pct": 0.1
         }
       ],
       "generatedTimelineEvents": [
+        {
+          "date": "2026-10-19",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Add ffi/identity: C-callable account heritage for Flinstone",
+          "detail": "A standalone crate, `ffi/identity`, built as `libkeyquorum_identity.a` with `include/keyquorum_identity.h`, so the Flinstone shell can use KeyQuorum's rules for account heritage instead of re-implementing them in C.",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/129",
+          "identity": "pr:BPForbes/KeyQuorum#129"
+        },
         {
           "date": "2026-10-09",
           "kind": "feature",
@@ -575,19 +589,10 @@
           "detail": "- Provide a cached one-time PIN verification window to avoid repeated prompts for short-lived operations. - Allow callers to explicitly end the cached PIN window via a CLI command. - Improve CLI argument validation for mode-specific options and numeric limits to prevent misuse.",
           "href": "https://github.com/BPForbes/KeyQuorum/pull/7",
           "identity": "pr:BPForbes/KeyQuorum#7"
-        },
-        {
-          "date": "2026-08-24",
-          "kind": "feature",
-          "project": "keyquorum",
-          "title": "Add local SQLite schema for hardware-key-quorum storage",
-          "detail": "* **New Features** * Added secure password-based encryption for files and stored credentials. * Added local storage for protected files, credentials, hardware keys, sharing links, and audit events. * Added password-protected file locking and unlocking with tamper detection.",
-          "href": "https://github.com/BPForbes/KeyQuorum/pull/2",
-          "identity": "pr:BPForbes/KeyQuorum#2"
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-19T14:26:19.865Z"
+      "fetchedAt": "2026-10-19T16:53:59.255Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -624,7 +629,7 @@
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-10-19T14:26:17.539Z"
+      "fetchedAt": "2026-10-19T16:53:57.307Z"
     }
   }
 }
