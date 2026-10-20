@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-20T12:07:37.295Z",
+  "generatedAt": "2026-10-20T12:56:43.773Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -9,11 +9,11 @@
       "name": "Bailey-Forbes-Flinstone",
       "defaultBranch": "main",
       "createdAt": "2025-05-28T17:51:02Z",
-      "pushedAt": "2026-10-20T12:04:10Z",
-      "commitCount": 519,
-      "mergedPullRequestCount": 172,
-      "pullRequestCount": 231,
-      "latestVersion": "5.2.1",
+      "pushedAt": "2026-10-20T12:55:38Z",
+      "commitCount": 525,
+      "mergedPullRequestCount": 175,
+      "pullRequestCount": 234,
+      "latestVersion": "5.2.2",
       "latestVersionSource": "version-manifest:version/locked",
       "languages": [
         {
@@ -23,7 +23,7 @@
         },
         {
           "name": "Shell",
-          "bytes": 209931,
+          "bytes": 213436,
           "pct": 5.6
         },
         {
@@ -150,7 +150,7 @@
           "endDate": null,
           "summary": "Project-metadata contract · Pages",
           "description": "Flintstone publishes project-metadata.json alongside its validated browser lab on every promoted deploy: GitHub-derived languages, a merged-pull-request timeline, and release milestones, gated by the same fail-closed promotion checks as the lab itself. Latest GA on main.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/c83ee60b3bfd9e17e8feedaf2c1ed032ec4a1400/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/152dacd491db0ffcfc9e4b5b035cf8de025e723b/version/locked"
         },
         {
           "id": "4-5-4",
@@ -159,7 +159,7 @@
           "endDate": null,
           "summary": "Emscripten shell · shared relay",
           "description": "Sandboxed Emscripten Flinstone Shell as the default lab, and a shared relay room on a Cloudflare Durable Object with BroadcastChannel fallback. Latest GM promote on main.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/c83ee60b3bfd9e17e8feedaf2c1ed032ec4a1400/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/152dacd491db0ffcfc9e4b5b035cf8de025e723b/version/locked"
         },
         {
           "id": "4-5-1-4-5-3",
@@ -168,7 +168,7 @@
           "endDate": null,
           "summary": "Relay CI · Cloudflare lab · guest DNS",
           "description": "Relay CI stabilised and Cloudflare Worker artifacts for first-visit lab boot; the QMP cont timeout fixed; guest DNS moved to same-origin /lab-dns with a Cloudflare DoH fallback.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/c83ee60b3bfd9e17e8feedaf2c1ed032ec4a1400/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/152dacd491db0ffcfc9e4b5b035cf8de025e723b/version/locked"
         },
         {
           "id": "4-5-0",
@@ -177,7 +177,7 @@
           "endDate": null,
           "summary": "Freestanding boot · lab identity",
           "description": "Freestanding x86-64 BIOS boot candidate with long-mode entry, lab identity, and concurrent sessions. States plainly that the guest is not the hosted ELF.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/c83ee60b3bfd9e17e8feedaf2c1ed032ec4a1400/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/152dacd491db0ffcfc9e4b5b035cf8de025e723b/version/locked"
         },
         {
           "id": "4-4-0",
@@ -186,7 +186,7 @@
           "endDate": null,
           "summary": "Browser-kernel contract · CI gate",
           "description": "Schema-versioned P8 browser-kernel artifact contract, a static lab harness, and a fail-closed CI promotion gate.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/c83ee60b3bfd9e17e8feedaf2c1ed032ec4a1400/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/152dacd491db0ffcfc9e4b5b035cf8de025e723b/version/locked"
         },
         {
           "id": "4-3-0",
@@ -195,7 +195,7 @@
           "endDate": null,
           "summary": "Wi-Fi · WPA2/WPA3-SAE · nl80211",
           "description": "Production Wi-Fi: 802.11ax drivers, WPA2 and WPA3-SAE supplication, FullMAC and nl80211 backends, TWT, and post-association DHCP.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/c83ee60b3bfd9e17e8feedaf2c1ed032ec4a1400/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/152dacd491db0ffcfc9e4b5b035cf8de025e723b/version/locked"
         },
         {
           "id": "4-2-0",
@@ -204,7 +204,7 @@
           "endDate": null,
           "summary": "P3 networking · WSL · Linux hosting",
           "description": "P3 networking, server foundations, WSL and native Linux integration.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/c83ee60b3bfd9e17e8feedaf2c1ed032ec4a1400/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/152dacd491db0ffcfc9e4b5b035cf8de025e723b/version/locked"
         },
         {
           "id": "4-1-0-4-1-1",
@@ -213,7 +213,7 @@
           "endDate": "2026-05-24",
           "summary": "Identity · su/sudo · issue sweep",
           "description": "Identity stack; then issues #169-#222 (ARM ABI, sessions, batch argv, SHA-256 fetches, threadpool).",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/c83ee60b3bfd9e17e8feedaf2c1ed032ec4a1400/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/152dacd491db0ffcfc9e4b5b035cf8de025e723b/version/locked"
         },
         {
           "id": "4-0-0-4-0-1",
@@ -222,7 +222,7 @@
           "endDate": "2026-05-19",
           "summary": "Contracts · IPC/VFS · serial-j1",
           "description": "Inheritable system contracts; then IPC/VFS/shell hardening and serial -j1 default builds.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/c83ee60b3bfd9e17e8feedaf2c1ed032ec4a1400/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/152dacd491db0ffcfc9e4b5b035cf8de025e723b/version/locked"
         },
         {
           "id": "3-3-0",
@@ -231,7 +231,7 @@
           "endDate": null,
           "summary": "fs_jail · audit · FL1 history",
           "description": "Contract surfaces for fs_jail and audit; FL1 history vs post-exec audit log.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/c83ee60b3bfd9e17e8feedaf2c1ed032ec4a1400/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/152dacd491db0ffcfc9e4b5b035cf8de025e723b/version/locked"
         },
         {
           "id": "2-2-4-3-2-3",
@@ -240,11 +240,11 @@
           "endDate": "2026-05-12",
           "summary": "Shell · FAT32 · AArch64 · disk history",
           "description": "Syscall-style shell dispatch, FAT32 host volumes, AArch64/Pi defaults, disk-backed history, OS roadmap.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/c83ee60b3bfd9e17e8feedaf2c1ed032ec4a1400/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/152dacd491db0ffcfc9e4b5b035cf8de025e723b/version/locked"
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-10-20T12:07:34.440Z"
+      "fetchedAt": "2026-10-20T12:56:40.583Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -416,7 +416,7 @@
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-20T12:07:36.011Z"
+      "fetchedAt": "2026-10-20T12:56:42.486Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -583,7 +583,7 @@
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-20T12:07:37.295Z"
+      "fetchedAt": "2026-10-20T12:56:43.773Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -620,7 +620,7 @@
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-10-20T12:07:35.255Z"
+      "fetchedAt": "2026-10-20T12:56:41.567Z"
     }
   }
 }
