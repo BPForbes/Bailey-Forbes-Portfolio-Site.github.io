@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-19T16:53:59.255Z",
+  "generatedAt": "2026-10-20T01:23:43.451Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -19,10 +19,10 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "name": "Bailey-Forbes-Flinstone",
       "defaultBranch": "main",
       "createdAt": "2025-05-28T17:51:02Z",
-      "pushedAt": "2026-10-19T15:12:34Z",
+      "pushedAt": "2026-10-20T01:14:05Z",
       "commitCount": 515,
-      "mergedPullRequestCount": 168,
-      "pullRequestCount": 227,
+      "mergedPullRequestCount": 171,
+      "pullRequestCount": 230,
       "latestVersion": "5.2.0",
       "latestVersionSource": "version-manifest:version/locked",
       "languages": [
@@ -169,7 +169,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "endDate": null,
           "summary": "Project-metadata contract · Pages",
           "description": "Flintstone publishes project-metadata.json alongside its validated browser lab on every promoted deploy: GitHub-derived languages, a merged-pull-request timeline, and release milestones, gated by the same fail-closed promotion checks as the lab itself. Latest GA on main.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/dd0edcb5a92a87c363d111f6abd3b87a40be001f/version/locked"
         },
         {
           "id": "4-5-4",
@@ -178,7 +178,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "endDate": null,
           "summary": "Emscripten shell · shared relay",
           "description": "Sandboxed Emscripten Flinstone Shell as the default lab, and a shared relay room on a Cloudflare Durable Object with BroadcastChannel fallback. Latest GM promote on main.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/dd0edcb5a92a87c363d111f6abd3b87a40be001f/version/locked"
         },
         {
           "id": "4-5-1-4-5-3",
@@ -187,7 +187,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "endDate": null,
           "summary": "Relay CI · Cloudflare lab · guest DNS",
           "description": "Relay CI stabilised and Cloudflare Worker artifacts for first-visit lab boot; the QMP cont timeout fixed; guest DNS moved to same-origin /lab-dns with a Cloudflare DoH fallback.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/dd0edcb5a92a87c363d111f6abd3b87a40be001f/version/locked"
         },
         {
           "id": "4-5-0",
@@ -196,7 +196,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "endDate": null,
           "summary": "Freestanding boot · lab identity",
           "description": "Freestanding x86-64 BIOS boot candidate with long-mode entry, lab identity, and concurrent sessions. States plainly that the guest is not the hosted ELF.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/dd0edcb5a92a87c363d111f6abd3b87a40be001f/version/locked"
         },
         {
           "id": "4-4-0",
@@ -205,7 +205,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "endDate": null,
           "summary": "Browser-kernel contract · CI gate",
           "description": "Schema-versioned P8 browser-kernel artifact contract, a static lab harness, and a fail-closed CI promotion gate.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/dd0edcb5a92a87c363d111f6abd3b87a40be001f/version/locked"
         },
         {
           "id": "4-3-0",
@@ -214,7 +214,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "endDate": null,
           "summary": "Wi-Fi · WPA2/WPA3-SAE · nl80211",
           "description": "Production Wi-Fi: 802.11ax drivers, WPA2 and WPA3-SAE supplication, FullMAC and nl80211 backends, TWT, and post-association DHCP.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/dd0edcb5a92a87c363d111f6abd3b87a40be001f/version/locked"
         },
         {
           "id": "4-2-0",
@@ -223,7 +223,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "endDate": null,
           "summary": "P3 networking · WSL · Linux hosting",
           "description": "P3 networking, server foundations, WSL and native Linux integration.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/dd0edcb5a92a87c363d111f6abd3b87a40be001f/version/locked"
         },
         {
           "id": "4-1-0-4-1-1",
@@ -232,7 +232,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "endDate": "2026-05-24",
           "summary": "Identity · su/sudo · issue sweep",
           "description": "Identity stack; then issues #169-#222 (ARM ABI, sessions, batch argv, SHA-256 fetches, threadpool).",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/dd0edcb5a92a87c363d111f6abd3b87a40be001f/version/locked"
         },
         {
           "id": "4-0-0-4-0-1",
@@ -241,7 +241,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "endDate": "2026-05-19",
           "summary": "Contracts · IPC/VFS · serial-j1",
           "description": "Inheritable system contracts; then IPC/VFS/shell hardening and serial -j1 default builds.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/dd0edcb5a92a87c363d111f6abd3b87a40be001f/version/locked"
         },
         {
           "id": "3-3-0",
@@ -250,7 +250,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "endDate": null,
           "summary": "fs_jail · audit · FL1 history",
           "description": "Contract surfaces for fs_jail and audit; FL1 history vs post-exec audit log.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/dd0edcb5a92a87c363d111f6abd3b87a40be001f/version/locked"
         },
         {
           "id": "2-2-4-3-2-3",
@@ -259,11 +259,11 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "endDate": "2026-05-12",
           "summary": "Shell · FAT32 · AArch64 · disk history",
           "description": "Syscall-style shell dispatch, FAT32 host volumes, AArch64/Pi defaults, disk-backed history, OS roadmap.",
-          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/e9febb75b6ccf235e71afbde80173871678d9f01/version/locked"
+          "url": "https://github.com/BPForbes/Bailey-Forbes-Flinstone/tree/dd0edcb5a92a87c363d111f6abd3b87a40be001f/version/locked"
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-10-19T16:53:56.275Z"
+      "fetchedAt": "2026-10-20T01:23:40.729Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -435,7 +435,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-19T16:53:58.178Z"
+      "fetchedAt": "2026-10-20T01:23:42.281Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -445,20 +445,20 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "defaultBranch": "main",
       "description": "KeyQuorum is a secure file-sharing system centered on hardware key sharing. Files are encrypted and bound to registered physical tokens, such as USB devices. Access requires the necessary hardware keys to be presented before a protected file can be unlocked, providing layered, hardware-backed access control.",
       "createdAt": "2026-08-24T17:17:46Z",
-      "pushedAt": "2026-10-19T16:34:10Z",
-      "commitCount": 87,
-      "mergedPullRequestCount": 88,
-      "pullRequestCount": 115,
+      "pushedAt": "2026-10-20T01:05:50Z",
+      "commitCount": 88,
+      "mergedPullRequestCount": 89,
+      "pullRequestCount": 116,
       "languages": [
         {
           "name": "Rust",
-          "bytes": 3763766,
-          "pct": 81.4
+          "bytes": 3788897,
+          "pct": 81.5
         },
         {
           "name": "JavaScript",
           "bytes": 516491,
-          "pct": 11.2
+          "pct": 11.1
         },
         {
           "name": "TypeScript",
@@ -481,13 +481,13 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "pct": 0.1
         },
         {
-          "name": "HTML",
-          "bytes": 1732,
+          "name": "C",
+          "bytes": 3202,
           "pct": 0.1
         },
         {
-          "name": "C",
-          "bytes": 1245,
+          "name": "HTML",
+          "bytes": 1732,
           "pct": 0.1
         }
       ],
@@ -602,7 +602,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-19T16:53:59.255Z"
+      "fetchedAt": "2026-10-20T01:23:43.451Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -639,7 +639,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-10-19T16:53:57.307Z"
+      "fetchedAt": "2026-10-20T01:23:41.489Z"
     }
   }
 };
