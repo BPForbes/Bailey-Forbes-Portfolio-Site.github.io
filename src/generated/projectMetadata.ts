@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-29T11:32:27.941Z",
+  "generatedAt": "2026-10-29T20:45:56.633Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -19,10 +19,10 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "name": "Bailey-Forbes-Flinstone",
       "defaultBranch": "main",
       "createdAt": "2025-05-28T17:51:02Z",
-      "pushedAt": "2026-10-29T04:08:08Z",
+      "pushedAt": "2026-10-29T19:17:51Z",
       "commitCount": 525,
-      "mergedPullRequestCount": 180,
-      "pullRequestCount": 240,
+      "mergedPullRequestCount": 181,
+      "pullRequestCount": 241,
       "latestVersion": "5.2.2",
       "latestVersionSource": "version-manifest:version/locked",
       "languages": [
@@ -254,7 +254,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-10-29T11:32:24.815Z"
+      "fetchedAt": "2026-10-29T20:45:53.558Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -426,7 +426,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-29T11:32:26.581Z"
+      "fetchedAt": "2026-10-29T20:45:55.302Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -436,14 +436,14 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "defaultBranch": "main",
       "description": "KeyQuorum is a secure file-sharing system centered on hardware key sharing. Files are encrypted and bound to registered physical tokens, such as USB devices. Access requires the necessary hardware keys to be presented before a protected file can be unlocked, providing layered, hardware-backed access control.",
       "createdAt": "2026-08-24T17:17:46Z",
-      "pushedAt": "2026-10-28T18:23:23Z",
-      "commitCount": 102,
-      "mergedPullRequestCount": 101,
-      "pullRequestCount": 133,
+      "pushedAt": "2026-10-29T20:31:49Z",
+      "commitCount": 103,
+      "mergedPullRequestCount": 102,
+      "pullRequestCount": 134,
       "languages": [
         {
           "name": "Rust",
-          "bytes": 3877019,
+          "bytes": 3884187,
           "pct": 81.7
         },
         {
@@ -468,7 +468,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         },
         {
           "name": "C",
-          "bytes": 12560,
+          "bytes": 12925,
           "pct": 0.3
         },
         {
@@ -483,6 +483,15 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "generatedTimelineEvents": [
+        {
+          "date": "2026-10-29",
+          "kind": "feature",
+          "project": "keyquorum",
+          "title": "Export history event and outcome names (files ABI 2)",
+          "detail": "Adds `kq_file_event_name(code)` and `kq_file_outcome_name(code)` to the files C ABI. Each returns the static NUL-terminated name of a history event type or outcome (\"EditCheckedIn\", \"Success\", ...), or `NULL` for a code this build does not know (a history written by a newer build). The caller never frees the string.",
+          "href": "https://github.com/BPForbes/KeyQuorum/pull/148",
+          "identity": "pr:BPForbes/KeyQuorum#148"
+        },
         {
           "date": "2026-10-19",
           "kind": "feature",
@@ -581,19 +590,10 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "detail": "Wraps the existing vault, locked_files, and sharing library APIs behind a clap-based command line: vault add/get, lock/unlock, and share create/redeem/revoke. Passwords are always prompted for interactively rather than accepted as arguments, keeping secrets out of shell history and process listings.",
           "href": "https://github.com/BPForbes/KeyQuorum/pull/5",
           "identity": "pr:BPForbes/KeyQuorum#5"
-        },
-        {
-          "date": "2026-08-25",
-          "kind": "feature",
-          "project": "keyquorum",
-          "title": "Add PIN unlock window and `pin relock` CLI; tighten CLI validation and secure export writes",
-          "detail": "- Provide a cached one-time PIN verification window to avoid repeated prompts for short-lived operations. - Allow callers to explicitly end the cached PIN window via a CLI command. - Improve CLI argument validation for mode-specific options and numeric limits to prevent misuse.",
-          "href": "https://github.com/BPForbes/KeyQuorum/pull/7",
-          "identity": "pr:BPForbes/KeyQuorum#7"
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-10-29T11:32:27.941Z"
+      "fetchedAt": "2026-10-29T20:45:56.633Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -630,7 +630,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-10-29T11:32:25.692Z"
+      "fetchedAt": "2026-10-29T20:45:54.346Z"
     }
   }
 };
