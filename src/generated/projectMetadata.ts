@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-05T13:13:16.215Z",
+  "generatedAt": "2026-11-06T12:57:58.870Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -19,10 +19,10 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "name": "Bailey-Forbes-Flinstone",
       "defaultBranch": "main",
       "createdAt": "2025-05-28T17:51:02Z",
-      "pushedAt": "2026-11-03T23:51:53Z",
+      "pushedAt": "2026-11-05T20:28:28Z",
       "commitCount": 525,
       "mergedPullRequestCount": 183,
-      "pullRequestCount": 242,
+      "pullRequestCount": 243,
       "latestVersion": "5.2.2",
       "latestVersionSource": "version-manifest:version/locked",
       "languages": [
@@ -254,7 +254,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-11-05T13:13:12.970Z"
+      "fetchedAt": "2026-11-06T12:57:56.030Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -264,10 +264,10 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "defaultBranch": "main",
       "description": "A community platform for people to collaborate when it comes to each other’s education.",
       "createdAt": "2026-06-07T21:07:48Z",
-      "pushedAt": "2026-10-30T08:26:45Z",
-      "commitCount": 24,
-      "mergedPullRequestCount": 62,
-      "pullRequestCount": 77,
+      "pushedAt": "2026-11-06T08:25:05Z",
+      "commitCount": 25,
+      "mergedPullRequestCount": 63,
+      "pullRequestCount": 78,
       "languages": [
         {
           "name": "C#",
@@ -426,7 +426,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-11-05T13:13:14.819Z"
+      "fetchedAt": "2026-11-06T12:57:57.749Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -436,10 +436,10 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "defaultBranch": "main",
       "description": "KeyQuorum is a secure file-sharing system centered on hardware key sharing. Files are encrypted and bound to registered physical tokens, such as USB devices. Access requires the necessary hardware keys to be presented before a protected file can be unlocked, providing layered, hardware-backed access control.",
       "createdAt": "2026-08-24T17:17:46Z",
-      "pushedAt": "2026-11-03T23:20:17Z",
+      "pushedAt": "2026-11-06T00:55:32Z",
       "commitCount": 107,
       "mergedPullRequestCount": 106,
-      "pullRequestCount": 140,
+      "pullRequestCount": 145,
       "languages": [
         {
           "name": "Rust",
@@ -593,7 +593,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-11-05T13:13:16.215Z"
+      "fetchedAt": "2026-11-06T12:57:58.870Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -630,7 +630,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-11-05T13:13:13.929Z"
+      "fetchedAt": "2026-11-06T12:57:56.862Z"
     }
   }
 };
