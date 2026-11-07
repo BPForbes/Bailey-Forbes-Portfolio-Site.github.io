@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-06T12:57:58.870Z",
+  "generatedAt": "2026-11-07T03:35:37.752Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -19,9 +19,9 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "name": "Bailey-Forbes-Flinstone",
       "defaultBranch": "main",
       "createdAt": "2025-05-28T17:51:02Z",
-      "pushedAt": "2026-11-05T20:28:28Z",
+      "pushedAt": "2026-11-07T03:35:13Z",
       "commitCount": 525,
-      "mergedPullRequestCount": 183,
+      "mergedPullRequestCount": 184,
       "pullRequestCount": 243,
       "latestVersion": "5.2.2",
       "latestVersionSource": "version-manifest:version/locked",
@@ -254,7 +254,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-11-06T12:57:56.030Z"
+      "fetchedAt": "2026-11-07T03:35:34.954Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -426,7 +426,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-11-06T12:57:57.749Z"
+      "fetchedAt": "2026-11-07T03:35:36.554Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -436,39 +436,39 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "defaultBranch": "main",
       "description": "KeyQuorum is a secure file-sharing system centered on hardware key sharing. Files are encrypted and bound to registered physical tokens, such as USB devices. Access requires the necessary hardware keys to be presented before a protected file can be unlocked, providing layered, hardware-backed access control.",
       "createdAt": "2026-08-24T17:17:46Z",
-      "pushedAt": "2026-11-06T00:55:32Z",
-      "commitCount": 107,
-      "mergedPullRequestCount": 106,
-      "pullRequestCount": 145,
+      "pushedAt": "2026-11-07T03:22:50Z",
+      "commitCount": 140,
+      "mergedPullRequestCount": 107,
+      "pullRequestCount": 146,
       "languages": [
         {
           "name": "Rust",
-          "bytes": 3884187,
-          "pct": 81.7
+          "bytes": 4023571,
+          "pct": 82.1
         },
         {
           "name": "JavaScript",
           "bytes": 516491,
-          "pct": 10.9
+          "pct": 10.5
         },
         {
           "name": "TypeScript",
           "bytes": 281023,
-          "pct": 5.9
+          "pct": 5.7
         },
         {
           "name": "CSS",
           "bytes": 30821,
-          "pct": 0.7
+          "pct": 0.6
+        },
+        {
+          "name": "C",
+          "bytes": 29885,
+          "pct": 0.6
         },
         {
           "name": "HCL",
           "bytes": 15427,
-          "pct": 0.3
-        },
-        {
-          "name": "C",
-          "bytes": 12925,
           "pct": 0.3
         },
         {
@@ -593,7 +593,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-11-06T12:57:58.870Z"
+      "fetchedAt": "2026-11-07T03:35:37.752Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -630,7 +630,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-11-06T12:57:56.862Z"
+      "fetchedAt": "2026-11-07T03:35:35.775Z"
     }
   }
 };
