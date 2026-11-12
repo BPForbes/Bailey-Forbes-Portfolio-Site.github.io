@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-11T23:09:56.358Z",
+  "generatedAt": "2026-11-12T13:47:32.063Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -254,7 +254,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-11-11T23:09:53.049Z"
+      "fetchedAt": "2026-11-12T13:47:28.747Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -426,7 +426,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-11-11T23:09:54.928Z"
+      "fetchedAt": "2026-11-12T13:47:30.681Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -443,13 +443,13 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "languages": [
         {
           "name": "Rust",
-          "bytes": 4026527,
+          "bytes": 4087999,
           "pct": 82.1
         },
         {
           "name": "JavaScript",
           "bytes": 516491,
-          "pct": 10.5
+          "pct": 10.4
         },
         {
           "name": "TypeScript",
@@ -457,13 +457,13 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
           "pct": 5.7
         },
         {
-          "name": "CSS",
-          "bytes": 30821,
-          "pct": 0.6
+          "name": "C",
+          "bytes": 34381,
+          "pct": 0.7
         },
         {
-          "name": "C",
-          "bytes": 30291,
+          "name": "CSS",
+          "bytes": 30821,
           "pct": 0.6
         },
         {
@@ -593,7 +593,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-11-11T23:09:56.358Z"
+      "fetchedAt": "2026-11-12T13:47:32.063Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -630,7 +630,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-11-11T23:09:53.976Z"
+      "fetchedAt": "2026-11-12T13:47:29.710Z"
     }
   }
 };
