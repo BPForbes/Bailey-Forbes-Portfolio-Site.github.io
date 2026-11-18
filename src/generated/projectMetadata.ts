@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-17T14:26:23.678Z",
+  "generatedAt": "2026-11-18T14:00:11.042Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -19,10 +19,10 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "name": "Bailey-Forbes-Flinstone",
       "defaultBranch": "main",
       "createdAt": "2025-05-28T17:51:02Z",
-      "pushedAt": "2026-11-17T00:21:35Z",
+      "pushedAt": "2026-11-18T13:59:00Z",
       "commitCount": 525,
-      "mergedPullRequestCount": 185,
-      "pullRequestCount": 245,
+      "mergedPullRequestCount": 188,
+      "pullRequestCount": 250,
       "latestVersion": "5.2.2",
       "latestVersionSource": "version-manifest:version/locked",
       "languages": [
@@ -254,7 +254,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-11-17T14:26:20.053Z"
+      "fetchedAt": "2026-11-18T14:00:07.417Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -426,7 +426,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-11-17T14:26:22.145Z"
+      "fetchedAt": "2026-11-18T14:00:09.492Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -593,7 +593,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-11-17T14:26:23.678Z"
+      "fetchedAt": "2026-11-18T14:00:11.042Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -630,7 +630,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-11-17T14:26:21.110Z"
+      "fetchedAt": "2026-11-18T14:00:08.346Z"
     }
   }
 };
