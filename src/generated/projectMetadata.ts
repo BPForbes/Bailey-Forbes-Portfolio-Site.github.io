@@ -10,7 +10,7 @@ import type { GeneratedProjectMetadata } from "../types.js";
 
 export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-18T14:00:11.042Z",
+  "generatedAt": "2026-11-19T14:27:36.695Z",
   "projects": {
     "flinstone": {
       "repository": "BPForbes/Bailey-Forbes-Flinstone",
@@ -19,9 +19,9 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       "name": "Bailey-Forbes-Flinstone",
       "defaultBranch": "main",
       "createdAt": "2025-05-28T17:51:02Z",
-      "pushedAt": "2026-11-18T13:59:00Z",
+      "pushedAt": "2026-11-18T17:56:17Z",
       "commitCount": 525,
-      "mergedPullRequestCount": 188,
+      "mergedPullRequestCount": 191,
       "pullRequestCount": 250,
       "latestVersion": "5.2.2",
       "latestVersionSource": "version-manifest:version/locked",
@@ -254,7 +254,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "contract",
-      "fetchedAt": "2026-11-18T14:00:07.417Z"
+      "fetchedAt": "2026-11-19T14:27:32.328Z"
     },
     "homework-central": {
       "repository": "BPForbes/Homework-Central",
@@ -426,7 +426,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-11-18T14:00:09.492Z"
+      "fetchedAt": "2026-11-19T14:27:34.831Z"
     },
     "keyquorum": {
       "repository": "BPForbes/KeyQuorum",
@@ -593,7 +593,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
         }
       ],
       "source": "github",
-      "fetchedAt": "2026-11-18T14:00:11.042Z"
+      "fetchedAt": "2026-11-19T14:27:36.695Z"
     },
     "qpu": {
       "repository": "BPForbes/BPForbes.QPU.github.io",
@@ -630,7 +630,7 @@ export const GENERATED_PROJECT_METADATA: GeneratedProjectMetadata = {
       ],
       "generatedTimelineEvents": [],
       "source": "contract",
-      "fetchedAt": "2026-11-18T14:00:08.346Z"
+      "fetchedAt": "2026-11-19T14:27:33.710Z"
     }
   }
 };
